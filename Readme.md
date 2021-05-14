@@ -53,15 +53,15 @@ INFO  Created: ~\source\_posts\新文章.md
 
 如果有图片、附件，可以放到`source/images` 文件夹里
 
-然后通过类似于 `![](/blog/images/image.jpg)` 的方法访问它们。
+然后通过类似于 `![](/images/image.jpg)` 的方法访问它们。
 
 例如：
 
 ```markdown
-[下载附件](/blog/images/05%20TDD%E5%AE%9E%E8%B7%B5.pdf) 
+[下载附件](/images/05%20TDD%E5%AE%9E%E8%B7%B5.pdf) 
 ```
 
-[下载附件](/blog/images/05%20TDD%E5%AE%9E%E8%B7%B5.pdf) 
+[下载附件](/images/05%20TDD%E5%AE%9E%E8%B7%B5.pdf) 
 
 
 更多信息: [Writing](https://hexo.io/docs/writing.html)
@@ -74,13 +74,13 @@ INFO  Created: ~\source\_posts\新文章.md
 将pdf放到`source/images` 文件夹，然后在markdown中引用。
 
 ```markdown
-{% pdf /blog/images/your/file.pdf %}
+{% pdf /images/your/file.pdf %}
 ```
 
 比如：
 
 ```markdown
-{% pdf /blog/images/05%20TDD%E5%AE%9E%E8%B7%B5.pdf %}
+{% pdf /images/05%20TDD%E5%AE%9E%E8%B7%B5.pdf %}
 ```
 
 

@@ -45,7 +45,7 @@ ELK不是一款软件，而是elasticsearch+Logstash+kibana三款开源软件组
 
 最新版本是2.28发布的5.2.2版本
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132521281-1050921717.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170309132521281-1050921717.png)
 
 windows选择ZIP，linux选择tar，ubuntu选择DEB
 
@@ -129,7 +129,7 @@ Logstash安装比较简单，下载压缩包、解压、配置，启动即可。
 
 Logstash 和flume比较类似，有input和output的概念。不过logstash社区通常习惯用 shipper，broker 和 indexer 来描述数据流中不同进程各自的角色。
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132521734-923307871.jpg)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170309132521734-923307871.jpg)
 
 我们来看怎么配置logstash。
 
@@ -220,7 +220,7 @@ access\_log /var/log/nginx/access.log\_json json;
 
 这样nginx的日志就变为：
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132522188-1514690908.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170309132522188-1514690908.png)
 
 2.2.3 启动logstash
 
@@ -230,7 +230,7 @@ bin/logstash -f nginxlog2es.conf
 
 启动成功后就能看到收集到的日志：
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132522875-360437388.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170309132522875-360437388.png)
 
 2.3 kibana
 
@@ -260,45 +260,45 @@ elasticsearch.url: "[http://192.168.86.108:9200](http://192.168.86.108:9200)"
 
 bin/kibana
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132523531-706059809.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170309132523531-706059809.png)
 
 2.3.2 配置报表
 
 启动后打开http://192.168.86.108:5601，就能看到日志了，在输入框里还可以输入关键词进行搜索，并且自带流量统计。
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132524219-2011756617.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170309132524219-2011756617.png)
 
 下面来看如何生成报表，比如搞个响应时间折线图，进入visualize，选择折线图
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132524828-237029731.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170309132524828-237029731.png)
 
 分别配置X和y轴，Y为平均响应时间，X为时间，最后保存即可。
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132525281-2069886424.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170309132525281-2069886424.png)
 
 再来配置一个表格报表，通产各个url的访问量
 
 Metrics 配置使用count作为聚合函数
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132526047-1007293145.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170309132526047-1007293145.png)
 
 buckets增加rows，字段选url
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132526438-1898740306.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170309132526438-1898740306.png)
 
 再增加一个状态码：
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132526953-1261870375.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170309132526953-1261870375.png)
 
 这样就完成了一个漂亮的表格
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132527406-1971021303.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170309132527406-1971021303.png)
 
 2.3.3 将报表添加到dashboard
 
 在dashboard点add，将两个报表加入即可
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132527781-1974262713.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170309132527781-1974262713.png)
 
 3、总结
 

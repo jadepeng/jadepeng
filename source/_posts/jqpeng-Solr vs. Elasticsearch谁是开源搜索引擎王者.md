@@ -42,7 +42,7 @@ Elasticsearch主要特性：
 
 热度对比
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170313220045088-284441280.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170313220045088-284441280.png)
 
 在开始比较前，我们可以查看两者在google中的[搜索热度](https://trends.google.com/trends/explore?date=all&amp;q=apache%20solr,elasticsearch)，可以看出在2013年后，Elasticsearch与Solr相比具有很大的吸引力，但这并不意味着Apache Solr已经死了。虽然不少人不认可，但Solr仍然是最流行的搜索引擎之一，具有强大的开源社区支持。
 
@@ -106,7 +106,7 @@ Solr在这里得分很高。它是一个非常有据可查的产品，具有清�
 
 通过上面的对比，很难确定谁是最终赢家。其实，无论选择Solr还是Elasticsearch，你首先需要了解您的用户场景和未来的需求。我们来总结一下：
 
-![](https://images2015.cnblogs.com/blog/38465/201703/38465-20170313220046213-1161805781.png)
+![](https://images2015.cnblogs.com/38465/201703/38465-20170313220046213-1161805781.png)
 
 请记住：
 
@@ -117,7 +117,7 @@ Solr在这里得分很高。它是一个非常有据可查的产品，具有清�
 
 总之，两者都是功能丰富的搜索引擎，并且或多或少地给出相同的性能，只要它们被设计和实施得很好。
 
-本文主要内容为翻译http://logz.io/blog/solr-vs-elasticsearch/，感谢作者，感谢谷歌翻译！
+本文主要内容为翻译http://logz.io/solr-vs-elasticsearch/，感谢作者，感谢谷歌翻译！
 
 
 

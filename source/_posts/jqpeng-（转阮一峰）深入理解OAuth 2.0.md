@@ -397,5 +397,5 @@ B步骤中，认证服务器向客户端发送访问令牌，下面是一个例�
 
 * * *
 
-出处：[http://www.ruanyifeng.com/blog/2014/05/oauth\_2\_0.html](http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html)
+出处：[http://www.ruanyifeng.com/2014/05/oauth\_2\_0.html](http://www.ruanyifeng.com/2014/05/oauth_2_0.html)
 

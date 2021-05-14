@@ -174,7 +174,7 @@ push直接调用push即可, 需要指定`credentialsProvider`
     
             String cloneDir = "/tmp/test";
     
-            Git git = fromCloneRepository("http://gitlab.GITHOST.cn/blog/env-test.git", cloneDir, provider);
+            Git git = fromCloneRepository("http://gitlab.GITHOST.cn/env-test.git", cloneDir, provider);
     
             // 修改文件
     

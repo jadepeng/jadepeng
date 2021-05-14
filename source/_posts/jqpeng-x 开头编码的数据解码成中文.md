@@ -54,7 +54,7 @@ date: 2016-01-05 11:38
 
 ## 深入理解：　　
 
-要了解原理，推荐阅读http://www.ruanyifeng.com/blog/2007/10/ascii\_unicode\_and\_utf-8.html
+要了解原理，推荐阅读http://www.ruanyifeng.com/2007/10/ascii\_unicode\_and\_utf-8.html
 
 UTF-8是unicode编码的一种落地方案：
 

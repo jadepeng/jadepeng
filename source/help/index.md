@@ -59,15 +59,15 @@ INFO  Created: ~\blog\source\_posts\新文章.md
 
 如果有图片、附件，可以放到`source/images` 文件夹里
 
-然后通过类似于 `![](/blog/images/image.jpg)` 的方法访问它们。
+然后通过类似于 `![](/images/image.jpg)` 的方法访问它们。
 
 例如：
 
 ```markdown
-[下载附件](/blog/images/05%20TDD%E5%AE%9E%E8%B7%B5.pdf) 
+[下载附件](/images/05%20TDD%E5%AE%9E%E8%B7%B5.pdf) 
 ```
 
-[下载附件](/blog/images/05%20TDD%E5%AE%9E%E8%B7%B5.pdf) 
+[下载附件](/images/05%20TDD%E5%AE%9E%E8%B7%B5.pdf) 
 
 
 更多信息: [Writing](https://hexo.io/docs/writing.html)
@@ -75,7 +75,7 @@ INFO  Created: ~\blog\source\_posts\新文章.md
 
 **分页网页的永久链接地址**
 
-    :year/:month/:day/:title/	/blog/2013/07/14/hello-world/
+    :year/:month/:day/:title/	/2013/07/14/hello-world/
 
 比如
 
@@ -89,9 +89,9 @@ date: 2021-04-29 10:00:56
 ---
 ```
 
-对应的链接: `/blog/2021/04/29/TDD实践/`
+对应的链接: `/2021/04/29/TDD实践/`
 
-    [高效编码之TDD 实践 - 钟明星 - 2021 年 4月 28 日](/blog/2021/04/29/TDD%E5%AE%9E%E8%B7%B5/)
+    [高效编码之TDD 实践 - 钟明星 - 2021 年 4月 28 日](/2021/04/29/TDD%E5%AE%9E%E8%B7%B5/)
 
 **附件保存**
 
@@ -104,7 +104,7 @@ date: 2021-04-29 10:00:56
 将pdf放到`source/images` 文件夹，然后在markdown中引用。
 
 ```markdown
-{% pdf /blog/images/your/file.pdf %}
+{% pdf /images/your/file.pdf %}
 
 ### 预览
 
