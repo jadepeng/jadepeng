@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: 教程 —— 如何在自己的应用集成superset Superset 是apache的一个孵化项目，定位为一款现代的，准商用BI系统 superset Apache Superset  (incubating) is a modern, enterprise-ready business intelligence web application  Superset">
+<meta property="og:type" content="article">
+<meta property="og:title" content="教程 —— 如何在自己的应用集成superset">
+<meta property="og:url" content="http://blog.iflyresearch.com/2019/09/17/jqpeng-%E6%95%99%E7%A8%8B%20%E2%80%94%E2%80%94%20%E5%A6%82%E4%BD%95%E5%9C%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BA%94%E7%94%A8%E9%9B%86%E6%88%90superset/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: 教程 —— 如何在自己的应用集成superset Superset 是apache的一个孵化项目，定位为一款现代的，准商用BI系统 superset Apache Superset  (incubating) is a modern, enterprise-ready business intelligence web application  Superset">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://superset.incubator.apache.org/_images/bank_dash.png">
+<meta property="og:image" content="https://superset.incubator.apache.org/_images/explore.png">
+<meta property="og:image" content="https://superset.incubator.apache.org/_images/sqllab.png">
+<meta property="og:image" content="https://superset.incubator.apache.org/_images/deckgl_dash.png">
+<meta property="article:published_time" content="2019-09-17T12:01:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.585Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="superset">
+<meta property="article:tag" content="BI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://superset.incubator.apache.org/_images/bank_dash.png">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2019/09/17/jqpeng-%E6%95%99%E7%A8%8B%20%E2%80%94%E2%80%94%20%E5%A6%82%E4%BD%95%E5%9C%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BA%94%E7%94%A8%E9%9B%86%E6%88%90superset/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>教程 —— 如何在自己的应用集成superset | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/09/17/jqpeng-%E6%95%99%E7%A8%8B%20%E2%80%94%E2%80%94%20%E5%A6%82%E4%BD%95%E5%9C%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BA%94%E7%94%A8%E9%9B%86%E6%88%90superset/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          教程 —— 如何在自己的应用集成superset
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-17 20:01:00" itemprop="dateCreated datePublished" datetime="2019-09-17T20:01:00+08:00">2019-09-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/intergate-superset.html">教程 —— 如何在自己的应用集成superset</a></p>
+<p>Superset 是apache的一个孵化项目，定位为一款现代的，准商用BI系统</p>
+<h2 id="superset"><a href="#superset" class="headerlink" title="superset"></a>superset</h2><blockquote>
+<p>Apache Superset  (incubating) is a modern, enterprise-ready business intelligence web application</p>
+</blockquote>
+<p>Superset 是apache的一个孵化项目，定位为一款现代的，准商用BI系统。</p>
+<p>Superset（Caravel）是由Airbnb（知名在线房屋短租公司）开源的数据分析与可视化平台（曾用名Caravel、Panoramix），该工具主要特点是可自助分析、自定义仪表盘、分析结果可视化（导出）、用户/角色权限控制，还集成了一个SQL编辑器，可以进行SQL编辑查询等。</p>
+<p>通过superset，可以制作漂亮的统计图表。</p>
+<h3 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h3><p><img src="https://superset.incubator.apache.org/_images/bank_dash.png" alt="_images/bank_dash.png"></p>
+<hr>
+<p><img src="https://superset.incubator.apache.org/_images/explore.png" alt="_images/explore.png"></p>
+<hr>
+<p><img src="https://superset.incubator.apache.org/_images/sqllab.png" alt="_images/sqllab.png"></p>
+<hr>
+<p><img src="https://superset.incubator.apache.org/_images/deckgl_dash.png" alt="_images/deckgl_dash.png"></p>
+<h2 id="superset安装"><a href="#superset安装" class="headerlink" title="superset安装"></a>superset安装</h2><p>我们这里直接使用docker</p>
+<pre><code>git clone https://github.com/apache/incubator-superset/
+cd incubator-superset/contrib/docker
+# prefix with SUPERSET_LOAD_EXAMPLES=yes to load examples:
+docker-compose run --rm superset ./docker-init.sh
+# you can run this command everytime you need to start superset now:
+docker-compose up
+</code></pre>
+<p>等构建完成后，访问 <a target="_blank" rel="noopener" href="http://localhost:8088/">http://localhost:8088</a> 即可。</p>
+<p>想要在自己的应用集成，首先要解决认证</p>
+<h2 id="superset-认证分析"><a href="#superset-认证分析" class="headerlink" title="superset 认证分析"></a>superset 认证分析</h2><p>superset基于flask-appbuilder开发，security基于flask_appbuilder.security，翻阅其代码，</p>
+<p>找到入口： <code>superset/__init__.py</code>:</p>
+<pre><code>custom_sm = app.config.get(&#39;CUSTOM_SECURITY_MANAGER&#39;) or SupersetSecurityManager
+if not issubclass(custom_sm, SupersetSecurityManager):
+    raise Exception(
+        &quot;&quot;&quot;Your CUSTOM_SECURITY_MANAGER must now extend SupersetSecurityManager,
+         not FAB&#39;s security manager.
+         See [4565] in UPDATING.md&quot;&quot;&quot;)
+
+appbuilder = AppBuilder(
+    app,
+    db.session,
+    base_template=&#39;superset/base.html&#39;,
+    indexview=MyIndexView,
+    security_manager_class=custom_sm,
+    update_perms=get_update_perms_flag(),
+)
+
+security_manager = appbuilder.sm
+</code></pre>
+<p>默认使用<code>SupersetSecurityManager</code>,继承自<code>SecurityManager</code>：</p>
+<pre><code>class SupersetSecurityManager(SecurityManager):
+
+    def get_schema_perm(self, database, schema):
+        if schema:
+            return &#39;[&#123;&#125;].[&#123;&#125;]&#39;.format(database, schema)
+
+    def can_access(self, permission_name, view_name):
+        &quot;&quot;&quot;Protecting from has_access failing from missing perms/view&quot;&quot;&quot;
+        user = g.user
+        if user.is_anonymous:
+            return self.is_item_public(permission_name, view_name)
+        return self._has_view_access(user, permission_name, view_name)        ...
+</code></pre>
+<p>我们再来看SecurityManager及父类，发现，登录是通过auth_view来控制的，默认是AUTH_DB，也就是AuthDBView。</p>
+<pre><code>&quot;&quot;&quot; Override if you want your own Authentication LDAP view &quot;&quot;&quot;
+      authdbview = AuthDBView      if self.auth_type == AUTH_DB:
+            self.user_view = self.userdbmodelview
+            self.auth_view = self.authdbview()
+ @property
+    def get_url_for_login(self):
+        return url_for(&#39;%s.%s&#39; % (self.sm.auth_view.endpoint, &#39;login&#39;))
+</code></pre>
+<p>再来看authdbview：</p>
+<pre><code>class AuthDBView(AuthView):
+    login_template = &#39;appbuilder/general/security/login_db.html&#39;
+
+    @expose(&#39;/login/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
+    def login(self):
+        if g.user is not None and g.user.is_authenticated:
+            return redirect(self.appbuilder.get_url_for_index)
+        form = LoginForm_db()
+        if form.validate_on_submit():
+            user = self.appbuilder.sm.auth_user_db(form.username.data, form.password.data)
+            if not user:
+                flash(as_unicode(self.invalid_login_message), &#39;warning&#39;)
+                return redirect(self.appbuilder.get_url_for_login)
+            login_user(user, remember=False)
+            return redirect(self.appbuilder.get_url_for_index)
+        return self.render_template(self.login_template,
+                               title=self.title,
+                               form=form,
+                               appbuilder=self.appbuilder)
+</code></pre>
+<p>对外提供’/login/‘接口，读取HTTP POST里的用户名，密码，然后调用auth_user_db验证，验证通过调用login_user生成认证信息。</p>
+<p>因此，我们可以自定义AuthDBView，改为从我们自己的应用认证即可。</p>
+<h2 id="使用jwt来验证superset"><a href="#使用jwt来验证superset" class="headerlink" title="使用jwt来验证superset"></a>使用jwt来验证superset</h2><p>自定义CustomAuthDBView，继承自AuthDBView，登录时可以通过cookie或者url参数传入jwt token，然后验证通过的话，自动登录，。</p>
+<pre><code>import jwt
+import json
+class CustomAuthDBView(AuthDBView):
+    login_template = &#39;appbuilder/general/security/login_db.html&#39;
+
+    @expose(&#39;/login/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
+    def login(self):
+        token = request.args.get(&#39;token&#39;)
+        if not token:
+            token = request.cookies.get(&#39;access_token&#39;)
+        if token is not None:
+            jwt_payload = jwt.decode(token,&#39;secret&#39;,algorithms=[&#39;RS256&#39;])
+            user_name = jwt_payload.get(&quot;user_name&quot;)
+            user = self.appbuilder.sm.find_user(username=user_name)
+            if not user:
+               role_admin = self.appbuilder.sm.find_role(&#39;Admin&#39;)
+               user = self.appbuilder.sm.add_user(user_name, user_name, &#39;aimind&#39;, user_name + &quot;@aimind.com&quot;, role_admin, password = &quot;aimind&quot; + user_name)
+            if user:
+                login_user(user, remember=False)
+                redirect_url = request.args.get(&#39;redirect&#39;)
+                if not redirect_url:
+                    redirect_url = self.appbuilder.get_url_for_index
+                return redirect(redirect_url)
+            else:
+                return super(CustomAuthDBView,self).login()
+        else:
+            flash(&#39;Unable to auto login&#39;, &#39;warning&#39;)
+            return super(CustomAuthDBView,self).login()
+</code></pre>
+<p>如果用户不存在，通过self.appbuilder.sm.add_user自动添加用户。</p>
+<p>然后再引入这个CustomAuthDBView，</p>
+<pre><code>class CustomSecurityManager(SupersetSecurityManager):
+    authdbview = CustomAuthDBView
+</code></pre>
+<p>最后，再引入这个CustomSecurityManager,在superset_config.py 里增加：</p>
+<pre><code>from aimind_security import CustomSecurityManager
+CUSTOM_SECURITY_MANAGER = CustomSecurityManager
+</code></pre>
+<h2 id="在应用里集成superset"><a href="#在应用里集成superset" class="headerlink" title="在应用里集成superset"></a>在应用里集成superset</h2><p>集成就简单了，访问，’SUPER_SET_URL/login/?token=jwt_token’ 即可，可以通过iframe无缝集成。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/python/" rel="tag"># python</a>
+              <a href="/tags/superset/" rel="tag"># superset</a>
+              <a href="/tags/BI/" rel="tag"># BI</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/09/12/jqpeng-%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%8E%A8%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5(3)%20--%20jena%E8%87%AA%E5%AE%9A%E4%B9%89builtin/" rel="prev" title="知识图谱推理与实践(3) -- jena自定义builtin">
+      <i class="fa fa-chevron-left"></i> 知识图谱推理与实践(3) -- jena自定义builtin
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/10/21/jqpeng-NLP%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7brat%20%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E/" rel="next" title="NLP标注工具brat 配置文件说明">
+      NLP标注工具brat 配置文件说明 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#superset"><span class="nav-number">1.</span> <span class="nav-text">superset</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E8%A7%88"><span class="nav-number">1.1.</span> <span class="nav-text">预览</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#superset%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">superset安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#superset-%E8%AE%A4%E8%AF%81%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">superset 认证分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8jwt%E6%9D%A5%E9%AA%8C%E8%AF%81superset"><span class="nav-number">4.</span> <span class="nav-text">使用jwt来验证superset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E5%BA%94%E7%94%A8%E9%87%8C%E9%9B%86%E6%88%90superset"><span class="nav-number">5.</span> <span class="nav-text">在应用里集成superset</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

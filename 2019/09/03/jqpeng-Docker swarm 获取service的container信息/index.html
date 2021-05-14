@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: Docker swarm 获取service的container信息 我们可以通过docker service create创建服务，例如： docker service create --name mysql mysql:latest  服务创建好后，如何来获取该service包含的容器信息呢？比如获取刚才创建的mysql服务的容器。我们可以通过docker s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker swarm 获取service的container信息">
+<meta property="og:url" content="http://blog.iflyresearch.com/2019/09/03/jqpeng-Docker%20swarm%20%E8%8E%B7%E5%8F%96service%E7%9A%84container%E4%BF%A1%E6%81%AF/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: Docker swarm 获取service的container信息 我们可以通过docker service create创建服务，例如： docker service create --name mysql mysql:latest  服务创建好后，如何来获取该service包含的容器信息呢？比如获取刚才创建的mysql服务的容器。我们可以通过docker s">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-03T00:48:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.577Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="swarm">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2019/09/03/jqpeng-Docker%20swarm%20%E8%8E%B7%E5%8F%96service%E7%9A%84container%E4%BF%A1%E6%81%AF/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Docker swarm 获取service的container信息 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/09/03/jqpeng-Docker%20swarm%20%E8%8E%B7%E5%8F%96service%E7%9A%84container%E4%BF%A1%E6%81%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Docker swarm 获取service的container信息
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-03 08:48:00" itemprop="dateCreated datePublished" datetime="2019-09-03T08:48:00+08:00">2019-09-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>22k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>20 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/docker-service-container.html">Docker swarm 获取service的container信息</a></p>
+<p>我们可以通过<code>docker service create</code>创建服务，例如：</p>
+<pre><code>docker service create --name mysql mysql:latest
+</code></pre>
+<p>服务创建好后，如何来获取该service包含的容器信息呢？比如获取刚才创建的mysql服务的容器。我们可以通过docker service ps命令来获取，</p>
+<h2 id="命令行方式"><a href="#命令行方式" class="headerlink" title="命令行方式"></a>命令行方式</h2><pre><code>~# docker service ps mysql
+ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE        ERROR               PORTS
+lvskmv1lkhz6        mysql.1             mysql:latest        docker86-9          Running             Running 3 days ago 
+</code></pre>
+<p>遗憾的是返回的数据不包含containerId，只有serviceId, 可以通过<code>docker inspect来获取service详情</code></p>
+<pre><code>~# docker inspect lvskmv1lkhz6
+[
+    &#123;
+        &quot;ID&quot;: &quot;lvskmv1lkhz6bvynfuxa0jqgn&quot;,
+        &quot;Version&quot;: &#123;
+            &quot;Index&quot;: 21
+        &#125;,
+        &quot;CreatedAt&quot;: &quot;2019-08-30T08:04:18.382831966Z&quot;,
+        &quot;UpdatedAt&quot;: &quot;2019-08-30T08:09:43.613636037Z&quot;,
+        &quot;Labels&quot;: &#123;&#125;,
+        &quot;Spec&quot;: &#123;
+            &quot;ContainerSpec&quot;: &#123;
+                &quot;Image&quot;: &quot;mysql:latest@sha256:01cf53f2538aa805bda591d83f107c394adca8d31f98eacd3654e282dada3193&quot;,
+                &quot;Env&quot;: [
+                    &quot;MYSQL_ROOT_PASSWORD=aimind@mysql2019\&quot;&quot;
+                ],
+                &quot;Isolation&quot;: &quot;default&quot;
+            &#125;,
+            &quot;Resources&quot;: &#123;
+                &quot;Limits&quot;: &#123;&#125;,
+                &quot;Reservations&quot;: &#123;&#125;
+            &#125;,
+            &quot;RestartPolicy&quot;: &#123;
+                &quot;Condition&quot;: &quot;any&quot;,
+                &quot;Delay&quot;: 5000000000,
+                &quot;MaxAttempts&quot;: 0,
+                &quot;Window&quot;: 0
+            &#125;,
+            &quot;Placement&quot;: &#123;&#125;,
+            &quot;ForceUpdate&quot;: 0
+        &#125;,
+        &quot;ServiceID&quot;: &quot;uporil7xf4rwffa0rhg1j5htw&quot;,
+        &quot;Slot&quot;: 1,
+        &quot;NodeID&quot;: &quot;sixp62dhqe702b69pm6v8m9rh&quot;,
+        &quot;Status&quot;: &#123;
+            &quot;Timestamp&quot;: &quot;2019-08-30T08:09:43.554514932Z&quot;,
+            &quot;State&quot;: &quot;running&quot;,
+            &quot;Message&quot;: &quot;started&quot;,
+            &quot;ContainerStatus&quot;: &#123;
+                &quot;ContainerID&quot;: &quot;2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08&quot;,
+                &quot;PID&quot;: 14884,
+                &quot;ExitCode&quot;: 0
+            &#125;,
+            &quot;PortStatus&quot;: &#123;&#125;
+        &#125;,
+        &quot;DesiredState&quot;: &quot;running&quot;,
+        &quot;NetworksAttachments&quot;: [
+            &#123;
+                &quot;Network&quot;: &#123;
+                    &quot;ID&quot;: &quot;emypqxzjggws7uicersyz6uag&quot;,
+                    &quot;Version&quot;: &#123;
+                        &quot;Index&quot;: 12
+                    &#125;,
+                    &quot;CreatedAt&quot;: &quot;2019-08-30T08:02:57.254494392Z&quot;,
+                    &quot;UpdatedAt&quot;: &quot;2019-08-30T08:02:57.271216394Z&quot;,
+                    &quot;Spec&quot;: &#123;
+                        &quot;Name&quot;: &quot;aimind-overlay&quot;,
+                        &quot;Labels&quot;: &#123;&#125;,
+                        &quot;DriverConfiguration&quot;: &#123;
+                            &quot;Name&quot;: &quot;overlay&quot;
+                        &#125;,
+                        &quot;IPAMOptions&quot;: &#123;
+                            &quot;Driver&quot;: &#123;
+                                &quot;Name&quot;: &quot;default&quot;
+                            &#125;
+                        &#125;,
+                        &quot;Scope&quot;: &quot;swarm&quot;
+                    &#125;,
+                    &quot;DriverState&quot;: &#123;
+                        &quot;Name&quot;: &quot;overlay&quot;,
+                        &quot;Options&quot;: &#123;
+                            &quot;com.docker.network.driver.overlay.vxlanid_list&quot;: &quot;4097&quot;
+                        &#125;
+                    &#125;,
+                    &quot;IPAMOptions&quot;: &#123;
+                        &quot;Driver&quot;: &#123;
+                            &quot;Name&quot;: &quot;default&quot;
+                        &#125;,
+                        &quot;Configs&quot;: [
+                            &#123;
+                                &quot;Subnet&quot;: &quot;10.0.0.0/24&quot;,
+                                &quot;Gateway&quot;: &quot;10.0.0.1&quot;
+                            &#125;
+                        ]
+                    &#125;
+                &#125;,
+                &quot;Addresses&quot;: [
+                    &quot;10.0.0.4/24&quot;
+                ]
+            &#125;
+        ]
+    &#125;
+]
+</code></pre>
+<p>返回的json中，<code>NodeID</code>是所在节点ID，<code>Status.ContainerStatus</code> 是容器的状态信息，<code>.Status.ContainerStatus.ContainerID</code> 是容器ID，比如这里的是<code>2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08</code>。</p>
+<p>拿到容器ID就能获取容器详情了，也可以获取container的统计信息：</p>
+<pre><code>docker inspect 2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08
+[
+    &#123;
+        &quot;Id&quot;: &quot;2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08&quot;,
+        &quot;Created&quot;: &quot;2019-08-30T08:09:41.827551223Z&quot;,
+        &quot;Path&quot;: &quot;docker-entrypoint.sh&quot;,
+        &quot;Args&quot;: [
+            &quot;mysqld&quot;
+        ],
+        &quot;State&quot;: &#123;
+            &quot;Status&quot;: &quot;running&quot;,
+            &quot;Running&quot;: true,
+            &quot;Paused&quot;: false,
+            &quot;Restarting&quot;: false,
+            &quot;OOMKilled&quot;: false,
+            &quot;Dead&quot;: false,
+            &quot;Pid&quot;: 14884,
+            &quot;ExitCode&quot;: 0,
+            &quot;Error&quot;: &quot;&quot;,
+            &quot;StartedAt&quot;: &quot;2019-08-30T08:09:43.402630785Z&quot;,
+            &quot;FinishedAt&quot;: &quot;0001-01-01T00:00:00Z&quot;
+        &#125;,
+        &quot;Image&quot;: &quot;sha256:62a9f311b99c24c0fde0a772abc6030bc48e5acc7d7416b8eeb72d3da1b4eb6c&quot;,
+        &quot;ResolvConfPath&quot;: &quot;/data/docker/containers/2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08/resolv.conf&quot;,
+        &quot;HostnamePath&quot;: &quot;/data/docker/containers/2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08/hostname&quot;,
+        &quot;HostsPath&quot;: &quot;/data/docker/containers/2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08/hosts&quot;,
+        &quot;LogPath&quot;: &quot;/data/docker/containers/2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08/2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08-json.log&quot;,
+        &quot;Name&quot;: &quot;/mysql.1.lvskmv1lkhz6bvynfuxa0jqgn&quot;,
+        &quot;RestartCount&quot;: 0,
+        &quot;Driver&quot;: &quot;overlay2&quot;,
+        &quot;Platform&quot;: &quot;linux&quot;,
+        &quot;MountLabel&quot;: &quot;&quot;,
+        &quot;ProcessLabel&quot;: &quot;&quot;,
+        &quot;AppArmorProfile&quot;: &quot;docker-default&quot;,
+        &quot;ExecIDs&quot;: null,
+        &quot;HostConfig&quot;: &#123;
+            &quot;Binds&quot;: null,
+            &quot;ContainerIDFile&quot;: &quot;&quot;,
+            &quot;LogConfig&quot;: &#123;
+                &quot;Type&quot;: &quot;json-file&quot;,
+                &quot;Config&quot;: &#123;
+                    &quot;max-file&quot;: &quot;3&quot;,
+                    &quot;max-size&quot;: &quot;10m&quot;
+                &#125;
+            &#125;,
+            &quot;NetworkMode&quot;: &quot;default&quot;,
+            &quot;PortBindings&quot;: &#123;&#125;,
+            &quot;RestartPolicy&quot;: &#123;
+                &quot;Name&quot;: &quot;&quot;,
+                &quot;MaximumRetryCount&quot;: 0
+            &#125;,
+            &quot;AutoRemove&quot;: false,
+            &quot;VolumeDriver&quot;: &quot;&quot;,
+            &quot;VolumesFrom&quot;: null,
+            &quot;CapAdd&quot;: null,
+            &quot;CapDrop&quot;: null,
+            &quot;Dns&quot;: null,
+            &quot;DnsOptions&quot;: null,
+            &quot;DnsSearch&quot;: null,
+            &quot;ExtraHosts&quot;: null,
+            &quot;GroupAdd&quot;: null,
+            &quot;IpcMode&quot;: &quot;shareable&quot;,
+            &quot;Cgroup&quot;: &quot;&quot;,
+            &quot;Links&quot;: null,
+            &quot;OomScoreAdj&quot;: 0,
+            &quot;PidMode&quot;: &quot;&quot;,
+            &quot;Privileged&quot;: false,
+            &quot;PublishAllPorts&quot;: false,
+            &quot;ReadonlyRootfs&quot;: false,
+            &quot;SecurityOpt&quot;: null,
+            &quot;UTSMode&quot;: &quot;&quot;,
+            &quot;UsernsMode&quot;: &quot;&quot;,
+            &quot;ShmSize&quot;: 67108864,
+            &quot;Runtime&quot;: &quot;runc&quot;,
+            &quot;ConsoleSize&quot;: [
+                0,
+                0
+            ],
+            &quot;Isolation&quot;: &quot;default&quot;,
+            &quot;CpuShares&quot;: 0,
+            &quot;Memory&quot;: 0,
+            &quot;NanoCpus&quot;: 0,
+            &quot;CgroupParent&quot;: &quot;&quot;,
+            &quot;BlkioWeight&quot;: 0,
+            &quot;BlkioWeightDevice&quot;: null,
+            &quot;BlkioDeviceReadBps&quot;: null,
+            &quot;BlkioDeviceWriteBps&quot;: null,
+            &quot;BlkioDeviceReadIOps&quot;: null,
+            &quot;BlkioDeviceWriteIOps&quot;: null,
+            &quot;CpuPeriod&quot;: 0,
+            &quot;CpuQuota&quot;: 0,
+            &quot;CpuRealtimePeriod&quot;: 0,
+            &quot;CpuRealtimeRuntime&quot;: 0,
+            &quot;CpusetCpus&quot;: &quot;&quot;,
+            &quot;CpusetMems&quot;: &quot;&quot;,
+            &quot;Devices&quot;: null,
+            &quot;DeviceCgroupRules&quot;: null,
+            &quot;DiskQuota&quot;: 0,
+            &quot;KernelMemory&quot;: 0,
+            &quot;MemoryReservation&quot;: 0,
+            &quot;MemorySwap&quot;: 0,
+            &quot;MemorySwappiness&quot;: null,
+            &quot;OomKillDisable&quot;: false,
+            &quot;PidsLimit&quot;: 0,
+            &quot;Ulimits&quot;: null,
+            &quot;CpuCount&quot;: 0,
+            &quot;CpuPercent&quot;: 0,
+            &quot;IOMaximumIOps&quot;: 0,
+            &quot;IOMaximumBandwidth&quot;: 0,
+            &quot;MaskedPaths&quot;: [
+                &quot;/proc/acpi&quot;,
+                &quot;/proc/kcore&quot;,
+                &quot;/proc/keys&quot;,
+                &quot;/proc/latency_stats&quot;,
+                &quot;/proc/timer_list&quot;,
+                &quot;/proc/timer_stats&quot;,
+                &quot;/proc/sched_debug&quot;,
+                &quot;/proc/scsi&quot;,
+                &quot;/sys/firmware&quot;
+            ],
+            &quot;ReadonlyPaths&quot;: [
+                &quot;/proc/asound&quot;,
+                &quot;/proc/bus&quot;,
+                &quot;/proc/fs&quot;,
+                &quot;/proc/irq&quot;,
+                &quot;/proc/sys&quot;,
+                &quot;/proc/sysrq-trigger&quot;
+            ]
+        &#125;,
+        &quot;GraphDriver&quot;: &#123;
+            &quot;Data&quot;: &#123;
+                &quot;LowerDir&quot;: &quot;/data/docker/overlay2/f0184a2c979eef7a135726a49f5651e16b568ecfd47606e20e504e28ea311f25-init/diff:/data/docker/overlay2/644c4c905af78d3320559b9f388631151dcf5c19ab8f2c91999d4d59c8409784/diff:/data/docker/overlay2/7ed834798bd5eeef1b75d012a27bb01cd8a0a5e71048db72a8743980481bb74b/diff:/data/docker/overlay2/56e3eac1c86a9ae29b3251025824f93b78e43151a36eb973407feb1075d8db1c/diff:/data/docker/overlay2/40161cfa334a118eaa09c04dc7d864d00e3544f77e6979584298478f68566bc5/diff:/data/docker/overlay2/e884a3df3e827368a468a4afc8850de4fa6336a78ca9a922406237e3ab75a97e/diff:/data/docker/overlay2/a04e8776674f902eaa0e15467ad0678f03baf2a1b8a568b034ad4b4c1ddb1a23/diff:/data/docker/overlay2/7745739e901232d6b702b599844157583d02a34fa4aca10c888e0e9c44075433/diff:/data/docker/overlay2/f423b8f55475ec902cea1ea5c54897ed6a24da3cc0acd64a79e022e887d83e77/diff:/data/docker/overlay2/231e63e7fbb5084facc93c89ed23d366d915f9a2edd4f85735df5d45bc87cafa/diff:/data/docker/overlay2/c11047327e6f47e49d1abee4df8acbaba51ac6b92e59801ac613331c5bad3bc1/diff:/data/docker/overlay2/f893602043c1b5ad9d2839ec0ab8f17da7e0eaf073788f6c3d35138dfe6c06b8/diff:/data/docker/overlay2/3443517fc9e882df67d9730a9aa7530dc3c541b6872aaf05290c5e7ec588e0fb/diff&quot;,
+                &quot;MergedDir&quot;: &quot;/data/docker/overlay2/f0184a2c979eef7a135726a49f5651e16b568ecfd47606e20e504e28ea311f25/merged&quot;,
+                &quot;UpperDir&quot;: &quot;/data/docker/overlay2/f0184a2c979eef7a135726a49f5651e16b568ecfd47606e20e504e28ea311f25/diff&quot;,
+                &quot;WorkDir&quot;: &quot;/data/docker/overlay2/f0184a2c979eef7a135726a49f5651e16b568ecfd47606e20e504e28ea311f25/work&quot;
+            &#125;,
+            &quot;Name&quot;: &quot;overlay2&quot;
+        &#125;,
+        &quot;Mounts&quot;: [
+            &#123;
+                &quot;Type&quot;: &quot;volume&quot;,
+                &quot;Name&quot;: &quot;c2128d05001b8fec1712807f381e2c72d42ce8a83ae97f6b038f51c0d48446f1&quot;,
+                &quot;Source&quot;: &quot;/data/docker/volumes/c2128d05001b8fec1712807f381e2c72d42ce8a83ae97f6b038f51c0d48446f1/_data&quot;,
+                &quot;Destination&quot;: &quot;/var/lib/mysql&quot;,
+                &quot;Driver&quot;: &quot;local&quot;,
+                &quot;Mode&quot;: &quot;&quot;,
+                &quot;RW&quot;: true,
+                &quot;Propagation&quot;: &quot;&quot;
+            &#125;
+        ],
+        &quot;Config&quot;: &#123;
+            &quot;Hostname&quot;: &quot;2cf128f77797&quot;,
+            &quot;Domainname&quot;: &quot;&quot;,
+            &quot;User&quot;: &quot;&quot;,
+            &quot;AttachStdin&quot;: false,
+            &quot;AttachStdout&quot;: false,
+            &quot;AttachStderr&quot;: false,
+            &quot;ExposedPorts&quot;: &#123;
+                &quot;3306/tcp&quot;: &#123;&#125;,
+                &quot;33060/tcp&quot;: &#123;&#125;
+            &#125;,
+            &quot;Tty&quot;: false,
+            &quot;OpenStdin&quot;: false,
+            &quot;StdinOnce&quot;: false,
+            &quot;Env&quot;: [
+                &quot;MYSQL_ROOT_PASSWORD=aimind@mysql2019\&quot;&quot;,
+                &quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;,
+                &quot;GOSU_VERSION=1.7&quot;,
+                &quot;MYSQL_MAJOR=8.0&quot;,
+                &quot;MYSQL_VERSION=8.0.17-1debian9&quot;
+            ],
+            &quot;Cmd&quot;: [
+                &quot;mysqld&quot;
+            ],
+            &quot;ArgsEscaped&quot;: true,
+            &quot;Image&quot;: &quot;mysql:latest@sha256:01cf53f2538aa805bda591d83f107c394adca8d31f98eacd3654e282dada3193&quot;,
+            &quot;Volumes&quot;: &#123;
+                &quot;/var/lib/mysql&quot;: &#123;&#125;
+            &#125;,
+            &quot;WorkingDir&quot;: &quot;&quot;,
+            &quot;Entrypoint&quot;: [
+                &quot;docker-entrypoint.sh&quot;
+            ],
+            &quot;OnBuild&quot;: null,
+            &quot;Labels&quot;: &#123;
+                &quot;com.docker.swarm.node.id&quot;: &quot;sixp62dhqe702b69pm6v8m9rh&quot;,
+                &quot;com.docker.swarm.service.id&quot;: &quot;uporil7xf4rwffa0rhg1j5htw&quot;,
+                &quot;com.docker.swarm.service.name&quot;: &quot;mysql&quot;,
+                &quot;com.docker.swarm.task&quot;: &quot;&quot;,
+                &quot;com.docker.swarm.task.id&quot;: &quot;lvskmv1lkhz6bvynfuxa0jqgn&quot;,
+                &quot;com.docker.swarm.task.name&quot;: &quot;mysql.1.lvskmv1lkhz6bvynfuxa0jqgn&quot;
+            &#125;
+        &#125;,
+        &quot;NetworkSettings&quot;: &#123;
+            &quot;Bridge&quot;: &quot;&quot;,
+            &quot;SandboxID&quot;: &quot;459ab4b83580513da251182d08dc217d0079613d10952df00ffcca6e2537958b&quot;,
+            &quot;HairpinMode&quot;: false,
+            &quot;LinkLocalIPv6Address&quot;: &quot;&quot;,
+            &quot;LinkLocalIPv6PrefixLen&quot;: 0,
+            &quot;Ports&quot;: &#123;
+                &quot;3306/tcp&quot;: null,
+                &quot;33060/tcp&quot;: null
+            &#125;,
+            &quot;SandboxKey&quot;: &quot;/var/run/docker/netns/459ab4b83580&quot;,
+            &quot;SecondaryIPAddresses&quot;: null,
+            &quot;SecondaryIPv6Addresses&quot;: null,
+            &quot;EndpointID&quot;: &quot;&quot;,
+            &quot;Gateway&quot;: &quot;&quot;,
+            &quot;GlobalIPv6Address&quot;: &quot;&quot;,
+            &quot;GlobalIPv6PrefixLen&quot;: 0,
+            &quot;IPAddress&quot;: &quot;&quot;,
+            &quot;IPPrefixLen&quot;: 0,
+            &quot;IPv6Gateway&quot;: &quot;&quot;,
+            &quot;MacAddress&quot;: &quot;&quot;,
+            &quot;Networks&quot;: &#123;
+                &quot;aimind-overlay&quot;: &#123;
+                    &quot;IPAMConfig&quot;: &#123;
+                        &quot;IPv4Address&quot;: &quot;10.0.0.4&quot;
+                    &#125;,
+                    &quot;Links&quot;: null,
+                    &quot;Aliases&quot;: [
+                        &quot;2cf128f77797&quot;
+                    ],
+                    &quot;NetworkID&quot;: &quot;emypqxzjggws7uicersyz6uag&quot;,
+                    &quot;EndpointID&quot;: &quot;56a78b2527a6dcf83fd3dc2794c514aaa325457d9c8a21bd236d3ea3c22c8fa9&quot;,
+                    &quot;Gateway&quot;: &quot;&quot;,
+                    &quot;IPAddress&quot;: &quot;10.0.0.4&quot;,
+                    &quot;IPPrefixLen&quot;: 24,
+                    &quot;IPv6Gateway&quot;: &quot;&quot;,
+                    &quot;GlobalIPv6Address&quot;: &quot;&quot;,
+                    &quot;GlobalIPv6PrefixLen&quot;: 0,
+                    &quot;MacAddress&quot;: &quot;02:42:0a:00:00:04&quot;,
+                    &quot;DriverOpts&quot;: null
+                &#125;
+            &#125;
+        &#125;
+    &#125;
+]
+</code></pre>
+<p>然后就可以通过stats来获取资源占用情况：</p>
+<pre><code>~#docker stats 2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08 --all --no-stream 
+CONTAINER ID        NAME                                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+2cf128f77797        mysql.1.lvskmv1lkhz6bvynfuxa0jqgn   0.33%               374.4MiB / 188.8GiB   0.19%               230kB / 0B          8.19kB / 1.26GB     38
+</code></pre>
+<h2 id="coding方式"><a href="#coding方式" class="headerlink" title="coding方式"></a>coding方式</h2><p>除了命令行，我们还可以通过docker api来获取，可以参见 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/docker-java.html">docker-java Docker的java API</a></p>
+<h3 id="获取containerID"><a href="#获取containerID" class="headerlink" title="获取containerID"></a>获取containerID</h3><pre><code>System.out.println(client.listTasksCmd().withNameFilter(&quot;mysql&quot;).exec());
+</code></pre>
+<p>结果：</p>
+<pre><code>[class Task &#123;
+    ID: lvskmv1lkhz6bvynfuxa0jqgn
+    version: 21
+    createdAt: 2019-08-30T08:04:18.382831966Z
+    updatedAt: 2019-08-30T08:09:43.613636037Z
+    name: null
+    labels: &#123;&#125;
+    spec: TaskSpec[containerSpec=ContainerSpec[image=mysql:latest@sha256:01cf53f2538aa805bda591d83f107c394adca8d31f98eacd3654e282dada3193,labels=&lt;null&gt;,command=&lt;null&gt;,args=&lt;null&gt;,env=[MYSQL_ROOT_PASSWORD=aimind@mysql2019&quot;],dir=&lt;null&gt;,user=&lt;null&gt;,groups=&lt;null&gt;,tty=&lt;null&gt;,mounts=&lt;null&gt;,duration=&lt;null&gt;,stopGracePeriod=&lt;null&gt;,dnsConfig=&lt;null&gt;,openStdin=&lt;null&gt;,readOnly=&lt;null&gt;,hosts=&lt;null&gt;,hostname=&lt;null&gt;,secrets=&lt;null&gt;,healthCheck=&lt;null&gt;,stopSignal=&lt;null&gt;,privileges=&lt;null&gt;,configs=&lt;null&gt;],resources=ResourceRequirements[limits=ResourceSpecs[memoryBytes=&lt;null&gt;,nanoCPUs=&lt;null&gt;],reservations=ResourceSpecs[memoryBytes=&lt;null&gt;,nanoCPUs=&lt;null&gt;]],restartPolicy=ServiceRestartPolicy[condition=ANY,delay=5000000000,maxAttempts=0,window=0],placement=ServicePlacement[constraints=&lt;null&gt;,platforms=&lt;null&gt;],logDriver=&lt;null&gt;,forceUpdate=0,networks=&lt;null&gt;,runtime=&lt;null&gt;]
+    serviceId: uporil7xf4rwffa0rhg1j5htw
+    slot: 1
+    nodeId: sixp62dhqe702b69pm6v8m9rh
+    assignedGenericResources: null
+    status: TaskStatus[timestamp=2019-08-30T08:09:43.554514932Z,state=running,message=started,err=&lt;null&gt;,containerStatus=TaskStatusContainerStatus[containerID=2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08,pid=14884,exitCode=0]]
+    desiredState: running
+&#125;]
+</code></pre>
+<p>可以看到containerID：<code>2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08</code> 和命令行一直。</p>
+<p>然后获取容器详情：</p>
+<pre><code> System.out.println(client.inspectContainerCmd(&quot;2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08&quot;).exec());
+</code></pre>
+<p>获取容器统计信息：</p>
+<pre><code>        System.out.println(client.statsCmd(&quot;2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08&quot;).exec(new InvocationBuilder.AsyncResultCallback&lt;&gt;()).awaitResult());
+</code></pre>
+<p>对应的结果：</p>
+<pre><code>InspectContainerResponse[args=&#123;mysqld&#125;,config=com.github.dockerjava.api.model.ContainerConfig@3e15bb06[attachStderr=false,attachStdin=false,attachStdout=false,cmd=&#123;mysqld&#125;,domainName=,entrypoint=&#123;docker-entrypoint.sh&#125;,env=&#123;MYSQL_ROOT_PASSWORD=aimind@mysql2019&quot;,PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,GOSU_VERSION=1.7,MYSQL_MAJOR=8.0,MYSQL_VERSION=8.0.17-1debian9&#125;,exposedPorts=com.github.dockerjava.api.model.ExposedPorts@6778aea6,hostName=2cf128f77797,image=mysql:latest@sha256:01cf53f2538aa805bda591d83f107c394adca8d31f98eacd3654e282dada3193,labels=&#123;com.docker.swarm.node.id=sixp62dhqe702b69pm6v8m9rh, com.docker.swarm.service.id=uporil7xf4rwffa0rhg1j5htw, com.docker.swarm.service.name=mysql, com.docker.swarm.task=, com.docker.swarm.task.id=lvskmv1lkhz6bvynfuxa0jqgn, com.docker.swarm.task.name=mysql.1.lvskmv1lkhz6bvynfuxa0jqgn&#125;,macAddress=&lt;null&gt;,networkDisabled=&lt;null&gt;,onBuild=&lt;null&gt;,stdinOpen=false,portSpecs=&lt;null&gt;,stdInOnce=false,tty=false,user=,volumes=&#123;/var/lib/mysql=&#123;&#125;&#125;,workingDir=,healthCheck=&lt;null&gt;],created=2019-08-30T08:09:41.827551223Z,driver=overlay2,execDriver=&lt;null&gt;,hostConfig=com.github.dockerjava.api.model.HostConfig@5853495b[binds=&lt;null&gt;,blkioWeight=0,blkioWeightDevice=&lt;null&gt;,blkioDeviceReadBps=&lt;null&gt;,blkioDeviceWriteBps=&lt;null&gt;,blkioDeviceReadIOps=&lt;null&gt;,blkioDeviceWriteIOps=&lt;null&gt;,memorySwappiness=&lt;null&gt;,nanoCPUs=&lt;null&gt;,capAdd=&lt;null&gt;,capDrop=&lt;null&gt;,containerIDFile=,cpuPeriod=0,cpuRealtimePeriod=0,cpuRealtimeRuntime=0,cpuShares=0,cpuQuota=0,cpusetCpus=,cpusetMems=,devices=&lt;null&gt;,deviceCgroupRules=&lt;null&gt;,diskQuota=0,dns=&lt;null&gt;,dnsOptions=&lt;null&gt;,dnsSearch=&lt;null&gt;,extraHosts=&lt;null&gt;,groupAdd=&lt;null&gt;,ipcMode=shareable,cgroup=,links=&lt;null&gt;,logConfig=com.github.dockerjava.api.model.LogConfig@524a2ffb,lxcConf=&lt;null&gt;,memory=0,memorySwap=0,memoryReservation=0,kernelMemory=0,networkMode=default,oomKillDisable=false,init=&lt;null&gt;,autoRemove=false,oomScoreAdj=0,portBindings=&#123;&#125;,privileged=false,publishAllPorts=false,readonlyRootfs=false,restartPolicy=no,ulimits=&lt;null&gt;,cpuCount=0,cpuPercent=0,ioMaximumIOps=0,ioMaximumBandwidth=0,volumesFrom=&lt;null&gt;,mounts=&lt;null&gt;,pidMode=,isolation=default,securityOpts=&lt;null&gt;,storageOpt=&lt;null&gt;,cgroupParent=,volumeDriver=,shmSize=67108864,pidsLimit=0,runtime=runc,tmpFs=&lt;null&gt;,utSMode=,usernsMode=,sysctls=&lt;null&gt;,consoleSize=[0, 0]],hostnamePath=/data/docker/containers/2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08/hostname,hostsPath=/data/docker/containers/2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08/hosts,logPath=/data/docker/containers/2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08/2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08-json.log,id=2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08,sizeRootFs=&lt;null&gt;,imageId=sha256:62a9f311b99c24c0fde0a772abc6030bc48e5acc7d7416b8eeb72d3da1b4eb6c,mountLabel=,name=/mysql.1.lvskmv1lkhz6bvynfuxa0jqgn,restartCount=0,networkSettings=com.github.dockerjava.api.model.NetworkSettings@7173ae5b[bridge=,sandboxId=459ab4b83580513da251182d08dc217d0079613d10952df00ffcca6e2537958b,hairpinMode=false,linkLocalIPv6Address=,linkLocalIPv6PrefixLen=0,ports=&#123;3306/tcp=null, 33060/tcp=null&#125;,sandboxKey=/var/run/docker/netns/459ab4b83580,secondaryIPAddresses=&lt;null&gt;,secondaryIPv6Addresses=&lt;null&gt;,endpointID=,gateway=,portMapping=&lt;null&gt;,globalIPv6Address=,globalIPv6PrefixLen=0,ipAddress=,ipPrefixLen=0,ipV6Gateway=,macAddress=,networks=&#123;aimind-overlay=com.github.dockerjava.api.model.ContainerNetwork@53a9fcfd[ipamConfig=com.github.dockerjava.api.model.ContainerNetwork$Ipam@21f459fc,links=&lt;null&gt;,aliases=[2cf128f77797],networkID=emypqxzjggws7uicersyz6uag,endpointId=56a78b2527a6dcf83fd3dc2794c514aaa325457d9c8a21bd236d3ea3c22c8fa9,gateway=,ipAddress=10.0.0.4,ipPrefixLen=24,ipV6Gateway=,globalIPv6Address=,globalIPv6PrefixLen=0,macAddress=02:42:0a:00:00:04]&#125;],path=docker-entrypoint.sh,processLabel=,resolvConfPath=/data/docker/containers/2cf128f77797f08419f50a057973388f15753efb16134ed05370ded495d0ac08/resolv.conf,execIds=&lt;null&gt;,state=com.github.dockerjava.api.command.InspectContainerResponse$ContainerState@4d192aef[status=running,running=true,paused=false,restarting=false,oomKilled=false,dead=false,pid=14884,exitCode=0,error=,startedAt=2019-08-30T08:09:43.402630785Z,finishedAt=0001-01-01T00:00:00Z,health=&lt;null&gt;],volumes=&lt;null&gt;,volumesRW=&lt;null&gt;,node=&lt;null&gt;,mounts=[com.github.dockerjava.api.command.InspectContainerResponse$Mount@1416cf9f[name=c2128d05001b8fec1712807f381e2c72d42ce8a83ae97f6b038f51c0d48446f1,source=/data/docker/volumes/c2128d05001b8fec1712807f381e2c72d42ce8a83ae97f6b038f51c0d48446f1/_data,destination=/var/lib/mysql,driver=local,mode=,rw=true]],graphDriver=com.github.dockerjava.api.command.GraphDriver@84487f4[name=overlay2,data=com.github.dockerjava.api.command.GraphData@bfc14b9[rootDir=&lt;null&gt;,deviceId=&lt;null&gt;,deviceName=&lt;null&gt;,deviceSize=&lt;null&gt;,dir=&lt;null&gt;]],platform=linux]
+Disconnected from the target VM, address: &#39;127.0.0.1:60730&#39;, transport: &#39;socket&#39;
+com.github.dockerjava.api.model.Statistics@55a88417[read=2019-09-02T12:20:14.534216408Z,networks=&#123;eth0=com.github.dockerjava.api.model.StatisticNetworksConfig@18acfe88[rxBytes=0,rxDropped=0,rxErrors=0,rxPackets=0,txBytes=0,txDropped=0,txErrors=0,txPackets=0], eth1=com.github.dockerjava.api.model.StatisticNetworksConfig@8a2a6a[rxBytes=197752,rxDropped=0,rxErrors=0,rxPackets=836,txBytes=0,txDropped=0,txErrors=0,txPackets=0]&#125;,network=&lt;null&gt;,memoryStats=com.github.dockerjava.api.model.MemoryStatsConfig@772861aa,blkioStats=BlkioStatsConfig[ioServiceBytesRecursive=[BlkioStatEntry[major=8,minor=0,op=Read,value=8192], BlkioStatEntry[major=8,minor=0,op=Write,value=1259921408], BlkioStatEntry[major=8,minor=0,op=Sync,value=1258987520], BlkioStatEntry[major=8,minor=0,op=Async,value=942080], BlkioStatEntry[major=8,minor=0,op=Total,value=1259929600]],ioServicedRecursive=[BlkioStatEntry[major=8,minor=0,op=Read,value=2], BlkioStatEntry[major=8,minor=0,op=Write,value=4066], BlkioStatEntry[major=8,minor=0,op=Sync,value=4009], BlkioStatEntry[major=8,minor=0,op=Async,value=59], BlkioStatEntry[major=8,minor=0,op=Total,value=4068]],ioQueueRecursive=[],ioServiceTimeRecursive=[],ioWaitTimeRecursive=[],ioMergedRecursive=[],ioTimeRecursive=[],sectorsRecursive=[]],cpuStats=com.github.dockerjava.api.model.CpuStatsConfig@4cb40e3b,preCpuStats=com.github.dockerjava.api.model.CpuStatsConfig@41b1f51e,pidsStats=com.github.dockerjava.api.model.PidsStatsConfig@3a543f31]
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/swarm/" rel="tag"># swarm</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/08/26/jqpeng-XNginx%E5%8D%87%E7%BA%A7%E8%AE%B0%E5%BD%95/" rel="prev" title="XNginx升级记录">
+      <i class="fa fa-chevron-left"></i> XNginx升级记录
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/09/05/jqpeng-%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%8E%A8%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5%EF%BC%881%EF%BC%89/" rel="next" title="知识图谱推理与实践（1）">
+      知识图谱推理与实践（1） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%96%B9%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">命令行方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#coding%E6%96%B9%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">coding方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96containerID"><span class="nav-number">2.1.</span> <span class="nav-text">获取containerID</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

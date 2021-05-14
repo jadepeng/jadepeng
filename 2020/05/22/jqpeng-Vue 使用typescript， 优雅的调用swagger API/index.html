@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: Vue 使用typescript， 优雅的调用swagger API Swagger 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务，后端集成下Swagger，然后就可以提供一个在线文档地址给前端同学。  前端如何优雅的调用呢？ 入门版根据文档，用axios自动来调用 &#x2F;&#x2F; 应用管理相关接口 import axios f">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue 使用typescript， 优雅的调用swagger API">
+<meta property="og:url" content="http://blog.iflyresearch.com/2020/05/22/jqpeng-Vue%20%E4%BD%BF%E7%94%A8typescript%EF%BC%8C%20%E4%BC%98%E9%9B%85%E7%9A%84%E8%B0%83%E7%94%A8swagger%20API/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: Vue 使用typescript， 优雅的调用swagger API Swagger 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务，后端集成下Swagger，然后就可以提供一个在线文档地址给前端同学。  前端如何优雅的调用呢？ 入门版根据文档，用axios自动来调用 &#x2F;&#x2F; 应用管理相关接口 import axios f">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/5/22/1590142373032.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/5/22/1590143121653.png">
+<meta property="article:published_time" content="2020-05-22T10:31:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/5/22/1590142373032.png">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2020/05/22/jqpeng-Vue%20%E4%BD%BF%E7%94%A8typescript%EF%BC%8C%20%E4%BC%98%E9%9B%85%E7%9A%84%E8%B0%83%E7%94%A8swagger%20API/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Vue 使用typescript， 优雅的调用swagger API | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/05/22/jqpeng-Vue%20%E4%BD%BF%E7%94%A8typescript%EF%BC%8C%20%E4%BC%98%E9%9B%85%E7%9A%84%E8%B0%83%E7%94%A8swagger%20API/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Vue 使用typescript， 优雅的调用swagger API
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-22 18:31:00" itemprop="dateCreated datePublished" datetime="2020-05-22T18:31:00+08:00">2020-05-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/generator-swagger-2-ts-2.html">Vue 使用typescript， 优雅的调用swagger API</a></p>
+<p>Swagger 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务，后端集成下Swagger，然后就可以提供一个在线文档地址给前端同学。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/5/22/1590142373032.png" alt="swagger"></p>
+<p>前端如何优雅的调用呢？</p>
+<h2 id="入门版"><a href="#入门版" class="headerlink" title="入门版"></a>入门版</h2><p>根据文档，用axios自动来调用</p>
+<pre><code>// 应用管理相关接口
+import axios from &#39;../interceptors.js&#39;
+
+// 获取应用列表
+export const getList = (data) =&gt; &#123;
+  return axios(&#123;
+    url: &#39;/app/list?sort=createdDate,desc&#39;,
+    method: &#39;get&#39;,
+    params: data
+  &#125;)
+&#125;
+</code></pre>
+<p>这里的问题是，有多少个接口，你就要编写多少个函数，且数据结构需要查看文档获取。</p>
+<h2 id="进阶版本"><a href="#进阶版本" class="headerlink" title="进阶版本"></a>进阶版本</h2><p>使用typescript，编写API，通过Type定义数据结构，进行约束。</p>
+<p>问题： 还是需要手写</p>
+<h2 id="优雅版本"><a href="#优雅版本" class="headerlink" title="优雅版本"></a>优雅版本</h2><p>swagger 其实是一个json-schema描述文档，我们可以基于此，自动生成。</p>
+<p>很早之前，写过一个插件 <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/generator-swagger-2-ts">generator-swagger-2-t</a>, 简单的实现了将swagger生成typescript api。</p>
+<p>今天，笔者对这个做了升级，方便支持后端返回的泛型数据结构。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>需要同时安装 <a target="_blank" rel="noopener" href="http://yeoman.io/">Yeoman</a> 和 -swagger-2-ts</p>
+<pre><code>npm install -g generator-swagger-2-ts
+</code></pre>
+<p>然后cd到你的工作目录，执行:</p>
+<pre><code>yo swagger-2-ts
+</code></pre>
+<p>按提示</p>
+<ul>
+<li>输入swagger-ui 地址，例如<a target="_blank" rel="noopener" href="http://192.168.86.8:8051/swagger-ui.html">http://192.168.86.8:8051/swagger-ui.html</a></li>
+<li>可选生成js 或者 typescript</li>
+<li>可以自定义生成的api class名称、api文件名</li>
+<li>API 支持泛型</li>
+</ul>
+<p>也可以通过命令行直接传递参数</p>
+<pre><code> yo swagger-2-ts --swaggerUrl=http://localhost:8080/swagger-ui.html --className=API --type=typescript --outputFile=api.ts
+</code></pre>
+<ul>
+<li>swaggerUrl: swagger ui url swaggerui地址</li>
+<li>className： API class name 类名</li>
+<li>type： typescript or javascipt</li>
+<li>outputFile: api 文件保存路径</li>
+</ul>
+<h3 id="生成代码demo："><a href="#生成代码demo：" class="headerlink" title="生成代码demo："></a>生成代码demo：</h3><pre><code>export type AccountUserInfo = &#123;
+  disableTime?: string
+  isDisable?: number
+  lastLoginIp?: string
+  lastLoginPlace?: string
+  lastLoginTime?: string
+  openId?: string
+&#125;
+
+
+export type BasePayloadResponse = &#123;
+  data?: object
+  desc?: string
+  retcode?: string
+
+&#125;
+
+/**
+ * User Account Controller
+ * @class UserAccountAPI
+ */
+export class UserAccountAPI &#123;
+/**
+  * changeUserState
+  * @method
+  * @name UserAccountAPI#changeUserState
+  
+  * @param  accountUserInfo - accountUserInfo 
+  
+  * @param $domain API域名,没有指定则使用构造函数指定的
+  */
+  changeUserState(parameters: &#123;
+    &#39;accountUserInfo&#39;: AccountUserInfo,
+    $queryParameters?: any,
+    $domain?: string
+  &#125;): Promise&lt;AxiosResponse&lt;BasePayloadResponse&gt;&gt; &#123;
+
+    let config: AxiosRequestConfig = &#123;
+      baseURL: parameters.$domain || this.$defaultDomain,
+      url: &#39;/userAccount/changeUserState&#39;,
+      method: &#39;PUT&#39;
+    &#125;
+
+    config.headers = &#123;&#125;
+    config.params = &#123;&#125;
+
+    config.headers[ &#39;Accept&#39; ] = &#39;*/*&#39;
+    config.headers[ &#39;Content-Type&#39; ] = &#39;application/json&#39;
+
+    config.data = parameters.accountUserInfo
+    return axios.request(config)
+  &#125;
+
+  _UserAccountAPI: UserAccountAPI = null;
+
+  /**
+  * 获取 User Account Controller API
+  * return @class UserAccountAPI
+  */
+  getUserAccountAPI(): UserAccountAPI &#123;
+    if (!this._UserAccountAPI) &#123;
+      this._UserAccountAPI = new UserAccountAPI(this.$defaultDomain)
+    &#125;
+    return this._UserAccountAPI
+  &#125;
+&#125;
+
+
+/**
+ * 管理系统接口描述
+ * @class API
+ */
+export class API &#123;
+  /**
+   *  API构造函数
+   * @param domain API域名
+   */
+  constructor(domain?: string) &#123;
+    this.$defaultDomain = domain || &#39;http://localhost:8080&#39;
+  &#125;
+&#125;
+</code></pre>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><pre><code>import &#123; API &#125; from &#39;./http/api/manageApi&#39;
+// in main.ts
+let api = new API(&quot;/api/&quot;)
+api.getUserAccountAPI().changeUserState(&#123;
+  isDisable: 1
+  openId: &#39;open id&#39;
+&#125;)
+</code></pre>
+<h2 id="Vue中最佳实践"><a href="#Vue中最佳实践" class="headerlink" title="Vue中最佳实践"></a>Vue中最佳实践</h2><h3 id="main-ts-全局定义"><a href="#main-ts-全局定义" class="headerlink" title="main.ts 全局定义"></a>main.ts 全局定义</h3><pre><code>import &#123; API &#125; from &#39;./http/api/manageApi&#39;
+
+Vue.prototype.$manageApi = new API(&#39;/api/&#39;)
+</code></pre>
+<h3 id="增加-d-ts"><a href="#增加-d-ts" class="headerlink" title="增加.d.ts"></a>增加.d.ts</h3><p>增加types文件，方便使用智能提示</p>
+<pre><code>import &#123; API &#125; from &#39;@/http/api/manageApi&#39;
+import &#123; MarkAPI &#125; from &#39;@/http/api/mark-center-api&#39;
+declare module &quot;vue/types/vue&quot; &#123;
+  interface Vue &#123;
+    $manageApi: API
+    $markApi: MarkAPI
+  &#125;
+&#125;
+</code></pre>
+<h3 id="实际使用"><a href="#实际使用" class="headerlink" title="实际使用"></a>实际使用</h3><p>现在可以在vue里直接调用了。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/5/22/1590143121653.png" alt="vscode调用"></p>
+<pre><code>this.$manageApi
+      .getUserAccountAPI().changeUserState(&#123;isDisable: 1， openId: &#39;open id&#39;&#125;)
+</code></pre>
+<h2 id="开源地址"><a href="#开源地址" class="headerlink" title="开源地址"></a>开源地址</h2><p><a target="_blank" rel="noopener" href="https://github.com/jadepeng/generator-swagger-2-ts">https://github.com/jadepeng/generator-swagger-2-ts</a></p>
+<p>欢迎star！</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/16/jqpeng-Spring%20Data%20Mongodb%20%E4%B9%90%E8%A7%82%E9%94%81/" rel="prev" title="Spring Data Mongodb 乐观锁">
+      <i class="fa fa-chevron-left"></i> Spring Data Mongodb 乐观锁
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/28/jqpeng-npm%20%E6%9B%B4%E6%96%B0package.json%E4%B8%AD%E4%BE%9D%E8%B5%96%E5%8C%85%E7%89%88%E6%9C%AC/" rel="next" title="npm 更新package.json中依赖包版本">
+      npm 更新package.json中依赖包版本 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A5%E9%97%A8%E7%89%88"><span class="nav-number">1.</span> <span class="nav-text">入门版</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E9%98%B6%E7%89%88%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">进阶版本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E9%9B%85%E7%89%88%E6%9C%AC"><span class="nav-number">3.</span> <span class="nav-text">优雅版本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">3.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81demo%EF%BC%9A"><span class="nav-number">3.2.</span> <span class="nav-text">生成代码demo：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">3.3.</span> <span class="nav-text">使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vue%E4%B8%AD%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">4.</span> <span class="nav-text">Vue中最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#main-ts-%E5%85%A8%E5%B1%80%E5%AE%9A%E4%B9%89"><span class="nav-number">4.1.</span> <span class="nav-text">main.ts 全局定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0-d-ts"><span class="nav-number">4.2.</span> <span class="nav-text">增加.d.ts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E4%BD%BF%E7%94%A8"><span class="nav-number">4.3.</span> <span class="nav-text">实际使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9D%80"><span class="nav-number">5.</span> <span class="nav-text">开源地址</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

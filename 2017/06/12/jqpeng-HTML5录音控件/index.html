@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: HTML5录音控件 最近的项目又需要用到录音，年前有过调研，再次翻出来使用，这里做一个记录。 HTML5提供了录音支持，因此可以方便使用HTML5来录音，来实现录音、语音识别等功能，语音开发必备。但是ES标准提供的API并不人性化，不方便使用，并且不提供保存为wav的功能，开发起来费劲啊！！ github寻找轮子，发现Recorder.js，基本上可以满足需求了，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTML5录音控件">
+<meta property="og:url" content="http://blog.iflyresearch.com/2017/06/12/jqpeng-HTML5%E5%BD%95%E9%9F%B3%E6%8E%A7%E4%BB%B6/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: HTML5录音控件 最近的项目又需要用到录音，年前有过调研，再次翻出来使用，这里做一个记录。 HTML5提供了录音支持，因此可以方便使用HTML5来录音，来实现录音、语音识别等功能，语音开发必备。但是ES标准提供的API并不人性化，不方便使用，并且不提供保存为wav的功能，开发起来费劲啊！！ github寻找轮子，发现Recorder.js，基本上可以满足需求了，">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-06-12T09:07:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.577Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2017/06/12/jqpeng-HTML5%E5%BD%95%E9%9F%B3%E6%8E%A7%E4%BB%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>HTML5录音控件 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/06/12/jqpeng-HTML5%E5%BD%95%E9%9F%B3%E6%8E%A7%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HTML5录音控件
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-06-12 17:07:00" itemprop="dateCreated datePublished" datetime="2017-06-12T17:07:00+08:00">2017-06-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/6993912.html">HTML5录音控件</a></p>
+<p>最近的项目又需要用到录音，年前有过调研，再次翻出来使用，这里做一个记录。</p>
+<p>HTML5提供了录音支持，因此可以方便使用HTML5来录音，来实现录音、语音识别等功能，语音开发必备。但是ES标准提供的API并不人性化，不方便使用，并且不提供保存为wav的功能，开发起来费劲啊！！</p>
+<p>github寻找轮子，发现<a target="_blank" rel="noopener" href="https://github.com/mattdiamond/Recorderjs">Recorder.js</a>，基本上可以满足需求了，良好的封装，支持导出wav，但是存在：</p>
+<ul>
+<li>wav采样率不可调整</li>
+<li>recorder创建麻烦，需要自己初始化getUserMedia</li>
+<li>无实时数据回调，不方便绘制波形</li>
+<li>。。。</li>
+</ul>
+<h2 id="改造轮子"><a href="#改造轮子" class="headerlink" title="改造轮子"></a>改造轮子</h2><h3 id="创建recorder工具方法"><a href="#创建recorder工具方法" class="headerlink" title="创建recorder工具方法"></a>创建recorder工具方法</h3><p>提供创建recorder工具函数，封装audio接口：</p>
+<pre><code>static createRecorder(callback,config)&#123;
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        window.URL = window.URL || window.webkitURL;
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+        
+        if (navigator.getUserMedia) &#123;
+            navigator.getUserMedia(
+                &#123; audio: true &#125; //只启用音频
+                , function (stream) &#123;
+                    var audio_context = new AudioContext;
+                    var input = audio_context.createMediaStreamSource(stream);
+                    var rec = new Recorder(input, config);
+                    callback(rec);
+                &#125;
+                , function (error) &#123;
+                    switch (error.code || error.name) &#123;
+                        case &#39;PERMISSION_DENIED&#39;:
+                        case &#39;PermissionDeniedError&#39;:
+                            throwError(&#39;用户拒绝提供信息。&#39;);
+                            break;
+                        case &#39;NOT_SUPPORTED_ERROR&#39;:
+                        case &#39;NotSupportedError&#39;:
+                            throwError(&#39;浏览器不支持硬件设备。&#39;);
+                            break;
+                        case &#39;MANDATORY_UNSATISFIED_ERROR&#39;:
+                        case &#39;MandatoryUnsatisfiedError&#39;:
+                            throwError(&#39;无法发现指定的硬件设备。&#39;);
+                            break;
+                        default:
+                            throwError(&#39;无法打开麦克风。异常信息:&#39; + (error.code || error.name));
+                            break;
+                    &#125;
+                &#125;);
+        &#125; else &#123;
+            throwError(&#39;当前浏览器不支持录音功能。&#39;); return;
+        &#125;
+    &#125;
+</code></pre>
+<h3 id="采样率"><a href="#采样率" class="headerlink" title="采样率"></a>采样率</h3><p>H5录制的默认是44k的，文件大，不方便传输，因此需要进行重新采样，一般采用插值取点方法：</p>
+<p>以下代码主要来自stackoverflow：</p>
+<pre><code>             /**
+             * 转换采样率
+             * @param data
+             * @param newSampleRate 目标采样率
+             * @param oldSampleRate 原始数据采样率
+             * @returns &#123;any[]|Array&#125;
+             */
+            function interpolateArray(data, newSampleRate, oldSampleRate) &#123;
+                var fitCount = Math.round(data.length * (newSampleRate / oldSampleRate));
+                var newData = new Array();
+                var springFactor = new Number((data.length - 1) / (fitCount - 1));
+                newData[0] = data[0]; // for new allocation
+                for (var i = 1; i &lt; fitCount - 1; i++) &#123;
+                    var tmp = i * springFactor;
+                    var before = new Number(Math.floor(tmp)).toFixed();
+                    var after = new Number(Math.ceil(tmp)).toFixed();
+                    var atPoint = tmp - before;
+                    newData[i] = this.linearInterpolate(data[before], data[after], atPoint);
+                &#125;
+                newData[fitCount - 1] = data[data.length - 1]; // for new allocation
+                return newData;
+            &#125;
+
+            function linearInterpolate(before, after, atPoint) &#123;
+                return before + (after - before) * atPoint;
+            &#125;
+</code></pre>
+<p>修改导出wav函数exportWAV，增加采样率选项：</p>
+<pre><code>            /**
+             * 导出wav
+             * @param type
+             * @param desiredSamplingRate 期望的采样率
+             */
+            function exportWAV(type,desiredSamplingRate) &#123;
+                // 默认为16k
+                desiredSamplingRate = desiredSamplingRate || 16000;
+                var buffers = [];
+                for (var channel = 0; channel &lt; numChannels; channel++) &#123;
+                    var buffer = mergeBuffers(recBuffers[channel], recLength);
+                    // 需要转换采样率
+                    if (desiredSamplingRate!=sampleRate) &#123;
+                        // 插值去点
+                        buffer = interpolateArray(buffer, desiredSamplingRate, sampleRate);
+                    &#125;
+                    buffers.push(buffer);
+                &#125;
+                var interleaved = numChannels === 2 ? interleave(buffers[0], buffers[1]) : buffers[0];
+                var dataview = encodeWAV(interleaved,desiredSamplingRate);
+                var audioBlob = new Blob([dataview], &#123; type: type &#125;);
+                self.postMessage(&#123; command: &#39;exportWAV&#39;, data: audioBlob &#125;);
+            &#125;
+</code></pre>
+<h3 id="实时录音数据回调"><a href="#实时录音数据回调" class="headerlink" title="实时录音数据回调"></a>实时录音数据回调</h3><p>为了方便绘制音量、波形图，需要获取到实时数据：</p>
+<p>config新增一个回调函数onaudioprocess：</p>
+<pre><code>  config = &#123;
+        bufferLen: 4096,
+        numChannels: 1, // 默认单声道
+        mimeType: &#39;audio/wav&#39;,
+        onaudioprocess:null
+    &#125;;
+</code></pre>
+<p>修改录音数据处理函数：</p>
+<pre><code>        this.node.onaudioprocess = (e) =&gt; &#123;
+            if (!this.recording) return;
+            var buffer = [];
+
+            for (var channel = 0; channel &lt; this.config.numChannels; channel++) &#123;
+                buffer.push(e.inputBuffer.getChannelData(channel));
+            &#125;
+
+            // 发送给worker
+            this.worker.postMessage(&#123;
+                command: &#39;record&#39;,
+                buffer: buffer
+            &#125;);
+
+            // 数据回调
+            if(this.config.onaudioprocess)&#123;
+                this.config.onaudioprocess(buffer[0]);
+            &#125;
+        &#125;;
+</code></pre>
+<p>这样，在创建recorder时，配置onaudioprocess就可以获取到实时数据了</p>
+<h3 id="实时数据编码"><a href="#实时数据编码" class="headerlink" title="实时数据编码"></a>实时数据编码</h3><p>编码计算耗时，需要放到worker执行：</p>
+<p>接口函数新增encode，发送消息给worker，让worker执行：</p>
+<pre><code>    encode(cb,buffer,sampleRate) &#123;
+        cb = cb || this.config.callback;
+        if (!cb) throw new Error(&#39;Callback not set&#39;);
+        this.callbacks.encode.push(cb);
+        this.worker.postMessage(&#123; command: &#39;encode&#39;,buffer:buffer,sampleRate:sampleRate&#125;);
+    &#125;
+</code></pre>
+<p>worker里新增encode函数，处理encode请求，完成后执行回调</p>
+<pre><code> self.onmessage = function (e) &#123;
+                switch (e.data.command) &#123;
+
+                    case &#39;encode&#39;:
+                        encode(e.data.buffer,e.data.sampleRate);
+                        break;
+
+                &#125;
+            &#125;;        
+    encode(cb,buffer,sampleRate) &#123;
+        cb = cb || this.config.callback;
+        if (!cb) throw new Error(&#39;Callback not set&#39;);
+        this.callbacks.encode.push(cb);
+        this.worker.postMessage(&#123; command: &#39;encode&#39;,buffer:buffer,sampleRate:sampleRate&#125;);
+    &#125;
+</code></pre>
+<h3 id="wav上传"><a href="#wav上传" class="headerlink" title="wav上传"></a>wav上传</h3><p>增加一个上传函数：</p>
+<pre><code>     exportWAVAndUpload(url, callback) &#123;
+        var _url = url;
+        exportWAV(function(blob)&#123;
+            var fd = new FormData();
+            fd.append(&quot;audioData&quot;, blob);
+            var xhr = new XMLHttpRequest();
+            if (callback) &#123;
+                xhr.upload.addEventListener(&quot;progress&quot;, function (e) &#123;
+                    callback(&#39;uploading&#39;, e);
+                &#125;, false);
+                xhr.addEventListener(&quot;load&quot;, function (e) &#123;
+                    callback(&#39;ok&#39;, e);
+                &#125;, false);
+                xhr.addEventListener(&quot;error&quot;, function (e) &#123;
+                    callback(&#39;error&#39;, e);
+                &#125;, false);
+                xhr.addEventListener(&quot;abort&quot;, function (e) &#123;
+                    callback(&#39;cancel&#39;, e);
+                &#125;, false);
+            &#125;
+            xhr.open(&quot;POST&quot;, url);
+            xhr.send(fd);
+        &#125;)     
+    &#125;
+</code></pre>
+<h3 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h3><p>=<a target="_blank" rel="noopener" href="http://files.cnblogs.com/files/xiaoqi/recorder.js">点击下载</a></p>
+<h2 id="发现新轮子"><a href="#发现新轮子" class="headerlink" title="发现新轮子"></a>发现新轮子</h2><p>今天再次看这个项目，发现这个项目已经不维护了，</p>
+<blockquote>
+<p>Note: This repository is not being actively maintained due to lack of time and interest. If you maintain or know of a good fork, please let me know so I can direct future visitors to it. In the meantime, if this library isn’t working, you can find a list of popular forks here: <a target="_blank" rel="noopener" href="http://forked.yannick.io/mattdiamond/recorderjs">http://forked.yannick.io/mattdiamond/recorderjs</a>.</p>
+</blockquote>
+<p>作者推荐<a target="_blank" rel="noopener" href="https://github.com/chris-rudmin/Recorderjs">https://github.com/chris-rudmin/Recorderjs</a>，提供更多的功能：</p>
+<ul>
+<li><strong>bitRate</strong> (<em>optional</em>) Specifies the target bitrate in bits/sec. The encoder selects an application-specific default when this is not specified.</li>
+<li><strong>bufferLength</strong> - (<em>optional</em>) The length of the buffer that the internal JavaScriptNode uses to capture the audio. Can be tweaked if experiencing performance issues. Defaults to <code>4096</code>.</li>
+<li><strong>encoderApplication</strong> - (<em>optional</em>) Specifies the encoder application. Supported values are <code>2048</code> - Voice, <code>2049</code> - Full Band Audio, <code>2051</code> - Restricted Low Delay. Defaults to <code>2049</code>.</li>
+<li><strong>encoderComplexity</strong> - (<em>optional</em>) Value between 0 and 10 which determines latency and processing for resampling. <code>0</code> is fastest with lowest complexity. <code>10</code> is slowest with highest complexity. The encoder selects a default when this is not specified.</li>
+<li><strong>encoderFrameSize</strong> (<em>optional</em>) Specifies the frame size in ms used for encoding. Defaults to <code>20</code>.</li>
+<li><strong>encoderPath</strong> - (<em>optional</em>) Path to encoderWorker.min.js worker script. Defaults to <code>encoderWorker.min.js</code></li>
+<li><strong>encoderSampleRate</strong> - (<em>optional</em>) Specifies the sample rate to encode at. Defaults to <code>48000</code>. Supported values are <code>8000</code>, <code>12000</code>, <code>16000</code>, <code>24000</code> or <code>48000</code>.</li>
+<li><strong>leaveStreamOpen</strong> - (<em>optional</em>) Keep the stream around when trying to <code>stop</code> recording, so you can re-<code>start</code> without re-<code>initStream</code>. Defaults to <code>false</code>.</li>
+<li><strong>maxBuffersPerPage</strong> - (<em>optional</em>) Specifies the maximum number of buffers to use before generating an Ogg page. This can be used to lower the streaming latency. The lower the value the more overhead the ogg stream will incur. Defaults to <code>40</code>.</li>
+<li><strong>monitorGain</strong> - (<em>optional</em>) Sets the gain of the monitoring output. Gain is an a-weighted value between <code>0</code> and <code>1</code>. Defaults to <code>0</code></li>
+<li><strong>numberOfChannels</strong> - (<em>optional</em>) The number of channels to record. <code>1</code> = mono, <code>2</code> = stereo. Defaults to <code>1</code>. Maximum <code>2</code> channels are supported.</li>
+<li><strong>originalSampleRateOverride</strong> - (<em>optional</em>) Override the ogg opus ‘input sample rate’ field. Google Speech API requires this field to be <code>16000</code>.</li>
+<li><strong>resampleQuality</strong> - (<em>optional</em>) Value between 0 and 10 which determines latency and processing for resampling. <code>0</code> is fastest with lowest quality. <code>10</code> is slowest with highest quality. Defaults to <code>3</code>.</li>
+<li><strong>streamPages</strong> - (<em>optional</em>) <code>dataAvailable</code> event will fire after each encoded page. Defaults to <code>false</code>.</li>
+</ul>
+<p>推荐使用</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/06/07/jqpeng-Spring%20Boot%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%94%BE%E5%9C%A8jar%E5%A4%96%E9%83%A8/" rel="prev" title="Spring Boot配置文件放在jar外部">
+      <i class="fa fa-chevron-left"></i> Spring Boot配置文件放在jar外部
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/06/19/jqpeng-IDEA+PHP+XDebug%E8%B0%83%E8%AF%95%E9%85%8D%E7%BD%AE/" rel="next" title="IDEA+PHP+XDebug调试配置">
+      IDEA+PHP+XDebug调试配置 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E9%80%A0%E8%BD%AE%E5%AD%90"><span class="nav-number">1.</span> <span class="nav-text">改造轮子</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BArecorder%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">创建recorder工具方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%87%E6%A0%B7%E7%8E%87"><span class="nav-number">1.2.</span> <span class="nav-text">采样率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E5%BD%95%E9%9F%B3%E6%95%B0%E6%8D%AE%E5%9B%9E%E8%B0%83"><span class="nav-number">1.3.</span> <span class="nav-text">实时录音数据回调</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E6%95%B0%E6%8D%AE%E7%BC%96%E7%A0%81"><span class="nav-number">1.4.</span> <span class="nav-text">实时数据编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wav%E4%B8%8A%E4%BC%A0"><span class="nav-number">1.5.</span> <span class="nav-text">wav上传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">1.6.</span> <span class="nav-text">完整代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E7%8E%B0%E6%96%B0%E8%BD%AE%E5%AD%90"><span class="nav-number">2.</span> <span class="nav-text">发现新轮子</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

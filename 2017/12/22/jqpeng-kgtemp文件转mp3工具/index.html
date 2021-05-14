@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: kgtemp文件转mp3工具 kgtemp文件是酷我音乐软件的缓存文件，本文从技术层面探讨如何解密该文件为mp3文件，并通过读取ID3信息来重命名。 备注：针对老版本的酷我音乐生效，新版本不支持！！！ kgtemp解密kgtemp文件前1024个字节是固定的包头信息，解密方案详细可以参见(http:&#x2F;&#x2F;www.cnblogs.com&#x2F;KMBlog&#x2F;p&#x2F;687775">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kgtemp文件转mp3工具">
+<meta property="og:url" content="http://blog.iflyresearch.com/2017/12/22/jqpeng-kgtemp%E6%96%87%E4%BB%B6%E8%BD%ACmp3%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: kgtemp文件转mp3工具 kgtemp文件是酷我音乐软件的缓存文件，本文从技术层面探讨如何解密该文件为mp3文件，并通过读取ID3信息来重命名。 备注：针对老版本的酷我音乐生效，新版本不支持！！！ kgtemp解密kgtemp文件前1024个字节是固定的包头信息，解密方案详细可以参见(http:&#x2F;&#x2F;www.cnblogs.com&#x2F;KMBlog&#x2F;p&#x2F;687775">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1513919861693.jpg">
+<meta property="article:published_time" content="2017-12-22T05:24:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="kgtemp">
+<meta property="article:tag" content="c#">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1513919861693.jpg">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2017/12/22/jqpeng-kgtemp%E6%96%87%E4%BB%B6%E8%BD%ACmp3%E5%B7%A5%E5%85%B7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>kgtemp文件转mp3工具 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/12/22/jqpeng-kgtemp%E6%96%87%E4%BB%B6%E8%BD%ACmp3%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kgtemp文件转mp3工具
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-12-22 13:24:00" itemprop="dateCreated datePublished" datetime="2017-12-22T13:24:00+08:00">2017-12-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/8085563.html">kgtemp文件转mp3工具</a></p>
+<p>kgtemp文件是酷我音乐软件的缓存文件，本文从技术层面探讨如何解密该文件为mp3文件，并通过读取ID3信息来重命名。</p>
+<p>备注：针对老版本的酷我音乐生效，新版本不支持！！！</p>
+<h2 id="kgtemp解密"><a href="#kgtemp解密" class="headerlink" title="kgtemp解密"></a>kgtemp解密</h2><p>kgtemp文件前1024个字节是固定的包头信息，解密方案详细可以参见(<a target="_blank" rel="noopener" href="http://www.cnblogs.com/KMBlog/p/6877752.html">http://www.cnblogs.com/KMBlog/p/6877752.html</a>)：</p>
+<pre><code>class Program&#123;    static void Main(string[] args)    &#123;
+        byte[] key=&#123;0xAC,0xEC,0xDF,0x57&#125;;        using (var input = new FileStream(@&quot;E:\KuGou\Temp\236909b6016c6e98365e5225f488dd7a.kgtemp&quot;, FileMode.Open, FileAccess.Read))        &#123;            var output = File.OpenWrite(@&quot;d:\test.mp3&quot;);//输出文件            input.Seek(1024, SeekOrigin.Begin);//跳过1024字节的包头            byte[] buffer = new byte[key.Length];            int length;            while((length=input.Read(buffer,0,buffer.Length))&gt;0)            &#123;                for(int i=0;i&lt;length;i++)                &#123;                    var k = key[i];                    var kh = k &gt;&gt; 4;                    var kl = k &amp; 0xf;                    var b = buffer[i];                    var low = b &amp; 0xf ^ kl;//解密后的低4位                    var high = (b &gt;&gt; 4) ^ kh ^ low &amp; 0xf;//解密后的高4位                    buffer[i] = (byte)(high &lt;&lt; 4 | low);                &#125;                output.Write(buffer, 0, length);            &#125;            output.Close();        &#125;        Console.WriteLine(&quot;按任意键退出...&quot;);        Console.ReadKey();    &#125;&#125;
+</code></pre>
+<p>这样解密出来就是mp3文件了</p>
+<h2 id="读取ID3信息"><a href="#读取ID3信息" class="headerlink" title="读取ID3信息"></a>读取ID3信息</h2><p>解密出来的文件还需要手动命名，不是很方便，可以读取ID3V1信息重命名文件。<br> ID3V1比较简单，它是存放在MP3文件的末尾，用16进制的编辑器打开一个MP3文件，查看其末尾的128个顺序存放字节，数据结构定义如下：<br> char Header<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1513919861693.jpg" title="1513919861693">3</a>;    /<em>标签头必须是”TAG”否则认为没有标签</em>/<br> char Title[30];    /<em>标题</em>/<br> char Artist[30];   /<em>作者</em>/<br> char Album[30];    /<em>专集</em>/<br> char Year<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1513920067729.jpg" title="1513920067729">4</a>;    /<em>出品年代</em>/<br> char Comment[30];   /<em>备注</em>/<br> char Genre;    /<em>类型，流派</em>/</p>
+<p>解析代码比较简单，注意中文歌曲用GBK编码就可以了：</p>
+<pre><code>  private static Mp3Info FormatMp3Info(byte[] Info, System.Text.Encoding Encoding)    &#123;        Mp3Info myMp3Info = new Mp3Info();        string str = null;        int i;        int position = 0主要代码jia，; //循环的起始值        int currentIndex = 0; //Info的当前索引值
+        //获取TAG标识        for (i = currentIndex; i &lt; currentIndex + 3; i++)        &#123;            str = str + (char)Info[i];            position++;        &#125;        currentIndex = position;        myMp3Info.identify = str;
+        //获取歌名        str = null;        byte[] bytTitle = new byte[30]; //将歌名部分读到一个单独的数组中        int j = 0;        for (i = currentIndex; i &lt; currentIndex + 30; i++)        &#123;            bytTitle[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Title = ByteToString(bytTitle, Encoding);
+        //获取歌手名        str = null;        j = 0;        byte[] bytArtist = new byte[30]; //将歌手名部分读到一个单独的数组中        for (i = currentIndex; i &lt; currentIndex + 30; i++)        &#123;            bytArtist[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Artist = ByteToString(bytArtist, Encoding);
+        //获取唱片名        str = null;        j = 0;        byte[] bytAlbum = new byte[30]; //将唱片名部分读到一个单独的数组中        for (i = currentIndex; i &lt; currentIndex + 30; i++)        &#123;            bytAlbum[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Album = ByteToString(bytAlbum, Encoding);
+        //获取年        str = null;        j = 0;        byte[] bytYear = new byte[4]; //将年部分读到一个单独的数组中        for (i = currentIndex; i &lt; currentIndex + 4; i++)        &#123;            bytYear[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Year = ByteToString(bytYear, Encoding);
+        //获取注释        str = null;        j = 0;        byte[] bytComment = new byte[28]; //将注释部分读到一个单独的数组中        for (i = currentIndex; i &lt; currentIndex + 25; i++)        &#123;            bytComment[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Comment = ByteToString(bytComment, Encoding);
+        //以下获取保留位        myMp3Info.reserved1 = (char)Info[++position];        myMp3Info.reserved2 = (char)Info[++position];        myMp3Info.reserved3 = (char)Info[++position];
+        //        return myMp3Info;    &#125;
+</code></pre>
+<h2 id="转换小工具"><a href="#转换小工具" class="headerlink" title="转换小工具"></a>转换小工具</h2><p>写了一个小工具，来进行转换</p>
+<p><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1513919861693.jpg" alt="装换工具" title="1513919861693"></p>
+<p>下载地址：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1o7FIsPk">https://pan.baidu.com/s/1o7FIsPk</a></p>
+<p>PS:上面只读取了IDV1，部分歌曲可能不存在<br> 可以下载@缤纷 提供的程序，增加了ID3V2的支持：<br><a target="_blank" rel="noopener" href="https://files.cnblogs.com/files/gxlxzys/kgtemp%E6%96%87%E4%BB%B6%E8%BD%ACmp3%E5%B7%A5%E5%85%B7.zip">https://files.cnblogs.com/files/gxlxzys/kgtemp文件转mp3工具.zip</a></p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/kgtemp/" rel="tag"># kgtemp</a>
+              <a href="/tags/c/" rel="tag"># c#</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/12/08/jqpeng-%E4%BD%BF%E7%94%A8SpringBoot%E5%BC%80%E5%8F%91REST%E6%9C%8D%E5%8A%A1/" rel="prev" title="使用SpringBoot开发REST服务">
+      <i class="fa fa-chevron-left"></i> 使用SpringBoot开发REST服务
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/12/26/jqpeng-%E4%BD%BF%E7%94%A8Spring%E8%AE%BF%E9%97%AEMongodb%E7%9A%84%E6%96%B9%E6%B3%95%E5%A4%A7%E5%85%A8%E2%80%94%E2%80%94Spring%20Data%20MongoDB%E6%9F%A5%E8%AF%A2%E6%8C%87%E5%8D%97/" rel="next" title="使用Spring访问Mongodb的方法大全——Spring Data MongoDB查询指南">
+      使用Spring访问Mongodb的方法大全——Spring Data MongoDB查询指南 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#kgtemp%E8%A7%A3%E5%AF%86"><span class="nav-number">1.</span> <span class="nav-text">kgtemp解密</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96ID3%E4%BF%A1%E6%81%AF"><span class="nav-number">2.</span> <span class="nav-text">读取ID3信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2%E5%B0%8F%E5%B7%A5%E5%85%B7"><span class="nav-number">3.</span> <span class="nav-text">转换小工具</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

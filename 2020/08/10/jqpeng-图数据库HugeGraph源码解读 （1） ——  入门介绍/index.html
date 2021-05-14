@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: 图数据库HugeGraph源码解读 （1） ——  入门介绍 HugeGraph介绍以下引自官方文档： HugeGraph是一款易用、高效、通用的开源图数据库系统（Graph Database，GitHub项目地址）， 实现了Apache TinkerPop3框架及完全兼容Gremlin查询语言， 具备完善的工具链组件，助力用户轻松构建基于图数据库之上的应用和产品">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图数据库HugeGraph源码解读 （1） ——  入门介绍">
+<meta property="og:url" content="http://blog.iflyresearch.com/2020/08/10/jqpeng-%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93HugeGraph%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%20%EF%BC%881%EF%BC%89%20%E2%80%94%E2%80%94%20%20%E5%85%A5%E9%97%A8%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: 图数据库HugeGraph源码解读 （1） ——  入门介绍 HugeGraph介绍以下引自官方文档： HugeGraph是一款易用、高效、通用的开源图数据库系统（Graph Database，GitHub项目地址）， 实现了Apache TinkerPop3框架及完全兼容Gremlin查询语言， 具备完善的工具链组件，助力用户轻松构建基于图数据库之上的应用和产品">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/10/1597055013416.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/10/1597055066287.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/10/1597055603962.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/10/1597056461542.png">
+<meta property="article:published_time" content="2020-08-10T11:32:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="hugegraph">
+<meta property="article:tag" content="知识图谱">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/10/1597055013416.png">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2020/08/10/jqpeng-%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93HugeGraph%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%20%EF%BC%881%EF%BC%89%20%E2%80%94%E2%80%94%20%20%E5%85%A5%E9%97%A8%E4%BB%8B%E7%BB%8D/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>图数据库HugeGraph源码解读 （1） ——  入门介绍 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/08/10/jqpeng-%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93HugeGraph%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%20%EF%BC%881%EF%BC%89%20%E2%80%94%E2%80%94%20%20%E5%85%A5%E9%97%A8%E4%BB%8B%E7%BB%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          图数据库HugeGraph源码解读 （1） ——  入门介绍
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-10 19:32:00" itemprop="dateCreated datePublished" datetime="2020-08-10T19:32:00+08:00">2020-08-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>20k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>19 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/hugegraph-summary.html">图数据库HugeGraph源码解读 （1） ——  入门介绍</a></p>
+<h2 id="HugeGraph介绍"><a href="#HugeGraph介绍" class="headerlink" title="HugeGraph介绍"></a>HugeGraph介绍</h2><p>以下引自官方文档：</p>
+<pre><code>HugeGraph是一款易用、高效、通用的开源图数据库系统（Graph Database，GitHub项目地址）， 实现了Apache TinkerPop3框架及完全兼容Gremlin查询语言， 具备完善的工具链组件，助力用户轻松构建基于图数据库之上的应用和产品。HugeGraph支持百亿以上的顶点和边快速导入，并提供毫秒级的关联关系查询能力（OLTP）， 并可与Hadoop、Spark等大数据平台集成以进行离线分析（OLAP）。
+
+HugeGraph典型应用场景包括深度关系探索、关联分析、路径搜索、特征抽取、数据聚类、社区检测、 知识图谱等，适用业务领域有如网络安全、电信诈骗、金融风控、广告推荐、社交网络和智能机器人等。
+</code></pre>
+<p>划重点：  </p>
+<ul>
+<li>基于TinkerPop3框架，兼容Gremlin查询语言  </li>
+<li>OLTP（开源） 与 OLAP(商业版）  </li>
+<li>常用图应用支持—— 路径搜索、推荐等</li>
+</ul>
+<h2 id="架构介绍"><a href="#架构介绍" class="headerlink" title="架构介绍"></a>架构介绍</h2><h3 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h3><p>HugeGraph包括三个层次的功能，分别是存储层、计算层和用户接口层。 HugeGraph支持OLTP和OLAP两种图计算类型</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/10/1597055013416.png" alt="HugeGraph架构"></p>
+<h3 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h3><p>HugeGraph的主要功能分为HugeCore、ApiServer、HugeGraph-Client、HugeGraph-Loader和HugeGraph-Studio等组件构成，各组件之间的通信关系如下图所示。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/10/1597055066287.png" alt="组件"></p>
+<p>其中核心组件：</p>
+<ul>
+<li>HugeCore ：HugeGraph的核心模块，TinkerPop的接口主要在该模块中实现。</li>
+<li>ApiServer ：提供RESTFul Api接口，对外提供Graph Api、Schema Api和Gremlin Api等接口服务。</li>
+<li>HugeGraph-Client：基于Java客户端驱动程序</li>
+</ul>
+<p>生态组件：</p>
+<ul>
+<li>HugeGraph-Loader：数据导入模块。HugeGraph-Loader可以扫描并分析现有数据，自动生成Graph Schema创建语言，通过批量方式快速导入数据。</li>
+<li>HugeGraph-Studio：基于Web的可视化IDE环境。以Notebook方式记录Gremlin查询，可视化展示Graph的关联关系。HugeGraph-Studio也是本系统推荐的工具。</li>
+</ul>
+<p><code>HugeGraph-Studio</code>  看起来已经被抛弃了，研发团队正开发一个名为’hugegraph-hubble’ 的新项目：</p>
+<pre><code>hugegraph-hubble is a graph management and analysis platform that provides features: graph data load, schema management, graph relationship analysis and graphical display.
+</code></pre>
+<p>根据官方的说明，<code>hubble</code>定义为图谱管理和分析平台，提供图谱数据加载、schema管理、图分析和可视化展示，目前正在研发中，预计2020年9月份会发布首个版本。</p>
+<h3 id="设计理念"><a href="#设计理念" class="headerlink" title="设计理念"></a>设计理念</h3><p>常见的图数据表示模型有两种：</p>
+<ul>
+<li>RDF（Resource Description Framework）模型： 学术界的选择，通过sparql来进行查询，<code>jena</code>，<code>gStore</code>等等</li>
+<li>属性图（Property Graph）模型，工业界的选择，<code>neo4j</code>和<code>janusgraph</code>都是这种方案。</li>
+</ul>
+<p>RDF是W3C标准，而Property Graph是工业标准，受到广大图数据库厂商的广泛支持。HugeGraph采用Property Graph，遵循工业标准。</p>
+<p>HugeGraph存储概念模型详见下图：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/10/1597055603962.png" alt="HugeGraph概念模型"></p>
+<p>主要包含几个部分：</p>
+<ul>
+<li>Vertex（顶点），对应一个实体（Entity）</li>
+<li>Vertex Label(顶点的类型），对应一个概念（Concept）</li>
+<li>属性（图里的name、age），PropertyKey</li>
+<li>Edge边（图里的lives），对应RDF里的Relation</li>
+</ul>
+<h3 id="可扩展性"><a href="#可扩展性" class="headerlink" title="可扩展性"></a>可扩展性</h3><p>HugeGraph提供了丰富的插件扩展机制，包含几个维度的扩展项：</p>
+<ul>
+<li>后端存储</li>
+<li>序列化器</li>
+<li>自定义配置项</li>
+<li>分词器</li>
+</ul>
+<p>插件实现机制</p>
+<ol>
+<li>HugeGraph提供插件接口HugeGraphPlugin，通过Java SPI机制支持插件化</li>
+<li>HugeGraph提供了4个扩展项注册函数：<code>registerOptions()</code>、<code>registerBackend()</code>、<code>registerSerializer()</code>、<code>registerAnalyzer()</code></li>
+<li>插件实现者实现相应的Options、Backend、Serializer或Analyzer的接口</li>
+<li>插件实现者实现HugeGraphPlugin接口的<code>register()</code>方法，在该方法中注册上述第3点所列的具体实现类，并打成jar包</li>
+<li>插件使用者将jar包放在HugeGraph Server安装目录的<code>plugins</code>目录下，修改相关配置项为插件自定义值，重启即可生效</li>
+</ol>
+<h3 id="从案例深入源码"><a href="#从案例深入源码" class="headerlink" title="从案例深入源码"></a>从案例深入源码</h3><p>想要深入的理解一个系统的源码，先从具体的应用入手。先查看example代码：</p>
+<p><code>https://github.com/hugegraph/hugegraph/blob/master/hugegraph-example/src/main/java/com/baidu/hugegraph/example/Example1.java</code></p>
+<pre><code> public static void main(String[] args) throws Exception &#123;
+        LOG.info(&quot;Example1 start!&quot;);
+
+        HugeGraph graph = ExampleUtil.loadGraph();
+
+        Example1.showFeatures(graph);
+
+        Example1.loadSchema(graph);
+        Example1.loadData(graph);
+        Example1.testQuery(graph);
+        Example1.testRemove(graph);
+        Example1.testVariables(graph);
+        Example1.testLeftIndexProcess(graph);
+
+        Example1.thread(graph);
+
+        graph.close();
+
+        HugeFactory.shutdown(30L);
+    &#125;
+</code></pre>
+<h4 id="1-loadGraph"><a href="#1-loadGraph" class="headerlink" title="1. loadGraph"></a>1. loadGraph</h4><p>要使用hugegraph，需要先初始化一个<code>HugeGraph</code>对象，而<code>LoadGraph</code> 正是做这个的。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/10/1597056461542.png" alt="loadGraph"></p>
+<pre><code>public static HugeGraph loadGraph(boolean needClear, boolean needProfile) &#123;
+        if (needProfile) &#123;
+            profile();
+        &#125;
+
+        registerPlugins();
+
+        String conf = &quot;hugegraph.properties&quot;;
+        try &#123;
+            String path = ExampleUtil.class.getClassLoader()
+                                     .getResource(conf).getPath();
+            File file = new File(path);
+            if (file.exists() &amp;&amp; file.isFile()) &#123;
+                conf = path;
+            &#125;
+        &#125; catch (Exception ignored) &#123;
+        &#125;
+
+        HugeGraph graph = HugeFactory.open(conf);
+
+        if (needClear) &#123;
+            graph.clearBackend();
+        &#125;
+        graph.initBackend();
+
+        return graph;
+    &#125;
+</code></pre>
+<h5 id="1-1-registerPlugins"><a href="#1-1-registerPlugins" class="headerlink" title="1.1 registerPlugins"></a>1.1 registerPlugins</h5><p>其中 <code>registerPlugins</code> 注册插件，注意上面介绍的扩展机制。hugegraph所有的后端存储都需要通过插件注册。</p>
+<pre><code> public static void registerPlugins() &#123;
+        if (registered) &#123;
+            return;
+        &#125;
+        registered = true;
+
+        RegisterUtil.registerCassandra();
+        RegisterUtil.registerScyllaDB();
+        RegisterUtil.registerHBase();
+        RegisterUtil.registerRocksDB();
+        RegisterUtil.registerMysql();
+        RegisterUtil.registerPalo();
+    &#125;
+</code></pre>
+<p>注册主要是register配置、序列化器和backend，比如下面是mysql的。</p>
+<pre><code>public static void registerMysql() &#123;
+        // Register config
+        OptionSpace.register(&quot;mysql&quot;,
+                &quot;com.baidu.hugegraph.backend.store.mysql.MysqlOptions&quot;);
+        // Register serializer
+        SerializerFactory.register(&quot;mysql&quot;,
+                &quot;com.baidu.hugegraph.backend.store.mysql.MysqlSerializer&quot;);
+        // Register backend
+        BackendProviderFactory.register(&quot;mysql&quot;,
+                &quot;com.baidu.hugegraph.backend.store.mysql.MysqlStoreProvider&quot;);
+    &#125;
+</code></pre>
+<h5 id="1-2-HugeFactory-open"><a href="#1-2-HugeFactory-open" class="headerlink" title="1.2 HugeFactory.open"></a>1.2 HugeFactory.open</h5><p>HugeFactory 是Hugraph的工厂类，支持传入Configuraion配置信息，构建一个HugeGraph实例，注意这里为了线程安全，签名采用<code>synchronized</code></p>
+<pre><code> public static synchronized HugeGraph open(Configuration config) &#123;
+        HugeConfig conf = config instanceof HugeConfig ?
+                          (HugeConfig) config : new HugeConfig(config);
+        String name = conf.get(CoreOptions.STORE);
+        checkGraphName(name, &quot;graph config(like hugegraph.properties)&quot;);
+        name = name.toLowerCase();
+        HugeGraph graph = graphs.get(name);
+        if (graph == null || graph.closed()) &#123;
+            graph = new StandardHugeGraph(conf);
+            graphs.put(name, graph);
+        &#125; else &#123;
+            String backend = conf.get(CoreOptions.BACKEND);
+            E.checkState(backend.equalsIgnoreCase(graph.backend()),
+                         &quot;Graph name &#39;%s&#39; has been used by backend &#39;%s&#39;&quot;,
+                         name, graph.backend());
+        &#125;
+        return graph;
+    &#125;
+</code></pre>
+<p>这里顺带提下配置文件，通过代码看到，默认是读取<code>hugegraph.properties</code>.</p>
+<h5 id="1-3-HugeGraph-对象"><a href="#1-3-HugeGraph-对象" class="headerlink" title="1.3 HugeGraph 对象"></a>1.3 HugeGraph 对象</h5><p>HugeGraph是一个interface，继承gremlin的Graph接口，定义了图谱的Schema定义、数据存储、查询等API方法。从上面1.2可以看到，默认的实现是<code>StandardHugeGraph</code>。</p>
+<pre><code>public interface HugeGraph extends Graph &#123;
+
+    public HugeGraph hugegraph();
+
+    public SchemaManager schema();
+
+    public Id getNextId(HugeType type);
+
+    public void addPropertyKey(PropertyKey key);
+    public void removePropertyKey(Id key);
+    public Collection&lt;PropertyKey&gt; propertyKeys();
+    public PropertyKey propertyKey(String key);
+    public PropertyKey propertyKey(Id key);
+    public boolean existsPropertyKey(String key);
+
+...
+   
+</code></pre>
+<h5 id="1-4-graph-clearBackend-与initBackend"><a href="#1-4-graph-clearBackend-与initBackend" class="headerlink" title="1.4 graph.clearBackend 与initBackend"></a>1.4 graph.clearBackend 与initBackend</h5><p>clearBackend将后端数据清理，initBackend初始化基本的数据结构。</p>
+<h4 id="2-loadSchema"><a href="#2-loadSchema" class="headerlink" title="2. loadSchema"></a>2. loadSchema</h4><p>该方法，用来定义schema：</p>
+<pre><code>public static void loadSchema(final HugeGraph graph) &#123;
+
+        SchemaManager schema = graph.schema();
+
+        // Schema changes will be commit directly into the back-end
+        LOG.info(&quot;===============  propertyKey  ================&quot;);
+        schema.propertyKey(&quot;id&quot;).asInt().create();
+        schema.propertyKey(&quot;name&quot;).asText().create();
+        schema.propertyKey(&quot;gender&quot;).asText().create();
+        schema.propertyKey(&quot;instructions&quot;).asText().create();
+        schema.propertyKey(&quot;category&quot;).asText().create();
+        schema.propertyKey(&quot;year&quot;).asInt().create();
+        schema.propertyKey(&quot;time&quot;).asText().create();
+        schema.propertyKey(&quot;timestamp&quot;).asDate().create();
+        schema.propertyKey(&quot;ISBN&quot;).asText().create();
+        schema.propertyKey(&quot;calories&quot;).asInt().create();
+        schema.propertyKey(&quot;amount&quot;).asText().create();
+        schema.propertyKey(&quot;stars&quot;).asInt().create();
+        schema.propertyKey(&quot;age&quot;).asInt().valueSingle().create();
+        schema.propertyKey(&quot;comment&quot;).asText().valueSet().create();
+        schema.propertyKey(&quot;contribution&quot;).asText().valueSet().create();
+        schema.propertyKey(&quot;nickname&quot;).asText().valueList().create();
+        schema.propertyKey(&quot;lived&quot;).asText().create();
+        schema.propertyKey(&quot;country&quot;).asText().valueSet().create();
+        schema.propertyKey(&quot;city&quot;).asText().create();
+        schema.propertyKey(&quot;sensor_id&quot;).asUUID().create();
+        schema.propertyKey(&quot;versions&quot;).asInt().valueList().create();
+
+        LOG.info(&quot;===============  vertexLabel  ================&quot;);
+
+        schema.vertexLabel(&quot;person&quot;)
+              .properties(&quot;name&quot;, &quot;age&quot;, &quot;city&quot;)
+              .primaryKeys(&quot;name&quot;)
+              .create();
+        schema.vertexLabel(&quot;author&quot;)
+              .properties(&quot;id&quot;, &quot;name&quot;, &quot;age&quot;, &quot;lived&quot;)
+              .primaryKeys(&quot;id&quot;).create();
+        schema.vertexLabel(&quot;language&quot;).properties(&quot;name&quot;, &quot;versions&quot;)
+              .primaryKeys(&quot;name&quot;).create();
+        schema.vertexLabel(&quot;recipe&quot;).properties(&quot;name&quot;, &quot;instructions&quot;)
+              .primaryKeys(&quot;name&quot;).create();
+        schema.vertexLabel(&quot;book&quot;).properties(&quot;name&quot;)
+              .primaryKeys(&quot;name&quot;).create();
+        schema.vertexLabel(&quot;reviewer&quot;).properties(&quot;name&quot;, &quot;timestamp&quot;)
+              .primaryKeys(&quot;name&quot;).create();
+
+        // vertex label must have the properties that specified in primary key
+        schema.vertexLabel(&quot;FridgeSensor&quot;).properties(&quot;city&quot;)
+              .primaryKeys(&quot;city&quot;).create();
+
+        LOG.info(&quot;===============  vertexLabel &amp; index  ================&quot;);
+        schema.indexLabel(&quot;personByCity&quot;)
+              .onV(&quot;person&quot;).secondary().by(&quot;city&quot;).create();
+        schema.indexLabel(&quot;personByAge&quot;)
+              .onV(&quot;person&quot;).range().by(&quot;age&quot;).create();
+
+        schema.indexLabel(&quot;authorByLived&quot;)
+              .onV(&quot;author&quot;).search().by(&quot;lived&quot;).create();
+
+        // schemaManager.getVertexLabel(&quot;author&quot;).index(&quot;byName&quot;).secondary().by(&quot;name&quot;).add();
+        // schemaManager.getVertexLabel(&quot;recipe&quot;).index(&quot;byRecipe&quot;).materialized().by(&quot;name&quot;).add();
+        // schemaManager.getVertexLabel(&quot;meal&quot;).index(&quot;byMeal&quot;).materialized().by(&quot;name&quot;).add();
+        // schemaManager.getVertexLabel(&quot;ingredient&quot;).index(&quot;byIngredient&quot;).materialized().by(&quot;name&quot;).add();
+        // schemaManager.getVertexLabel(&quot;reviewer&quot;).index(&quot;byReviewer&quot;).materialized().by(&quot;name&quot;).add();
+
+        LOG.info(&quot;===============  edgeLabel  ================&quot;);
+
+        schema.edgeLabel(&quot;authored&quot;).singleTime()
+              .sourceLabel(&quot;author&quot;).targetLabel(&quot;book&quot;)
+              .properties(&quot;contribution&quot;, &quot;comment&quot;)
+              .nullableKeys(&quot;comment&quot;)
+              .create();
+
+        schema.edgeLabel(&quot;write&quot;).multiTimes().properties(&quot;time&quot;)
+              .sourceLabel(&quot;author&quot;).targetLabel(&quot;book&quot;)
+              .sortKeys(&quot;time&quot;)
+              .create();
+
+        schema.edgeLabel(&quot;look&quot;).multiTimes().properties(&quot;timestamp&quot;)
+              .sourceLabel(&quot;person&quot;).targetLabel(&quot;book&quot;)
+              .sortKeys(&quot;timestamp&quot;)
+              .create();
+
+        schema.edgeLabel(&quot;created&quot;).singleTime()
+              .sourceLabel(&quot;author&quot;).targetLabel(&quot;language&quot;)
+              .create();
+
+        schema.edgeLabel(&quot;rated&quot;)
+              .sourceLabel(&quot;reviewer&quot;).targetLabel(&quot;recipe&quot;)
+              .create();
+    &#125;
+</code></pre>
+<p>划重点：  </p>
+<ul>
+<li>SchemaManager schema = graph.schema() 获取SchemaManager  </li>
+<li>schema.propertyKey(NAME).asXXType().create() 创建属性  </li>
+<li>schema.vertexLabel(“person”) // 定义概念<br>.properties(“name”, “age”, “city”)  // 定义概念的属性<br>.primaryKeys(“name”)  // 定义primary Keys，primary Key组合后可以唯一确定一个实体<br>.create();  </li>
+<li> schema.indexLabel(“personByCity”).onV(“person”).secondary().by(“city”).create();  定义索引  </li>
+<li>schema.edgeLabel(“authored”).singleTime()<br>.sourceLabel(“author”).targetLabel(“book”)<br>.properties(“contribution”, “comment”)<br>.nullableKeys(“comment”)<br>.create();  // 定义关系</li>
+</ul>
+<h4 id="3-loadData"><a href="#3-loadData" class="headerlink" title="3. loadData"></a>3. loadData</h4><p>创建实体，注意格式，K-V成对出现：</p>
+<pre><code>graph.addVertex(T.label, &quot;book&quot;, &quot;name&quot;, &quot;java-3&quot;);
+</code></pre>
+<p>创建关系，Vertex的addEdge方法：</p>
+<pre><code>    Vertex james = tx.addVertex(T.label, &quot;author&quot;, &quot;id&quot;, 1,
+                                &quot;name&quot;, &quot;James Gosling&quot;,  &quot;age&quot;, 62,
+                                &quot;lived&quot;, &quot;San Francisco Bay Area&quot;);
+
+    Vertex java = tx.addVertex(T.label, &quot;language&quot;, &quot;name&quot;, &quot;java&quot;,
+                               &quot;versions&quot;, Arrays.asList(6, 7, 8));
+    Vertex book1 = tx.addVertex(T.label, &quot;book&quot;, &quot;name&quot;, &quot;java-1&quot;);
+    Vertex book2 = tx.addVertex(T.label, &quot;book&quot;, &quot;name&quot;, &quot;java-2&quot;);
+    Vertex book3 = tx.addVertex(T.label, &quot;book&quot;, &quot;name&quot;, &quot;java-3&quot;);
+
+    james.addEdge(&quot;created&quot;, java);
+    james.addEdge(&quot;authored&quot;, book1,
+                  &quot;contribution&quot;, &quot;1990-1-1&quot;,
+                  &quot;comment&quot;, &quot;it&#39;s a good book&quot;,
+                  &quot;comment&quot;, &quot;it&#39;s a good book&quot;,
+                  &quot;comment&quot;, &quot;it&#39;s a good book too&quot;);
+    james.addEdge(&quot;authored&quot;, book2, &quot;contribution&quot;, &quot;2017-4-28&quot;);
+
+    james.addEdge(&quot;write&quot;, book2, &quot;time&quot;, &quot;2017-4-28&quot;);
+    james.addEdge(&quot;write&quot;, book3, &quot;time&quot;, &quot;2016-1-1&quot;);
+    james.addEdge(&quot;write&quot;, book3, &quot;time&quot;, &quot;2017-4-28&quot;);    
+</code></pre>
+<p>添加后，需要commit</p>
+<h4 id="4-testQuery-测试查询"><a href="#4-testQuery-测试查询" class="headerlink" title="4. testQuery 测试查询"></a>4. testQuery 测试查询</h4><p>查询主要通过<code>GraphTraversal</code>, 可以通过<code>graph.traversal()</code>获得：</p>
+<pre><code>public static void testQuery(final HugeGraph graph) &#123;
+        // query all
+        GraphTraversal&lt;Vertex, Vertex&gt; vertices = graph.traversal().V();
+        int size = vertices.toList().size();
+        assert size == 12;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all vertices: size=&quot; + size);
+
+        // query by label
+        vertices = graph.traversal().V().hasLabel(&quot;person&quot;);
+        size = vertices.toList().size();
+        assert size == 5;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all persons: size=&quot; + size);
+
+        // query vertex by primary-values
+        vertices = graph.traversal().V().hasLabel(&quot;author&quot;).has(&quot;id&quot;, 1);
+        List&lt;Vertex&gt; vertexList = vertices.toList();
+        assert vertexList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query vertices by primary-values: &quot; +
+                           vertexList);
+
+        VertexLabel author = graph.schema().getVertexLabel(&quot;author&quot;);
+        String authorId = String.format(&quot;%s:%s&quot;, author.id().asString(), &quot;11&quot;);
+
+        // query vertex by id and query out edges
+        vertices = graph.traversal().V(authorId);
+        GraphTraversal&lt;Vertex, Edge&gt; edgesOfVertex = vertices.outE(&quot;created&quot;);
+        List&lt;Edge&gt; edgeList = edgesOfVertex.toList();
+        assert edgeList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query edges of vertex: &quot; + edgeList);
+
+        vertices = graph.traversal().V(authorId);
+        vertexList = vertices.out(&quot;created&quot;).toList();
+        assert vertexList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query vertices of vertex: &quot; + vertexList);
+
+        // query edge by sort-values
+        vertices = graph.traversal().V(authorId);
+        edgesOfVertex = vertices.outE(&quot;write&quot;).has(&quot;time&quot;, &quot;2017-4-28&quot;);
+        edgeList = edgesOfVertex.toList();
+        assert edgeList.size() == 2;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query edges of vertex by sort-values: &quot; +
+                           edgeList);
+
+        // query vertex by condition (filter by property name)
+        ConditionQuery q = new ConditionQuery(HugeType.VERTEX);
+        PropertyKey age = graph.propertyKey(&quot;age&quot;);
+        q.key(HugeKeys.PROPERTIES, age.id());
+        if (graph.backendStoreFeatures()
+                 .supportsQueryWithContainsKey()) &#123;
+            Iterator&lt;Vertex&gt; iter = graph.vertices(q);
+            assert iter.hasNext();
+            System.out.println(&quot;&gt;&gt;&gt;&gt; queryVertices(age): &quot; + iter.hasNext());
+            while (iter.hasNext()) &#123;
+                System.out.println(&quot;&gt;&gt;&gt;&gt; queryVertices(age): &quot; + iter.next());
+            &#125;
+        &#125;
+
+        // query all edges
+        GraphTraversal&lt;Edge, Edge&gt; edges = graph.traversal().E().limit(2);
+        size = edges.toList().size();
+        assert size == 2;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all edges with limit 2: size=&quot; + size);
+
+        // query edge by id
+        EdgeLabel authored = graph.edgeLabel(&quot;authored&quot;);
+        VertexLabel book = graph.schema().getVertexLabel(&quot;book&quot;);
+        String book1Id = String.format(&quot;%s:%s&quot;, book.id().asString(), &quot;java-1&quot;);
+        String book2Id = String.format(&quot;%s:%s&quot;, book.id().asString(), &quot;java-2&quot;);
+
+        String edgeId = String.format(&quot;S%s&gt;%s&gt;%s&gt;S%s&quot;,
+                                      authorId, authored.id(), &quot;&quot;, book2Id);
+        edges = graph.traversal().E(edgeId);
+        edgeList = edges.toList();
+        assert edgeList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query edge by id: &quot; + edgeList);
+
+        Edge edge = edgeList.get(0);
+        edges = graph.traversal().E(edge.id());
+        edgeList = edges.toList();
+        assert edgeList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query edge by id: &quot; + edgeList);
+
+        // query edge by condition
+        q = new ConditionQuery(HugeType.EDGE);
+        q.eq(HugeKeys.OWNER_VERTEX, IdGenerator.of(authorId));
+        q.eq(HugeKeys.DIRECTION, Directions.OUT);
+        q.eq(HugeKeys.LABEL, authored.id());
+        q.eq(HugeKeys.SORT_VALUES, &quot;&quot;);
+        q.eq(HugeKeys.OTHER_VERTEX, IdGenerator.of(book1Id));
+
+        Iterator&lt;Edge&gt; edges2 = graph.edges(q);
+        assert edges2.hasNext();
+        System.out.println(&quot;&gt;&gt;&gt;&gt; queryEdges(id-condition): &quot; +
+                           edges2.hasNext());
+        while (edges2.hasNext()) &#123;
+            System.out.println(&quot;&gt;&gt;&gt;&gt; queryEdges(id-condition): &quot; +
+                               edges2.next());
+        &#125;
+
+        // NOTE: query edge by has-key just supported by Cassandra
+        if (graph.backendStoreFeatures().supportsQueryWithContainsKey()) &#123;
+            PropertyKey contribution = graph.propertyKey(&quot;contribution&quot;);
+            q.key(HugeKeys.PROPERTIES, contribution.id());
+            Iterator&lt;Edge&gt; edges3 = graph.edges(q);
+            assert edges3.hasNext();
+            System.out.println(&quot;&gt;&gt;&gt;&gt; queryEdges(contribution): &quot; +
+                               edges3.hasNext());
+            while (edges3.hasNext()) &#123;
+                System.out.println(&quot;&gt;&gt;&gt;&gt; queryEdges(contribution): &quot; +
+                                   edges3.next());
+            &#125;
+        &#125;
+
+        // query by vertex label
+        vertices = graph.traversal().V().hasLabel(&quot;book&quot;);
+        size = vertices.toList().size();
+        assert size == 5;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all books: size=&quot; + size);
+
+        // query by vertex label and key-name
+        vertices = graph.traversal().V().hasLabel(&quot;person&quot;).has(&quot;age&quot;);
+        size = vertices.toList().size();
+        assert size == 5;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all persons with age: size=&quot; + size);
+
+        // query by vertex props
+        vertices = graph.traversal().V().hasLabel(&quot;person&quot;)
+                        .has(&quot;city&quot;, &quot;Taipei&quot;);
+        vertexList = vertices.toList();
+        assert vertexList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all persons in Taipei: &quot; + vertexList);
+
+        vertices = graph.traversal().V().hasLabel(&quot;person&quot;).has(&quot;age&quot;, 19);
+        vertexList = vertices.toList();
+        assert vertexList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all persons age==19: &quot; + vertexList);
+
+        vertices = graph.traversal().V().hasLabel(&quot;person&quot;)
+                        .has(&quot;age&quot;, P.lt(19));
+        vertexList = vertices.toList();
+        assert vertexList.size() == 1;
+        assert vertexList.get(0).property(&quot;age&quot;).value().equals(3);
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all persons age&lt;19: &quot; + vertexList);
+
+        String addr = &quot;Bay Area&quot;;
+        vertices = graph.traversal().V().hasLabel(&quot;author&quot;)
+                        .has(&quot;lived&quot;, Text.contains(addr));
+        vertexList = vertices.toList();
+        assert vertexList.size() == 1;
+        System.out.println(String.format(&quot;&gt;&gt;&gt;&gt; query all authors lived %s: %s&quot;,
+                           addr, vertexList));
+    &#125;
+</code></pre>
+<p>划重点</p>
+<h5 id="查询指定label的实体："><a href="#查询指定label的实体：" class="headerlink" title="查询指定label的实体："></a>查询指定label的实体：</h5><pre><code> vertices = graph.traversal().V().hasLabel(&quot;person&quot;);
+ size = vertices.toList().size();
+</code></pre>
+<h5 id="根据primary-values查询实体："><a href="#根据primary-values查询实体：" class="headerlink" title="根据primary-values查询实体："></a>根据primary-values查询实体：</h5><pre><code> vertices = graph.traversal().V().hasLabel(&quot;author&quot;).has(&quot;id&quot;, 1);
+        List&lt;Vertex&gt; vertexList = vertices.toList();
+</code></pre>
+<h5 id="查询edge："><a href="#查询edge：" class="headerlink" title="查询edge："></a>查询edge：</h5><p>查询所有edge：</p>
+<pre><code>GraphTraversal&lt;Edge, Edge&gt; edges = graph.traversal().E().limit(2);
+</code></pre>
+<p>根据ID查询edge：</p>
+<pre><code>    EdgeLabel authored = graph.edgeLabel(&quot;authored&quot;);
+    VertexLabel book = graph.schema().getVertexLabel(&quot;book&quot;);
+    String book1Id = String.format(&quot;%s:%s&quot;, book.id().asString(), &quot;java-1&quot;);
+    String book2Id = String.format(&quot;%s:%s&quot;, book.id().asString(), &quot;java-2&quot;);
+
+    String edgeId = String.format(&quot;S%s&gt;%s&gt;%s&gt;S%s&quot;,
+                                  authorId, authored.id(), &quot;&quot;, book2Id);
+    edges = graph.traversal().E(edgeId);
+</code></pre>
+<p>注意，edge的id由几个字段拼接起来的：  “S%s&gt;%s&gt;%s&gt;S%s”,authorId, authored.id(), “”, book2Id)</p>
+<p>根据条件查询edge：</p>
+<pre><code> q = new ConditionQuery(HugeType.EDGE);
+        q.eq(HugeKeys.OWNER_VERTEX, IdGenerator.of(authorId));
+        q.eq(HugeKeys.DIRECTION, Directions.OUT);
+        q.eq(HugeKeys.LABEL, authored.id());
+        q.eq(HugeKeys.SORT_VALUES, &quot;&quot;);
+        q.eq(HugeKeys.OTHER_VERTEX, IdGenerator.of(book1Id));
+
+        Iterator&lt;Edge&gt; edges2 = graph.edges(q);
+        assert edges2.hasNext();
+        System.out.println(&quot;&gt;&gt;&gt;&gt; queryEdges(id-condition): &quot; +
+                           edges2.hasNext());
+        while (edges2.hasNext()) &#123;
+            System.out.println(&quot;&gt;&gt;&gt;&gt; queryEdges(id-condition): &quot; +
+                               edges2.next());
+        &#125;
+</code></pre>
+<p>可以指定DIRECTION，</p>
+<h4 id="5-删除"><a href="#5-删除" class="headerlink" title="5. 删除"></a>5. 删除</h4><p>删除Vetex，调用vetex自带的remove方法</p>
+<pre><code>       // remove vertex (and its edges)
+        List&lt;Vertex&gt; vertices = graph.traversal().V().hasLabel(&quot;person&quot;)
+                                     .has(&quot;age&quot;, 19).toList();
+        assert vertices.size() == 1;
+        Vertex james = vertices.get(0);
+        Vertex book6 = graph.addVertex(T.label, &quot;book&quot;, &quot;name&quot;, &quot;java-6&quot;);
+        james.addEdge(&quot;look&quot;, book6, &quot;timestamp&quot;, &quot;2017-5-2 12:00:08.0&quot;);
+        james.addEdge(&quot;look&quot;, book6, &quot;timestamp&quot;, &quot;2017-5-3 12:00:08.0&quot;);
+        graph.tx().commit();
+        assert graph.traversal().V(book6.id()).bothE().hasNext();
+        System.out.println(&quot;&gt;&gt;&gt;&gt; removing vertex: &quot; + james);
+        james.remove();
+        graph.tx().commit();
+        assert !graph.traversal().V(james.id()).hasNext();
+        assert !graph.traversal().V(book6.id()).bothE().hasNext();
+
+    
+</code></pre>
+<p>删除关系，也类似：</p>
+<pre><code>    // remove edge
+        VertexLabel author = graph.schema().getVertexLabel(&quot;author&quot;);
+        String authorId = String.format(&quot;%s:%s&quot;, author.id().asString(), &quot;11&quot;);
+        EdgeLabel authored = graph.edgeLabel(&quot;authored&quot;);
+        VertexLabel book = graph.schema().getVertexLabel(&quot;book&quot;);
+        String book2Id = String.format(&quot;%s:%s&quot;, book.id().asString(), &quot;java-2&quot;);
+
+        String edgeId = String.format(&quot;S%s&gt;%s&gt;%s&gt;S%s&quot;,
+                                      authorId, authored.id(), &quot;&quot;, book2Id);
+
+        List &lt;Edge&gt; edges = graph.traversal().E(edgeId).toList();
+        assert edges.size() == 1;
+        Edge edge = edges.get(0);
+        System.out.println(&quot;&gt;&gt;&gt;&gt; removing edge: &quot; + edge);
+        edge.remove();
+        graph.tx().commit();
+        assert !graph.traversal().E(edgeId).hasNext();
+</code></pre>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文初步介绍了hugegraph设计理念、基本使用等。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/hugegraph/" rel="tag"># hugegraph</a>
+              <a href="/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" rel="tag"># 知识图谱</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/29/jqpeng-%E4%BD%BF%E7%94%A8%E7%A7%91%E5%A4%A7%E8%AE%AF%E9%A3%9ETTS%E8%87%AA%E5%AE%9A%E4%B9%89%E5%BD%A9%E8%99%B9%E5%B1%81%E8%AF%AD%E9%9F%B3%E5%8C%85/" rel="prev" title="使用科大讯飞TTS自定义彩虹屁语音包">
+      <i class="fa fa-chevron-left"></i> 使用科大讯飞TTS自定义彩虹屁语音包
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/13/jqpeng-%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8BTinkerPop%20Provider/" rel="next" title="图数据库之TinkerPop Provider">
+      图数据库之TinkerPop Provider <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#HugeGraph%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">HugeGraph介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">架构介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="nav-number">2.1.</span> <span class="nav-text">架构图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E7%90%86%E5%BF%B5"><span class="nav-number">2.3.</span> <span class="nav-text">设计理念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7"><span class="nav-number">2.4.</span> <span class="nav-text">可扩展性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%A1%88%E4%BE%8B%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81"><span class="nav-number">2.5.</span> <span class="nav-text">从案例深入源码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-loadGraph"><span class="nav-number">2.5.1.</span> <span class="nav-text">1. loadGraph</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-registerPlugins"><span class="nav-number">2.5.1.1.</span> <span class="nav-text">1.1 registerPlugins</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-HugeFactory-open"><span class="nav-number">2.5.1.2.</span> <span class="nav-text">1.2 HugeFactory.open</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-HugeGraph-%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.5.1.3.</span> <span class="nav-text">1.3 HugeGraph 对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-4-graph-clearBackend-%E4%B8%8EinitBackend"><span class="nav-number">2.5.1.4.</span> <span class="nav-text">1.4 graph.clearBackend 与initBackend</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-loadSchema"><span class="nav-number">2.5.2.</span> <span class="nav-text">2. loadSchema</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-loadData"><span class="nav-number">2.5.3.</span> <span class="nav-text">3. loadData</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-testQuery-%E6%B5%8B%E8%AF%95%E6%9F%A5%E8%AF%A2"><span class="nav-number">2.5.4.</span> <span class="nav-text">4. testQuery 测试查询</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E6%8C%87%E5%AE%9Alabel%E7%9A%84%E5%AE%9E%E4%BD%93%EF%BC%9A"><span class="nav-number">2.5.4.1.</span> <span class="nav-text">查询指定label的实体：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AEprimary-values%E6%9F%A5%E8%AF%A2%E5%AE%9E%E4%BD%93%EF%BC%9A"><span class="nav-number">2.5.4.2.</span> <span class="nav-text">根据primary-values查询实体：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2edge%EF%BC%9A"><span class="nav-number">2.5.4.3.</span> <span class="nav-text">查询edge：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E5%88%A0%E9%99%A4"><span class="nav-number">2.5.5.</span> <span class="nav-text">5. 删除</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

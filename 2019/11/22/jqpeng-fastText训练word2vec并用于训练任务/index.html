@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: fastText训练word2vec并用于训练任务 最近测试OpenNRE，没有GPU服务器，bert的跑不动，于是考虑用word2vec，捡起fasttext 下载安装先clone代码 git clone https:&#x2F;&#x2F;github.com&#x2F;facebookresearch&#x2F;fastText.git  然后make编译： make  编译后，将生成的fastT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fastText训练word2vec并用于训练任务">
+<meta property="og:url" content="http://blog.iflyresearch.com/2019/11/22/jqpeng-fastText%E8%AE%AD%E7%BB%83word2vec%E5%B9%B6%E7%94%A8%E4%BA%8E%E8%AE%AD%E7%BB%83%E4%BB%BB%E5%8A%A1/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: fastText训练word2vec并用于训练任务 最近测试OpenNRE，没有GPU服务器，bert的跑不动，于是考虑用word2vec，捡起fasttext 下载安装先clone代码 git clone https:&#x2F;&#x2F;github.com&#x2F;facebookresearch&#x2F;fastText.git  然后make编译： make  编译后，将生成的fastT">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-11-22T07:45:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="fastText">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2019/11/22/jqpeng-fastText%E8%AE%AD%E7%BB%83word2vec%E5%B9%B6%E7%94%A8%E4%BA%8E%E8%AE%AD%E7%BB%83%E4%BB%BB%E5%8A%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>fastText训练word2vec并用于训练任务 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/11/22/jqpeng-fastText%E8%AE%AD%E7%BB%83word2vec%E5%B9%B6%E7%94%A8%E4%BA%8E%E8%AE%AD%E7%BB%83%E4%BB%BB%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          fastText训练word2vec并用于训练任务
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-22 15:45:00" itemprop="dateCreated datePublished" datetime="2019-11-22T15:45:00+08:00">2019-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/fastText.html">fastText训练word2vec并用于训练任务</a></p>
+<p>最近测试OpenNRE，没有GPU服务器，bert的跑不动，于是考虑用word2vec，捡起fasttext</p>
+<h2 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h2><p>先clone代码</p>
+<pre><code>git clone https://github.com/facebookresearch/fastText.git
+</code></pre>
+<p>然后make编译：</p>
+<pre><code>make
+</code></pre>
+<p>编译后，将生成的fastText移到bin</p>
+<pre><code>cp fasttext /usr/local/bin/
+</code></pre>
+<h2 id="训练word2vec"><a href="#训练word2vec" class="headerlink" title="训练word2vec"></a>训练word2vec</h2><p>先讲语料分好词，比如保存到sent_train.txt，文件内容是中文分词后的内容:</p>
+<pre><code>楚穆王 十二年 : （ 丁未 ， 公元前 614 年 ） ， 在位 12 年 的 楚穆王 死 ， 死后 葬 在 楚 郢 之西 。
+</code></pre>
+<p>开始调用fasttext训练：</p>
+<pre><code>fasttext skipgram -input sent_train.txt -output ./result
+</code></pre>
+<p>很快就跑完了，跑完后，可以看到生成两个文件：</p>
+<pre><code># ll result.*
+-rw-r--r-- 1 root root 876945058 Nov 21 09:29 result.bin
+-rw-r--r-- 1 root root  82656362 Nov 21 09:29 result.vec
+</code></pre>
+<p>来看下vec文件，可以看到是100维的向量</p>
+<pre><code># head result.vec 
+94161 100
+， 0.030437 0.12177 -0.1367 0.11101 -0.49543 0.49908 0.033441 -0.025445 -0.036312 -0.081132 -0.082666 0.27204 -0.2367 -0.23424 -0.30124 -0.029666 -0.23803 -0.083255 -0.03177 -0.23129 0.33953 -0.095728 0.023824 -0.33981 -0.048715 -0.22876 0.24215 -0.094075 -0.077224 0.097473 -0.012714 -0.16661 -0.5156 -0.12635 -0.34265 -0.13444 -0.25535 -0.29832 0.14624 -0.24779 0.25403 0.17662 0.070345 -0.15927 0.3449 0.11372 0.22504 0.15652 0.19013 -0.029641 -0.1761 0.018512 -0.19782 -0.15607 0.39958 0.31343 0.30654 0.062457 -0.045659 -0.008893 0.11445 0.035771 0.048592 0.17336 0.15742 -0.085562 -0.12398 0.25767 -0.087141 -0.10011 -0.14832 0.11072 0.0037114 0.18156 -0.32666 -0.081212 0.1102 -0.035646 0.09467 0.014385 0.11191 -0.14713 -0.0052515 -0.006049 0.3735 -0.13804 0.12271 -0.050977 -0.019325 -0.034865 0.019665 -0.16755 0.034194 0.074825 0.16173 -0.20006 -0.03904 -0.18061 0.040119 -0.22622 
+&lt;/s&gt; -0.23353 0.071758 -0.26913 -0.14217 -0.1736 0.22807 -0.11152 -0.047725 0.19557 0.13388 -0.21704 0.39025 -0.30286 0.16748 -0.18748 0.11423 -0.19393 -0.10635 -0.12826 -0.3244 0.27615 -0.25832 -0.17595 -0.12634 -0.094196 -0.19782 0.14435 -0.059313 -0.24001 -0.13996 -0.09501 -0.26155 -0.35677 0.059324 -0.23963 -0.20722 -0.37483 -0.11253 0.021369 -0.15571 0.059181 0.33843 -0.058266 -0.12393 0.17777 -0.032558 0.17864 0.28223 0.058037 0.13108 -0.31817 0.081199 -0.05605 -0.029366 0.30827 0.3208 0.070286 0.062643 0.0040956 -0.080481 0.0064075 -0.087952 0.19877 0.33604 0.28209 0.073563 -0.097628 0.035748 -0.20385 -0.28676 -0.12122 0.10025 -0.05521 0.22991 -0.326 0.062162 0.090364 -0.20831 0.3678 -0.00043566 0.059466 -0.068502 -0.072635 0.08424 0.56188 -0.2588 0.15091 -0.15923 -0.12595 0.086243 0.08293 -0.37854 0.055448 0.11274 0.19559 -0.17132 -0.0858 -0.072667 -0.10356 0.1394 
+。 -0.097674 0.13847 -0.25706 0.057651 -0.29097 0.23529 -0.022163 -0.046278 0.18153 0.15302 -0.25117 0.30537 -0.22519 0.072574 -0.20933 -0.012315 -0.098127 -0.13748 -0.10589 -0.24647 0.38788 -0.077517 -0.24665 -0.1512 -0.17301 -0.13699 0.15931 -0.050389 -0.20344 -0.10393 -0.086151 -0.12502 -0.51355 -0.078194 -0.32112 -0.25169 -0.55924 -0.083918 0.13193 -0.12648 0.030666 0.37635 -0.0068401 -0.082757 0.35918 0.099755 0.048127 0.14651 -0.078756 0.16794 -0.35228 0.096068 -0.083268 -0.16416 0.30675 0.2112 -0.0034745 0.06171 0.015094 0.035436 0.13429 -0.036958 0.052708 0.39273 0.15883 0.015595 -0.014254 0.025274 -0.061765 -0.20447 -0.11626 0.12291 -0.13875 0.28874 -0.46607 -0.0064296 0.09502 -0.19274 0.32262 -0.077533 0.058291 -0.11019 -0.23094 -0.023817 0.59467 -0.31411 0.13071 -0.064146 -0.10452 -0.014019 0.28547 -0.3112 -0.019938 0.073268 0.2858 -0.087934 -0.0038124 -0.032765 -0.086257 0.07277 
+的 -0.32055 0.26205 -0.12693 0.036473 -0.48332 0.37801 0.043741 0.063979 0.17719 -0.0034521 -0.28247 0.4286 -0.11431 0.02168 -0.2469 -0.34261 -0.29886 -0.11997 -0.068971 -0.084678 0.36461 -0.089133 -0.056445 -0.15533 0.00017123 0.1496 0.24858 0.12394 -0.23362 -0.26373 0.037876 -0.20656 -0.48941 0.093864 -0.21763 -0.35464 -0.31409 -0.10626 0.064067 -0.21431 0.028025 0.27952 -0.1368 -0.30315 0.39894 0.23021 0.19465 0.12281 0.22508 -0.14596 -0.31362 -0.035584 0.076387 -0.28307 0.32819 0.21772 0.2417 0.23587 -0.097756 -0.18368 -0.027078 -0.15416 0.095119 -0.16597 0.096744 0.20759 0.083306 0.24435 -0.055484 -0.17169 -0.031104 0.13582 0.15192 0.066508 -0.19847 -0.28637 0.027218 -0.030856 0.36561 -0.13589 0.26368 -0.13762 -0.21137 -0.24706 0.46078 -0.31472 0.080658 0.23818 -0.060492 0.18232 0.19158 -0.16032 0.14793 0.021469 0.22363 -0.20411 0.07628 -0.096523 -0.11407 -0.35992 
+</code></pre>
+<h2 id="转换为pytorch可加载格式"><a href="#转换为pytorch可加载格式" class="headerlink" title="转换为pytorch可加载格式"></a>转换为pytorch可加载格式</h2><p>为了方便训练使用，需要转换下：</p>
+<pre><code>import pickle as pkl
+import numpy as np
+import os
+import json
+
+def create_wordVec(vec_file，word2id,vec):
+    word_map = &#123;&#125;
+    word_map[&#39;PAD&#39;] = len(word_map)
+    word_map[&#39;UNK&#39;] = len(word_map)
+    word_embed = []
+    for line in open(vec_file):
+        content = line.strip().split()
+        if len(content) != 100 + 1:
+            continue
+        word_map[content[0]] = len(word_map)
+        word_embed.append(np.asarray(content[1:], dtype=np.float32))
+    word_embed = np.array(word_embed)
+    np.save(vec,word_embed)
+    with open(word2id, &#39;w+&#39;, encoding=&#39;utf-8&#39;) as fw:
+      fw.write(json.dumps(word_map, ensure_ascii=False))
+
+create_wordVec(&#39;result.vec&#39;,&#39;word2id.json&#39;,&#39;word2vec.npy&#39;)
+</code></pre>
+<h2 id="训练模型"><a href="#训练模型" class="headerlink" title="训练模型"></a>训练模型</h2><p>参考opennre的cnn分类代码：</p>
+<pre><code>import torch
+import numpy as np
+import json
+import opennre
+from opennre import encoder, model, framework
+
+print(&#39;load word2vec ...&#39;)
+ckpt = &#39;ckpt/semeval_cnn_softmax.pth.tar&#39;
+wordi2d = json.load(open(&#39;pretrain/glove/word2id.json&#39;))
+word2vec = np.load(&#39;pretrain/glove/word2vec.npy&#39;)
+rel2id = json.load(open(&#39;benchmark/ccks/ccks_rel2id.txt&#39;))
+print(&#39;create model ...&#39;)
+sentence_encoder = opennre.encoder.CNNEncoder(token2id=wordi2d,
+                                             max_length=100,
+                                             word_size=100,
+                                             position_size=5,
+                                             hidden_size=230,
+                                             blank_padding=True,
+                                             kernel_size=3,
+                                             padding_size=1,
+                                             word2vec=word2vec,
+                                             dropout=0.5)
+model = opennre.model.SoftmaxNN(sentence_encoder, len(rel2id), rel2id)
+framework = opennre.framework.SentenceRE(
+    train_path=&#39;benchmark/ccks/ccks_train.txt&#39;,
+    val_path=&#39;benchmark/ccks/ccks_dev.txt&#39;,
+    test_path=&#39;benchmark/ccks/ccks_dev.txt&#39;,
+    model=model,
+    ckpt=ckpt,
+    batch_size=32,
+    max_epoch=100,
+    lr=0.1,
+    weight_decay=1e-5,
+    opt=&#39;sgd&#39;)
+# Train
+#framework.train_model(metric=&#39;micro_f1&#39;)
+# Test
+print(&#39;load model ...&#39;)
+
+framework.load_state_dict(torch.load(ckpt)[&#39;state_dict&#39;])
+framework.train_model(metric=&#39;micro_f1&#39;)
+result = framework.eval_model(framework.test_loader)
+print(&#39;Accuracy on test set: &#123;&#125;&#39;.format(result[&#39;acc&#39;]))
+print(&#39;Micro Precision: &#123;&#125;&#39;.format(result[&#39;micro_p&#39;]))
+print(&#39;Micro Recall: &#123;&#125;&#39;.format(result[&#39;micro_r&#39;]))
+print(&#39;Micro F1: &#123;&#125;&#39;.format(result[&#39;micro_f1&#39;]))
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/fastText/" rel="tag"># fastText</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/10/21/jqpeng-NLP%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7brat%20%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E/" rel="prev" title="NLP标注工具brat 配置文件说明">
+      <i class="fa fa-chevron-left"></i> NLP标注工具brat 配置文件说明
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/12/18/jqpeng-%E9%80%9A%E8%BF%87%20Drone%20Rest%20API%20%E8%8E%B7%E5%8F%96%E6%9E%84%E5%BB%BA%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97/" rel="next" title="通过 Drone Rest API 获取构建记录日志">
+      通过 Drone Rest API 获取构建记录日志 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">下载安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83word2vec"><span class="nav-number">2.</span> <span class="nav-text">训练word2vec</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2%E4%B8%BApytorch%E5%8F%AF%E5%8A%A0%E8%BD%BD%E6%A0%BC%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">转换为pytorch可加载格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">训练模型</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

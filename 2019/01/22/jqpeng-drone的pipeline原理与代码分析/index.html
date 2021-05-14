@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: drone的pipeline原理与代码分析 最近的一个项目，需要实现一个工作任务流（task pipeline），基于之前CICD的经验，jenkins pipeline和drone的pipeline进入候选。 drone是基于go的cicd解决方案，github上有1.6万+star，本文简单对比了其和jenkins的区别，重点介绍了drone的pipeline">
+<meta property="og:type" content="article">
+<meta property="og:title" content="drone的pipeline原理与代码分析">
+<meta property="og:url" content="http://blog.iflyresearch.com/2019/01/22/jqpeng-drone%E7%9A%84pipeline%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: drone的pipeline原理与代码分析 最近的一个项目，需要实现一个工作任务流（task pipeline），基于之前CICD的经验，jenkins pipeline和drone的pipeline进入候选。 drone是基于go的cicd解决方案，github上有1.6万+star，本文简单对比了其和jenkins的区别，重点介绍了drone的pipeline">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-01-22T09:11:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="drone">
+<meta property="article:tag" content="pipeline">
+<meta property="article:tag" content="jenkins">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2019/01/22/jqpeng-drone%E7%9A%84pipeline%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>drone的pipeline原理与代码分析 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/01/22/jqpeng-drone%E7%9A%84pipeline%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          drone的pipeline原理与代码分析
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-01-22 17:11:00" itemprop="dateCreated datePublished" datetime="2019-01-22T17:11:00+08:00">2019-01-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>14k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>13 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/drone-pipeline.html">drone的pipeline原理与代码分析</a></p>
+<p>最近的一个项目，需要实现一个工作任务流（task pipeline），基于之前CICD的经验，jenkins pipeline和drone的pipeline进入候选。</p>
+<p>drone是基于go的cicd解决方案，github上有1.6万+star，本文简单对比了其和jenkins的区别，重点介绍了drone的pipeline原理，并简单分析了代码。</p>
+<h2 id="jenkins-与-drone"><a href="#jenkins-与-drone" class="headerlink" title="jenkins 与 drone"></a>jenkins 与 drone</h2><table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>jenkins</th>
+<th>drone</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pipeline定义</td>
+<td>编写jenkinsfile</td>
+<td>编写流程yml</td>
+</tr>
+<tr>
+<td>运行方式</td>
+<td>在一个pod里运行</td>
+<td>每一步骤起对应的container，通过挂载volume实现数据共享</td>
+</tr>
+<tr>
+<td>运行环境</td>
+<td>物理机或者容器环境，包括K8S</td>
+<td>docker容器环境</td>
+</tr>
+<tr>
+<td>开发语言</td>
+<td>java</td>
+<td>golang</td>
+</tr>
+</tbody></table>
+<p>drone pipeline好处是相对更轻量级，yml定义也相对简洁清晰，按照功能来划分容器，可以方便的实现task的复用，而jenkins则是完全打包到一个镜像，会造成单个镜像体积过大，比如jenkins的单个镜像超过2G。</p>
+<p>drone的pipeline，是基于<a target="_blank" rel="noopener" href="https://github.com/cncd/pipeline">https://github.com/cncd/pipeline</a> 实现的，这里简单分析下其原理。</p>
+<h2 id="编译和执行-drone-pipeline"><a href="#编译和执行-drone-pipeline" class="headerlink" title="编译和执行 drone pipeline"></a>编译和执行 drone pipeline</h2><p>要了解一个程序的原理，先从输入输出讲起。</p>
+<p>先安装：</p>
+<pre><code>go get -u github.com/cncd/pipeline
+go install github.com/cncd/pipeline/pipec
+</code></pre>
+<p>然后测试</p>
+<pre><code>cd $GOPATH/github.com/cncd/pipeline/samples/sample_1
+# ll
+total 28
+drwxr-xr-x  2 root root 4096 Jan 22 11:44 ./
+drwxr-xr-x 13 root root 4096 Jan 22 11:02 ../
+-rw-r--r--  1 root root  549 Jan 22 11:02 .env
+-rw-r--r--  1 root root 6804 Jan 22 16:30 pipeline.json
+-rw-r--r--  1 root root  229 Jan 22 11:02 pipeline.yml
+-rw-r--r--  1 root root  138 Jan 22 11:02 README.md
+</code></pre>
+<ul>
+<li>pipeline.yml 定义文件</li>
+<li>pipeline.json 编译后的配置文件</li>
+<li>.env 环境变量</li>
+</ul>
+<p>先来查看<code>pipeline.yml</code> 定义</p>
+<pre><code>workspace:
+  base: /go
+  path: src/github.com/drone/envsubst
+
+clone:
+  git:
+    image: plugins/git
+    depth: 50
+
+pipeline:
+  build:
+    image: golang:1.7
+    commands:
+      - go get -t ./...
+      - go build
+      - go test -v
+</code></pre>
+<p>上面的yml定义了：</p>
+<ul>
+<li>工作目录workspace</li>
+<li>初始化工作，git clone仓库,仓库地址在.env里定义</li>
+<li>然后是定义pipeline，<ul>
+<li>pipeline下面是step数组，这里只有一个build</li>
+<li>使用golang:1.7镜像</li>
+<li>构建命令在commands数组里定义</li>
+</ul>
+</li>
+</ul>
+<p>通过<code>pipec compile</code>compile配置文件：</p>
+<pre><code># pipec compile
+Successfully compiled pipeline.yml to pipeline.json
+</code></pre>
+<p>查看编译后的<code>pipeline.json</code></p>
+<pre><code>&#123;
+  &quot;pipeline&quot;: [
+    &#123;
+      &quot;name&quot;: &quot;pipeline_clone_0&quot;,
+      &quot;alias&quot;: &quot;git&quot;,
+      &quot;steps&quot;: [
+        &#123;
+          &quot;name&quot;: &quot;pipeline_clone_0&quot;,
+          &quot;alias&quot;: &quot;git&quot;,
+          &quot;image&quot;: &quot;plugins/git:latest&quot;,
+          &quot;working_dir&quot;: &quot;/go/src/github.com/drone/envsubst&quot;,
+          &quot;environment&quot;: &#123;
+            &quot;CI&quot;: &quot;drone&quot;,
+            &quot;CI_BUILD_CREATED&quot;: &quot;1486119586&quot;,
+            &quot;CI_BUILD_EVENT&quot;: &quot;push&quot;,
+            &quot;CI_BUILD_NUMBER&quot;: &quot;6&quot;,
+            &quot;CI_BUILD_STARTED&quot;: &quot;1486119585&quot;,
+            &quot;CI_COMMIT_AUTHOR&quot;: &quot;bradrydzewski&quot;,
+            &quot;CI_COMMIT_AUTHOR_NAME&quot;: &quot;bradrydzewski&quot;,
+            &quot;CI_COMMIT_BRANCH&quot;: &quot;master&quot;,
+            &quot;CI_COMMIT_MESSAGE&quot;: &quot;added a few more test cases for escaping behavior&quot;,
+            &quot;CI_COMMIT_REF&quot;: &quot;refs/heads/master&quot;,
+            &quot;CI_COMMIT_SHA&quot;: &quot;d0876d3176965f9552a611cbd56e24a9264355e6&quot;,
+            &quot;CI_REMOTE_URL&quot;: &quot;https://github.com/drone/envsubst.git&quot;,
+            &quot;CI_REPO&quot;: &quot;drone/envsubst&quot;,
+            &quot;CI_REPO_LINK&quot;: &quot;https://github.com/drone/envsubst&quot;,
+            &quot;CI_REPO_NAME&quot;: &quot;drone/envsubst&quot;,
+            &quot;CI_REPO_REMOTE&quot;: &quot;https://github.com/drone/envsubst.git&quot;,
+            &quot;CI_SYSTEM&quot;: &quot;pipec&quot;,
+            &quot;CI_SYSTEM_ARCH&quot;: &quot;linux/amd64&quot;,
+            &quot;CI_SYSTEM_LINK&quot;: &quot;https://github.com/cncd/pipec&quot;,
+            &quot;CI_SYSTEM_NAME&quot;: &quot;pipec&quot;,
+            &quot;CI_WORKSPACE&quot;: &quot;/go/src/github.com/drone/envsubst&quot;,
+            &quot;DRONE&quot;: &quot;true&quot;,
+            &quot;DRONE_ARCH&quot;: &quot;linux/amd64&quot;,
+            &quot;DRONE_BRANCH&quot;: &quot;master&quot;,
+            &quot;DRONE_BUILD_CREATED&quot;: &quot;1486119586&quot;,
+            &quot;DRONE_BUILD_EVENT&quot;: &quot;push&quot;,
+            &quot;DRONE_BUILD_LINK&quot;: &quot;https://github.com/cncd/pipec/drone/envsubst/6&quot;,
+            &quot;DRONE_BUILD_NUMBER&quot;: &quot;6&quot;,
+            &quot;DRONE_BUILD_STARTED&quot;: &quot;1486119585&quot;,
+            &quot;DRONE_COMMIT&quot;: &quot;d0876d3176965f9552a611cbd56e24a9264355e6&quot;,
+            &quot;DRONE_COMMIT_AUTHOR&quot;: &quot;bradrydzewski&quot;,
+            &quot;DRONE_COMMIT_BRANCH&quot;: &quot;master&quot;,
+            &quot;DRONE_COMMIT_MESSAGE&quot;: &quot;added a few more test cases for escaping behavior&quot;,
+            &quot;DRONE_COMMIT_REF&quot;: &quot;refs/heads/master&quot;,
+            &quot;DRONE_COMMIT_SHA&quot;: &quot;d0876d3176965f9552a611cbd56e24a9264355e6&quot;,
+            &quot;DRONE_JOB_STARTED&quot;: &quot;1486119585&quot;,
+            &quot;DRONE_REMOTE_URL&quot;: &quot;https://github.com/drone/envsubst.git&quot;,
+            &quot;DRONE_REPO&quot;: &quot;drone/envsubst&quot;,
+            &quot;DRONE_REPO_LINK&quot;: &quot;https://github.com/drone/envsubst&quot;,
+            &quot;DRONE_REPO_NAME&quot;: &quot;envsubst&quot;,
+            &quot;DRONE_REPO_OWNER&quot;: &quot;drone&quot;,
+            &quot;DRONE_REPO_SCM&quot;: &quot;git&quot;,
+            &quot;DRONE_WORKSPACE&quot;: &quot;/go/src/github.com/drone/envsubst&quot;,
+            &quot;PLUGIN_DEPTH&quot;: &quot;50&quot;
+          &#125;,
+          &quot;volumes&quot;: [
+            &quot;pipeline_default:/go&quot;
+          ],
+          &quot;networks&quot;: [
+            &#123;
+              &quot;name&quot;: &quot;pipeline_default&quot;,
+              &quot;aliases&quot;: [
+                &quot;git&quot;
+              ]
+            &#125;
+          ],
+          &quot;on_success&quot;: true,
+          &quot;auth_config&quot;: &#123;&#125;
+        &#125;
+      ]
+    &#125;,
+    &#123;
+      &quot;name&quot;: &quot;pipeline_stage_0&quot;,
+      &quot;alias&quot;: &quot;build&quot;,
+      &quot;steps&quot;: [
+        &#123;
+          &quot;name&quot;: &quot;pipeline_step_0&quot;,
+          &quot;alias&quot;: &quot;build&quot;,
+          &quot;image&quot;: &quot;golang:1.7&quot;,
+          &quot;working_dir&quot;: &quot;/go/src/github.com/drone/envsubst&quot;,
+          &quot;environment&quot;: &#123;
+            &quot;CI&quot;: &quot;drone&quot;,
+            &quot;CI_BUILD_CREATED&quot;: &quot;1486119586&quot;,
+            &quot;CI_BUILD_EVENT&quot;: &quot;push&quot;,
+            &quot;CI_BUILD_NUMBER&quot;: &quot;6&quot;,
+            &quot;CI_BUILD_STARTED&quot;: &quot;1486119585&quot;,
+            &quot;CI_COMMIT_AUTHOR&quot;: &quot;bradrydzewski&quot;,
+            &quot;CI_COMMIT_AUTHOR_NAME&quot;: &quot;bradrydzewski&quot;,
+            &quot;CI_COMMIT_BRANCH&quot;: &quot;master&quot;,
+            &quot;CI_COMMIT_MESSAGE&quot;: &quot;added a few more test cases for escaping behavior&quot;,
+            &quot;CI_COMMIT_REF&quot;: &quot;refs/heads/master&quot;,
+            &quot;CI_COMMIT_SHA&quot;: &quot;d0876d3176965f9552a611cbd56e24a9264355e6&quot;,
+            &quot;CI_REMOTE_URL&quot;: &quot;https://github.com/drone/envsubst.git&quot;,
+            &quot;CI_REPO&quot;: &quot;drone/envsubst&quot;,
+            &quot;CI_REPO_LINK&quot;: &quot;https://github.com/drone/envsubst&quot;,
+            &quot;CI_REPO_NAME&quot;: &quot;drone/envsubst&quot;,
+            &quot;CI_REPO_REMOTE&quot;: &quot;https://github.com/drone/envsubst.git&quot;,
+            &quot;CI_SCRIPT&quot;: &quot;CmlmIFsgLW4gIiRDSV9ORVRSQ19NQUNISU5FIiBdOyB0aGVuCmNhdCA8PEVPRiA+ICRIT01FLy5uZXRyYwptYWNoaW5lICRDSV9ORVRSQ19NQUNISU5FCmxvZ2luICRDSV9ORVRSQ19VU0VSTkFNRQpwYXNzd29yZCAkQ0lfTkVUUkNfUEFTU1dPUkQKRU9GCmNobW9kIDA2MDAgJEhPTUUvLm5ldHJjCmZpCnVuc2V0IENJX05FVFJDX1VTRVJOQU1FCnVuc2V0IENJX05FVFJDX1BBU1NXT1JECnVuc2V0IENJX1NDUklQVAp1bnNldCBEUk9ORV9ORVRSQ19VU0VSTkFNRQp1bnNldCBEUk9ORV9ORVRSQ19QQVNTV09SRAoKZWNobyArICJnbyBnZXQgLXQgLi8uLi4iCmdvIGdldCAtdCAuLy4uLgoKZWNobyArICJnbyBidWlsZCIKZ28gYnVpbGQKCmVjaG8gKyAiZ28gdGVzdCAtdiIKZ28gdGVzdCAtdgoK&quot;,
+            &quot;CI_SYSTEM&quot;: &quot;pipec&quot;,
+            &quot;CI_SYSTEM_ARCH&quot;: &quot;linux/amd64&quot;,
+            &quot;CI_SYSTEM_LINK&quot;: &quot;https://github.com/cncd/pipec&quot;,
+            &quot;CI_SYSTEM_NAME&quot;: &quot;pipec&quot;,
+            &quot;CI_WORKSPACE&quot;: &quot;/go/src/github.com/drone/envsubst&quot;,
+            &quot;DRONE&quot;: &quot;true&quot;,
+            &quot;DRONE_ARCH&quot;: &quot;linux/amd64&quot;,
+            &quot;DRONE_BRANCH&quot;: &quot;master&quot;,
+            &quot;DRONE_BUILD_CREATED&quot;: &quot;1486119586&quot;,
+            &quot;DRONE_BUILD_EVENT&quot;: &quot;push&quot;,
+            &quot;DRONE_BUILD_LINK&quot;: &quot;https://github.com/cncd/pipec/drone/envsubst/6&quot;,
+            &quot;DRONE_BUILD_NUMBER&quot;: &quot;6&quot;,
+            &quot;DRONE_BUILD_STARTED&quot;: &quot;1486119585&quot;,
+            &quot;DRONE_COMMIT&quot;: &quot;d0876d3176965f9552a611cbd56e24a9264355e6&quot;,
+            &quot;DRONE_COMMIT_AUTHOR&quot;: &quot;bradrydzewski&quot;,
+            &quot;DRONE_COMMIT_BRANCH&quot;: &quot;master&quot;,
+            &quot;DRONE_COMMIT_MESSAGE&quot;: &quot;added a few more test cases for escaping behavior&quot;,
+            &quot;DRONE_COMMIT_REF&quot;: &quot;refs/heads/master&quot;,
+            &quot;DRONE_COMMIT_SHA&quot;: &quot;d0876d3176965f9552a611cbd56e24a9264355e6&quot;,
+            &quot;DRONE_JOB_STARTED&quot;: &quot;1486119585&quot;,
+            &quot;DRONE_REMOTE_URL&quot;: &quot;https://github.com/drone/envsubst.git&quot;,
+            &quot;DRONE_REPO&quot;: &quot;drone/envsubst&quot;,
+            &quot;DRONE_REPO_LINK&quot;: &quot;https://github.com/drone/envsubst&quot;,
+            &quot;DRONE_REPO_NAME&quot;: &quot;envsubst&quot;,
+            &quot;DRONE_REPO_OWNER&quot;: &quot;drone&quot;,
+            &quot;DRONE_REPO_SCM&quot;: &quot;git&quot;,
+            &quot;DRONE_WORKSPACE&quot;: &quot;/go/src/github.com/drone/envsubst&quot;,
+            &quot;HOME&quot;: &quot;/root&quot;,
+            &quot;SHELL&quot;: &quot;/bin/sh&quot;
+          &#125;,
+          &quot;entrypoint&quot;: [
+            &quot;/bin/sh&quot;,
+            &quot;-c&quot;
+          ],
+          &quot;command&quot;: [
+            &quot;echo $CI_SCRIPT | base64 -d | /bin/sh -e&quot;
+          ],
+          &quot;volumes&quot;: [
+            &quot;pipeline_default:/go&quot;
+          ],
+          &quot;networks&quot;: [
+            &#123;
+              &quot;name&quot;: &quot;pipeline_default&quot;,
+              &quot;aliases&quot;: [
+                &quot;build&quot;
+              ]
+            &#125;
+          ],
+          &quot;on_success&quot;: true,
+          &quot;auth_config&quot;: &#123;&#125;
+        &#125;
+      ]
+    &#125;
+  ],
+  &quot;networks&quot;: [
+    &#123;
+      &quot;name&quot;: &quot;pipeline_default&quot;,
+      &quot;driver&quot;: &quot;bridge&quot;
+    &#125;
+  ],
+  &quot;volumes&quot;: [
+    &#123;
+      &quot;name&quot;: &quot;pipeline_default&quot;,
+      &quot;driver&quot;: &quot;local&quot;
+    &#125;
+  ],
+  &quot;secrets&quot;: null
+&#125;
+</code></pre>
+<p>简单分析结构：</p>
+<ul>
+<li>pipeline 定义了执行的stage，每个stage有一个或者多个step</li>
+<li>networks、volumes、secrets 分别定义网络、存储和secrets<ul>
+<li>通过network，实现container互通</li>
+<li>通过volumes实现数据共享</li>
+</ul>
+</li>
+</ul>
+<p>最后执行，通过<code>pipec exec</code>：</p>
+<pre><code># pipec exec
+proc &quot;pipeline_clone_0&quot; started
++ git init
+Initialized empty Git repository in /go/src/github.com/drone/envsubst/.git/
++ git remote add origin https://github.com/drone/envsubst.git
++ git fetch --no-tags --depth=50 origin +refs/heads/master:
+From https://github.com/drone/envsubst
+ * branch            master     -&gt; FETCH_HEAD
+ * [new branch]      master     -&gt; origin/master
++ git reset --hard -q d0876d3176965f9552a611cbd56e24a9264355e6
++ git submodule update --init --recursive
+proc &quot;pipeline_clone_0&quot; exited with status 0
+proc &quot;pipeline_step_0&quot; started
++ go get -t ./...
++ go build
++ go test -v
+=== RUN   TestExpand
+--- PASS: TestExpand (0.00s)
+=== RUN   TestFuzz
+--- PASS: TestFuzz (0.01s)
+=== RUN   Test_len
+--- PASS: Test_len (0.00s)
+=== RUN   Test_lower
+--- PASS: Test_lower (0.00s)
+=== RUN   Test_lowerFirst
+--- PASS: Test_lowerFirst (0.00s)
+=== RUN   Test_upper
+--- PASS: Test_upper (0.00s)
+=== RUN   Test_upperFirst
+--- PASS: Test_upperFirst (0.00s)
+=== RUN   Test_default
+--- PASS: Test_default (0.00s)
+PASS
+ok      github.com/drone/envsubst    0.009s
+proc &quot;pipeline_step_0&quot; exited with status 0
+</code></pre>
+<h2 id="pipeline-原理分析"><a href="#pipeline-原理分析" class="headerlink" title="pipeline 原理分析"></a>pipeline 原理分析</h2><h3 id="编译过程"><a href="#编译过程" class="headerlink" title="编译过程"></a>编译过程</h3><p>可以形象的理解为 .env+pipeline.yml –&gt; pipeline.json</p>
+<p>编译过程不复杂，主要是解析pipeline.yml为<code>Config</code>:</p>
+<pre><code>Config struct &#123;    Cache     libcompose.Stringorslice    Platform  string    Branches  Constraint    Workspace Workspace    Clone     Containers    Pipeline  Containers    Services  Containers    Networks  Networks    Volumes   Volumes    Labels    libcompose.SliceorMap&#125;
+</code></pre>
+<p>然后转换为json对应的config：</p>
+<pre><code>Config struct &#123;    Stages   []*Stage   `json:&quot;pipeline&quot;` // pipeline stages    Networks []*Network `json:&quot;networks&quot;` // network definitions    Volumes  []*Volume  `json:&quot;volumes&quot;`  // volume definitions    Secrets  []*Secret  `json:&quot;secrets&quot;`  // secret definitions&#125;
+</code></pre>
+<p>该部分主要代码在pipeline/frontend里</p>
+<h3 id="执行过程"><a href="#执行过程" class="headerlink" title="执行过程"></a>执行过程</h3><p>我们主要关注执行过程，主要代码在pipeline/backend里。</p>
+<p>首先是读取配置文件为backend.Config</p>
+<pre><code>config, err := pipeline.Parse(reader)if err != nil &#123;    return err&#125;
+</code></pre>
+<p>然后创建执行环境，目前的代码仅docker可用，k8s是空代码。</p>
+<pre><code>var engine backend.Engineif c.Bool(&quot;kubernetes&quot;) &#123;    engine = kubernetes.New(        c.String(&quot;kubernetes-namepsace&quot;),        c.String(&quot;kubernetes-endpoint&quot;),        c.String(&quot;kubernetes-token&quot;),    )&#125; else &#123;    engine, err = docker.NewEnv()    if err != nil &#123;        return err    &#125;&#125;
+</code></pre>
+<p>接着开始执行</p>
+<pre><code>    ctx, cancel := context.WithTimeout(context.Background(), c.Duration(&quot;timeout&quot;))defer cancel()ctx = interrupt.WithContext(ctx)
+return pipeline.New(config,    pipeline.WithContext(ctx),    pipeline.WithLogger(defaultLogger),    pipeline.WithTracer(defaultTracer),    pipeline.WithEngine(engine),).Run()
+</code></pre>
+<p>其中pipeline.NEW创建了<code>Runtime</code>对象;</p>
+<pre><code>type Runtime struct &#123;err     error  // 错误信息spec    *backend.Config  // 配置信息engine  backend.Engine  // docker enginestarted int64 // 开始时间
+ctx    context.Contexttracer Tracerlogger Logger
+&#125;
+</code></pre>
+<p>其中Engine，操作容器的interface，目前仅docker可用。</p>
+<pre><code>// Engine defines a container orchestration backend and is used
+// to create and manage container resources.
+type Engine interface &#123;// Setup the pipeline environment.Setup(context.Context, *Config) error// Start the pipeline step.Exec(context.Context, *Step) error// Kill the pipeline step.Kill(context.Context, *Step) error// Wait for the pipeline step to complete and returns// the completion results.Wait(context.Context, *Step) (*State, error)// Tail the pipeline step logs.Tail(context.Context, *Step) (io.ReadCloser, error)// Destroy the pipeline environment.Destroy(context.Context, *Config) error
+&#125;
+</code></pre>
+<p>关注Run：</p>
+<pre><code>// Run starts the runtime and waits for it to complete.
+func (r *Runtime) Run() error &#123;
+    // 延迟函数，用于销毁docker envdefer func() &#123;    r.engine.Destroy(r.ctx, r.spec)&#125;()// 初始化docker enginer.started = time.Now().Unix()if err := r.engine.Setup(r.ctx, r.spec); err != nil &#123;    return err&#125;
+   
+   // 依次运行stagefor _, stage := range r.spec.Stages &#123;    select &#123;    case &lt;-r.ctx.Done():        return ErrCancel    // 执行    case err := &lt;-r.execAll(stage.Steps):        if err != nil &#123;            r.err = err        &#125;    &#125;&#125;
+return r.err
+&#125;
+</code></pre>
+<p>重点在于使用errgroup.Group通过协程方式运行step：</p>
+<pre><code>// 执行所有steps
+func (r *Runtime) execAll(procs []*backend.Step) &lt;-chan error &#123;var g errgroup.Groupdone := make(chan error)
+    // 遍历执行stepfor _, proc := range procs &#123;   // 协程 exec    proc := proc    g.Go(func() error &#123;        return r.exec(proc)    &#125;)&#125;
+go func() &#123;    done &lt;- g.Wait()    close(done)&#125;()return done
+&#125;
+
+// 执行单个step
+func (r *Runtime) exec(proc *backend.Step) error &#123;switch &#123;case r.err != nil &amp;&amp; proc.OnFailure == false:    return nilcase r.err == nil &amp;&amp; proc.OnSuccess == false:    return nil&#125;// trace日志if r.tracer != nil &#123;    state := new(State)    state.Pipeline.Time = r.started    state.Pipeline.Error = r.err    state.Pipeline.Step = proc    state.Process = new(backend.State) // empty    if err := r.tracer.Trace(state); err == ErrSkip &#123;        return nil    &#125; else if err != nil &#123;        return err    &#125;&#125;
+   
+   // docker engine执行if err := r.engine.Exec(r.ctx, proc); err != nil &#123;    return err&#125;
+   
+   // 记录日志信息if r.logger != nil &#123;    rc, err := r.engine.Tail(r.ctx, proc)    if err != nil &#123;        return err    &#125;
+    go func() &#123;        r.logger.Log(proc, multipart.New(rc))        rc.Close()    &#125;()&#125;
+if proc.Detached &#123;    return nil&#125;
+
+   // 等待docker engine执行完成wait, err := r.engine.Wait(r.ctx, proc)if err != nil &#123;    return err&#125;
+if r.tracer != nil &#123;    state := new(State)    state.Pipeline.Time = r.started    state.Pipeline.Error = r.err    state.Pipeline.Step = proc    state.Process = wait    if err := r.tracer.Trace(state); err != nil &#123;        return err    &#125;&#125;
+   if wait.OOMKilled &#123;    return &amp;OomError&#123;        Name: proc.Name,        Code: wait.ExitCode,    &#125;&#125; else if wait.ExitCode != 0 &#123;    return &amp;ExitError&#123;        Name: proc.Name,        Code: wait.ExitCode,    &#125;&#125;return nil
+&#125;
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/drone/" rel="tag"># drone</a>
+              <a href="/tags/pipeline/" rel="tag"># pipeline</a>
+              <a href="/tags/jenkins/" rel="tag"># jenkins</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/01/22/jqpeng-Docker%20Client%20%EF%BC%88another%20java%20docker%20client%20api%EF%BC%89/" rel="prev" title="Docker Client （another java docker client api）">
+      <i class="fa fa-chevron-left"></i> Docker Client （another java docker client api）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/02/19/jqpeng-makefilen%20%20missing%20separator.%20Stop/" rel="next" title="makefilen  missing separator. Stop">
+      makefilen  missing separator. Stop <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#jenkins-%E4%B8%8E-drone"><span class="nav-number">1.</span> <span class="nav-text">jenkins 与 drone</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%92%8C%E6%89%A7%E8%A1%8C-drone-pipeline"><span class="nav-number">2.</span> <span class="nav-text">编译和执行 drone pipeline</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pipeline-%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">pipeline 原理分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B"><span class="nav-number">3.1.</span> <span class="nav-text">编译过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">3.2.</span> <span class="nav-text">执行过程</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

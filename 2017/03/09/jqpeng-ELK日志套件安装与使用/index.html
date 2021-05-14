@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: ELK日志套件安装与使用 1、ELK介绍 ELK不是一款软件，而是elasticsearch+Logstash+kibana三款开源软件组合而成的日志收集处理套件，堪称神器。其中Logstash负责日志收集，elasticsearch负责日志的搜索、统计，而kibana则是ES的展示神器，前端炫丽，点几下鼠标简单配置，就可以完成搜索、聚合功能，生成华丽的报表。 目">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ELK日志套件安装与使用">
+<meta property="og:url" content="http://blog.iflyresearch.com/2017/03/09/jqpeng-ELK%E6%97%A5%E5%BF%97%E5%A5%97%E4%BB%B6%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: ELK日志套件安装与使用 1、ELK介绍 ELK不是一款软件，而是elasticsearch+Logstash+kibana三款开源软件组合而成的日志收集处理套件，堪称神器。其中Logstash负责日志收集，elasticsearch负责日志的搜索、统计，而kibana则是ES的展示神器，前端炫丽，点几下鼠标简单配置，就可以完成搜索、聚合功能，生成华丽的报表。 目">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132521281-1050921717.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132521734-923307871.jpg">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132522188-1514690908.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132522875-360437388.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132523531-706059809.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132524219-2011756617.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132524828-237029731.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132525281-2069886424.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132526047-1007293145.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132526438-1898740306.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132526953-1261870375.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132527406-1971021303.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132527781-1974262713.png">
+<meta property="article:published_time" content="2017-03-09T05:26:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.577Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="ELK">
+<meta property="article:tag" content="elasticsearch">
+<meta property="article:tag" content="Logstash">
+<meta property="article:tag" content="kibana">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132521281-1050921717.png">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2017/03/09/jqpeng-ELK%E6%97%A5%E5%BF%97%E5%A5%97%E4%BB%B6%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ELK日志套件安装与使用 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/03/09/jqpeng-ELK%E6%97%A5%E5%BF%97%E5%A5%97%E4%BB%B6%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ELK日志套件安装与使用
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-09 13:26:00" itemprop="dateCreated datePublished" datetime="2017-03-09T13:26:00+08:00">2017-03-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/elk-part1.html">ELK日志套件安装与使用</a></p>
+<p>1、ELK介绍</p>
+<p>ELK不是一款软件，而是elasticsearch+Logstash+kibana三款开源软件组合而成的日志收集处理套件，堪称神器。其中Logstash负责日志收集，elasticsearch负责日志的搜索、统计，而kibana则是ES的展示神器，前端炫丽，点几下鼠标简单配置，就可以完成搜索、聚合功能，生成华丽的报表。</p>
+<p>目前我们的日志方案：</p>
+<ul>
+<li>flume负责收集，服务写日志到文件，flume收集日志文件</li>
+<li>flume汇总到数据通道kafka，供其他服务消费</li>
+<li>日志搜索：从kafka读取日志写入到solr cloud提供搜索</li>
+<li>日志统计：将kafka的日志写到hdfs，使用spark、hive来做统计</li>
+<li>日志展示：开发的java-web，读取数据库生成统计报表</li>
+</ul>
+<p>当前日志方案问题分析：</p>
+<ul>
+<li>需要预先编程才能使用，开发工作量大</li>
+<li>不够灵活，新需求需要改代码</li>
+<li>离线统计，实时性不高</li>
+<li>未提供基于搜索结果的统计功能</li>
+<li>系统方案较为复杂，需要了解多项技术，学习维护成本高</li>
+<li>……</li>
+<li>新增需求都是泪，开发出来后变动很少</li>
+</ul>
+<p>通过调研ELK，发现真是解救目前问题的一个神器，大部分问题都可以迎刃而解。</p>
+<p>2、ELK安装</p>
+<p>默认需要先安装jdk1.8，自行安装即可</p>
+<p>2.1、安装ES</p>
+<p>2.1.1 下载ES</p>
+<p>下载地址：<a target="_blank" rel="noopener" href="https://www.elastic.co/downloads/elasticsearch">https://www.elastic.co/downloads/elasticsearch</a></p>
+<p>最新版本是2.28发布的5.2.2版本</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132521281-1050921717.png"></p>
+<p>windows选择ZIP，linux选择tar，ubuntu选择DEB</p>
+<p>测试服务器是ubuntu，直接下载deb包，然后安装即可</p>
+<p>wget <a target="_blank" rel="noopener" href="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.2.deb">https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.2.deb</a></p>
+<p>sudo dpkg -i elasticsearch-5.2.2.deb</p>
+<p>2.1.2 配置</p>
+<p>如果使用deb包安装的，配置文件路径如下：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+<th>默认路经</th>
+<th>Setting</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>home</td>
+<td>Elasticsearch home directory or $ES_HOME</td>
+<td>/usr/share/elasticsearch</td>
+<td></td>
+</tr>
+<tr>
+<td>bin</td>
+<td>Binary scripts including elasticsearch to start a node and elasticsearch-plugin to install plugins</td>
+<td>/usr/share/elasticsearch/bin</td>
+<td></td>
+</tr>
+<tr>
+<td>conf</td>
+<td>Configuration files including elasticsearch.yml</td>
+<td>/etc/elasticsearch</td>
+<td>path.conf</td>
+</tr>
+<tr>
+<td>conf</td>
+<td>Environment variables including heap size, file descriptors.</td>
+<td>/etc/default/elasticsearch</td>
+<td></td>
+</tr>
+<tr>
+<td>data</td>
+<td>The location of the data files of each index / shard allocated on the node. Can hold multiple locations.</td>
+<td>/var/lib/elasticsearch</td>
+<td>path.data</td>
+</tr>
+<tr>
+<td>logs</td>
+<td>Log files location.</td>
+<td>/var/log/elasticsearch</td>
+<td>path.logs</td>
+</tr>
+<tr>
+<td>plugins</td>
+<td>Plugin files location. Each plugin will be contained in a subdirectory.</td>
+<td>/usr/share/elasticsearch/plugins</td>
+<td></td>
+</tr>
+<tr>
+<td>repo</td>
+<td>Shared file system repository locations. Can hold multiple locations. A file system repository can be placed in to any subdirectory of any directory specified here.</td>
+<td>Not configured</td>
+<td>path.repo</td>
+</tr>
+<tr>
+<td>script</td>
+<td>Location of script files.</td>
+<td>/etc/elasticsearch/scripts</td>
+<td>path.scripts</td>
+</tr>
+</tbody></table>
+<p>修改/etc/elasticsearch/elasticsearch.yml即可</p>
+<p>测试使用，主要设置网络：</p>
+<pre><code>network.host: 192.168.86.108
+
+http.port: 9200
+</code></pre>
+<p>ES的集群配置比较方便，设置cluster.name就可以：</p>
+<pre><code>cluster.name: es-log
+</code></pre>
+<p>2.1.3 启动ES</p>
+<p>由于我们使用的deb安装的，因此可以用服务方式启动：</p>
+<p>service elasticsearch start</p>
+<p>如果使用的压缩包，执行 bin/elasticsearch (or bin\elasticsearch.bat on Windows)即可</p>
+<p>然后，打开 curl <a target="_blank" rel="noopener" href="http://192.168.86.108:9200/">http://192.168.86.108:9200/</a> 测试（ip换成配置的ip）</p>
+<p>2.2 安装 Logstash</p>
+<p>现在收集处理框架非常多，像 facebook 出品的scribe ，apache 基金会的亲儿子flume，Logstash也是一个非常出名的日志框架，使用jruby开发，可以运行在jvm之上实现跨平台，具体的介绍可以到官网<a target="_blank" rel="noopener" href="http://logstash.net查看./">http://logstash.net查看。</a></p>
+<p>Logstash安装比较简单，下载压缩包、解压、配置，启动即可。</p>
+<p>2.2.1 下载安装</p>
+<pre><code>wget https://artifacts.elastic.co/downloads/logstash/logstash-5.2.2.tar.gz
+
+tar zxvf logstash-5.2.2.tar.gz
+
+ln -s logstash-5.2.2 logstash
+</code></pre>
+<p>2.2.2 配置</p>
+<p>Logstash 和flume比较类似，有input和output的概念。不过logstash社区通常习惯用 shipper，broker 和 indexer 来描述数据流中不同进程各自的角色。</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132521734-923307871.jpg"></p>
+<p>我们来看怎么配置logstash。</p>
+<p>创建一个配置文件nginxlog2es.conf，读取nginx日志,输出到elasticsearch 。具体的配置格式参见官方文档。</p>
+<pre><code>input &#123;
+    file &#123;
+        path =&gt; &quot;/var/log/nginx/access.log_json&quot;
+        codec =&gt; &quot;json&quot;
+    &#125;
+&#125;
+filter &#123;
+    mutate &#123;
+        split =&gt; [ &quot;upstreamtime&quot;, &quot;,&quot; ]
+    &#125;
+    mutate &#123;
+        convert =&gt; [ &quot;upstreamtime&quot;, &quot;float&quot; ]
+    &#125;
+&#125;
+output &#123;
+  stdout &#123; codec =&gt; rubydebug &#125;
+  elasticsearch &#123;
+        hosts =&gt; [&quot;192.168.86.108:9200&quot;]
+        index =&gt; &quot;logstash-%&#123;type&#125;-%&#123;+YYYY.MM.dd&#125;&quot;
+        document_type =&gt; &quot;%&#123;type&#125;&quot;
+        flush_size =&gt; 20000
+        idle_flush_time =&gt; 10
+        sniffing =&gt; true
+        template_overwrite =&gt; true
+    &#125;
+&#125;
+</code></pre>
+<p>这里简单说明下，input是file类型，/var/log/nginx/access.log_json每行是一个json数据，codec =&gt; “json”指定按json解析。</p>
+<p>output 配置了两个，stdout 是控制台输出，elasticsearch 则是输出到前面配置的es服务器，index 索引名称为logstash-nginx-日期，这样每天为一个索引。</p>
+<p>Nginx 直接生成json日志可以通过指定logformat，拼接为json：</p>
+<p>配置logformat：</p>
+<pre><code>log_format json &#39;&#123;&quot;@timestamp&quot;:&quot;$time_iso8601&quot;,&#39;
+
+&#39;&quot;host&quot;:&quot;$server_addr&quot;,&#39;
+
+&#39;&quot;clientip&quot;:&quot;$remote_addr&quot;,&#39;
+
+&#39;&quot;size&quot;:$body_bytes_sent,&#39;
+
+&#39;&quot;responsetime&quot;:$request_time,&#39;
+
+&#39;&quot;upstreamtime&quot;:&quot;$upstream_response_time&quot;,&#39;
+
+&#39;&quot;upstreamhost&quot;:&quot;$upstream_addr&quot;,&#39;
+
+&#39;&quot;http_host&quot;:&quot;$host&quot;,&#39;
+
+&#39;&quot;url&quot;:&quot;$uri&quot;,&#39;
+
+&#39;&quot;xff&quot;:&quot;$http_x_forwarded_for&quot;,&#39;
+
+&#39;&quot;referer&quot;:&quot;$http_referer&quot;,&#39;
+
+&#39;&quot;agent&quot;:&quot;$http_user_agent&quot;,&#39;
+
+&#39;&quot;status&quot;:&quot;$status&quot;&#125;&#39;;
+</code></pre>
+<p>然后使用：</p>
+<p>access_log /var/log/nginx/access.log_json json;</p>
+<p>这样nginx的日志就变为：</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132522188-1514690908.png"></p>
+<p>2.2.3 启动logstash</p>
+<p>使用-f指定配置文件</p>
+<p>bin/logstash -f nginxlog2es.conf</p>
+<p>启动成功后就能看到收集到的日志：</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132522875-360437388.png"></p>
+<p>2.3 kibana</p>
+<p>2.3.1 安装</p>
+<p>kibana安装也比较简单，下载，解压，配置即可</p>
+<p>wget <a target="_blank" rel="noopener" href="https://artifacts.elastic.co/downloads/kibana/kibana-5.2.2-linux-x86_64.tar.gz">https://artifacts.elastic.co/downloads/kibana/kibana-5.2.2-linux-x86_64.tar.gz</a></p>
+<p>解压后建立软连接</p>
+<p>ln -s kibana-5.2.2-linux-x86_64 kibana</p>
+<p>cd kibana</p>
+<p>修改配置文件</p>
+<p>vim config/kibana.yml</p>
+<p>修改</p>
+<p>server.host: “192.168.86.108”</p>
+<p>elasticsearch.url: “<a target="_blank" rel="noopener" href="http://192.168.86.108:9200/">http://192.168.86.108:9200</a>“</p>
+<p>然后启动：</p>
+<p>bin/kibana</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132523531-706059809.png"></p>
+<p>2.3.2 配置报表</p>
+<p>启动后打开<a href="http://192.168.86.108:5601，就能看到日志了，在输入框里还可以输入关键词进行搜索，并且自带流量统计。">http://192.168.86.108:5601，就能看到日志了，在输入框里还可以输入关键词进行搜索，并且自带流量统计。</a></p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132524219-2011756617.png"></p>
+<p>下面来看如何生成报表，比如搞个响应时间折线图，进入visualize，选择折线图</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132524828-237029731.png"></p>
+<p>分别配置X和y轴，Y为平均响应时间，X为时间，最后保存即可。</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132525281-2069886424.png"></p>
+<p>再来配置一个表格报表，通产各个url的访问量</p>
+<p>Metrics 配置使用count作为聚合函数</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132526047-1007293145.png"></p>
+<p>buckets增加rows，字段选url</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132526438-1898740306.png"></p>
+<p>再增加一个状态码：</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132526953-1261870375.png"></p>
+<p>这样就完成了一个漂亮的表格</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132527406-1971021303.png"></p>
+<p>2.3.3 将报表添加到dashboard</p>
+<p>在dashboard点add，将两个报表加入即可</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132527781-1974262713.png"></p>
+<p>3、总结</p>
+<p>简单的介绍就到这里为止了，更多的功能后面继续挖掘。</p>
+<p>总结下，借助ELK可以快速搭建日志收集、日志搜索和统计分析平台，可以不写一行代码完成漂亮的统计报表，简直是开发和运维的福音，是不是心动了？如果是，快行动起来吧！</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/ELK/" rel="tag"># ELK</a>
+              <a href="/tags/elasticsearch/" rel="tag"># elasticsearch</a>
+              <a href="/tags/Logstash/" rel="tag"># Logstash</a>
+              <a href="/tags/kibana/" rel="tag"># kibana</a>
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/02/13/jqpeng-Jupyter%20notebook%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" rel="prev" title="Jupyter notebook安装与使用">
+      <i class="fa fa-chevron-left"></i> Jupyter notebook安装与使用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/03/13/jqpeng-Solr%20vs.%20Elasticsearch%E8%B0%81%E6%98%AF%E5%BC%80%E6%BA%90%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E7%8E%8B%E8%80%85/" rel="next" title="Solr vs. Elasticsearch谁是开源搜索引擎王者">
+      Solr vs. Elasticsearch谁是开源搜索引擎王者 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: axios介绍与使用说明 axios中文文档 本周在做一个使用vuejs的前端项目，访问后端服务使用axios库，这里对照官方文档，简单记录下，也方便大家参考。 Axios 是一个基于  Promise 的 HTTP 库，可以用在浏览器和 node.js 中。github开源地址https:&#x2F;&#x2F;github.com&#x2F;axios&#x2F;axios 特性 在浏览器中创建 X">
+<meta property="og:type" content="article">
+<meta property="og:title" content="axios介绍与使用说明 axios中文文档">
+<meta property="og:url" content="http://blog.iflyresearch.com/2018/04/14/jqpeng-axios%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%20axios%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: axios介绍与使用说明 axios中文文档 本周在做一个使用vuejs的前端项目，访问后端服务使用axios库，这里对照官方文档，简单记录下，也方便大家参考。 Axios 是一个基于  Promise 的 HTTP 库，可以用在浏览器和 node.js 中。github开源地址https:&#x2F;&#x2F;github.com&#x2F;axios&#x2F;axios 特性 在浏览器中创建 X">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-04-14T04:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="JavaScript">
+<meta property="article:tag" content="axios">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2018/04/14/jqpeng-axios%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%20axios%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>axios介绍与使用说明 axios中文文档 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/04/14/jqpeng-axios%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%20axios%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          axios介绍与使用说明 axios中文文档
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-04-14 12:00:00" itemprop="dateCreated datePublished" datetime="2018-04-14T12:00:00+08:00">2018-04-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/axios.html">axios介绍与使用说明 axios中文文档</a></p>
+<p>本周在做一个使用vuejs的前端项目，访问后端服务使用axios库，这里对照官方文档，简单记录下，也方便大家参考。</p>
+<p>Axios 是一个基于  <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> 的 HTTP 库，可以用在浏览器和 node.js 中。github开源地址<a target="_blank" rel="noopener" href="https://github.com/axios/axios">https://github.com/axios/axios</a></p>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ul>
+<li>在浏览器中创建 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest">XMLHttpRequests</a></li>
+<li>在 node.js 则创建 <a target="_blank" rel="noopener" href="http://nodejs.org/api/http.html">http</a> 请求</li>
+<li>支持 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> API</li>
+<li>支持拦截请求和响应</li>
+<li>转换请求和响应数据</li>
+<li>取消请求</li>
+<li>自动转换 JSON 数据</li>
+<li>客户端支持防御 <a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Cross-site_request_forgery">XSRF</a></li>
+</ul>
+<h2 id="浏览器支持"><a href="#浏览器支持" class="headerlink" title="浏览器支持"></a>浏览器支持</h2><p>支持Chrome、火狐、Edge、IE8+等浏览器</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>使用 npm安装:</p>
+<pre><code>$ npm install axios
+</code></pre>
+<p>使用 bower:</p>
+<pre><code>$ bower install axios
+</code></pre>
+<p>或者直接使用 cdn:</p>
+<pre><code>&lt;script src=&quot;https://unpkg.com/axios/dist/axios.min.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<h2 id="使用举例"><a href="#使用举例" class="headerlink" title="使用举例"></a>使用举例</h2><p>执行 <code>GET</code> 请求</p>
+<pre><code>// 为给定 ID 的 user 创建请求
+axios.get(&#39;/user?ID=12345&#39;)
+  .then(function (response) &#123;
+    console.log(response);
+  &#125;)
+  .catch(function (error) &#123;
+    console.log(error);
+  &#125;);
+
+// GET 参数可以放到params里（推荐）
+axios.get(&#39;/user&#39;, &#123;
+    params: &#123;
+      ID: 12345
+    &#125;
+  &#125;)
+  .then(function (response) &#123;
+    console.log(response);
+  &#125;)
+  .catch(function (error) &#123;
+    console.log(error);
+  &#125;);
+
+// 还可以使用ECMAScript 2017里的async/await，添加 `async` keyword to your outer function/method.
+async function getUser() &#123;
+  try &#123;
+    const response = await axios.get(&#39;/user?ID=12345&#39;);
+    console.log(response);
+  &#125; catch (error) &#123;
+    console.error(error);
+  &#125;
+&#125;
+</code></pre>
+<blockquote>
+<p>async/await 是 ECMAScript 2017新提供的功能 ，Internet Explorer 和一些旧的浏览器并不支持</p>
+</blockquote>
+<p>执行 <code>POST</code> 请求</p>
+<pre><code>axios.post(&#39;/user&#39;, &#123;
+    firstName: &#39;Fred&#39;,
+    lastName: &#39;Flintstone&#39;
+  &#125;)
+  .then(function (response) &#123;
+    console.log(response);
+  &#125;)
+  .catch(function (error) &#123;
+    console.log(error);
+  &#125;);
+</code></pre>
+<p>执行多个并发请求</p>
+<pre><code>function getUserAccount() &#123;
+  return axios.get(&#39;/user/12345&#39;);
+&#125;
+
+function getUserPermissions() &#123;
+  return axios.get(&#39;/user/12345/permissions&#39;);
+&#125;
+axios.all([getUserAccount(), getUserPermissions()])
+  .then(axios.spread(function (acct, perms) &#123;
+    // 两个请求现在都执行完成
+  &#125;));
+</code></pre>
+<h2 id="axios-API"><a href="#axios-API" class="headerlink" title="axios API"></a>axios API</h2><p>可以通过向 <code>axios</code> 传递相关配置来创建请求</p>
+<h5 id="axios-config"><a href="#axios-config" class="headerlink" title="axios(config)"></a>axios(config)</h5><pre><code>// 发送 POST 请求
+axios(&#123;
+  method: &#39;post&#39;,
+  url: &#39;/user/12345&#39;,
+  data: &#123;
+    firstName: &#39;Fred&#39;,
+    lastName: &#39;Flintstone&#39;
+  &#125;
+&#125;);
+//  GET 请求远程图片
+axios(&#123;
+  method:&#39;get&#39;,
+  url:&#39;http://bit.ly/2mTM3nY&#39;,
+  responseType:&#39;stream&#39;
+&#125;)
+  .then(function(response) &#123;
+  response.data.pipe(fs.createWriteStream(&#39;ada_lovelace.jpg&#39;))
+&#125;);
+</code></pre>
+<h5 id="axios-url-config"><a href="#axios-url-config" class="headerlink" title="axios(url[, config])"></a>axios(url[, config])</h5><pre><code>// 发送 GET 请求（默认的方法）
+axios(&#39;/user/12345&#39;);
+</code></pre>
+<h3 id="请求方法的别名"><a href="#请求方法的别名" class="headerlink" title="请求方法的别名"></a>请求方法的别名</h3><p>为方便使用，官方为所有支持的请求方法提供了别名，可以直接使用别名来发起请求：</p>
+<h5 id="axios-request-config"><a href="#axios-request-config" class="headerlink" title="axios.request(config)"></a>axios.request(config)</h5><h5 id="axios-get-url-config"><a href="#axios-get-url-config" class="headerlink" title="axios.get(url[, config])"></a>axios.get(url[, config])</h5><h5 id="axios-delete-url-config"><a href="#axios-delete-url-config" class="headerlink" title="axios.delete(url[, config])"></a>axios.delete(url[, config])</h5><h5 id="axios-head-url-config"><a href="#axios-head-url-config" class="headerlink" title="axios.head(url[, config])"></a>axios.head(url[, config])</h5><h5 id="axios-post-url-data-config"><a href="#axios-post-url-data-config" class="headerlink" title="axios.post(url[, data[, config]])"></a>axios.post(url[, data[, config]])</h5><h5 id="axios-put-url-data-config"><a href="#axios-put-url-data-config" class="headerlink" title="axios.put(url[, data[, config]])"></a>axios.put(url[, data[, config]])</h5><h5 id="axios-patch-url-data-config"><a href="#axios-patch-url-data-config" class="headerlink" title="axios.patch(url[, data[, config]])"></a>axios.patch(url[, data[, config]])</h5><h6 id="NOTE"><a href="#NOTE" class="headerlink" title="NOTE"></a>NOTE</h6><p>在使用别名方法时， <code>url</code>、<code>method</code>、<code>data</code> 这些属性都不必在配置中指定。</p>
+<h3 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h3><p>处理并发请求的助手函数</p>
+<h5 id="axios-all-iterable"><a href="#axios-all-iterable" class="headerlink" title="axios.all(iterable)"></a>axios.all(iterable)</h5><h5 id="axios-spread-callback"><a href="#axios-spread-callback" class="headerlink" title="axios.spread(callback)"></a>axios.spread(callback)</h5><h3 id="创建实例"><a href="#创建实例" class="headerlink" title="创建实例"></a>创建实例</h3><p>可以使用自定义配置新建一个 axios 实例</p>
+<h5 id="axios-create-config"><a href="#axios-create-config" class="headerlink" title="axios.create([config])"></a>axios.create([config])</h5><pre><code>const instance = axios.create(&#123;
+  baseURL: &#39;https://some-domain.com/api/&#39;,
+  timeout: 1000,
+  headers: &#123;&#39;X-Custom-Header&#39;: &#39;foobar&#39;&#125;
+&#125;);
+</code></pre>
+<h3 id="实例方法"><a href="#实例方法" class="headerlink" title="实例方法"></a>实例方法</h3><p>以下是可用的实例方法。指定的配置将与实例的配置合并</p>
+<h5 id="axios-request-config-1"><a href="#axios-request-config-1" class="headerlink" title="axios#request(config)"></a>axios#request(config)</h5><h5 id="axios-get-url-config-1"><a href="#axios-get-url-config-1" class="headerlink" title="axios#get(url[, config])"></a>axios#get(url[, config])</h5><h5 id="axios-delete-url-config-1"><a href="#axios-delete-url-config-1" class="headerlink" title="axios#delete(url[, config])"></a>axios#delete(url[, config])</h5><h5 id="axios-head-url-config-1"><a href="#axios-head-url-config-1" class="headerlink" title="axios#head(url[, config])"></a>axios#head(url[, config])</h5><h5 id="axios-post-url-data-config-1"><a href="#axios-post-url-data-config-1" class="headerlink" title="axios#post(url[, data[, config]])"></a>axios#post(url[, data[, config]])</h5><h5 id="axios-put-url-data-config-1"><a href="#axios-put-url-data-config-1" class="headerlink" title="axios#put(url[, data[, config]])"></a>axios#put(url[, data[, config]])</h5><h5 id="axios-patch-url-data-config-1"><a href="#axios-patch-url-data-config-1" class="headerlink" title="axios#patch(url[, data[, config]])"></a>axios#patch(url[, data[, config]])</h5><h2 id="请求配置项"><a href="#请求配置项" class="headerlink" title="请求配置项"></a>请求配置项</h2><p>下面是创建请求时可用的配置选项，注意只有 <code>url</code> 是必需的。如果没有指定 <code>method</code>，请求将默认使用 <code>get</code> 方法。</p>
+<pre><code>&#123;
+  // `url` 是用于请求的服务器 URL
+  url: &quot;/user&quot;,
+
+  // `method` 是创建请求时使用的方法
+  method: &quot;get&quot;, // 默认是 get
+
+  // `baseURL` 将自动加在 `url` 前面，除非 `url` 是一个绝对 URL。
+  // 它可以通过设置一个 `baseURL` 便于为 axios 实例的方法传递相对 URL
+  baseURL: &quot;https://some-domain.com/api/&quot;,
+
+  // `transformRequest` 允许在向服务器发送前，修改请求数据
+  // 只能用在 &quot;PUT&quot;, &quot;POST&quot; 和 &quot;PATCH&quot; 这几个请求方法
+  // 后面数组中的函数必须返回一个字符串，或 ArrayBuffer，或 Stream
+  transformRequest: [function (data) &#123;
+    // 对 data 进行任意转换处理
+
+    return data;
+  &#125;],
+
+  // `transformResponse` 在传递给 then/catch 前，允许修改响应数据
+  transformResponse: [function (data) &#123;
+    // 对 data 进行任意转换处理
+
+    return data;
+  &#125;],
+
+  // `headers` 是即将被发送的自定义请求头
+  headers: &#123;&quot;X-Requested-With&quot;: &quot;XMLHttpRequest&quot;&#125;,
+
+  // `params` 是即将与请求一起发送的 URL 参数
+  // 必须是一个无格式对象(plain object)或 URLSearchParams 对象
+  params: &#123;
+    ID: 12345
+  &#125;,
+
+  // `paramsSerializer` 是一个负责 `params` 序列化的函数
+  // (e.g. https://www.npmjs.com/package/qs, http://api.jquery.com/jquery.param/)
+  paramsSerializer: function(params) &#123;
+    return Qs.stringify(params, &#123;arrayFormat: &quot;brackets&quot;&#125;)
+  &#125;,
+
+  // `data` 是作为请求主体被发送的数据
+  // 只适用于这些请求方法 &quot;PUT&quot;, &quot;POST&quot;, 和 &quot;PATCH&quot;
+  // 在没有设置 `transformRequest` 时，必须是以下类型之一：
+  // - string, plain object, ArrayBuffer, ArrayBufferView, URLSearchParams
+  // - 浏览器专属：FormData, File, Blob
+  // - Node 专属： Stream
+  data: &#123;
+    firstName: &quot;Fred&quot;
+  &#125;,
+
+  // `timeout` 指定请求超时的毫秒数(0 表示无超时时间)
+  // 如果请求话费了超过 `timeout` 的时间，请求将被中断
+  timeout: 1000,
+
+  // `withCredentials` 表示跨域请求时是否需要使用凭证
+  withCredentials: false, // 默认的
+
+  // `adapter` 允许自定义处理请求，以使测试更轻松
+  // 返回一个 promise 并应用一个有效的响应 (查阅 [response docs](#response-api)).
+  adapter: function (config) &#123;
+    /* ... */
+  &#125;,
+
+  // `auth` 表示应该使用 HTTP 基础验证，并提供凭据
+  // 这将设置一个 `Authorization` 头，覆写掉现有的任意使用 `headers` 设置的自定义 `Authorization`头
+  auth: &#123;
+    username: &quot;janedoe&quot;,
+    password: &quot;s00pers3cret&quot;
+  &#125;,
+
+  // `responseType` 表示服务器响应的数据类型，可以是 &quot;arraybuffer&quot;, &quot;blob&quot;, &quot;document&quot;, &quot;json&quot;, &quot;text&quot;, &quot;stream&quot;
+  responseType: &quot;json&quot;, // 默认的
+
+  // `xsrfCookieName` 是用作 xsrf token 的值的cookie的名称
+  xsrfCookieName: &quot;XSRF-TOKEN&quot;, // default
+
+  // `xsrfHeaderName` 是承载 xsrf token 的值的 HTTP 头的名称
+  xsrfHeaderName: &quot;X-XSRF-TOKEN&quot;, // 默认的
+
+  // `onUploadProgress` 允许为上传处理进度事件
+  onUploadProgress: function (progressEvent) &#123;
+    // 对原生进度事件的处理
+  &#125;,
+
+  // `onDownloadProgress` 允许为下载处理进度事件
+  onDownloadProgress: function (progressEvent) &#123;
+    // 对原生进度事件的处理
+  &#125;,
+
+  // `maxContentLength` 定义允许的响应内容的最大尺寸
+  maxContentLength: 2000,
+
+  // `validateStatus` 定义对于给定的HTTP 响应状态码是 resolve 或 reject  promise 。如果 `validateStatus` 返回 `true` (或者设置为 `null` 或 `undefined`)，promise 将被 resolve; 否则，promise 将被 rejecte
+  validateStatus: function (status) &#123;
+    return status &amp;gt;= 200 &amp;amp;&amp;amp; status &amp;lt; 300; // 默认的
+  &#125;,
+
+  // `maxRedirects` 定义在 node.js 中 follow 的最大重定向数目
+  // 如果设置为0，将不会 follow 任何重定向
+  maxRedirects: 5, // 默认的
+
+  // `httpAgent` 和 `httpsAgent` 分别在 node.js 中用于定义在执行 http 和 https 时使用的自定义代理。允许像这样配置选项：
+  // `keepAlive` 默认没有启用
+  httpAgent: new http.Agent(&#123; keepAlive: true &#125;),
+  httpsAgent: new https.Agent(&#123; keepAlive: true &#125;),
+
+  // &quot;proxy&quot; 定义代理服务器的主机名称和端口
+  // `auth` 表示 HTTP 基础验证应当用于连接代理，并提供凭据
+  // 这将会设置一个 `Proxy-Authorization` 头，覆写掉已有的通过使用 `header` 设置的自定义 `Proxy-Authorization` 头。
+  proxy: &#123;
+    host: &quot;127.0.0.1&quot;,
+    port: 9000,
+    auth: : &#123;
+      username: &quot;mikeymike&quot;,
+      password: &quot;rapunz3l&quot;
+    &#125;
+  &#125;,
+
+  // `cancelToken` 指定用于取消请求的 cancel token
+  // （查看后面的 Cancellation 这节了解更多）
+  cancelToken: new CancelToken(function (cancel) &#123;
+  &#125;)
+&#125;
+</code></pre>
+<h2 id="响应结构"><a href="#响应结构" class="headerlink" title="响应结构"></a>响应结构</h2><p>axios请求的响应包含以下信息：</p>
+<pre><code>&#123;
+  // `data` 由服务器提供的响应
+  data: &#123;&#125;,
+
+  // `status`  HTTP 状态码
+  status: 200,
+
+  // `statusText` 来自服务器响应的 HTTP 状态信息
+  statusText: &quot;OK&quot;,
+
+  // `headers` 服务器响应的头
+  headers: &#123;&#125;,
+
+  // `config` 是为请求提供的配置信息
+  config: &#123;&#125;
+&#125;
+</code></pre>
+<p>使用 <code>then</code> 时，会接收下面这样的响应：</p>
+<pre><code>axios.get(&quot;/user/12345&quot;)
+  .then(function(response) &#123;
+    console.log(response.data);
+    console.log(response.status);
+    console.log(response.statusText);
+    console.log(response.headers);
+    console.log(response.config);
+  &#125;);
+</code></pre>
+<p>在使用 <code>catch</code> 时，或传递 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then">rejection callback</a> 作为 <code>then</code> 的第二个参数时，响应可以通过 <code>error</code> 对象可被使用，正如在错误处理这一节所讲。</p>
+<h2 id="配置的默认值-defaults"><a href="#配置的默认值-defaults" class="headerlink" title="配置的默认值/defaults"></a>配置的默认值/defaults</h2><p>你可以指定将被用在各个请求的配置默认值</p>
+<h3 id="全局的-axios-默认值"><a href="#全局的-axios-默认值" class="headerlink" title="全局的 axios 默认值"></a>全局的 axios 默认值</h3><pre><code>axios.defaults.baseURL = &quot;https://api.example.com&quot;;
+axios.defaults.headers.common[&quot;Authorization&quot;] = AUTH_TOKEN;
+axios.defaults.headers.post[&quot;Content-Type&quot;] = &quot;application/x-www-form-urlencoded&quot;;
+</code></pre>
+<h3 id="自定义实例默认值"><a href="#自定义实例默认值" class="headerlink" title="自定义实例默认值"></a>自定义实例默认值</h3><pre><code>// 创建实例时设置配置的默认值
+var instance = axios.create(&#123;
+  baseURL: &quot;https://api.example.com&quot;
+&#125;);
+
+// 在实例已创建后修改默认值
+instance.defaults.headers.common[&quot;Authorization&quot;] = AUTH_TOKEN;
+</code></pre>
+<h3 id="配置的优先级"><a href="#配置的优先级" class="headerlink" title="配置的优先级"></a>配置的优先级</h3><p>配置会以一个优先顺序进行合并。</p>
+<p>请求的config &gt; 实例的 <code>defaults</code> 属性 &gt; 库默认值：</p>
+<pre><code>// 使用由库提供的配置的默认值来创建实例
+// 此时超时配置的默认值是 `0`
+var instance = axios.create();
+
+// 覆写库的超时默认值
+// 现在，在超时前，所有请求都会等待 2.5 秒
+instance.defaults.timeout = 2500;
+
+// 为已知需要花费很长时间的请求覆写超时设置
+instance.get(&quot;/longRequest&quot;, &#123;
+  timeout: 5000
+&#125;);
+</code></pre>
+<h2 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h2><p>可以自定义拦截器，在在请求或响应被 <code>then</code> 或 <code>catch</code> 处理前拦截它们。</p>
+<pre><code>// 添加请求拦截器
+axios.interceptors.request.use(function (config) &#123;
+    // 在发送请求之前做些什么
+    return config;
+  &#125;, function (error) &#123;
+    // 对请求错误做些什么
+    return Promise.reject(error);
+  &#125;);
+
+// 添加响应拦截器
+axios.interceptors.response.use(function (response) &#123;
+    // 对响应数据做点什么
+    return response;
+  &#125;, function (error) &#123;
+    // 对响应错误做点什么
+    return Promise.reject(error);
+  &#125;);
+</code></pre>
+<p>如果你想在稍后移除拦截器，可以这样：</p>
+<pre><code>var myInterceptor = axios.interceptors.request.use(function () &#123;/*...*/&#125;);
+axios.interceptors.request.eject(myInterceptor);
+</code></pre>
+<p>可以为自定义 axios 实例添加拦截器</p>
+<pre><code>var instance = axios.create();
+instance.interceptors.request.use(function () &#123;/*...*/&#125;);
+</code></pre>
+<h2 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h2><pre><code>axios.get(&quot;/user/12345&quot;)
+  .catch(function (error) &#123;
+    if (error.response) &#123;
+      // 请求已发出，但服务器响应的状态码不在 2xx 范围内
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+    &#125; else &#123;
+      // Something happened in setting up the request that triggered an Error
+      console.log(&quot;Error&quot;, error.message);
+    &#125;
+    console.log(error.config);
+  &#125;);
+</code></pre>
+<p>可以使用 <code>validateStatus</code> 配置选项定义一个自定义 HTTP 状态码的错误范围。</p>
+<pre><code>axios.get(&quot;/user/12345&quot;, &#123;
+  validateStatus: function (status) &#123;
+    return status &lt; 500; // 状态码在大于或等于500时才会 reject
+  &#125;
+&#125;)
+</code></pre>
+<h2 id="取消请求"><a href="#取消请求" class="headerlink" title="取消请求"></a>取消请求</h2><p>使用 <em>cancel token</em> 取消请求</p>
+<blockquote>
+<p>Axios 的 cancel token API 基于<a target="_blank" rel="noopener" href="https://github.com/tc39/proposal-cancelable-promises">cancelable promises proposal</a></p>
+</blockquote>
+<p>可以使用 <code>CancelToken.source</code> 工厂方法创建 cancel token，像这样：</p>
+<pre><code>const CancelToken = axios.CancelToken;
+const source = CancelToken.source();
+
+axios.get(&#39;/user/12345&#39;, &#123;
+  cancelToken: source.token
+&#125;).catch(function(thrown) &#123;
+  if (axios.isCancel(thrown)) &#123;
+    console.log(&#39;Request canceled&#39;, thrown.message);
+  &#125; else &#123;
+    // handle error
+  &#125;
+&#125;);
+
+axios.post(&#39;/user/12345&#39;, &#123;
+  name: &#39;new name&#39;
+&#125;, &#123;
+  cancelToken: source.token
+&#125;)
+
+// cancel the request (the message parameter is optional)
+source.cancel(&#39;Operation canceled by the user.&#39;);
+</code></pre>
+<p>还可以通过传递一个 executor 函数到 <code>CancelToken</code> 的构造函数来创建 cancel token：</p>
+<pre><code>var CancelToken = axios.CancelToken;
+var cancel;
+
+axios.get(&quot;/user/12345&quot;, &#123;
+  cancelToken: new CancelToken(function executor(c) &#123;
+    // executor 函数接收一个 cancel 函数作为参数
+    cancel = c;
+  &#125;)
+&#125;);
+
+// 取消请求
+cancel();
+</code></pre>
+<p>Note : 可以使用同一个 cancel token 取消多个请求</p>
+<h2 id="请求时使用-application-x-www-form-urlencoded"><a href="#请求时使用-application-x-www-form-urlencoded" class="headerlink" title="请求时使用 application/x-www-form-urlencoded"></a>请求时使用 application/x-www-form-urlencoded</h2><p>axios会默认序列化  JavaScript 对象为 JSON. 如果想使用 application/x-www-form-urlencoded 格式，你可以使用下面的配置.</p>
+<h3 id="浏览器"><a href="#浏览器" class="headerlink" title="浏览器"></a>浏览器</h3><p>在浏览器环境，你可以使用  URLSearchParams API ：:</p>
+<pre><code>const params = new URLSearchParams();
+params.append(&#39;param1&#39;, &#39;value1&#39;);
+params.append(&#39;param2&#39;, &#39;value2&#39;);
+axios.post(&#39;/foo&#39;, params);
+</code></pre>
+<blockquote>
+<p>URLSearchParams不是所有的浏览器均支持</p>
+</blockquote>
+<p>除此之外，你可以使用qs库来编码数据:</p>
+<pre><code>const qs = require(&#39;qs&#39;);
+axios.post(&#39;/foo&#39;, qs.stringify(&#123; &#39;bar&#39;: 123 &#125;));
+
+// Or in another way (ES6),
+
+import qs from &#39;qs&#39;;
+const data = &#123; &#39;bar&#39;: 123 &#125;;
+const options = &#123;
+  method: &#39;POST&#39;,
+  headers: &#123; &#39;content-type&#39;: &#39;application/x-www-form-urlencoded&#39; &#125;,
+  data: qs.stringify(data),
+  url,
+&#125;;
+axios(options);
+</code></pre>
+<h3 id="Node-js环境"><a href="#Node-js环境" class="headerlink" title="Node.js环境"></a>Node.js环境</h3><p>在 node.js里, 可以使用 querystring module:</p>
+<pre><code>const querystring = require(&#39;querystring&#39;);
+axios.post(&#39;http://something.com/&#39;, querystring.stringify(&#123; foo: &#39;bar&#39; &#125;));
+</code></pre>
+<p>当然，同浏览器一样，你还可以使用 qs library.</p>
+<h2 id="Promises"><a href="#Promises" class="headerlink" title="Promises"></a>Promises</h2><p>axios 依赖原生的 ES6 Promise 实现而<a target="_blank" rel="noopener" href="http://caniuse.com/promises">被支持</a>.<br> 如果你的环境不支持 ES6 Promise，你可以使用 <a target="_blank" rel="noopener" href="https://github.com/jakearchibald/es6-promise">polyfill</a>.</p>
+<h2 id="TypeScript支持"><a href="#TypeScript支持" class="headerlink" title="TypeScript支持"></a>TypeScript支持</h2><p>axios 包含 <a target="_blank" rel="noopener" href="http://typescriptlang.org/">TypeScript</a> definitions.</p>
+<pre><code>import axios from &quot;axios&quot;;
+axios.get(&quot;/user?ID=12345&quot;);
+</code></pre>
+<h2 id="相关资源"><a href="#相关资源" class="headerlink" title="相关资源"></a>相关资源</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/mzabriskie/axios/blob/master/CHANGELOG.md">变更记录</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mzabriskie/axios/blob/master/UPGRADE_GUIDE.md">升级指南</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mzabriskie/axios/blob/master/ECOSYSTEM.md">生态</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mzabriskie/axios/blob/master/CONTRIBUTING.md">贡献引导</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mzabriskie/axios/blob/master/CODE_OF_CONDUCT.md">Code of Conduct</a></li>
+</ul>
+<h2 id="Credits"><a href="#Credits" class="headerlink" title="Credits"></a>Credits</h2><p>axios 受<a target="_blank" rel="noopener" href="https://angularjs.org/">Angular</a>.提供的<a target="_blank" rel="noopener" href="https://docs.angularjs.org/api/ng/service/$http">$http service</a> 启发而创建， 致力于以提供一个脱离于ng的 <code>$http</code>模块。</p>
+<h2 id="开源协议"><a href="#开源协议" class="headerlink" title="开源协议"></a>开源协议</h2><p>采用MIT</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+              <a href="/tags/axios/" rel="tag"># axios</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/04/04/jqpeng-Spring%20boot%20web%E7%A8%8B%E5%BA%8Fstatic%E8%B5%84%E6%BA%90%E6%94%BE%E5%9C%A8jar%E5%A4%96%E9%83%A8/" rel="prev" title="Spring boot web程序static资源放在jar外部">
+      <i class="fa fa-chevron-left"></i> Spring boot web程序static资源放在jar外部
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/04/16/jqpeng-%E6%96%B0%E5%9E%8B%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84%E4%B8%89%E4%B8%AA%E5%A2%83%E7%95%8C%20%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%BD%AC%E5%89%8D%E7%AB%AF/" rel="next" title="新型前端开发工程师的三个境界 后端开发工程师如何快速转前端">
+      新型前端开发工程师的三个境界 后端开发工程师如何快速转前端 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E6%80%A7"><span class="nav-number">1.</span> <span class="nav-text">特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E6%94%AF%E6%8C%81"><span class="nav-number">2.</span> <span class="nav-text">浏览器支持</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">3.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B"><span class="nav-number">4.</span> <span class="nav-text">使用举例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#axios-API"><span class="nav-number">5.</span> <span class="nav-text">axios API</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-config"><span class="nav-number">5.0.0.1.</span> <span class="nav-text">axios(config)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-url-config"><span class="nav-number">5.0.0.2.</span> <span class="nav-text">axios(url[, config])</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95%E7%9A%84%E5%88%AB%E5%90%8D"><span class="nav-number">5.1.</span> <span class="nav-text">请求方法的别名</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-request-config"><span class="nav-number">5.1.0.1.</span> <span class="nav-text">axios.request(config)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-get-url-config"><span class="nav-number">5.1.0.2.</span> <span class="nav-text">axios.get(url[, config])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-delete-url-config"><span class="nav-number">5.1.0.3.</span> <span class="nav-text">axios.delete(url[, config])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-head-url-config"><span class="nav-number">5.1.0.4.</span> <span class="nav-text">axios.head(url[, config])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-post-url-data-config"><span class="nav-number">5.1.0.5.</span> <span class="nav-text">axios.post(url[, data[, config]])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-put-url-data-config"><span class="nav-number">5.1.0.6.</span> <span class="nav-text">axios.put(url[, data[, config]])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-patch-url-data-config"><span class="nav-number">5.1.0.7.</span> <span class="nav-text">axios.patch(url[, data[, config]])</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#NOTE"><span class="nav-number">5.1.0.7.1.</span> <span class="nav-text">NOTE</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91"><span class="nav-number">5.2.</span> <span class="nav-text">并发</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-all-iterable"><span class="nav-number">5.2.0.1.</span> <span class="nav-text">axios.all(iterable)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-spread-callback"><span class="nav-number">5.2.0.2.</span> <span class="nav-text">axios.spread(callback)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%9E%E4%BE%8B"><span class="nav-number">5.3.</span> <span class="nav-text">创建实例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-create-config"><span class="nav-number">5.3.0.1.</span> <span class="nav-text">axios.create([config])</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95"><span class="nav-number">5.4.</span> <span class="nav-text">实例方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-request-config-1"><span class="nav-number">5.4.0.1.</span> <span class="nav-text">axios#request(config)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-get-url-config-1"><span class="nav-number">5.4.0.2.</span> <span class="nav-text">axios#get(url[, config])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-delete-url-config-1"><span class="nav-number">5.4.0.3.</span> <span class="nav-text">axios#delete(url[, config])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-head-url-config-1"><span class="nav-number">5.4.0.4.</span> <span class="nav-text">axios#head(url[, config])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-post-url-data-config-1"><span class="nav-number">5.4.0.5.</span> <span class="nav-text">axios#post(url[, data[, config]])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-put-url-data-config-1"><span class="nav-number">5.4.0.6.</span> <span class="nav-text">axios#put(url[, data[, config]])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#axios-patch-url-data-config-1"><span class="nav-number">5.4.0.7.</span> <span class="nav-text">axios#patch(url[, data[, config]])</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E9%85%8D%E7%BD%AE%E9%A1%B9"><span class="nav-number">6.</span> <span class="nav-text">请求配置项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%8D%E5%BA%94%E7%BB%93%E6%9E%84"><span class="nav-number">7.</span> <span class="nav-text">响应结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%9A%84%E9%BB%98%E8%AE%A4%E5%80%BC-defaults"><span class="nav-number">8.</span> <span class="nav-text">配置的默认值&#x2F;defaults</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E7%9A%84-axios-%E9%BB%98%E8%AE%A4%E5%80%BC"><span class="nav-number">8.1.</span> <span class="nav-text">全局的 axios 默认值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AE%9E%E4%BE%8B%E9%BB%98%E8%AE%A4%E5%80%BC"><span class="nav-number">8.2.</span> <span class="nav-text">自定义实例默认值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-number">8.3.</span> <span class="nav-text">配置的优先级</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%A6%E6%88%AA%E5%99%A8"><span class="nav-number">9.</span> <span class="nav-text">拦截器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">10.</span> <span class="nav-text">错误处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%96%E6%B6%88%E8%AF%B7%E6%B1%82"><span class="nav-number">11.</span> <span class="nav-text">取消请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E6%97%B6%E4%BD%BF%E7%94%A8-application-x-www-form-urlencoded"><span class="nav-number">12.</span> <span class="nav-text">请求时使用 application&#x2F;x-www-form-urlencoded</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="nav-number">12.1.</span> <span class="nav-text">浏览器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Node-js%E7%8E%AF%E5%A2%83"><span class="nav-number">12.2.</span> <span class="nav-text">Node.js环境</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Promises"><span class="nav-number">13.</span> <span class="nav-text">Promises</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TypeScript%E6%94%AF%E6%8C%81"><span class="nav-number">14.</span> <span class="nav-text">TypeScript支持</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E8%B5%84%E6%BA%90"><span class="nav-number">15.</span> <span class="nav-text">相关资源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Credits"><span class="nav-number">16.</span> <span class="nav-text">Credits</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E6%BA%90%E5%8D%8F%E8%AE%AE"><span class="nav-number">17.</span> <span class="nav-text">开源协议</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

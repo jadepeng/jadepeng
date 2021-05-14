@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: 知识图谱学习笔记（1） 知识图谱学习笔记第一部分，包含RDF介绍，以及Jena RDF API使用 知识图谱的基石：RDFRDF(Resource Description Framework)，即资源描述框架，其本质是一个数据模型（Data Model）。它提供了一个统一的标准，用于描述实体&#x2F;资源。简单来说，就是表示事物的一种方法和手段。 RDF序列化方法RDF序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="知识图谱学习笔记（1）">
+<meta property="og:url" content="http://blog.iflyresearch.com/2018/05/04/jqpeng-%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%881%EF%BC%89/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: 知识图谱学习笔记（1） 知识图谱学习笔记第一部分，包含RDF介绍，以及Jena RDF API使用 知识图谱的基石：RDFRDF(Resource Description Framework)，即资源描述框架，其本质是一个数据模型（Data Model）。它提供了一个统一的标准，用于描述实体&#x2F;资源。简单来说，就是表示事物的一种方法和手段。 RDF序列化方法RDF序">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-e3478e02c36ead3875e598b0668830fd_hd.jpg">
+<meta property="og:image" content="https://pic3.zhimg.com/v2-9950314f9ab6e6c44a2300d03e022bb1_r.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/v2-ef0de6ba9620d27ca0f2d2f4b0f18f53_r.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-b27db971f3fa1cefc83a47be5234dc18_hd.jpg">
+<meta property="og:image" content="https://jena.apache.org/tutorials/figures/fig4.png">
+<meta property="og:image" content="https://jena.apache.org/tutorials/figures/fig5.png">
+<meta property="og:image" content="http://oyqmmpkcm.bkt.clouddn.com/1524907704194.jpg">
+<meta property="article:published_time" content="2018-05-04T09:25:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.585Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="知识图谱">
+<meta property="article:tag" content="Jena">
+<meta property="article:tag" content="RDF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic2.zhimg.com/80/v2-e3478e02c36ead3875e598b0668830fd_hd.jpg">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2018/05/04/jqpeng-%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%881%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>知识图谱学习笔记（1） | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/05/04/jqpeng-%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%881%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          知识图谱学习笔记（1）
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-05-04 17:25:00" itemprop="dateCreated datePublished" datetime="2018-05-04T17:25:00+08:00">2018-05-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>15 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/kg-study-part-1.html">知识图谱学习笔记（1）</a></p>
+<p>知识图谱学习笔记第一部分，包含RDF介绍，以及Jena RDF API使用</p>
+<h2 id="知识图谱的基石：RDF"><a href="#知识图谱的基石：RDF" class="headerlink" title="知识图谱的基石：RDF"></a>知识图谱的基石：RDF</h2><p>RDF(Resource Description Framework)，即资源描述框架，其本质是一个数据模型（Data Model）。它提供了一个统一的标准，用于描述实体/资源。简单来说，就是表示事物的一种方法和手段。<br><img src="https://pic2.zhimg.com/80/v2-e3478e02c36ead3875e598b0668830fd_hd.jpg" alt="enter description here"></p>
+<h3 id="RDF序列化方法"><a href="#RDF序列化方法" class="headerlink" title="RDF序列化方法"></a>RDF序列化方法</h3><p>RDF序列化的方式主要有：RDF/XML，N-Triples，Turtle，RDFa，JSON-LD等几种。</p>
+<ol>
+<li>RDF/XML，顾名思义，就是用XML的格式来表示RDF数据</li>
+<li>N-Triples，即用多个三元组来表示RDF数据集，是最直观的表示方法。在文件中，每一行表示一个三元组，方便机器解析和处理。开放领域知识图谱DBpedia通常是用这种格式来发布数据的。</li>
+<li>Turtle, [‘tɝtl] 应该是使用得最多的一种RDF序列化方式了。它比RDF/XML紧凑，且可读性比N-Triples好。</li>
+<li>RDFa,即“The Resource Description Framework in Attributes”，是HTML5的一个扩展，在不改变任何显示效果的情况下，让网站构建者能够在页面中标记实体，像人物、地点、时间、评论等等</li>
+<li>JSON-LD，即“JSON for Linking Data”，用键值对的方式来存储RDF数据</li>
+</ol>
+<p>Example1 N-Triples:</p>
+<pre><code>&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/chineseName&gt; &quot;罗纳尔多·路易斯·纳萨里奥·德·利马&quot;^^string.
+&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/career&gt; &quot;足球运动员&quot;^^string.
+&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/fullName&gt; &quot;Ronaldo Luís Nazário de Lima&quot;^^string.
+&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/birthDate&gt; &quot;1976-09-18&quot;^^date.
+&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/height&gt; &quot;180&quot;^^int.
+&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/weight&gt; &quot;98&quot;^^int.
+&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/nationality&gt; &quot;巴西&quot;^^string.
+&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/hasBirthPlace&gt; &lt;http://www.kg.com/place/10086&gt;.
+&lt;http://www.kg.com/place/10086&gt; &lt;http://www.kg.com/ontology/address&gt; &quot;里约热内卢&quot;^^string.
+&lt;http://www.kg.com/place/10086&gt; &lt;http://www.kg.com/ontology/coordinate&gt; &quot;-22.908333, -43.196389&quot;^^string.
+</code></pre>
+<p>Example2 Turtle:</p>
+<pre><code>@prefix person: &lt;http://www.kg.com/person/&gt; .
+@prefix place: &lt;http://www.kg.com/place/&gt; .
+@prefix : &lt;http://www.kg.com/ontology/&gt; .
+
+person:1 :chineseName &quot;罗纳尔多·路易斯·纳萨里奥·德·利马&quot;^^string.
+person:1 :career &quot;足球运动员&quot;^^string.
+person:1 :fullName &quot;Ronaldo Luís Nazário de Lima&quot;^^string.
+person:1 :birthDate &quot;1976-09-18&quot;^^date.
+person:1 :height &quot;180&quot;^^int. 
+person:1 :weight &quot;98&quot;^^int.
+person:1 :nationality &quot;巴西&quot;^^string. 
+person:1 :hasBirthPlace place:10086.
+place:10086 :address &quot;里约热内卢&quot;^^string.
+place:10086 :coordinate &quot;-22.908333, -43.196389&quot;^^string.
+</code></pre>
+<h3 id="RDF的表达能力"><a href="#RDF的表达能力" class="headerlink" title="RDF的表达能力"></a>RDF的表达能力</h3><p>RDF的表达能力有限，无法区分类和对象，也无法定义和描述类的关系/属性。RDF是对具体事物的描述，缺乏抽象能力，无法对同一个类别的事物进行定义和描述。就以罗纳尔多这个知识图为例，RDF能够表达罗纳尔多和里约热内卢这两个实体具有哪些属性，以及它们之间的关系。但如果我们想定义罗纳尔多是人，里约热内卢是地点，并且人具有哪些属性，地点具有哪些属性，人和地点之间存在哪些关系，这个时候RDF就表示无能为力了。</p>
+<h2 id="RDFS-OWL"><a href="#RDFS-OWL" class="headerlink" title="RDFS/OWL"></a>RDFS/OWL</h2><p>RDFS/OWL本质上是一些预定义词汇（vocabulary）构成的集合，用于对RDF进行类似的类定义及其属性的定义。</p>
+<blockquote>
+<p>RDFS/OWL序列化方式和RDF没什么不同，其实在表现形式上，它们就是RDF。其常用的方式主要是RDF/XML，Turtle。另外，通常我们用小写开头的单词或词组来表示属性，大写开头的表示类。数据属性（data property，实体和literal字面量的关系）通常由名词组成，而对象数据（object property，实体和实体之间的关系）通常由动词（has，is之类的）加名词组成。剩下的部分符合驼峰命名法。</p>
+</blockquote>
+<h3 id="轻量级的模式语言——RDFS"><a href="#轻量级的模式语言——RDFS" class="headerlink" title="轻量级的模式语言——RDFS"></a>轻量级的模式语言——RDFS</h3><p>RDFS，即“Resource Description Framework Schema”，是最基础的模式语言。还是以罗纳尔多知识图为例，我们在概念、抽象层面对RDF数据进行定义。下面的RDFS定义了人和地点这两个类，及每个类包含的属性。</p>
+<pre><code>@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix : &lt;http://www.kg.com/ontology/&gt; .
+
+### 这里我们用词汇rdfs:Class定义了“人”和“地点”这两个类。
+:Person rdf:type rdfs:Class.
+:Place rdf:type rdfs:Class.
+
+### rdfs当中不区分数据属性和对象属性，词汇rdf:Property定义了属性，即RDF的“边”。
+
+:chineseName rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:string .
+
+:career rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:string .
+
+:fullName rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:string .
+
+:birthDate rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:date .
+
+:height rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:int .
+
+:weight rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:int .
+
+:nationality rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:string .
+
+:hasBirthPlace rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range :Place .
+
+:address rdf:type rdf:Property;    rdfs:domain :Place;    rdfs:range xsd:string .
+
+:coordinate rdf:type rdf:Property;    rdfs:domain :Place;    rdfs:range xsd:string .
+</code></pre>
+<p>RDFS几个比较重要，常用的词汇：</p>
+<ol>
+<li>rdfs:Class. 用于定义类</li>
+<li>rdfs:domain. 用于表示该属性属于哪个类别</li>
+<li>rdfs:range. 用于描述该属性的取值类型</li>
+<li>rdfs:subClassOf. 用于描述该类的父类</li>
+<li>rdfs:subProperty. 用于描述该属性的父属性</li>
+</ol>
+<p><img src="https://pic3.zhimg.com/v2-9950314f9ab6e6c44a2300d03e022bb1_r.jpg" alt="enter description here"></p>
+<p>Data层是我们用RDF对罗纳尔多知识图的具体描述，Vocabulary是我们自己定义的一些词汇（类别，属性），RDF(S)则是预定义词汇。从下到上是一个具体到抽象的过程。图中我们用红色圆角矩形表示类，绿色字体表示rdf:type，rdfs:domain，rdfs:range三种预定义词汇，虚线表示rdf:type这种所属关系。</p>
+<h3 id="RDFS的扩展——OWL"><a href="#RDFS的扩展——OWL" class="headerlink" title="RDFS的扩展——OWL"></a>RDFS的扩展——OWL</h3><p>RDFS本质上是RDF词汇的一个扩展。后来人们发现RDFS的表达能力还是相当有限，因此提出了OWL。我们也可以把OWL当做是RDFS的一个扩展，其添加了额外的预定义词汇。</p>
+<p>OWL，即“Web Ontology Language”，语义网技术栈的核心之一。OWL有两个主要的功能：</p>
+<ol>
+<li>提供快速、灵活的数据建模能力。</li>
+<li>高效的自动推理。</li>
+</ol>
+<p>用OWL对罗纳尔多知识图进行语义层的描述：</p>
+<pre><code>@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix : &lt;http://www.kg.com/ontology/&gt; .
+@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
+
+### 这里我们用词汇owl:Class定义了“人”和“地点”这两个类。
+:Person rdf:type owl:Class.
+:Place rdf:type owl:Class.
+
+### owl区分数据属性和对象属性（对象属性表示实体和实体之间的关系）。词汇owl:DatatypeProperty定义了数据属性，owl:ObjectProperty定义了对象属性。
+:chineseName rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:string .
+
+:career rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:string .
+
+:fullName rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:string .
+
+:birthDate rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:date .
+
+:height rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:int .
+
+:weight rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:int .
+
+:nationality rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:string .
+
+:hasBirthPlace rdf:type owl:ObjectProperty;    rdfs:domain :Person;    rdfs:range :Place .
+
+:address rdf:type owl:DatatypeProperty;    rdfs:domain :Place;    rdfs:range xsd:string .
+
+:coordinate rdf:type owl:DatatypeProperty;    rdfs:domain :Place;    rdfs:range xsd:string .
+</code></pre>
+<p>schema层的描述语言换为OWL后，层次图表示为：<br><img src="https://pic2.zhimg.com/v2-ef0de6ba9620d27ca0f2d2f4b0f18f53_r.jpg" alt="enter description here"></p>
+<p>owl区分数据属性和对象属性（对象属性表示实体和实体之间的关系）。词汇owl:DatatypeProperty定义了数据属性，owl:ObjectProperty定义了对象属性。</p>
+<p>上图中，数据属性用青色表示，对象属性由蓝色表示。</p>
+<p>描述属性特征的词汇</p>
+<ol>
+<li>owl:TransitiveProperty. 表示该属性具有传递性质。例如，我们定义“位于”是具有传递性的属性，若A位于B，B位于C，那么A肯定位于C。</li>
+<li>owl:SymmetricProperty. 表示该属性具有对称性。例如，我们定义“认识”是具有对称性的属性，若A认识B，那么B肯定认识A。</li>
+<li>owl:FunctionalProperty. 表示该属性取值的唯一性。 例如，我们定义“母亲”是具有唯一性的属性，若A的母亲是B，在其他地方我们得知A的母亲是C，那么B和C指的是同一个人。</li>
+<li>owl:inverseOf. 定义某个属性的相反关系。例如，定义“父母”的相反关系是“子女”，若A是B的父母，那么B肯定是A的子女。</li>
+</ol>
+<p>本体映射词汇（Ontology Mapping）</p>
+<ol>
+<li>owl:equivalentClass. 表示某个类和另一个类是相同的。</li>
+<li>owl:equivalentProperty. 表示某个属性和另一个属性是相同的。</li>
+<li>owl:sameAs. 表示两个实体是同一个实体。</li>
+</ol>
+<h3 id="RDFS-OWL推理的推理机（reasoner）"><a href="#RDFS-OWL推理的推理机（reasoner）" class="headerlink" title="RDFS,OWL推理的推理机（reasoner）"></a>RDFS,OWL推理的推理机（reasoner）</h3><p>RDFS同样支持推理，由于缺乏丰富的表达能力，推理能力也不强。举个例子，我们用RDFS定义人和动物两个类，另外，定义人是动物的一个子类。此时推理机能够推断出一个实体若是人，那么它也是动物。OWL当然支持这种基本的推理，除此之外，凭借其强大的表达能力，我们能进行更有实际意义的推理。想象一个场景，我们有一个庞大数据库存储人物的亲属关系。里面很多关系都是单向的，比如，其只保存了A的父亲（母亲）是B，但B的子女字段里面没有A，可以推理得到B的子女A。</p>
+<p>。<img src="https://pic4.zhimg.com/80/v2-b27db971f3fa1cefc83a47be5234dc18_hd.jpg" alt="enter description here"></p>
+<h2 id="RDF查询语言SPARQL"><a href="#RDF查询语言SPARQL" class="headerlink" title="RDF查询语言SPARQL"></a>RDF查询语言SPARQL</h2><p>SPARQL即SPARQL Protocol and RDF Query Language的递归缩写，专门用于访问和操作RDF数据，是语义网的核心技术之一。W3C的RDF数据存取小组（RDF Data Access Working Group, RDAWG）对其进行了标准化。在2008年，SPARQL 1.0成为W3C官方所推荐的标准。2013年发布了SPARQL 1.1。相对第一个版本，其支持RDF图的更新，提供更强大的查询，比如：子查询、聚合操作（像我们常用的count）等等。</p>
+<p>由两个部分组成：协议和查询语言。</p>
+<ol>
+<li>查询语言很好理解，就像SQL用于查询关系数据库中的数据，XQuery用于查询XML数据，SPARQL用于查询RDF数据。</li>
+<li>协议是指我们可以通过HTTP协议在客户端和SPARQL服务器（SPARQL endpoint）之间传输查询和结果，这也是和其他查询语言最大的区别。</li>
+</ol>
+<p>一个SPARQL查询本质上是一个带有变量的RDF图，以我们之前提到的罗纳尔多RDF数据为例：</p>
+<pre><code>&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/chineseName&gt; &quot;罗纳尔多·路易斯·纳萨里奥·德·利马&quot;^^string.
+</code></pre>
+<p>查询SPARQL</p>
+<pre><code>&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/chineseName&gt; ?x.
+</code></pre>
+<p>SPARQL查询是基于图匹配的思想。我们把上述的查询与RDF图进行匹配，找到符合该匹配模式的所有子图，最后得到变量的值。就上面这个例子而言，在RDF图中找到匹配的子图后，将”罗纳尔多·路易斯·纳萨里奥·德·利马”和“?x”绑定，我们就得到最后的结果。简而言之，SPARQL查询分为三个步骤：</p>
+<ol>
+<li>构建查询图模式，表现形式就是带有变量的RDF。</li>
+<li>匹配，匹配到符合指定图模式的子图。</li>
+<li>绑定，将结果绑定到查询图模式对应的变量上。</li>
+</ol>
+<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><p><strong>如何查询所有数据</strong></p>
+<pre><code>PREFIX : &lt;http://www.kgdemo.com#&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;
+PREFIX xsd: &lt;XML Schema&gt;
+PREFIX vocab: &lt;http://localhost:2020/resource/vocab/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX map: &lt;http://localhost:2020/resource/#&gt;
+PREFIX db: &lt;http://localhost:2020/resource/&gt;
+
+SELECT * WHERE &#123;
+  ?s ?p ?o
+&#125;
+</code></pre>
+<p>SPARQL的部分关键词：</p>
+<ol>
+<li>SELECT， 指定我们要查询的变量。在这里我们查询所有的变量，用*代替。</li>
+<li>WHERE，指定我们要查询的图模式。含义上和SQL的WHERE没有区别。</li>
+<li>FROM，指定查询的RDF数据集。我们这里只有一个图，因此省去了FROM关键词。 PREFIX，用于IRI的缩写。</li>
+</ol>
+<p>“周星驰出演了哪些电影”：</p>
+<pre><code>PREFIX : &lt;http://www.kgdemo.com#&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;
+PREFIX xsd: &lt;XML Schema&gt;
+PREFIX vocab: &lt;http://localhost:2020/resource/vocab/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX map: &lt;http://localhost:2020/resource/#&gt;
+PREFIX db: &lt;http://localhost:2020/resource/&gt;
+
+SELECT ?n WHERE &#123;
+  ?s rdf:type :Person.
+  ?s :personName &#39;周星驰&#39;.
+  ?s :hasActedIn ?o.
+  ?o :movieTitle ?n
+&#125;
+</code></pre>
+<h2 id="使用Jena-构建知识图谱"><a href="#使用Jena-构建知识图谱" class="headerlink" title="使用Jena 构建知识图谱"></a>使用Jena 构建知识图谱</h2><p>Jena是Apache基金会旗下的开源Java框架，用于构建Semantic Web 和 Linked Data 应用。</p>
+<p>下面简要的介绍下API，要使用jena，可以下载jar包或者使用maven（推荐），建议测试时下面的都加上：</p>
+<pre><code>    &lt;dependency&gt;    &lt;groupId&gt;org.apache.jena&lt;/groupId&gt;    &lt;artifactId&gt;apache-jena-libs&lt;/artifactId&gt;    &lt;type&gt;pom&lt;/type&gt;    &lt;version&gt;3.7.0&lt;/version&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.apache.jena&lt;/groupId&gt;    &lt;artifactId&gt;jena-sdb&lt;/artifactId&gt;    &lt;version&gt;3.7.0&lt;/version&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.apache.jena&lt;/groupId&gt;    &lt;artifactId&gt;jena-base&lt;/artifactId&gt;    &lt;version&gt;3.7.0&lt;/version&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.apache.jena&lt;/groupId&gt;    &lt;artifactId&gt;jena-fuseki-embedded&lt;/artifactId&gt;    &lt;version&gt;3.7.0&lt;/version&gt; &lt;!-- Set the version --&gt;&lt;/dependency&gt;
+&lt;!-- https://mvnrepository.com/artifact/org.apache.jena/jena-arq --&gt;&lt;dependency&gt;    &lt;groupId&gt;org.apache.jena&lt;/groupId&gt;    &lt;artifactId&gt;jena-arq&lt;/artifactId&gt;    &lt;version&gt;3.7.0&lt;/version&gt;&lt;/dependency&gt;
+</code></pre>
+<h3 id="Jena-RDF-API"><a href="#Jena-RDF-API" class="headerlink" title="Jena RDF API"></a>Jena RDF API</h3><p>首先，三元组（triple）组成的图称之为Model，这个图里的Node可以是resources(实体）、literals（文本）或者blank nodes。</p>
+<p>一个三元组，在jena里称之为Statement，一个 statement 包含三部分：:</p>
+<ul>
+<li>the subject ：实体</li>
+<li>the predicate ：属性</li>
+<li>the object ： 值</li>
+</ul>
+<h4 id="创建Model"><a href="#创建Model" class="headerlink" title="创建Model"></a>创建Model</h4><pre><code>// URI 定义
+static String personURI    = &quot;http://somewhere/JohnSmith&quot;;
+static String fullName     = &quot;John Smith&quot;;
+
+// 创建一个空模型（KG)
+Model model = ModelFactory.createDefaultModel();
+
+// 创建一个resource（一个subject)
+Resource johnSmith = model.createResource(personURI);
+
+// 添加属性，这里的value是一个literals（文本）
+ johnSmith.addProperty(VCARD.FN, fullName);
+</code></pre>
+<p>当然，你还可以使用链式API,为resource添加多个Property</p>
+<pre><code>// create the resource
+//   and add the properties cascading style
+Resource johnSmith
+  = model.createResource(personURI)     .addProperty(VCARD.FN, fullName)     .addProperty(VCARD.N,                  model.createResource()                       .addProperty(VCARD.Given, givenName)                       .addProperty(VCARD.Family, familyName));
+</code></pre>
+<h4 id="遍历Model"><a href="#遍历Model" class="headerlink" title="遍历Model"></a>遍历Model</h4><p>使用model.listStatements遍历statements，返回一个迭代器，使用hasNext判断是否还有数据，通过getSubject，getPredicate，getObject 获取三元组信息。</p>
+<pre><code>// list the statements in the Model
+StmtIterator iter = model.listStatements();
+
+// print out the predicate, subject and object of each statement
+while (iter.hasNext()) &#123;
+    Statement stmt      = iter.nextStatement();  // get next statement
+    Resource  subject   = stmt.getSubject();     // get the subject
+    Property  predicate = stmt.getPredicate();   // get the predicate
+    RDFNode   object    = stmt.getObject();      // get the object
+    System.out.print(subject.toString());
+    System.out.print(&quot; &quot; + predicate.toString() + &quot; &quot;);
+    if (object instanceof Resource) &#123;
+       System.out.print(object.toString());
+    &#125; else &#123;
+        // object is a literal
+        System.out.print(&quot; \&quot;&quot; + object.toString() + &quot;\&quot;&quot;);
+    &#125;
+    System.out.println(&quot; .&quot;);
+&#125; 
+</code></pre>
+<p>运行结果：</p>
+<pre><code>http://somewhere/JohnSmith http://www.w3.org/2001/vcard-rdf/3.0#N 80aeb72e-ef9c-4879-807d-62daf3c13b72 .
+http://somewhere/JohnSmith http://www.w3.org/2001/vcard-rdf/3.0#FN  &quot;John Smith&quot; .
+80aeb72e-ef9c-4879-807d-62daf3c13b72 http://www.w3.org/2001/vcard-rdf/3.0#Family  &quot;Smith&quot; .
+80aeb72e-ef9c-4879-807d-62daf3c13b72 http://www.w3.org/2001/vcard-rdf/3.0#Given  &quot;John&quot; .
+</code></pre>
+<h4 id="保存为-RDF文件"><a href="#保存为-RDF文件" class="headerlink" title="保存为 RDF文件"></a>保存为 RDF文件</h4><p>可以使用model.write方便的把Model保存为rdf文件，write默认保存为XML格式</p>
+<pre><code>// now write the model in XML form to a file
+model.write(System.out);
+
+
+
+&lt;rdf:RDF
+  xmlns:rdf=&#39;http://www.w3.org/1999/02/22-rdf-syntax-ns#&#39;
+  xmlns:vcard=&#39;http://www.w3.org/2001/vcard-rdf/3.0#&#39;
+ &gt;
+  &lt;rdf:Description rdf:about=&#39;http://somewhere/JohnSmith&#39;&gt;
+    &lt;vcard:FN&gt;John Smith&lt;/vcard:FN&gt;
+    &lt;vcard:N rdf:nodeID=&quot;A0&quot;/&gt;
+  &lt;/rdf:Description&gt;
+  &lt;rdf:Description rdf:nodeID=&quot;A0&quot;&gt;
+    &lt;vcard:Given&gt;John&lt;/vcard:Given&gt;
+    &lt;vcard:Family&gt;Smith&lt;/vcard:Family&gt;
+  &lt;/rdf:Description&gt;
+&lt;/rdf:RDF&gt;
+</code></pre>
+<p>write还提供重载版本write( OutputStream out, String lang )，lang可以为”RDF/XML-ABBREV”, “N-TRIPLE”, “TURTLE”, (and “TTL”) and “N3”<br> 我们来保存为常见的TURTLE：</p>
+<pre><code>model.write(System.out, &quot;TURTLE&quot;);
+</code></pre>
+<p>结果：</p>
+<pre><code>&lt;http://somewhere/JohnSmith&gt;    &lt;http://www.w3.org/2001/vcard-rdf/3.0#FN&gt;            &quot;John Smith&quot; ;    &lt;http://www.w3.org/2001/vcard-rdf/3.0#N&gt;            [ &lt;http://www.w3.org/2001/vcard-rdf/3.0#Family&gt;                      &quot;Smith&quot; ;              &lt;http://www.w3.org/2001/vcard-rdf/3.0#Given&gt;                      &quot;John&quot;            ] .
+</code></pre>
+<p>jena还提供prefix功能，我们可以指定prefix来简化turtle,下面的代码将指定prefix，并保存到文件1.rdf里：</p>
+<pre><code>    model.setNsPrefix( &quot;vCard&quot;, &quot;http://www.w3.org/2001/vcard-rdf/3.0#&quot; );    model.setNsPrefix( &quot;rdf&quot;, &quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot; );    try &#123;        model.write(new FileOutputStream(&quot;1.rdf&quot;),&quot;TURTLE&quot;);    &#125; catch (FileNotFoundException e) &#123;        e.printStackTrace();    &#125;
+</code></pre>
+<p>结果：</p>
+<pre><code>@prefix rdf:   &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix vCard: &lt;http://www.w3.org/2001/vcard-rdf/3.0#&gt; .
+
+&lt;http://somewhere/JohnSmith&gt;    vCard:FN  &quot;John Smith&quot; ;    vCard:N   [ vCard:Family  &quot;Smith&quot; ;                vCard:Given   &quot;John&quot;              ] .
+</code></pre>
+<h4 id="读取rdf"><a href="#读取rdf" class="headerlink" title="读取rdf"></a>读取rdf</h4><p>Mode的read(Reader reader, String base)方法，提供 读取RDF文件的功能：</p>
+<pre><code>    static final String inputFileName  = &quot;1.rdf&quot;;
+                              
+    public static void main (String args[]) &#123;
+        // create an empty model
+        Model model = ModelFactory.createDefaultModel();
+
+        InputStream in = FileManager.get().open( inputFileName );
+        if (in == null) &#123;
+            throw new IllegalArgumentException( &quot;File: &quot; + inputFileName + &quot; not found&quot;);
+        &#125;
+        
+        // read the RDF/XML file
+        model.read(in, &quot;&quot;,&quot;TURTLE&quot;);
+                    
+        // write it to standard out
+        model.write(System.out);            
+    &#125;
+</code></pre>
+<p>注意，read的时候，默认是读取XML，如果是其他格式，需要指定lang。</p>
+<h4 id="从模型读取Resouce"><a href="#从模型读取Resouce" class="headerlink" title="从模型读取Resouce"></a>从模型读取Resouce</h4><p>一个resouce都有一个唯一的URI，我们可以通过URI来获取对应的Resouce：<br> 函数原型：</p>
+<pre><code>    /**    Return a Resource instance with the given URI in this model. &lt;i&gt;This method    behaves identically to &lt;code&gt;createResource(String)&lt;/code&gt;&lt;/i&gt; and exists as    legacy: createResource is now capable of, and allowed to, reuse existing objects.&lt;p&gt;    Subsequent operations on the returned object may modify this model.   @return a resource instance   @param uri the URI of the resource*/Resource getResource(String uri) ;
+</code></pre>
+<p>获取到Resouce后，通过getRequiredProperty获取属性，如果一个属性包含多个值，可以使用listProperties获取。</p>
+<pre><code> static final String inputFileName = &quot;1.rdf&quot;;
+    static final String johnSmithURI = &quot;http://somewhere/JohnSmith&quot;;
+    
+    public static void main (String args[]) &#123;
+        // create an empty model
+        Model model = ModelFactory.createDefaultModel();
+       
+        // use the FileManager to find the input file
+        InputStream in = FileManager.get().open(inputFileName);
+        if (in == null) &#123;
+            throw new IllegalArgumentException( &quot;File: &quot; + inputFileName + &quot; not found&quot;);
+        &#125;
+        
+        // read the RDF/XML file
+        model.read(new InputStreamReader(in), &quot;&quot;);
+        
+        // retrieve the Adam Smith vcard resource from the model
+        Resource vcard = model.getResource(johnSmithURI);
+
+        // retrieve the value of the N property
+        Resource name = (Resource) vcard.getRequiredProperty(VCARD.N)
+                                        .getObject();
+        // retrieve the given name property
+        String fullName = vcard.getRequiredProperty(VCARD.FN)
+                               .getString();
+        // add two nick name properties to vcard
+        vcard.addProperty(VCARD.NICKNAME, &quot;Smithy&quot;)
+             .addProperty(VCARD.NICKNAME, &quot;Adman&quot;);
+        
+        // set up the output
+        System.out.println(&quot;The nicknames of \&quot;&quot; + fullName + &quot;\&quot; are:&quot;);
+        // list the nicknames
+        StmtIterator iter = vcard.listProperties(VCARD.NICKNAME);
+        while (iter.hasNext()) &#123;
+            System.out.println(&quot;    &quot; + iter.nextStatement().getObject()
+                                            .toString());
+        &#125;
+
+        try &#123;
+            model.write(new FileOutputStream(&quot;1.rdf&quot;));
+        &#125; catch (FileNotFoundException e) &#123;
+            e.printStackTrace();
+        &#125;
+    &#125;
+</code></pre>
+<h4 id="查询模型"><a href="#查询模型" class="headerlink" title="查询模型"></a>查询模型</h4><p>可以通过listResourcesWithProperty查询包含Property的数据：</p>
+<pre><code>    ResIterator iter = model.listResourcesWithProperty(VCARD.FN);
+        if (iter.hasNext()) &#123;
+            System.out.println(&quot;The database contains vcards for:&quot;);
+            while (iter.hasNext()) &#123;
+                System.out.println(&quot;  &quot; + iter.nextResource()
+                                              .getRequiredProperty(VCARD.FN)
+                                              .getString() );
+            &#125;
+        &#125; else &#123;
+            System.out.println(&quot;No vcards were found in the database&quot;);
+        &#125;        
+</code></pre>
+<p>通过listStatements(SimpleSelector)查询Statement：</p>
+<pre><code>        // select all the resources with a VCARD.FN property
+        // whose value ends with &quot;Smith&quot;
+        StmtIterator iter = model.listStatements(
+            new 
+                SimpleSelector(null, VCARD.FN, (RDFNode) null) &#123;
+                    @Override
+                    public boolean selects(Statement s) &#123;
+                            return s.getString().endsWith(&quot;Smith&quot;);
+                    &#125;
+                &#125;);
+        if (iter.hasNext()) &#123;
+            System.out.println(&quot;The database contains vcards for:&quot;);
+            while (iter.hasNext()) &#123;
+                System.out.println(&quot;  &quot; + iter.nextStatement()
+                                              .getString());
+            &#125;
+        &#125; else &#123;
+            System.out.println(&quot;No Smith&#39;s were found in the database&quot;);
+        &#125;     
+</code></pre>
+<h4 id="模型合并"><a href="#模型合并" class="headerlink" title="模型合并"></a>模型合并</h4><p>可以通过union合并两个模型：</p>
+<p><img src="https://jena.apache.org/tutorials/figures/fig4.png" alt="enter description here"><br><img src="https://jena.apache.org/tutorials/figures/fig5.png" alt="enter description here"></p>
+<p>合并后：<br><img src="http://oyqmmpkcm.bkt.clouddn.com/1524907704194.jpg" alt="enter description here" title="1524907704194"></p>
+<h2 id="来源"><a href="#来源" class="headerlink" title="来源"></a>来源</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/32122644">知识图谱基础之RDF，RDFS与OWL</a></li>
+<li></li>
+</ul>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" rel="tag"># 知识图谱</a>
+              <a href="/tags/Jena/" rel="tag"># Jena</a>
+              <a href="/tags/RDF/" rel="tag"># RDF</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/04/16/jqpeng-%E6%96%B0%E5%9E%8B%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84%E4%B8%89%E4%B8%AA%E5%A2%83%E7%95%8C%20%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%BD%AC%E5%89%8D%E7%AB%AF/" rel="prev" title="新型前端开发工程师的三个境界 后端开发工程师如何快速转前端">
+      <i class="fa fa-chevron-left"></i> 新型前端开发工程师的三个境界 后端开发工程师如何快速转前端
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/05/28/jqpeng-%E5%BC%80%E6%BA%90APM%E7%B3%BB%E7%BB%9Fskywalking%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BD%BF%E7%94%A8/" rel="next" title="开源APM系统skywalking介绍与使用">
+      开源APM系统skywalking介绍与使用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%9A%84%E5%9F%BA%E7%9F%B3%EF%BC%9ARDF"><span class="nav-number">1.</span> <span class="nav-text">知识图谱的基石：RDF</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RDF%E5%BA%8F%E5%88%97%E5%8C%96%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">RDF序列化方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDF%E7%9A%84%E8%A1%A8%E8%BE%BE%E8%83%BD%E5%8A%9B"><span class="nav-number">1.2.</span> <span class="nav-text">RDF的表达能力</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDFS-OWL"><span class="nav-number">2.</span> <span class="nav-text">RDFS&#x2F;OWL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84%E6%A8%A1%E5%BC%8F%E8%AF%AD%E8%A8%80%E2%80%94%E2%80%94RDFS"><span class="nav-number">2.1.</span> <span class="nav-text">轻量级的模式语言——RDFS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDFS%E7%9A%84%E6%89%A9%E5%B1%95%E2%80%94%E2%80%94OWL"><span class="nav-number">2.2.</span> <span class="nav-text">RDFS的扩展——OWL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDFS-OWL%E6%8E%A8%E7%90%86%E7%9A%84%E6%8E%A8%E7%90%86%E6%9C%BA%EF%BC%88reasoner%EF%BC%89"><span class="nav-number">2.3.</span> <span class="nav-text">RDFS,OWL推理的推理机（reasoner）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDF%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80SPARQL"><span class="nav-number">3.</span> <span class="nav-text">RDF查询语言SPARQL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B"><span class="nav-number">3.1.</span> <span class="nav-text">举例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Jena-%E6%9E%84%E5%BB%BA%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1"><span class="nav-number">4.</span> <span class="nav-text">使用Jena 构建知识图谱</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Jena-RDF-API"><span class="nav-number">4.1.</span> <span class="nav-text">Jena RDF API</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAModel"><span class="nav-number">4.1.1.</span> <span class="nav-text">创建Model</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%81%8D%E5%8E%86Model"><span class="nav-number">4.1.2.</span> <span class="nav-text">遍历Model</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%9D%E5%AD%98%E4%B8%BA-RDF%E6%96%87%E4%BB%B6"><span class="nav-number">4.1.3.</span> <span class="nav-text">保存为 RDF文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96rdf"><span class="nav-number">4.1.4.</span> <span class="nav-text">读取rdf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E%E6%A8%A1%E5%9E%8B%E8%AF%BB%E5%8F%96Resouce"><span class="nav-number">4.1.5.</span> <span class="nav-text">从模型读取Resouce</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.1.6.</span> <span class="nav-text">查询模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%90%88%E5%B9%B6"><span class="nav-number">4.1.7.</span> <span class="nav-text">模型合并</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%A5%E6%BA%90"><span class="nav-number">5.</span> <span class="nav-text">来源</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

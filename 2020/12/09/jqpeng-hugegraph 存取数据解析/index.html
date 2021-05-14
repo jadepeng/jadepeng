@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: hugegraph 存取数据解析 hugegraph 是百度开源的图数据库，支持hbase，mysql，rocksdb等作为存储后端。本文以EDGE 存储，hbase为存储后端，来探索hugegraph是如何存取数据的。 存数据序列化 首先需要序列化，hbase 使用BinarySerializer:  keyWithIdPrefix 和indexWithIdPr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hugegraph 存取数据解析">
+<meta property="og:url" content="http://blog.iflyresearch.com/2020/12/09/jqpeng-hugegraph%20%E5%AD%98%E5%8F%96%E6%95%B0%E6%8D%AE%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: hugegraph 存取数据解析 hugegraph 是百度开源的图数据库，支持hbase，mysql，rocksdb等作为存储后端。本文以EDGE 存储，hbase为存储后端，来探索hugegraph是如何存取数据的。 存数据序列化 首先需要序列化，hbase 使用BinarySerializer:  keyWithIdPrefix 和indexWithIdPr">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/12/9/1607480289186.png">
+<meta property="article:published_time" content="2020-12-09T03:58:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="hugegraph">
+<meta property="article:tag" content="知识图谱">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/12/9/1607480289186.png">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2020/12/09/jqpeng-hugegraph%20%E5%AD%98%E5%8F%96%E6%95%B0%E6%8D%AE%E8%A7%A3%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>hugegraph 存取数据解析 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/12/09/jqpeng-hugegraph%20%E5%AD%98%E5%8F%96%E6%95%B0%E6%8D%AE%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          hugegraph 存取数据解析
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-09 11:58:00" itemprop="dateCreated datePublished" datetime="2020-12-09T11:58:00+08:00">2020-12-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/hugegraph-storage.html">hugegraph 存取数据解析</a></p>
+<p>hugegraph 是百度开源的图数据库，支持hbase，mysql，rocksdb等作为存储后端。本文以EDGE 存储，hbase为存储后端，来探索hugegraph是如何存取数据的。</p>
+<h2 id="存数据"><a href="#存数据" class="headerlink" title="存数据"></a>存数据</h2><h3 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h3><p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/12/9/1607480289186.png" alt="Edge"></p>
+<p>首先需要序列化，<code>hbase</code> 使用BinarySerializer:</p>
+<ul>
+<li>keyWithIdPrefix 和indexWithIdPrefix都是false</li>
+</ul>
+<p>这个后面会用到。</p>
+<pre><code>public class HbaseSerializer extends BinarySerializer &#123;
+
+    public HbaseSerializer() &#123;
+        super(false, true);
+    &#125;
+&#125;
+</code></pre>
+<p>要存到db，首先需要序列化为BackendEntry，<code>BackendEntry</code> 是图数据库和后端存储的传输对象，Hbase对应的是<code>BinaryBackendEntry</code>:</p>
+<pre><code>public class BinaryBackendEntry implements BackendEntry &#123;
+
+    private static final byte[] EMPTY_BYTES = new byte[]&#123;&#125;;
+
+    private final HugeType type;
+    private final BinaryId id;
+    private Id subId;
+    private final List&lt;BackendColumn&gt; columns;
+    private long ttl;
+
+    public BinaryBackendEntry(HugeType type, byte[] bytes) &#123;
+        this(type, BytesBuffer.wrap(bytes).parseId(type));
+    &#125;
+
+    public BinaryBackendEntry(HugeType type, BinaryId id) &#123;
+        this.type = type;
+        this.id = id;
+        this.subId = null;
+        this.columns = new ArrayList&lt;&gt;();
+        this.ttl = 0L;
+    &#125;
+</code></pre>
+<p>我们来看序列化，序列化，其实就是要将数据放到entry的column列里。</p>
+<ul>
+<li><code>hbase</code> 的<code>keyWithIdPrefix</code>是false，因此<code>name</code>不包含ownerVertexId（参考下面的EdgeId，去掉ownerVertexId）</li>
+</ul>
+<pre><code> public BackendEntry writeEdge(HugeEdge edge) &#123;
+        BinaryBackendEntry entry = newBackendEntry(edge);
+        byte[] name = this.keyWithIdPrefix ?
+                      this.formatEdgeName(edge) : EMPTY_BYTES;
+        byte[] value = this.formatEdgeValue(edge);
+        entry.column(name, value);
+
+        if (edge.hasTtl()) &#123;
+            entry.ttl(edge.ttl());
+        &#125;
+
+        return entry;
+    &#125;
+</code></pre>
+<p>EdgeId：</p>
+<pre><code>    private final Id ownerVertexId;
+    private final Directions direction;
+    private final Id edgeLabelId;
+    private final String sortValues;
+    private final Id otherVertexId;
+
+    private final boolean directed;
+    private String cache;
+</code></pre>
+<h3 id="backend-存储"><a href="#backend-存储" class="headerlink" title="backend 存储"></a>backend 存储</h3><p>生成BackendEntry后，通过store机制，交给后端的backend存储。</p>
+<p>EDGE的保存，对应HbaseTables.Edge:</p>
+<pre><code>public static class Edge extends HbaseTable &#123;
+
+        @Override
+        public void insert(Session session, BackendEntry entry) &#123;
+            long ttl = entry.ttl();
+            if (ttl == 0L) &#123;
+                session.put(this.table(), CF, entry.id().asBytes(),
+                            entry.columns());
+            &#125; else &#123;
+                session.put(this.table(), CF, entry.id().asBytes(),
+                            entry.columns(), ttl);
+            &#125;
+        &#125;
+&#125;
+</code></pre>
+<p>CF 是固定的f：</p>
+<pre><code>    protected static final byte[] CF = &quot;f&quot;.getBytes();
+</code></pre>
+<p><code>session.put</code> 对应：</p>
+<pre><code> @Override
+        public void put(String table, byte[] family, byte[] rowkey,
+                        Collection&lt;BackendColumn&gt; columns) &#123;
+            Put put = new Put(rowkey);
+            for (BackendColumn column : columns) &#123;
+                put.addColumn(family, column.name, column.value);
+            &#125;
+            this.batch(table, put);
+        &#125;
+</code></pre>
+<p>可以看出，存储时，edgeid作为<code>rowkey</code>，然后把去除<code>ownerVertexId</code>后的<code>edgeid</code>作为<code>column.name</code></p>
+<h2 id="EDGE-读取"><a href="#EDGE-读取" class="headerlink" title="EDGE 读取"></a>EDGE 读取</h2><h3 id="从backend读取BackendEntry"><a href="#从backend读取BackendEntry" class="headerlink" title="从backend读取BackendEntry"></a>从backend读取BackendEntry</h3><p>读取就是从hbase读取result，转换为BinaryBackendEntry，再转成Edge。</p>
+<p>读取，是scan的过程：</p>
+<pre><code> /**
+         * Inner scan: send scan request to HBase and get iterator
+         */
+        @Override
+        public RowIterator scan(String table, Scan scan) &#123;
+            assert !this.hasChanges();
+
+            try (Table htable = table(table)) &#123;
+                return new RowIterator(htable.getScanner(scan));
+            &#125; catch (IOException e) &#123;
+                throw new BackendException(e);
+            &#125;
+        &#125;
+</code></pre>
+<p>scan后，返回<code>BackendEntryIterator</code></p>
+<pre><code>protected BackendEntryIterator newEntryIterator(Query query,
+                                                    RowIterator rows) &#123;
+        return new BinaryEntryIterator&lt;&gt;(rows, query, (entry, row) -&gt; &#123;
+            E.checkState(!row.isEmpty(), &quot;Can&#39;t parse empty HBase result&quot;);
+            byte[] id = row.getRow();
+            if (entry == null || !Bytes.prefixWith(id, entry.id().asBytes())) &#123;
+                HugeType type = query.resultType();
+                // NOTE: only support BinaryBackendEntry currently
+                entry = new BinaryBackendEntry(type, id);
+            &#125;
+            try &#123;
+                this.parseRowColumns(row, entry, query);
+            &#125; catch (IOException e) &#123;
+                throw new BackendException(&quot;Failed to read HBase columns&quot;, e);
+            &#125;
+            return entry;
+        &#125;);
+    &#125;
+</code></pre>
+<p>注意，<code>new BinaryBackendEntry(type, id)</code> 时，BinaryBackendEntry的id并不是<code>rowkey</code>，而是对rowkey做了处理：</p>
+<pre><code>public BinaryId parseId(HugeType type) &#123;
+        if (type.isIndex()) &#123;
+            return this.readIndexId(type);
+        &#125;
+        // Parse id from bytes
+        int start = this.buffer.position();
+        /*
+         * Since edge id in edges table doesn&#39;t prefix with leading 0x7e,
+         * so readId() will return the source vertex id instead of edge id,
+         * can&#39;t call: type.isEdge() ? this.readEdgeId() : this.readId();
+         */
+        Id id = this.readId();
+        int end = this.buffer.position();
+        int len = end - start;
+        byte[] bytes = new byte[len];
+        System.arraycopy(this.array(), start, bytes, 0, len);
+        return new BinaryId(bytes, id);
+    &#125;
+</code></pre>
+<p>这里是先读取ownervertexId作为Id部分, 然后将剩余的直接放入bytes，组合成BinaryId，和序列化的时候有差别，为什么这么设计呢？原来不管是vertex还是edge，都是当成Vertex来读取的。</p>
+<pre><code>protected final BinaryBackendEntry newBackendEntry(HugeEdge edge) &#123;
+        BinaryId id = new BinaryId(formatEdgeName(edge),
+                                   edge.idWithDirection());
+        return newBackendEntry(edge.type(), id);
+    &#125;
+
+public EdgeId directed(boolean directed) &#123;
+    return new EdgeId(this.ownerVertexId, this.direction, this.edgeLabelId,
+                      this.sortValues, this.otherVertexId, directed);
+&#125;
+</code></pre>
+<p>序列化的时候是<code>EdgeId</code>。</p>
+<p><code>BackendEntryIterator</code>迭代器支持对结果进行merge, 上面代码里的<code>!Bytes.prefixWith(id, entry.id().asBytes()))</code> 就是对比是否是同一个ownervertex，如果是同一个，则放到同一个BackendEntry的Columns里。</p>
+<pre><code>     public BinaryEntryIterator(BackendIterator&lt;Elem&gt; results, Query query,
+                               BiFunction&lt;BackendEntry, Elem, BackendEntry&gt; m)
+
+    @Override
+    protected final boolean fetch() &#123;
+        assert this.current == null;
+        if (this.next != null) &#123;
+            this.current = this.next;
+            this.next = null;
+        &#125;
+
+        while (this.results.hasNext()) &#123;
+            Elem elem = this.results.next();
+            BackendEntry merged = this.merger.apply(this.current, elem);
+            E.checkState(merged != null, &quot;Error when merging entry&quot;);
+            if (this.current == null) &#123;
+                // The first time to read
+                this.current = merged;
+            &#125; else if (merged == this.current) &#123;
+                // The next entry belongs to the current entry
+                assert this.current != null;
+                if (this.sizeOf(this.current) &gt;= INLINE_BATCH_SIZE) &#123;
+                    break;
+                &#125;
+            &#125; else &#123;
+                // New entry
+                assert this.next == null;
+                this.next = merged;
+                break;
+            &#125;
+
+            // When limit exceed, stop fetching
+            if (this.reachLimit(this.fetched() - 1)) &#123;
+                // Need remove last one because fetched limit + 1 records
+                this.removeLastRecord();
+                this.results.close();
+                break;
+            &#125;
+        &#125;
+
+        return this.current != null;
+    &#125;
+</code></pre>
+<h3 id="从BackendEntry转换为edge"><a href="#从BackendEntry转换为edge" class="headerlink" title="从BackendEntry转换为edge"></a>从BackendEntry转换为edge</h3><p>然后再来看读取数据<code>readVertex</code>，前面说了，就算是edge，其实也是当vertex来读取的：</p>
+<pre><code> @Override
+    public HugeVertex readVertex(HugeGraph graph, BackendEntry bytesEntry) &#123;
+        if (bytesEntry == null) &#123;
+            return null;
+        &#125;
+        BinaryBackendEntry entry = this.convertEntry(bytesEntry);
+
+        // Parse id
+        Id id = entry.id().origin();
+        Id vid = id.edge() ? ((EdgeId) id).ownerVertexId() : id;
+        HugeVertex vertex = new HugeVertex(graph, vid, VertexLabel.NONE);
+
+        // Parse all properties and edges of a Vertex
+        for (BackendColumn col : entry.columns()) &#123;
+            if (entry.type().isEdge()) &#123;
+                // NOTE: the entry id type is vertex even if entry type is edge
+                // Parse vertex edges
+                this.parseColumn(col, vertex);
+            &#125; else &#123;
+                assert entry.type().isVertex();
+                // Parse vertex properties
+                assert entry.columnsSize() == 1 : entry.columnsSize();
+                this.parseVertex(col.value, vertex);
+            &#125;
+        &#125;
+
+        return vertex;
+    &#125;
+</code></pre>
+<p>逻辑：</p>
+<ul>
+<li>先读取ownervertexid，生成HugeVertex，这个时候只知道id，不知道vertexlabel，所以设置为VertexLabel.NONE</li>
+<li>然后，读取BackendColumn，一个edge，一个Column（name是edgeid去除ownervertexid后的部分，value是边数据）</li>
+</ul>
+<p>读取是在<code>parseColumn</code>:</p>
+<pre><code>protected void parseColumn(BackendColumn col, HugeVertex vertex) &#123;
+        BytesBuffer buffer = BytesBuffer.wrap(col.name);
+        Id id = this.keyWithIdPrefix ? buffer.readId() : vertex.id();
+        E.checkState(buffer.remaining() &gt; 0, &quot;Missing column type&quot;);
+        byte type = buffer.read();
+        // Parse property
+        if (type == HugeType.PROPERTY.code()) &#123;
+            Id pkeyId = buffer.readId();
+            this.parseProperty(pkeyId, BytesBuffer.wrap(col.value), vertex);
+        &#125;
+        // Parse edge
+        else if (type == HugeType.EDGE_IN.code() ||
+                 type == HugeType.EDGE_OUT.code()) &#123;
+            this.parseEdge(col, vertex, vertex.graph());
+        &#125;
+        // Parse system property
+        else if (type == HugeType.SYS_PROPERTY.code()) &#123;
+            // pass
+        &#125;
+        // Invalid entry
+        else &#123;
+            E.checkState(false, &quot;Invalid entry(%s) with unknown type(%s): 0x%s&quot;,
+                         id, type &amp; 0xff, Bytes.toHex(col.name));
+        &#125;
+    &#125;
+</code></pre>
+<p>从``col.name`读取type，如果是edge，则parseEdge:</p>
+<pre><code>protected void parseEdge(BackendColumn col, HugeVertex vertex,
+                             HugeGraph graph) &#123;
+        // owner-vertex + dir + edge-label + sort-values + other-vertex
+
+        BytesBuffer buffer = BytesBuffer.wrap(col.name);
+        if (this.keyWithIdPrefix) &#123;
+            // Consume owner-vertex id
+            buffer.readId();
+        &#125;
+        byte type = buffer.read();
+        Id labelId = buffer.readId();
+        String sortValues = buffer.readStringWithEnding();
+        Id otherVertexId = buffer.readId();
+
+        boolean direction = EdgeId.isOutDirectionFromCode(type);
+        EdgeLabel edgeLabel = graph.edgeLabelOrNone(labelId);
+
+        // Construct edge
+        HugeEdge edge = HugeEdge.constructEdge(vertex, direction, edgeLabel,
+                                               sortValues, otherVertexId);
+
+        // Parse edge-id + edge-properties
+        buffer = BytesBuffer.wrap(col.value);
+
+        //Id id = buffer.readId();
+
+        // Parse edge properties
+        this.parseProperties(buffer, edge);
+
+        // Parse edge expired time if needed
+        if (edge.hasTtl()) &#123;
+            this.parseExpiredTime(buffer, edge);
+        &#125;
+    &#125;
+</code></pre>
+<p>从col.name依次读取出type,labelId,sortValues和otherVertexId：</p>
+<pre><code>        byte type = buffer.read();
+        Id labelId = buffer.readId();
+        String sortValues = buffer.readStringWithEnding();
+        Id otherVertexId = buffer.readId();
+</code></pre>
+<p>然后根据labelid找到  <code>EdgeLabel edgeLabel = graph.edgeLabelOrNone(labelId);</code></p>
+<p>创建<code>edge</code>, 解析边属性<code>parseProperties</code></p>
+<p>最后读取<code>Ttl</code>, 处理结果的时候，会过滤过期数据。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/hugegraph/" rel="tag"># hugegraph</a>
+              <a href="/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" rel="tag"># 知识图谱</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/18/jqpeng-spring%20boot%E5%AE%9E%E7%8E%B0%E8%B6%85%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%BD%91%E5%85%B3%EF%BC%88%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E3%80%81%E8%BD%AC%E5%8F%91%EF%BC%89/" rel="prev" title="spring boot实现超轻量级网关（反向代理、转发）">
+      <i class="fa fa-chevron-left"></i> spring boot实现超轻量级网关（反向代理、转发）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/14/jqpeng-Spring%E4%B8%AD%E7%9A%84@Valid%20%E5%92%8C%20@Validated%E6%B3%A8%E8%A7%A3%E4%BD%A0%E7%94%A8%E5%AF%B9%E4%BA%86%E5%90%97/" rel="next" title="Spring中的@Valid 和 @Validated注解你用对了吗">
+      Spring中的@Valid 和 @Validated注解你用对了吗 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E6%95%B0%E6%8D%AE"><span class="nav-number">1.</span> <span class="nav-text">存数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">1.1.</span> <span class="nav-text">序列化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#backend-%E5%AD%98%E5%82%A8"><span class="nav-number">1.2.</span> <span class="nav-text">backend 存储</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EDGE-%E8%AF%BB%E5%8F%96"><span class="nav-number">2.</span> <span class="nav-text">EDGE 读取</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8Ebackend%E8%AF%BB%E5%8F%96BackendEntry"><span class="nav-number">2.1.</span> <span class="nav-text">从backend读取BackendEntry</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8EBackendEntry%E8%BD%AC%E6%8D%A2%E4%B8%BAedge"><span class="nav-number">2.2.</span> <span class="nav-text">从BackendEntry转换为edge</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

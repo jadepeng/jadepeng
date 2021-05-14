@@ -1,0 +1,2937 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JadePeng的技术笔记本">
+<meta property="og:type" content="website">
+<meta property="og:title" content="JadePeng的技术笔记本">
+<meta property="og:url" content="http://blog.iflyresearch.com/page/10/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="JadePeng的技术笔记本">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="JadePeng">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/page/10/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/04/26/jqpeng-%E9%AB%98%E6%95%88%E6%B2%9F%E9%80%9A%E6%8A%80%E5%B7%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/04/26/jqpeng-%E9%AB%98%E6%95%88%E6%B2%9F%E9%80%9A%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">高效沟通技巧</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-04-26 14:51:00" itemprop="dateCreated datePublished" datetime="2017-04-26T14:51:00+08:00">2017-04-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>804</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/effective-commnunication.html">高效沟通技巧</a></p>
+<p>高效沟通是工作中的必备技巧，本文为学习总结。</p>
+<h2 id="什么是沟通"><a href="#什么是沟通" class="headerlink" title="什么是沟通?"></a>什么是沟通?</h2><ul>
+<li>沟通是达成共识，理解一致</li>
+<li>沟通 VS. 表达 ： 沟通是双向交流，而表达是单向</li>
+<li>沟通关键在于<strong>通</strong>，需要抓住时机<strong>及时沟通到位</strong>，并不是讲过了就通了</li>
+</ul>
+<h2 id="沟通技巧"><a href="#沟通技巧" class="headerlink" title="沟通技巧"></a>沟通技巧</h2><h3 id="沟通障碍在于认知偏差"><a href="#沟通障碍在于认知偏差" class="headerlink" title="沟通障碍在于认知偏差"></a>沟通障碍在于认知偏差</h3><p>每个人的背景、价值观并不尽相同，对同一个事物的认识会产生较多的偏差，因此这个认知偏差会导致沟通出现障碍。</p>
+<p>克服认知偏差小技巧：</p>
+<ul>
+<li>刚开始不要说定性的结论</li>
+<li>及时沟通到位，一次不行，多次沟通</li>
+<li>要有为能做好事情<strong>找方法</strong>，而不是为不能做<strong>找理由</strong>!</li>
+</ul>
+<p>认知偏差通常会由这些原因导致：</p>
+<ul>
+<li>听不到位</li>
+<li>缺乏参与</li>
+<li>无效表达</li>
+</ul>
+<h3 id="聆听技巧"><a href="#聆听技巧" class="headerlink" title="聆听技巧"></a>聆听技巧</h3><p>关注下听的繁体字：<strong>聽</strong></p>
+<ul>
+<li>十目</li>
+<li>一心</li>
+<li>一耳</li>
+<li>一王</li>
+</ul>
+<h4 id="聆听小秘诀"><a href="#聆听小秘诀" class="headerlink" title="聆听小秘诀"></a>聆听小秘诀</h4><ul>
+<li>理解确认<ul>
+<li>用自己的语言<strong>复述</strong>对方所表达的意思</li>
+<li>在复述后通过<strong>澄清</strong>与对方确认理解，确认对话说话的目的</li>
+</ul>
+</li>
+<li>回应情绪<ul>
+<li>同理心</li>
+<li>表示理解</li>
+<li>让对方释放情绪</li>
+<li>不要一上来就将应该怎么做</li>
+</ul>
+</li>
+</ul>
+<p>沟通重在通，是双向的，因此需要提升参与度</p>
+<h3 id="提升参与"><a href="#提升参与" class="headerlink" title="提升参与"></a>提升参与</h3><h4 id="沟通三技巧"><a href="#沟通三技巧" class="headerlink" title="沟通三技巧"></a>沟通三技巧</h4><ul>
+<li>收集信息、了解真相</li>
+<li>澄清疑虑、核对想法</li>
+<li>拓展思维，鼓励参与</li>
+</ul>
+<h4 id="用开放式问题，激发思考"><a href="#用开放式问题，激发思考" class="headerlink" title="用开放式问题，激发思考"></a>用开放式问题，激发思考</h4><ul>
+<li>WHAT<ul>
+<li>你的建议是什么</li>
+<li>有什么困难挑战障碍</li>
+</ul>
+</li>
+<li>WHEN<ul>
+<li>你认为什么时候可以完成</li>
+</ul>
+</li>
+<li>WHY<ul>
+<li>这样的理由是？</li>
+<li>你认为可能是什么原因</li>
+</ul>
+</li>
+<li>WHO<ul>
+<li>谁可以帮忙</li>
+<li>可以从谁那里获取帮助</li>
+</ul>
+</li>
+<li>HOW<ul>
+<li>你打算如何开始</li>
+<li>要怎么做才可以</li>
+</ul>
+</li>
+<li>WHERE</li>
+</ul>
+<h4 id="提问技巧"><a href="#提问技巧" class="headerlink" title="提问技巧"></a>提问技巧</h4><ul>
+<li>一次一个问题</li>
+<li>保持开放</li>
+<li>由广泛到具体</li>
+<li>尊重隐私</li>
+<li>不带威胁</li>
+</ul>
+<h2 id="沟通互动流程"><a href="#沟通互动流程" class="headerlink" title="沟通互动流程"></a>沟通互动流程</h2><p>但凡沟通，可以按这个秘籍（套路）来做：</p>
+<ol>
+<li>定方向<ul>
+<li>确定沟通的目的——今天主要是。。。</li>
+<li>然后再将讲重要性  ——  有什么重要性</li>
+</ul>
+</li>
+<li>理情况<ul>
+<li>摆事实、看数据</li>
+<li>问题、疑虑</li>
+</ul>
+</li>
+<li>想方案<ul>
+<li>方向</li>
+<li>资源</li>
+<li>支持</li>
+</ul>
+</li>
+<li>明做法<ul>
+<li>行动计划</li>
+<li>追踪、应变</li>
+</ul>
+</li>
+<li>做总结<ul>
+<li>要点</li>
+<li>信心</li>
+</ul>
+</li>
+</ol>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/04/21/jqpeng-Latex%20%E5%85%AC%E5%BC%8F%E5%9C%A8%E7%BA%BF%E5%8F%AF%E8%A7%86%E5%8C%96%E7%BC%96%E8%BE%91%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/04/21/jqpeng-Latex%20%E5%85%AC%E5%BC%8F%E5%9C%A8%E7%BA%BF%E5%8F%AF%E8%A7%86%E5%8C%96%E7%BC%96%E8%BE%91%E5%99%A8/" class="post-title-link" itemprop="url">Latex 公式在线可视化编辑器</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-04-21 09:00:00" itemprop="dateCreated datePublished" datetime="2017-04-21T09:00:00+08:00">2017-04-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/latex-editor.html">Latex 公式在线可视化编辑器</a></p>
+<h2 id="寻觅"><a href="#寻觅" class="headerlink" title="寻觅"></a>寻觅</h2><p>最近的一个demo需要用到Latex公式在线编辑器，从搜索引擎一般会得到类似<a target="_blank" rel="noopener" href="http://latex.codecogs.com/eqneditor/editor.php">http://latex.codecogs.com/eqneditor/editor.php</a>的结果，这个编辑器的问题在于使用成本高，并且界面不美观。<br><img src="https://ooo.0o0.ooo/2017/04/20/58f847b5b0998.jpg" alt="codecogs" title="codecogs"></p>
+<p>继续探寻，发现了<a target="_blank" rel="noopener" href="http://www.wiris.com/editor/demo/en/examples">wiris Editor</a>：<br><img src="https://ooo.0o0.ooo/2017/04/20/58f8474b37a60.jpg" alt="wiris Editor" title="wiris"></p>
+<p>支持mathml和latex：<br><img src="https://ooo.0o0.ooo/2017/04/20/58f847990789b.jpg" alt="wiris Editor" title="mathml和latex"></p>
+<p>那么就它了！</p>
+<h2 id="选型"><a href="#选型" class="headerlink" title="选型"></a>选型</h2><p>首先，我们不会直接使用这个编辑器，只是在编辑公式的时候才使用，所以要选择合适的版本。<br><img src="https://ooo.0o0.ooo/2017/04/20/58f849cd99f29.jpg" alt="wiris Editor" title="1492666829731"><br> 以前用过CKEditor，所以就这它了！选用<a target="_blank" rel="noopener" href="http://www.wiris.com/en/downloads/files/1376/011ckeditor/java-demo_ckeditor_wiris4-4.2.0.1365.zip">java版本</a><br> 我们的数据已经是latex的，在wiris 编辑器显示需要注意latex需要用两个$$包括起来<br> 例如:</p>
+<pre><code>The history of $$\sqrt(2)$$.
+</code></pre>
+<p>但是CK版本的wiris对latex的支持是非可视化支持，在编辑器里输入latex还是显示为latex：<br><img src="https://ooo.0o0.ooo/2017/04/20/58f8490c90a9e.jpg" alt="enter description here" title="1492666637204"></p>
+<p>将焦点移动到$$内部，再点击按钮出现wiris的公式编辑器：</p>
+<p><img src="https://ooo.0o0.ooo/2017/04/20/58f84a34a07e2.jpg" alt="enter description here" title="1492666933326"><br> 这种设计适合对latex熟悉的人员，可以裸写latex，同时对不熟悉的人来说，可以使用公式编辑器。但是，这样不直观啊！你让不会latex的看到的就一堆符号！</p>
+<h2 id="适配"><a href="#适配" class="headerlink" title="适配"></a>适配</h2><p>简单试用可以发现，如果直接使用公式编辑器插入公式，是直观显示的：<br><img src="https://ooo.0o0.ooo/2017/04/20/58f84c7433958.jpg" alt="enter description here" title="1492667508804"></p>
+<p>可以看到保存的时候，mathml是：</p>
+<pre><code>&lt;math class=&quot;wrs_chemistry&quot; xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msqrt&gt;    &lt;mn&gt;2&lt;/mn&gt;&lt;/msqrt&gt;
+&lt;/math&gt;
+</code></pre>
+<p>那么在latex输入情况下呢：</p>
+<pre><code>&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;semantics&gt;    &lt;mrow&gt;        &lt;msqrt&gt;&lt;mo&gt;(&lt;/mo&gt;&lt;/msqrt&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;mo&gt;)&lt;/mo&gt;    &lt;/mrow&gt;    &lt;annotation encoding=&quot;LaTeX&quot;&gt;\sqrt(2)&lt;/annotation&gt;&lt;/semantics&gt;
+&lt;/math&gt;
+</code></pre>
+<p>原来问题在这里，正是mathML的区别导致处理的区别。也就是说一开始就生成不带LaTeX的mathML，然后再放入编辑器。简单查看代码，可以知道先调用wrs_endParse，再wrs_initParse就可以了。</p>
+<pre><code>CKEDITOR.on(&quot;instanceReady&quot;, function(event)&#123;    CKEDITOR.instances.example.focus();    var mathxml = wrs_endParse(&quot;已知向量$$\\vec&#123;a&#125;=(\\sqrt&#123;3&#125;,2)$$,$$\\vec&#123;b&#125;=(0,-2)$$,向量$$\\vec&#123;c&#125;=(k,\\sqrt&#123;2&#125;)$$.$$\\vec&#123;a&#125;-1\\vec&#123;b&#125;$$与$$\\vec&#123;d&#125;$$共线,$$k=$$__.&quot;);    CKEDITOR.instances.example.setData(wrs_initParse(mathxml));    // 等待完成    window.setTimeout(updateFunction,0);&#125;);
+</code></pre>
+<p><img src="https://ooo.0o0.ooo/2017/04/21/58f954fc81b80.jpg" alt="Latex" title="Latex可视化"></p>
+<p>直观显示没问题了，但是mathml如何再转换成Latex呢？core.js里的wrs_parseMathmlToLatex函数是直接从mathml里将<annotation encoding="LaTeX">。。。</annotation>里的内容提取出来：</p>
+<pre><code>function wrs_parseMathmlToLatex(content, characters)&#123;
+    ....
+    var openTarget = characters.tagOpener + &#39;annotation encoding=&#39; + characters.doubleQuote + &#39;LaTeX&#39; + characters.doubleQuote + characters.tagCloser;
+ 
+        mathml = content.substring(start, end);
+
+        startAnnotation = mathml.indexOf(openTarget);    // 包含 encoding=latex，保留latex
+        if (startAnnotation != -1)&#123;
+            startAnnotation += openTarget.length;
+            closeAnnotation = mathml.indexOf(closeTarget);
+            var latex = mathml.substring(startAnnotation, closeAnnotation);
+            if (characters == _wrs_safeXmlCharacters) &#123;
+                latex = wrs_mathmlDecode(latex);
+            &#125;
+            output += &#39;$$&#39; + latex + &#39;$$&#39;;
+            // Populate latex into cache.
+            wrs_populateLatexCache(latex, mathml);
+        &#125;else&#123;
+            output += mathml;
+        &#125;
+   ......
+&#125;
+</code></pre>
+<p>但是现在的mathml不包含这个信息，如何处理？查看官方文档，发现有一个mathml2latex的服务，查看官方给的java demo里servlet并不包含这个服务，但是jar包里存在代码，于是自己封装一个servlet即可：</p>
+<pre><code>public class ServiceServlet extends com.wiris.plugin.dispatchers.MainServlet &#123;
+
+    @Override
+    public void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response)
+            throws ServletException, IOException &#123;
+        PluginBuilder pb = newPluginBuilder(request);
+        String origin = request.getHeader(&quot;origin&quot;);
+        HttpResponse res = new HttpResponse(response);
+        pb.addCorsHeaders(res, origin);
+        String pathInfo = request.getServletPath();
+        if (pathInfo.equals(&quot;/mathml2latex&quot;)) &#123;
+            response.setContentType(&quot;text/plain; charset=utf-8&quot;);
+            ParamsProvider provider = pb.getCustomParamsProvider();
+            String mml = provider.getParameter(&quot;mml&quot;, (String)null);
+            String r = pb.newTextService().mathml2latex(mml);
+            PrintWriter out = response.getWriter();
+            out.print(r);
+            out.close();
+        &#125;
+</code></pre>
+<p>js里，调用这个服务：</p>
+<pre><code>var _wrs_mathmlCache = &#123;&#125;;
+function wrs_getLatexFromMathML(mml) &#123;
+    if (_wrs_mathmlCache.hasOwnProperty(mml)) &#123;
+        return _wrs_mathmlCache[mml];
+    &#125;
+    var data = &#123;
+        &#39;service&#39;: &#39;mathml2latex&#39;,
+        &#39;mml&#39;: mml
+    &#125;;
+
+    var latex = wrs_getContent(_wrs_conf_servicePath, data);
+    // Populate LatexCache.
+    if (!_wrs_mathmlCache.hasOwnProperty(mml)) &#123;
+        _wrs_mathmlCache[mml] = latex;
+    &#125;
+    return latex.split(&quot;\r&quot;).join(&#39;&#39;).split(&quot;\n&quot;).join(&#39; &#39;);
+&#125;
+</code></pre>
+<p>wrs_getLatexFromMathML只能将一个mathml转换为latex，对于编辑器里的内容来说，需要将mathML抽取出来逐一转换：</p>
+<pre><code>function wrs_parseRawMathmlToLatex(content, characters)&#123;
+    var output = &#39;&#39;;
+    var mathTagBegin = characters.tagOpener + &#39;math&#39;;
+    var mathTagEnd = characters.tagOpener + &#39;/math&#39; + characters.tagCloser;
+    var start = content.indexOf(mathTagBegin);
+    var end = 0;
+    var mathml, startAnnotation, closeAnnotation;
+
+    while (start != -1) &#123;
+        output += content.substring(end, start);
+        end = content.indexOf(mathTagEnd, start);
+
+        if (end == -1) &#123;
+            end = content.length - 1;
+        &#125;
+        else &#123;
+            end += mathTagEnd.length;
+        &#125;
+
+        mathml = content.substring(start, end);
+
+        output += wrs_getLatexFromMathML(mathml);
+
+        start = content.indexOf(mathTagBegin, end);
+    &#125;
+
+    output += content.substring(end, content.length);
+    return output;
+&#125;
+function wrs_getLatex(code) &#123;
+    return wrs_parseRawMathmlToLatex(code, _wrs_xmlCharacters);
+&#125;
+</code></pre>
+<p>末了，为了方便获取，可以将latex放到_current_latex变量里：</p>
+<pre><code>    // 获取数据editor.on(&#39;getData&#39;, function (e) &#123;    e.data.dataValue = wrs_endParse(e.data.dataValue || &quot;&quot;);    _current_latex = wrs_getLatex(e.data.dataValue || &quot;&quot;);&#125;);
+</code></pre>
+<p>再简单修改下网页，显示latex：<br><img src="https://ooo.0o0.ooo/2017/04/21/58f9588ca5b8f.jpg" alt="enter description here" title="获取Latex"></p>
+<p>收官!</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/04/13/jqpeng-RPC%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/04/13/jqpeng-RPC%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">RPC框架原理与实现</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-04-13 16:04:00" itemprop="dateCreated datePublished" datetime="2017-04-13T16:04:00+08:00">2017-04-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>16k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>15 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/java-rpc.html">RPC框架原理与实现</a></p>
+<p>RPC，全称 Remote Procedure Call（远程过程调用），即调用远程计算机上的服务，就像调用本地服务一样。那么RPC的原理是什么呢？了解一个技术最好的思路就是寻找一个该类型麻雀虽小五脏俱全的开源项目，不负所期，找到一个<a target="_blank" rel="noopener" href="http://git.oschina.net/huangyong/rpc">轻量级分布式 RPC 框架</a>，本文从这个项目入手来解读RPC的原理及其实现。</p>
+<p>其实说到RPC，大家应该不会陌生才是，以往流行的Web Service就是一种RPC，一般来说RPC 可基于 HTTP 或 TCP 协议，因为Web Service 基于HTTP，所以具有良好的跨平台性，但由于HTTP是应用层协议，相比TCP性能有所损耗。</p>
+<p>与本地调用不一样，远程调用需要通过网络层传输，因此涉及到的一个问题就是序列化，不同的序列化方式影响调用性能，流行的序列化包括Protobuf、Kryo、Hessian、Jackson、Thrift。</p>
+<p>下面，让我们来一关如何从零开始实现分布式RPC框架。</p>
+<h2 id="RPC框架组件"><a href="#RPC框架组件" class="headerlink" title="RPC框架组件"></a>RPC框架组件</h2><p>建设一个框架，一个系统，首先要做的就是分析需要哪些组件，他们的关系是什么？</p>
+<p>简单分析下，一个RPC框架需要包括：</p>
+<ul>
+<li>APP ：应用端，调用服务</li>
+<li>Server 服务容器，对外提供服务</li>
+<li>Service Registry 服务注册表</li>
+</ul>
+<blockquote>
+<p>我们需要将服务部署在分布式环境下的不同节点上，通过服务注册的方式，让客户端来自动发现当前可用的服务，并调用这些服务。这需要一种服务注册表（Service Registry）的组件，让它来注册分布式环境下所有的服务地址（包括：主机名与端口号）。</p>
+</blockquote>
+<p><img src="https://ooo.0o0.ooo/2017/04/13/58ef302271951.jpg" alt="RPC框架图" title="RPC"><br> 每台 Server 上可发布多个 Service，这些 Service 共用一个 host 与 port，在分布式环境下会提供 Server 共同对外提供 Service。此外，为防止 Service Registry 出现单点故障，因此需要将其搭建为集群环境。</p>
+<h2 id="RPC框架实现"><a href="#RPC框架实现" class="headerlink" title="RPC框架实现"></a>RPC框架实现</h2><h3 id="定义服务"><a href="#定义服务" class="headerlink" title="定义服务"></a>定义服务</h3><p>首先定义服务接口，接口可以单独放在一个jar包中</p>
+<pre><code>public interface HelloService &#123;
+String hello(String name);
+String hello(Person person);
+&#125;
+</code></pre>
+<h3 id="实现接口"><a href="#实现接口" class="headerlink" title="实现接口"></a>实现接口</h3><p>然后，增加一种实现</p>
+<pre><code>@RpcService(HelloService.class)
+public class HelloServiceImpl implements HelloService &#123;
+
+    @Override
+    public String hello(String name) &#123;
+        return &quot;Hello! &quot; + name;
+    &#125;
+
+    @Override
+    public String hello(Person person) &#123;
+        return &quot;Hello! &quot; + person.getFirstName() + &quot; &quot; + person.getLastName();
+    &#125;
+&#125;
+</code></pre>
+<p>这里的RpcService注解，定义在服务接口的实现类上，可以让框架通过这个注解找到服务实现类。</p>
+<p>更进一步，如果哪天服务版本升级了，但是历史服务还有人在使用，怎么办？解决方案就是服务需要分版本，按版本调用。</p>
+<pre><code>@RpcService(value = HelloService.class, version = &quot;sample.hello2&quot;)
+public class HelloServiceImpl2 implements HelloService &#123;
+
+    @Override
+    public String hello(String name) &#123;
+        return &quot;你好! &quot; + name;
+    &#125;
+
+    @Override
+    public String hello(Person person) &#123;
+        return &quot;你好! &quot; + person.getFirstName() + &quot; &quot; + person.getLastName();
+    &#125;
+&#125;
+</code></pre>
+<p>再来看下 RPC 服务注解</p>
+<pre><code>/**
+ * RPC 服务注解（标注在服务实现类上）
+ */
+@Target(&#123;ElementType.TYPE&#125;)
+@Retention(RetentionPolicy.RUNTIME)
+@Component
+public @interface RpcService &#123;
+
+    /**
+     * 服务接口类
+     */
+    Class&lt;?&gt; value();
+
+    /**
+     * 服务版本号
+     */
+    String version() default &quot;&quot;;
+&#125;
+</code></pre>
+<h3 id="服务端实现"><a href="#服务端实现" class="headerlink" title="服务端实现"></a>服务端实现</h3><p>Server端主要基于Netty（一个NIO框架）+Spring</p>
+<p>回到开头讲的，RPC关键点之一就是传输序列化，简单来说就是客户端调用service时，需要构建一个请求，然后将这个请求序列化传输到服务端，服务端完成调用后，再将结果 序列化后返回，简单画一下：</p>
+<p><img src="https://ooo.0o0.ooo/2017/04/13/58ef300978eca.jpg" alt="RPC请求" title="RPC"></p>
+<h4 id="定义Request"><a href="#定义Request" class="headerlink" title="定义Request"></a>定义Request</h4><pre><code>public class RpcRequest &#123;
+
+    private String requestId;
+    private String interfaceName;
+    private String serviceVersion;
+    private String methodName;
+    private Class&lt;?&gt;[] parameterTypes;
+    private Object[] parameters;
+
+&#125;
+</code></pre>
+<h4 id="定义RpcResponse"><a href="#定义RpcResponse" class="headerlink" title="定义RpcResponse"></a>定义RpcResponse</h4><pre><code>public class RpcResponse &#123;
+
+    private String requestId;
+    private Exception exception;
+    private Object result;
+
+&#125;
+</code></pre>
+<h4 id="Encoder与Decoder"><a href="#Encoder与Decoder" class="headerlink" title="Encoder与Decoder"></a>Encoder与Decoder</h4><p>因为项目基于Netty，所以按Netty那一套搞就行，核心是SerializationUtil，这个根据需要可以采用不同的序列化框架，比如pb。</p>
+<pre><code>public class RpcEncoder extends MessageToByteEncoder &#123;
+
+    private Class&lt;?&gt; genericClass;
+
+    public RpcEncoder(Class&lt;?&gt; genericClass) &#123;
+        this.genericClass = genericClass;
+    &#125;
+
+    @Override
+    public void encode(ChannelHandlerContext ctx, Object in, ByteBuf out) throws Exception &#123;
+        if (genericClass.isInstance(in)) &#123;
+            byte[] data = SerializationUtil.serialize(in);
+            out.writeInt(data.length);
+            out.writeBytes(data);
+        &#125;
+    &#125;
+&#125;
+
+
+
+public class RpcDecoder extends ByteToMessageDecoder &#123;
+
+    private Class&lt;?&gt; genericClass;
+
+    public RpcDecoder(Class&lt;?&gt; genericClass) &#123;
+        this.genericClass = genericClass;
+    &#125;
+
+    @Override
+    public void decode(ChannelHandlerContext ctx, ByteBuf in, List&lt;Object&gt; out) throws Exception &#123;
+        if (in.readableBytes() &lt; 4) &#123;
+            return;
+        &#125;
+        in.markReaderIndex();
+        int dataLength = in.readInt();
+        if (in.readableBytes() &lt; dataLength) &#123;
+            in.resetReaderIndex();
+            return;
+        &#125;
+        byte[] data = new byte[dataLength];
+        in.readBytes(data);
+        out.add(SerializationUtil.deserialize(data, genericClass));
+    &#125;
+&#125;
+</code></pre>
+<h4 id="扫描服务"><a href="#扫描服务" class="headerlink" title="扫描服务"></a>扫描服务</h4><p>服务端采用Spring，并且服务加了RpcService注解，所以服务器启动的时候扫描一下带RpcService的就行</p>
+<p>下面的代码实现了将服务找出来，并放到handlerMap里，这样，调用服务的时候就可以根据服务名称从Map里找到服务对象，知道了服务对象和服务方法，就能直接调用了。</p>
+<pre><code>    private Map&lt;String, Object&gt; handlerMap = new HashMap&lt;&gt;();
+
+    public void setApplicationContext(ApplicationContext ctx) throws BeansException &#123;
+        // 扫描带有 RpcService 注解的类并初始化 handlerMap 对象
+        Map&lt;String, Object&gt; serviceBeanMap = ctx.getBeansWithAnnotation(RpcService.class);
+        if (MapUtils.isNotEmpty(serviceBeanMap)) &#123;
+            for (Object serviceBean : serviceBeanMap.values()) &#123;
+                RpcService rpcService = serviceBean.getClass().getAnnotation(RpcService.class);
+                String serviceName = rpcService.value().getName();
+                String serviceVersion = rpcService.version();
+                if (StringUtil.isNotEmpty(serviceVersion)) &#123;
+                    serviceName += &quot;-&quot; + serviceVersion;
+                &#125;
+                handlerMap.put(serviceName, serviceBean);
+            &#125;
+        &#125;
+    &#125;
+</code></pre>
+<h4 id="启动服务器"><a href="#启动服务器" class="headerlink" title="启动服务器"></a>启动服务器</h4><p>按照Netty服务器标准代码，启动服务，注意Encoder和Decoder</p>
+<pre><code> @Override
+    public void afterPropertiesSet() throws Exception &#123;
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        try &#123;
+            // 创建并初始化 Netty 服务端 Bootstrap 对象
+            ServerBootstrap bootstrap = new ServerBootstrap();
+            bootstrap.group(bossGroup, workerGroup);
+            bootstrap.channel(NioServerSocketChannel.class);
+            bootstrap.childHandler(new ChannelInitializer&lt;SocketChannel&gt;() &#123;
+                @Override
+                public void initChannel(SocketChannel channel) throws Exception &#123;
+                    ChannelPipeline pipeline = channel.pipeline();
+                    pipeline.addLast(new RpcDecoder(RpcRequest.class)); // 解码 RPC 请求
+                    pipeline.addLast(new RpcEncoder(RpcResponse.class)); // 编码 RPC 响应
+                    pipeline.addLast(new RpcServerHandler(handlerMap)); // 处理 RPC 请求
+                &#125;
+            &#125;);
+            bootstrap.option(ChannelOption.SO_BACKLOG, 1024);
+            bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
+            // 获取 RPC 服务器的 IP 地址与端口号
+            String[] addressArray = StringUtil.split(serviceAddress, &quot;:&quot;);
+            String ip = addressArray[0];
+            int port = Integer.parseInt(addressArray[1]);
+            // 启动 RPC 服务器
+            ChannelFuture future = bootstrap.bind(ip, port).sync();
+            // 注册 RPC 服务地址
+            if (serviceRegistry != null) &#123;
+                for (String interfaceName : handlerMap.keySet()) &#123;
+                    serviceRegistry.register(interfaceName, serviceAddress);
+                    LOGGER.debug(&quot;register service: &#123;&#125; =&gt; &#123;&#125;&quot;, interfaceName, serviceAddress);
+                &#125;
+            &#125;
+            LOGGER.debug(&quot;server started on port &#123;&#125;&quot;, port);
+            // 关闭 RPC 服务器
+            future.channel().closeFuture().sync();
+        &#125; finally &#123;
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+        &#125;
+    &#125;
+</code></pre>
+<h4 id="处理请求"><a href="#处理请求" class="headerlink" title="处理请求"></a>处理请求</h4><p>RpcServerHandler负责处理请求，熟悉Netty的应该知道，继承SimpleChannelInboundHandler，在channelRead0函数里处理即可，注意，因为pipline里前面已经解码为RpcRequest对象了，所以在这里可以直接使用。</p>
+<pre><code>    public class RpcServerHandler extends SimpleChannelInboundHandler&lt;RpcRequest&gt; &#123;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RpcServerHandler.class);
+
+    private final Map&lt;String, Object&gt; handlerMap;
+
+    public RpcServerHandler(Map&lt;String, Object&gt; handlerMap) &#123;
+        this.handlerMap = handlerMap;
+    &#125;
+
+    @Override
+    public void channelRead0(final ChannelHandlerContext ctx, RpcRequest request) throws Exception &#123;
+        // 创建并初始化 RPC 响应对象
+        RpcResponse response = new RpcResponse();
+        response.setRequestId(request.getRequestId());
+        try &#123;
+            Object result = handle(request);
+            response.setResult(result);
+        &#125; catch (Exception e) &#123;
+            LOGGER.error(&quot;handle result failure&quot;, e);
+            response.setException(e);
+        &#125;
+        // 写入 RPC 响应对象并自动关闭连接
+        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+    &#125;
+&#125;
+</code></pre>
+<p>框架没什么说的，核心是怎么handle，无非就是从Reques里获取到服务名称和版本号，然后从handlerMap里寻找服务对象，然后调用方法。</p>
+<blockquote>
+<p>已知方法名和Class，可以通过反射进行调用，但是反射性能较低，可以使用cglib里的FastClass来执行invoke，详情参见<a target="_blank" rel="noopener" href="http://blog.jobbole.com/105423/">说说 cglib 动态代理</a></p>
+</blockquote>
+<pre><code>    private Object handle(RpcRequest request) throws Exception &#123;
+        // 获取服务对象
+        String serviceName = request.getInterfaceName();
+        String serviceVersion = request.getServiceVersion();
+        if (StringUtil.isNotEmpty(serviceVersion)) &#123;
+            serviceName += &quot;-&quot; + serviceVersion;
+        &#125;
+        Object serviceBean = handlerMap.get(serviceName);
+        if (serviceBean == null) &#123;
+            throw new RuntimeException(String.format(&quot;can not find service bean by key: %s&quot;, serviceName));
+        &#125;
+        // 获取反射调用所需的参数
+        Class&lt;?&gt; serviceClass = serviceBean.getClass();
+        String methodName = request.getMethodName();
+        Class&lt;?&gt;[] parameterTypes = request.getParameterTypes();
+        Object[] parameters = request.getParameters();
+        // 执行反射调用
+//        Method method = serviceClass.getMethod(methodName, parameterTypes);
+//        method.setAccessible(true);
+//        return method.invoke(serviceBean, parameters);
+        // 使用 CGLib 执行反射调用
+        FastClass serviceFastClass = FastClass.create(serviceClass);
+        FastMethod serviceFastMethod = serviceFastClass.getMethod(methodName, parameterTypes);
+        return serviceFastMethod.invoke(serviceBean, parameters);
+    &#125;
+</code></pre>
+<h4 id="服务发现与注册"><a href="#服务发现与注册" class="headerlink" title="服务发现与注册"></a>服务发现与注册</h4><p>在分布式系统里，服务的自动发现与注册是标配功能，一般来说都是使用集中配置中心，开源届有Zookeeper、etcd等实现。这里，使用zk作为配置中心。</p>
+<p>服务发现与注册的核心是，服务启动时，将服务名称和服务地址写入到配置中心，客户端调用的时候，先从集中配置中心读取所要调用服务的服务器地址，如果有多个，随机挑选一个（当然随机的话会存在负载不均衡问题），连接服务器并调用。</p>
+<blockquote>
+<p>个人认为较好的实现方式是，服务层面加一个HA层，客户端直接调用HA，HA负责负载Service。</p>
+</blockquote>
+<p>回到代码解读，这里使用的zookeeper，我们来看怎么实现。</p>
+<p>先是定义接口：</p>
+<pre><code>public interface ServiceRegistry &#123;
+
+    /**
+     * 注册服务名称与服务地址
+     *
+     * @param serviceName    服务名称
+     * @param serviceAddress 服务地址
+     */
+    void register(String serviceName, String serviceAddress);
+&#125;
+
+public interface ServiceDiscovery &#123;
+
+    /**
+     * 根据服务名称查找服务地址
+     *
+     * @param serviceName 服务名称
+     * @return 服务地址
+     */
+    String discover(String serviceName);
+&#125;
+</code></pre>
+<p>再看谈实现，zk有两种类型的节点，永久节点和临时节点，这种特性非常适合做服务发现与注册。<br> 试想：</p>
+<ul>
+<li>新启动一台Server，自动注册到ZK，写一个临时节点，客户端调用的时候就能读取到这个节点</li>
+<li>一台Server挂了，临时节点失效，客户端调用的时候就读取不到这个节点，自然不会调用</li>
+<li>当服务调用量太大，可以新启动服务，服务小的时候再停掉</li>
+</ul>
+<p>不再赘述，看代码：</p>
+<pre><code>public class ZooKeeperServiceRegistry implements ServiceRegistry &#123;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperServiceRegistry.class);
+
+    private final ZkClient zkClient;
+
+    public ZooKeeperServiceRegistry(String zkAddress) &#123;
+        // 创建 ZooKeeper 客户端
+        zkClient = new ZkClient(zkAddress, Constant.ZK_SESSION_TIMEOUT, Constant.ZK_CONNECTION_TIMEOUT);
+        LOGGER.debug(&quot;connect zookeeper&quot;);
+    &#125;
+
+    @Override
+    public void register(String serviceName, String serviceAddress) &#123;
+        // 创建 registry 节点（持久）
+        String registryPath = Constant.ZK_REGISTRY_PATH;
+        if (!zkClient.exists(registryPath)) &#123;
+            zkClient.createPersistent(registryPath);
+            LOGGER.debug(&quot;create registry node: &#123;&#125;&quot;, registryPath);
+        &#125;
+        // 创建 service 节点（持久）
+        String servicePath = registryPath + &quot;/&quot; + serviceName;
+        if (!zkClient.exists(servicePath)) &#123;
+            zkClient.createPersistent(servicePath);
+            LOGGER.debug(&quot;create service node: &#123;&#125;&quot;, servicePath);
+        &#125;
+        // 创建 address 节点（临时）
+        String addressPath = servicePath + &quot;/address-&quot;;
+        String addressNode = zkClient.createEphemeralSequential(addressPath, serviceAddress);
+        LOGGER.debug(&quot;create address node: &#123;&#125;&quot;, addressNode);
+    &#125;
+&#125;
+</code></pre>
+<p>原理就是创建了一个临时节点存储服务地址</p>
+<p>再来看服务发现：</p>
+<pre><code>public class ZooKeeperServiceDiscovery implements ServiceDiscovery &#123;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperServiceDiscovery.class);
+
+    private String zkAddress;
+
+    public ZooKeeperServiceDiscovery(String zkAddress) &#123;
+        this.zkAddress = zkAddress;
+    &#125;
+
+    @Override
+    public String discover(String name) &#123;
+        // 创建 ZooKeeper 客户端
+        ZkClient zkClient = new ZkClient(zkAddress, Constant.ZK_SESSION_TIMEOUT, Constant.ZK_CONNECTION_TIMEOUT);
+        LOGGER.debug(&quot;connect zookeeper&quot;);
+        try &#123;
+            // 获取 service 节点
+            String servicePath = Constant.ZK_REGISTRY_PATH + &quot;/&quot; + name;
+            if (!zkClient.exists(servicePath)) &#123;
+                throw new RuntimeException(String.format(&quot;can not find any service node on path: %s&quot;, servicePath));
+            &#125;
+            List&lt;String&gt; addressList = zkClient.getChildren(servicePath);
+            if (CollectionUtil.isEmpty(addressList)) &#123;
+                throw new RuntimeException(String.format(&quot;can not find any address node on path: %s&quot;, servicePath));
+            &#125;
+            // 获取 address 节点
+            String address;
+            int size = addressList.size();
+            if (size == 1) &#123;
+                // 若只有一个地址，则获取该地址
+                address = addressList.get(0);
+                LOGGER.debug(&quot;get only address node: &#123;&#125;&quot;, address);
+            &#125; else &#123;
+                // 若存在多个地址，则随机获取一个地址
+                address = addressList.get(ThreadLocalRandom.current().nextInt(size));
+                LOGGER.debug(&quot;get random address node: &#123;&#125;&quot;, address);
+            &#125;
+            // 获取 address 节点的值
+            String addressPath = servicePath + &quot;/&quot; + address;
+            return zkClient.readData(addressPath);
+        &#125; finally &#123;
+            zkClient.close();
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<h3 id="客户端实现"><a href="#客户端实现" class="headerlink" title="客户端实现"></a>客户端实现</h3><h4 id="服务代理"><a href="#服务代理" class="headerlink" title="服务代理"></a>服务代理</h4><p>可以先查看(<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi/p/java-proxy.html">http://www.cnblogs.com/xiaoqi/p/java-proxy.html</a>)了解java的动态代理。</p>
+<p>使用 Java 提供的动态代理技术实现 RPC 代理（当然也可以使用 CGLib 来实现），具体代码如下：</p>
+<pre><code>public class RpcProxy &#123;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RpcProxy.class);
+
+    private String serviceAddress;
+
+    private ServiceDiscovery serviceDiscovery;
+
+    public RpcProxy(String serviceAddress) &#123;
+        this.serviceAddress = serviceAddress;
+    &#125;
+
+    public RpcProxy(ServiceDiscovery serviceDiscovery) &#123;
+        this.serviceDiscovery = serviceDiscovery;
+    &#125;
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;T&gt; T create(final Class&lt;?&gt; interfaceClass) &#123;
+        return create(interfaceClass, &quot;&quot;);
+    &#125;
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;T&gt; T create(final Class&lt;?&gt; interfaceClass, final String serviceVersion) &#123;
+        // 创建动态代理对象
+        return (T) Proxy.newProxyInstance(
+                interfaceClass.getClassLoader(),
+                new Class&lt;?&gt;[]&#123;interfaceClass&#125;,
+                new InvocationHandler() &#123;
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;
+                        // 创建 RPC 请求对象并设置请求属性
+                        RpcRequest request = new RpcRequest();
+                        request.setRequestId(UUID.randomUUID().toString());
+                        request.setInterfaceName(method.getDeclaringClass().getName());
+                        request.setServiceVersion(serviceVersion);
+                        request.setMethodName(method.getName());
+                        request.setParameterTypes(method.getParameterTypes());
+                        request.setParameters(args);
+                        // 获取 RPC 服务地址
+                        if (serviceDiscovery != null) &#123;
+                            String serviceName = interfaceClass.getName();
+                            if (StringUtil.isNotEmpty(serviceVersion)) &#123;
+                                serviceName += &quot;-&quot; + serviceVersion;
+                            &#125;
+                            serviceAddress = serviceDiscovery.discover(serviceName);
+                            LOGGER.debug(&quot;discover service: &#123;&#125; =&gt; &#123;&#125;&quot;, serviceName, serviceAddress);
+                        &#125;
+                        if (StringUtil.isEmpty(serviceAddress)) &#123;
+                            throw new RuntimeException(&quot;server address is empty&quot;);
+                        &#125;
+                        // 从 RPC 服务地址中解析主机名与端口号
+                        String[] array = StringUtil.split(serviceAddress, &quot;:&quot;);
+                        String host = array[0];
+                        int port = Integer.parseInt(array[1]);
+                        // 创建 RPC 客户端对象并发送 RPC 请求
+                        RpcClient client = new RpcClient(host, port);
+                        long time = System.currentTimeMillis();
+                        RpcResponse response = client.send(request);
+                        LOGGER.debug(&quot;time: &#123;&#125;ms&quot;, System.currentTimeMillis() - time);
+                        if (response == null) &#123;
+                            throw new RuntimeException(&quot;response is null&quot;);
+                        &#125;
+                        // 返回 RPC 响应结果
+                        if (response.hasException()) &#123;
+                            throw response.getException();
+                        &#125; else &#123;
+                            return response.getResult();
+                        &#125;
+                    &#125;
+                &#125;
+        );
+    &#125;
+&#125;
+</code></pre>
+<h4 id="RPC客户端"><a href="#RPC客户端" class="headerlink" title="RPC客户端"></a>RPC客户端</h4><p>使用RpcClient类实现 RPC 客户端，只需扩展 Netty 提供的SimpleChannelInboundHandler抽象类即可，代码如下：</p>
+<pre><code>public class RpcClient extends SimpleChannelInboundHandler&lt;RpcResponse&gt; &#123;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RpcClient.class);
+
+    private final String host;
+    private final int port;
+
+    private RpcResponse response;
+
+    public RpcClient(String host, int port) &#123;
+        this.host = host;
+        this.port = port;
+    &#125;
+
+    @Override
+    public void channelRead0(ChannelHandlerContext ctx, RpcResponse response) throws Exception &#123;
+        this.response = response;
+    &#125;
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception &#123;
+        LOGGER.error(&quot;api caught exception&quot;, cause);
+        ctx.close();
+    &#125;
+
+    public RpcResponse send(RpcRequest request) throws Exception &#123;
+        EventLoopGroup group = new NioEventLoopGroup();
+        try &#123;
+            // 创建并初始化 Netty 客户端 Bootstrap 对象
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(group);
+            bootstrap.channel(NioSocketChannel.class);
+            bootstrap.handler(new ChannelInitializer&lt;SocketChannel&gt;() &#123;
+                @Override
+                public void initChannel(SocketChannel channel) throws Exception &#123;
+                    ChannelPipeline pipeline = channel.pipeline();
+                    pipeline.addLast(new RpcEncoder(RpcRequest.class)); // 编码 RPC 请求
+                    pipeline.addLast(new RpcDecoder(RpcResponse.class)); // 解码 RPC 响应
+                    pipeline.addLast(RpcClient.this); // 处理 RPC 响应
+                &#125;
+            &#125;);
+            bootstrap.option(ChannelOption.TCP_NODELAY, true);
+            // 连接 RPC 服务器
+            ChannelFuture future = bootstrap.connect(host, port).sync();
+            // 写入 RPC 请求数据并关闭连接
+            Channel channel = future.channel();
+            channel.writeAndFlush(request).sync();
+            channel.closeFuture().sync();
+            // 返回 RPC 响应对象
+            return response;
+        &#125; finally &#123;
+            group.shutdownGracefully();
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<h4 id="服务测试"><a href="#服务测试" class="headerlink" title="服务测试"></a>服务测试</h4><pre><code>public class HelloClient &#123;
+
+    public static void main(String[] args) throws Exception &#123;
+        ApplicationContext context = new ClassPathXmlApplicationContext(&quot;spring.xml&quot;);
+        RpcProxy rpcProxy = context.getBean(RpcProxy.class);
+
+        HelloService helloService = rpcProxy.create(HelloService.class);
+        String result = helloService.hello(&quot;World&quot;);
+        System.out.println(result);
+
+        HelloService helloService2 = rpcProxy.create(HelloService.class, &quot;sample.hello2&quot;);
+        String result2 = helloService2.hello(&quot;世界&quot;);
+        System.out.println(result2);
+
+        System.exit(0);
+    &#125;
+&#125;
+</code></pre>
+<p>输出结果</p>
+<pre><code>connect zookeeper
+get only address node: address-0000000001
+discover service: com.xxx.rpc.sample.api.HelloService =&gt; 127.0.0.1:8000
+time: 569ms
+Hello! World
+connect zookeeper
+get only address node: address-0000000001
+discover service: com.xxx.rpc.sample.api.HelloService-sample.hello2 =&gt; 127.0.0.1:8000
+time: 36ms
+你好! 世界
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/03/22/jqpeng-%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B8%BB%E7%AE%A1%E4%B9%8B%E8%B7%AF%EF%BC%881%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/22/jqpeng-%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B8%BB%E7%AE%A1%E4%B9%8B%E8%B7%AF%EF%BC%881%EF%BC%89/" class="post-title-link" itemprop="url">程序员主管之路（1）</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-22 14:59:00" itemprop="dateCreated datePublished" datetime="2017-03-22T14:59:00+08:00">2017-03-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/6599956.html">程序员主管之路（1）</a></p>
+<p>作为码农，技术出生，随着能力的被认可，会逐步承担管理角色，但是在担任主管尝尝会遇到不少挑战，如何快速从一名个人贡献者转变为一名合格的团队领导，完成职责的华丽转身。</p>
+<p>目录</p>
+<ul>
+<li>领导转型<ul>
+<li>工作理念</li>
+<li>时间管理</li>
+<li>目标分解</li>
+<li>团队成果仪表盘</li>
+</ul>
+</li>
+<li>成功领导三要素<ul>
+<li>1、言行一致</li>
+<li>2、启导他人</li>
+<li>3、拥抱反馈</li>
+</ul>
+</li>
+<li>规划团队行事历</li>
+</ul>
+<h2 id="领导转型"><a href="#领导转型" class="headerlink" title="领导转型"></a>领导转型</h2><p>个人贡献者与领导者有什么不同呢？</p>
+<h3 id="工作理念"><a href="#工作理念" class="headerlink" title="工作理念"></a>工作理念</h3><p>一人吃饱 VS 全家温暖<br> 需要树立起对团队负责的思想，关注团队的目标、绩效，关心员工的诉求，为员工争取利益，承担对应的风险与责任，当然你的收获也更多。</p>
+<h3 id="时间管理"><a href="#时间管理" class="headerlink" title="时间管理"></a>时间管理</h3><p>转岗团队领导后，你不仅需要承担原有的技术攻关工作，还需要承担团队的管理工作，有没有手忙脚乱，忙了一天也没有一个重点？试着列出自己每天的所有工作，看看时间都花在哪儿了？</p>
+<blockquote>
+<p>列出目前工作中最重要的三项目标或者任务，这就是你目前的<strong>重中之重</strong>，你需要花费足够多的时间在重点工作上面，以确保目标达成。如果你每天的工作大部分都不在重点工作上面，那么你需要及时调整你的工作日程！</p>
+</blockquote>
+<h3 id="目标分解"><a href="#目标分解" class="headerlink" title="目标分解"></a>目标分解</h3><p>有了重点工作计划，需要尝试把工作目标进行分解，根据工作内容，可以有不同的分解方法：</p>
+<ul>
+<li><p><strong>线性分解法</strong>，例如</p>
+<ul>
+<li>1季度完成营业额XX万</li>
+<li>2季度完成营业额XX万</li>
+</ul>
+</li>
+<li><p><strong>里程碑</strong></p>
+<ul>
+<li>04/30 提出新产品组合</li>
+<li>07/31 完成试销</li>
+</ul>
+</li>
+<li><p><strong>关键要素法</strong></p>
+<ul>
+<li>04/30 完成XXX</li>
+</ul>
+</li>
+</ul>
+<h3 id="团队成果仪表盘"><a href="#团队成果仪表盘" class="headerlink" title="团队成果仪表盘"></a>团队成果仪表盘</h3><p>有了目标，并进行了合适的分解，可以接着使用<strong>团队成果仪表盘</strong>来进行跟踪：</p>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>达标率</th>
+<th>目标</th>
+<th>关键里程碑</th>
+<th>灯号</th>
+<th>进度/状况说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>50%</td>
+<td>完成丁克玉组的解题demo开发</td>
+<td>3月23日完成demo</td>
+<td>:—–:</td>
+<td>————:</td>
+</tr>
+</tbody></table>
+<p>使用<strong>团队成果仪表盘</strong>，有什么好处呢？</p>
+<ul>
+<li>判断重点任务，调整工作优先级</li>
+<li>自我加压，追求卓越</li>
+</ul>
+<h2 id="成功领导三要素"><a href="#成功领导三要素" class="headerlink" title="成功领导三要素"></a>成功领导三要素</h2><p>好的团队领导需要与团队建立起信任，而建立信任有三个关键要素：</p>
+<h3 id="1、言行一致"><a href="#1、言行一致" class="headerlink" title="1、言行一致"></a>1、言行一致</h3><p>言行一致的表现：</p>
+<ul>
+<li>表里如一</li>
+<li>所言即所行</li>
+<li>不会人前一套人后一套</li>
+</ul>
+<p>为什么需要言行一致？</p>
+<ul>
+<li>能促进人与人之间的互信</li>
+<li>树立良好个人品牌</li>
+</ul>
+<h3 id="2、启导他人"><a href="#2、启导他人" class="headerlink" title="2、启导他人"></a>2、启导他人</h3><p>启导他人就是培养团队成员，提升他们的技能，因此，需要了解团队每个人的知识能力、经验、人格特质，我们可以通过<strong>团队成员能力评估表</strong>来对成员进行评估</p>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>员工1</th>
+<th>员工2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>专业能力</td>
+<td>5</td>
+<td>5</td>
+</tr>
+<tr>
+<td>沟通协调</td>
+<td>3</td>
+<td>4</td>
+</tr>
+<tr>
+<td>团队合作</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>决策能力</td>
+<td>2</td>
+<td>4</td>
+</tr>
+<tr>
+<td>计划组织</td>
+<td>4</td>
+<td>2</td>
+</tr>
+<tr>
+<td>质量导向</td>
+<td>4</td>
+<td>4</td>
+</tr>
+<tr>
+<td>客户导向</td>
+<td>4</td>
+<td>4</td>
+</tr>
+<tr>
+<td>持续学习</td>
+<td>4</td>
+<td>4</td>
+</tr>
+</tbody></table>
+<p>评估后选择员工的薄弱环节，有针对性的进行辅导。</p>
+<h3 id="3、拥抱反馈"><a href="#3、拥抱反馈" class="headerlink" title="3、拥抱反馈"></a>3、拥抱反馈</h3><p>为什么需要收集反馈？——了解员工心目中真实的自己，做更好的领导</p>
+<p>如何拥抱反馈？</p>
+<ul>
+<li>表现谦虚的态度</li>
+<li>主动寻求他人反馈</li>
+<li>接纳改善反馈</li>
+<li>感谢反馈</li>
+</ul>
+<h2 id="规划团队行事历"><a href="#规划团队行事历" class="headerlink" title="规划团队行事历"></a>规划团队行事历</h2><p>何为行事历？就是按周、月把需要例行的事情，规划的里程碑等放在日历里，这样月度、年度重点工作一目了然，便于团队拥有共同的目标。</p>
+<p>为什么需要建立行事历</p>
+<ul>
+<li>了解重要的例行事情，做好事先规划</li>
+<li>工作了然于胸，避免重要事情遗漏</li>
+<li>考核督促团队，达成目标</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/03/18/jqpeng-MarkDown%20%E5%B8%B8%E7%94%A8%E8%AF%AD%E6%B3%95%E6%95%99%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/18/jqpeng-MarkDown%20%E5%B8%B8%E7%94%A8%E8%AF%AD%E6%B3%95%E6%95%99%E7%A8%8B/" class="post-title-link" itemprop="url">MarkDown 常用语法教程</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-18 22:33:00" itemprop="dateCreated datePublished" datetime="2017-03-18T22:33:00+08:00">2017-03-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/6576517.html">MarkDown 常用语法教程</a></p>
+<h1 id="MarkDown-语法说明"><a href="#MarkDown-语法说明" class="headerlink" title="MarkDown 语法说明"></a>MarkDown 语法说明</h1><p>目录</p>
+<ul>
+<li>MarkDown 语法说明<ul>
+<li>标题</li>
+<li>列表<ul>
+<li>无序列表</li>
+<li>有序列表</li>
+</ul>
+</li>
+<li>引用</li>
+<li>图片与链接</li>
+<li>粗体与斜体</li>
+<li>表格</li>
+<li>插入代码</li>
+<li>分割线</li>
+</ul>
+</li>
+</ul>
+<h2 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h2><pre><code>标题1
+======
+
+标题2
+-----
+
+## 大标题
+### 小标题 
+#### 小标题 
+</code></pre>
+<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><h3 id="无序列表"><a href="#无序列表" class="headerlink" title="无序列表"></a>无序列表</h3><pre><code>+ 列表文本前使用 [减号+空格]
+* 列表文本前使用 [加号+空格]
+- 列表文本前使用 [星号+空格]
+</code></pre>
+<ul>
+<li>列表文本前使用 [减号+空格]</li>
+</ul>
+<ul>
+<li>列表文本前使用 [加号+空格]</li>
+</ul>
+<ul>
+<li>列表文本前使用 [星号+空格]</li>
+</ul>
+<h3 id="有序列表"><a href="#有序列表" class="headerlink" title="有序列表"></a>有序列表</h3><pre><code>1. 列表前使用 [数字+空格]
+2. 我们会自动帮你添加数字
+7. 不用担心数字不对，显示的时候我们会自动把这行的 7 纠正为 3
+</code></pre>
+<ol>
+<li>列表前使用 [数字+空格]</li>
+<li>我们会自动帮你添加数字</li>
+<li>不用担心数字不对，显示的时候我们会自动把这行的 7 纠正为 3</li>
+</ol>
+<h2 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h2><pre><code>&gt; 引用文本前使用 [大于号+空格]
+&gt; 折行可以不加，新起一行都要加上哦
+</code></pre>
+<blockquote>
+<p>引用文本前使用 [大于号+空格]</p>
+</blockquote>
+<h2 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h2><p>插入链接与插入图片的语法很像，区别在一个 !号</p>
+<pre><code>图片为：![]()
+链接为：[]()
+</code></pre>
+<p>插入链接：</p>
+<p><a target="_blank" rel="noopener" href="http://baidu.com/">Baidu</a></p>
+<p>图片：<br><img src="http://ww2.sinaimg.cn/large/6aee7dbbgw1efffa67voyj20ix0ctq3n.jpg" alt="图片提示"></p>
+<h2 id="粗体与斜体"><a href="#粗体与斜体" class="headerlink" title="粗体与斜体"></a>粗体与斜体</h2><pre><code>**两个为粗体**
+</code></pre>
+<p><strong>两个为粗体</strong></p>
+<pre><code>*单个为斜体*
+</code></pre>
+<p><em>单个为斜体</em></p>
+<h2 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h2><p>使用html</p>
+<pre><code>&lt;table&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Foo&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</code></pre>
+<p>markdown语法</p>
+<pre><code>name | age
+---- | ---
+LearnShare    | 12
+Mike |  32
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>age</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LearnShare</td>
+<td>12</td>
+</tr>
+<tr>
+<td>Mike</td>
+<td>32</td>
+</tr>
+</tbody></table>
+<p>对齐：</p>
+<pre><code>| Tables        |      Are      |  Cool |
+|:--------------|:-------------:|------:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      |   centered    |   $12 |
+| zebra stripes |   are neat    |    $1 |
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Tables</th>
+<th>Are</th>
+<th>Cool</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>col 3 is</td>
+<td>right-aligned</td>
+<td>$1600</td>
+</tr>
+<tr>
+<td>col 2 is</td>
+<td>centered</td>
+<td>$12</td>
+</tr>
+<tr>
+<td>zebra stripes</td>
+<td>are neat</td>
+<td>$1</td>
+</tr>
+</tbody></table>
+<h2 id="插入代码"><a href="#插入代码" class="headerlink" title="插入代码"></a>插入代码</h2><p>用两个 ``` 包裹一段代码，并指定一种语言</p>
+<pre><code><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    alert(<span class="string">&#x27;hello world&#x27;</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+$(document).ready(function () &#123;
+    alert(&#39;hello world&#39;);
+&#125;);
+</code></pre>
+<p>支持常用的语言，下面试下go语言</p>
+<pre><code>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;math&quot;
+    &quot;runtime&quot;
+)
+
+func sqrt(x float64) string &#123;
+    if x &lt; 0 &#123;
+        return sqrt(-x) + &quot;i&quot;
+    &#125;
+    return fmt.Sprint(math.Sqrt(x))
+&#125; 
+</code></pre>
+<h2 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h2><p>分割线的语法只需要三个 * 号，</p>
+<pre><code>***
+</code></pre>
+<hr>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/03/13/jqpeng-Solr%20vs.%20Elasticsearch%E8%B0%81%E6%98%AF%E5%BC%80%E6%BA%90%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E7%8E%8B%E8%80%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/13/jqpeng-Solr%20vs.%20Elasticsearch%E8%B0%81%E6%98%AF%E5%BC%80%E6%BA%90%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E7%8E%8B%E8%80%85/" class="post-title-link" itemprop="url">Solr vs. Elasticsearch谁是开源搜索引擎王者</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-13 22:01:00" itemprop="dateCreated datePublished" datetime="2017-03-13T22:01:00+08:00">2017-03-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/solr-vs-elasticsearch.html">Solr vs. Elasticsearch谁是开源搜索引擎王者</a></p>
+<p>当前是云计算和数据快速增长的时代,今天的应用程序正以PB级和ZB级的速度生产数据，但人们依然在不停的追求更高更快的性能需求。随着数据的堆积，如何快速有效的搜索这些数据，成为对后端服务的挑战。本文，我们将比较业界两个最流行的开源搜索引擎，Solr和ElasticSearch。两者都建立在Apache Lucene开源平台之上，它们的主要功能非常相似，但是在部署的易用性，可扩展性和其他功能方面也存在巨大差异。</p>
+<h1 id="关于Apache-Solr"><a href="#关于Apache-Solr" class="headerlink" title="关于Apache Solr"></a>关于Apache Solr</h1><p>Apache Solr基于业界大名鼎鼎的java开源搜索引擎Lucene，Lucene更多的是一个软件包，还不能称之为搜索引擎，而solr则完成对lucene的封装，是一个真正意义上的搜索引擎框架。在过去的十年里，solr发展壮大，拥有广泛的用户群体。solr提供分布式索引、分片、副本集、负载均衡和自动故障转移和恢复功能。如果正确部署，良好管理，solr就能够成为一个高可靠、可扩展和高容错的搜索引擎。不少互联网巨头，如Netflix，eBay，Instagram和Amazon（CloudSearch）均使用Solr。</p>
+<p>solr的主要特点：</p>
+<ul>
+<li>全文索引</li>
+<li>高亮</li>
+<li>分面搜索</li>
+<li>实时索引</li>
+<li>动态聚类</li>
+<li>数据库集成</li>
+<li>NoSQL特性和丰富的文档处理（例如Word和PDF文件）</li>
+</ul>
+<h1 id="关于Elasticsearch"><a href="#关于Elasticsearch" class="headerlink" title="关于Elasticsearch"></a>关于Elasticsearch</h1><p>与solr一样，Elasticsearch构建在Apache Lucene库之上，同是开源搜索引擎。Elasticsearch在Solr推出几年后才面世的，通过REST和schema-free（<strong>不需要预先定义 Schema，solr是需要预先定义的</strong>）的JSON文档提供分布式、多租户全文搜索引擎。并且官方提供Java，Groovy，PHP，Ruby，Perl，Python，.NET和Javascript客户端。</p>
+<p>分布式搜索引擎包含可以华为为分片（shard）的索引，每一个分片可以有多个副本（replicas）。每个Elasticsearch节点可以有一个或多个分片，其引擎既同时作为协调器（coordinator ），将操作转发给正确的分片。</p>
+<p>Elasticsearch可扩展为准实时搜索引擎。其中一个关键特性是多租户功能，可根据不同的用途分索引，可以同时操作多个索引。</p>
+<p>Elasticsearch主要特性：</p>
+<ul>
+<li>分布式搜索</li>
+<li>多租户</li>
+<li>查询统计分析</li>
+<li>分组和聚合</li>
+</ul>
+<p>热度对比</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170313220045088-284441280.png"></p>
+<p>在开始比较前，我们可以查看两者在google中的<a target="_blank" rel="noopener" href="https://trends.google.com/trends/explore?date=all&amp;q=apache%20solr,elasticsearch">搜索热度</a>，可以看出在2013年后，Elasticsearch与Solr相比具有很大的吸引力，但这并不意味着Apache Solr已经死了。虽然不少人不认可，但Solr仍然是最流行的搜索引擎之一，具有强大的开源社区支持。</p>
+<p>安装与配置</p>
+<p>相对来说，Elasticsearch更易于安装，与Solr相比非常轻量级。 Solr的分发软件包大小的当前版本（<a target="_blank" rel="noopener" href="http://mirrors.hust.edu.cn/apache/lucene/solr/6.4.2/">6.4.2</a>）大约为150 MB，而Elasticsearch分发软件包大小的当前版本（<a target="_blank" rel="noopener" href="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.2.tar.gz">5.2.2</a>）仅为32.2MB。</p>
+<p>但是，如果Elasticsearch管理不好，这种易于部署和使用可能会成为一个问题。基于JSON的配置很容易，但如果你想为文件中的每个配置指定注释，那么它不适合你。Solr也提供了Rest API，可以通过集合API创建自定义分片集合，记录聚类算法和执行自定义分片。</p>
+<p>总的来说，如果你的应用程序使用JSON，那么Elasticsearch是一个更好的选择。否则，使用Solr，因为它的schema.xml和solrconfig.xml有很好的文档。</p>
+<p>索引和搜索</p>
+<p>数据源</p>
+<p>Solr接受来自不同来源的数据，包括XML文件，逗号分隔符（CSV）文件和从数据库中的表提取的数据以及常见的文件格式（如Microsoft Word和PDF）。</p>
+<p>Elasticsearch还支持其他来源的数据，例如ActiveMQ，AWS SQS，DynamoDB（Amazon NoSQL），FileSystem，Git，JDBC，JMS，Kafka，LDAP，MongoDB，neo4j，RabbitMQ，Redis，Solr和Twitter。还有各种插件可用。</p>
+<p>搜索</p>
+<p><strong>Solr专注于文本搜索，而Elasticsearch则常用于查询、过滤和分组****分析统计</strong>，Elasticsearch背后的团队也努力让这些查询更为高效。因此当比较两者时，对那些不仅需要文本搜索，同时还需要复杂的时间序列搜索和聚合的应用程序而言，毫无疑问Elasticsearch是最佳选择。</p>
+<p>索引</p>
+<p>两者都支持使用停用词和同义词来匹配文档。</p>
+<p>在Solr中，索引间进行join必须是单个分片和其他节点上的副本集进行关联来搜索文档间关系（例如SQL连接）。而Elasticsearch提供更高效的has_children和top_children查询来检索这样的相关文档。</p>
+<p>可扩展性和分布式</p>
+<p>搜索引擎需要处理数以百万级的文档，基于此搜索引擎应该是可复制的，模块化的和可扩展的，支持集群和分布式架构。</p>
+<p>专为云而设计</p>
+<p>Elasticsearch非常易于扩展，拥有足够多的需要大集群的使用案例。</p>
+<p>Solr 基于Apache ZooKeeper也实现了类似ES的分布式部署模式。ZooKeeper是成熟和广泛使用的独立应用程序。</p>
+<p>相对比，Elasticsearch有一个内置的类似ZooKeeper的名为Zen的组件，通过内部的协调机制来维护集群状态。</p>
+<p>可以说Elasticsearch是转为云而设计，是分布式首选。</p>
+<p>分片拆分和再平衡</p>
+<p>shards是luence索引的分区单元，solr和elasticsearch均使用。你可以通过在集群中的不同计算机上运行shard来分发索引。随着SolrCloud的引入，Solr开始支持shard拆分，这允许您通过拆分现有shard来添加更多shard。相比之下，ElasticSearch仍然不支持这一点，事实上，实际上阻止了这种做法。ES通过向设置中添加更多计算机，可以使用自动碎片平衡功能。相比之下，Solr允许添加分片（使用隐式路由时）或分割（使用复合ID时），但不能删除分片。它允许您增加副本。在Elasticsearch中，默认情况下每个索引具有五个分片。它不允许您更改主分片的数量，但它允许您增加副本的数量。分片再平衡对于水平扩容非常有用。当添加新机器时，它将自动重新平衡不同机器中可用的分片。</p>
+<p>社区</p>
+<p>Solr有一个广泛的开源社区。任何人都可以贡献给Solr，新的Solr开发人员或代码提交者只能根据功能选择。 Elasticsearch在技术上是开源的，但不完全。所有贡献者都可以访问源代码，用户可以进行更改并提供。但最终的变化由Elastic（运行Elasticsearch和其他软件的公司）的员工确认和完成。因此，Elasticsearch更多地由单个公司驱动，而不是整个社区。</p>
+<p>Solr贡献者和提交者跨越多个组织，而Elasticsearch提交者仅来自Elastic。还有人指出，Solr的强大社区有一个健康的项目管道和许多知名公司参与。这些成员还通过在整个开发和工程过程中做出贡献来投资该平台。</p>
+<p>两者都有很好的用户群和丰富的开发人员社区，但ElasticSearch相较于Solr更新。 Solr已经存在了更长的时间，所以它的生态系统是发达的，拥有更大的用户群。</p>
+<p>文档</p>
+<p>Solr在这里得分很高。它是一个非常有据可查的产品，具有清晰的示例和API用例场景。 Elasticsearch的文档组织良好，但它缺乏好的示例和清晰的配置说明。</p>
+<p>选Solr 还是 Elasticsearch?</p>
+<p>通过上面的对比，很难确定谁是最终赢家。其实，无论选择Solr还是Elasticsearch，你首先需要了解您的用户场景和未来的需求。我们来总结一下：</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170313220046213-1161805781.png"></p>
+<p>请记住：</p>
+<ul>
+<li>Elasticsearch由于其易用性而在较新的开发人员中更受欢迎</li>
+<li>但是如果你已经在使用solr了，请继续使用它，因为迁移到Elasticsearch并不会带来具体的优势</li>
+<li>如果您需要它来处理分析查询以及搜索文本，Elasticsearch是更好的选择，特别是收集日志，做分析处理（参考前面发的ELK 安装使用<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi/p/elk-part1.html%EF%BC%89">http://www.cnblogs.com/xiaoqi/p/elk-part1.html）</a></li>
+</ul>
+<p>总之，两者都是功能丰富的搜索引擎，并且或多或少地给出相同的性能，只要它们被设计和实施得很好。</p>
+<p>本文主要内容为翻译<a target="_blank" rel="noopener" href="http://logz.io/blog/solr-vs-elasticsearch/%EF%BC%8C%E6%84%9F%E8%B0%A2%E4%BD%9C%E8%80%85%EF%BC%8C%E6%84%9F%E8%B0%A2%E8%B0%B7%E6%AD%8C%E7%BF%BB%E8%AF%91%EF%BC%81">http://logz.io/blog/solr-vs-elasticsearch/，感谢作者，感谢谷歌翻译！</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/03/09/jqpeng-ELK%E6%97%A5%E5%BF%97%E5%A5%97%E4%BB%B6%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/09/jqpeng-ELK%E6%97%A5%E5%BF%97%E5%A5%97%E4%BB%B6%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">ELK日志套件安装与使用</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-09 13:26:00" itemprop="dateCreated datePublished" datetime="2017-03-09T13:26:00+08:00">2017-03-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/elk-part1.html">ELK日志套件安装与使用</a></p>
+<p>1、ELK介绍</p>
+<p>ELK不是一款软件，而是elasticsearch+Logstash+kibana三款开源软件组合而成的日志收集处理套件，堪称神器。其中Logstash负责日志收集，elasticsearch负责日志的搜索、统计，而kibana则是ES的展示神器，前端炫丽，点几下鼠标简单配置，就可以完成搜索、聚合功能，生成华丽的报表。</p>
+<p>目前我们的日志方案：</p>
+<ul>
+<li>flume负责收集，服务写日志到文件，flume收集日志文件</li>
+<li>flume汇总到数据通道kafka，供其他服务消费</li>
+<li>日志搜索：从kafka读取日志写入到solr cloud提供搜索</li>
+<li>日志统计：将kafka的日志写到hdfs，使用spark、hive来做统计</li>
+<li>日志展示：开发的java-web，读取数据库生成统计报表</li>
+</ul>
+<p>当前日志方案问题分析：</p>
+<ul>
+<li>需要预先编程才能使用，开发工作量大</li>
+<li>不够灵活，新需求需要改代码</li>
+<li>离线统计，实时性不高</li>
+<li>未提供基于搜索结果的统计功能</li>
+<li>系统方案较为复杂，需要了解多项技术，学习维护成本高</li>
+<li>……</li>
+<li>新增需求都是泪，开发出来后变动很少</li>
+</ul>
+<p>通过调研ELK，发现真是解救目前问题的一个神器，大部分问题都可以迎刃而解。</p>
+<p>2、ELK安装</p>
+<p>默认需要先安装jdk1.8，自行安装即可</p>
+<p>2.1、安装ES</p>
+<p>2.1.1 下载ES</p>
+<p>下载地址：<a target="_blank" rel="noopener" href="https://www.elastic.co/downloads/elasticsearch">https://www.elastic.co/downloads/elasticsearch</a></p>
+<p>最新版本是2.28发布的5.2.2版本</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132521281-1050921717.png"></p>
+<p>windows选择ZIP，linux选择tar，ubuntu选择DEB</p>
+<p>测试服务器是ubuntu，直接下载deb包，然后安装即可</p>
+<p>wget <a target="_blank" rel="noopener" href="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.2.deb">https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.2.deb</a></p>
+<p>sudo dpkg -i elasticsearch-5.2.2.deb</p>
+<p>2.1.2 配置</p>
+<p>如果使用deb包安装的，配置文件路径如下：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+<th>默认路经</th>
+<th>Setting</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>home</td>
+<td>Elasticsearch home directory or $ES_HOME</td>
+<td>/usr/share/elasticsearch</td>
+<td></td>
+</tr>
+<tr>
+<td>bin</td>
+<td>Binary scripts including elasticsearch to start a node and elasticsearch-plugin to install plugins</td>
+<td>/usr/share/elasticsearch/bin</td>
+<td></td>
+</tr>
+<tr>
+<td>conf</td>
+<td>Configuration files including elasticsearch.yml</td>
+<td>/etc/elasticsearch</td>
+<td>path.conf</td>
+</tr>
+<tr>
+<td>conf</td>
+<td>Environment variables including heap size, file descriptors.</td>
+<td>/etc/default/elasticsearch</td>
+<td></td>
+</tr>
+<tr>
+<td>data</td>
+<td>The location of the data files of each index / shard allocated on the node. Can hold multiple locations.</td>
+<td>/var/lib/elasticsearch</td>
+<td>path.data</td>
+</tr>
+<tr>
+<td>logs</td>
+<td>Log files location.</td>
+<td>/var/log/elasticsearch</td>
+<td>path.logs</td>
+</tr>
+<tr>
+<td>plugins</td>
+<td>Plugin files location. Each plugin will be contained in a subdirectory.</td>
+<td>/usr/share/elasticsearch/plugins</td>
+<td></td>
+</tr>
+<tr>
+<td>repo</td>
+<td>Shared file system repository locations. Can hold multiple locations. A file system repository can be placed in to any subdirectory of any directory specified here.</td>
+<td>Not configured</td>
+<td>path.repo</td>
+</tr>
+<tr>
+<td>script</td>
+<td>Location of script files.</td>
+<td>/etc/elasticsearch/scripts</td>
+<td>path.scripts</td>
+</tr>
+</tbody></table>
+<p>修改/etc/elasticsearch/elasticsearch.yml即可</p>
+<p>测试使用，主要设置网络：</p>
+<pre><code>network.host: 192.168.86.108
+
+http.port: 9200
+</code></pre>
+<p>ES的集群配置比较方便，设置cluster.name就可以：</p>
+<pre><code>cluster.name: es-log
+</code></pre>
+<p>2.1.3 启动ES</p>
+<p>由于我们使用的deb安装的，因此可以用服务方式启动：</p>
+<p>service elasticsearch start</p>
+<p>如果使用的压缩包，执行 bin/elasticsearch (or bin\elasticsearch.bat on Windows)即可</p>
+<p>然后，打开 curl <a target="_blank" rel="noopener" href="http://192.168.86.108:9200/">http://192.168.86.108:9200/</a> 测试（ip换成配置的ip）</p>
+<p>2.2 安装 Logstash</p>
+<p>现在收集处理框架非常多，像 facebook 出品的scribe ，apache 基金会的亲儿子flume，Logstash也是一个非常出名的日志框架，使用jruby开发，可以运行在jvm之上实现跨平台，具体的介绍可以到官网<a target="_blank" rel="noopener" href="http://logstash.net查看./">http://logstash.net查看。</a></p>
+<p>Logstash安装比较简单，下载压缩包、解压、配置，启动即可。</p>
+<p>2.2.1 下载安装</p>
+<pre><code>wget https://artifacts.elastic.co/downloads/logstash/logstash-5.2.2.tar.gz
+
+tar zxvf logstash-5.2.2.tar.gz
+
+ln -s logstash-5.2.2 logstash
+</code></pre>
+<p>2.2.2 配置</p>
+<p>Logstash 和flume比较类似，有input和output的概念。不过logstash社区通常习惯用 shipper，broker 和 indexer 来描述数据流中不同进程各自的角色。</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132521734-923307871.jpg"></p>
+<p>我们来看怎么配置logstash。</p>
+<p>创建一个配置文件nginxlog2es.conf，读取nginx日志,输出到elasticsearch 。具体的配置格式参见官方文档。</p>
+<pre><code>input &#123;
+    file &#123;
+        path =&gt; &quot;/var/log/nginx/access.log_json&quot;
+        codec =&gt; &quot;json&quot;
+    &#125;
+&#125;
+filter &#123;
+    mutate &#123;
+        split =&gt; [ &quot;upstreamtime&quot;, &quot;,&quot; ]
+    &#125;
+    mutate &#123;
+        convert =&gt; [ &quot;upstreamtime&quot;, &quot;float&quot; ]
+    &#125;
+&#125;
+output &#123;
+  stdout &#123; codec =&gt; rubydebug &#125;
+  elasticsearch &#123;
+        hosts =&gt; [&quot;192.168.86.108:9200&quot;]
+        index =&gt; &quot;logstash-%&#123;type&#125;-%&#123;+YYYY.MM.dd&#125;&quot;
+        document_type =&gt; &quot;%&#123;type&#125;&quot;
+        flush_size =&gt; 20000
+        idle_flush_time =&gt; 10
+        sniffing =&gt; true
+        template_overwrite =&gt; true
+    &#125;
+&#125;
+</code></pre>
+<p>这里简单说明下，input是file类型，/var/log/nginx/access.log_json每行是一个json数据，codec =&gt; “json”指定按json解析。</p>
+<p>output 配置了两个，stdout 是控制台输出，elasticsearch 则是输出到前面配置的es服务器，index 索引名称为logstash-nginx-日期，这样每天为一个索引。</p>
+<p>Nginx 直接生成json日志可以通过指定logformat，拼接为json：</p>
+<p>配置logformat：</p>
+<pre><code>log_format json &#39;&#123;&quot;@timestamp&quot;:&quot;$time_iso8601&quot;,&#39;
+
+&#39;&quot;host&quot;:&quot;$server_addr&quot;,&#39;
+
+&#39;&quot;clientip&quot;:&quot;$remote_addr&quot;,&#39;
+
+&#39;&quot;size&quot;:$body_bytes_sent,&#39;
+
+&#39;&quot;responsetime&quot;:$request_time,&#39;
+
+&#39;&quot;upstreamtime&quot;:&quot;$upstream_response_time&quot;,&#39;
+
+&#39;&quot;upstreamhost&quot;:&quot;$upstream_addr&quot;,&#39;
+
+&#39;&quot;http_host&quot;:&quot;$host&quot;,&#39;
+
+&#39;&quot;url&quot;:&quot;$uri&quot;,&#39;
+
+&#39;&quot;xff&quot;:&quot;$http_x_forwarded_for&quot;,&#39;
+
+&#39;&quot;referer&quot;:&quot;$http_referer&quot;,&#39;
+
+&#39;&quot;agent&quot;:&quot;$http_user_agent&quot;,&#39;
+
+&#39;&quot;status&quot;:&quot;$status&quot;&#125;&#39;;
+</code></pre>
+<p>然后使用：</p>
+<p>access_log /var/log/nginx/access.log_json json;</p>
+<p>这样nginx的日志就变为：</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132522188-1514690908.png"></p>
+<p>2.2.3 启动logstash</p>
+<p>使用-f指定配置文件</p>
+<p>bin/logstash -f nginxlog2es.conf</p>
+<p>启动成功后就能看到收集到的日志：</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132522875-360437388.png"></p>
+<p>2.3 kibana</p>
+<p>2.3.1 安装</p>
+<p>kibana安装也比较简单，下载，解压，配置即可</p>
+<p>wget <a target="_blank" rel="noopener" href="https://artifacts.elastic.co/downloads/kibana/kibana-5.2.2-linux-x86_64.tar.gz">https://artifacts.elastic.co/downloads/kibana/kibana-5.2.2-linux-x86_64.tar.gz</a></p>
+<p>解压后建立软连接</p>
+<p>ln -s kibana-5.2.2-linux-x86_64 kibana</p>
+<p>cd kibana</p>
+<p>修改配置文件</p>
+<p>vim config/kibana.yml</p>
+<p>修改</p>
+<p>server.host: “192.168.86.108”</p>
+<p>elasticsearch.url: “<a target="_blank" rel="noopener" href="http://192.168.86.108:9200/">http://192.168.86.108:9200</a>“</p>
+<p>然后启动：</p>
+<p>bin/kibana</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132523531-706059809.png"></p>
+<p>2.3.2 配置报表</p>
+<p>启动后打开<a href="http://192.168.86.108:5601，就能看到日志了，在输入框里还可以输入关键词进行搜索，并且自带流量统计。">http://192.168.86.108:5601，就能看到日志了，在输入框里还可以输入关键词进行搜索，并且自带流量统计。</a></p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132524219-2011756617.png"></p>
+<p>下面来看如何生成报表，比如搞个响应时间折线图，进入visualize，选择折线图</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132524828-237029731.png"></p>
+<p>分别配置X和y轴，Y为平均响应时间，X为时间，最后保存即可。</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132525281-2069886424.png"></p>
+<p>再来配置一个表格报表，通产各个url的访问量</p>
+<p>Metrics 配置使用count作为聚合函数</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132526047-1007293145.png"></p>
+<p>buckets增加rows，字段选url</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132526438-1898740306.png"></p>
+<p>再增加一个状态码：</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132526953-1261870375.png"></p>
+<p>这样就完成了一个漂亮的表格</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132527406-1971021303.png"></p>
+<p>2.3.3 将报表添加到dashboard</p>
+<p>在dashboard点add，将两个报表加入即可</p>
+<p><img src="https://images2015.cnblogs.com/blog/38465/201703/38465-20170309132527781-1974262713.png"></p>
+<p>3、总结</p>
+<p>简单的介绍就到这里为止了，更多的功能后面继续挖掘。</p>
+<p>总结下，借助ELK可以快速搭建日志收集、日志搜索和统计分析平台，可以不写一行代码完成漂亮的统计报表，简直是开发和运维的福音，是不是心动了？如果是，快行动起来吧！</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/02/13/jqpeng-Jupyter%20notebook%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/02/13/jqpeng-Jupyter%20notebook%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Jupyter notebook安装与使用</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-02-13 14:35:00" itemprop="dateCreated datePublished" datetime="2017-02-13T14:35:00+08:00">2017-02-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>512</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/6393677.html">Jupyter notebook安装与使用</a></p>
+<ul>
+<li><p>Jupyter Notebook（此前被称为 IPython notebook）是一个交互式笔记本，支持运行 40 多种编程语言。</p>
+</li>
+<li><p>安装</p>
+<ul>
+<li>安装python 3</li>
+<li>pip安装<br>  pip3 install –upgrade pip<br>  pip3 install jupyter</li>
+</ul>
+</li>
+<li><p>运行 </p>
+<ul>
+<li>jupyter notebook 启动，会默认打开<a target="_blank" rel="noopener" href="http://localhost:8888/%EF%BC%8C%E8%AE%BF%E9%97%AE%E7%94%A8%E6%88%B7%E7%9B%AE%E5%BD%95">http://localhost:8888/，访问用户目录</a><br>  <img src="https://images2015.cnblogs.com/blog/38465/201702/38465-20170213144027332-1540737258.png">  如何自定义端口？<br>  <em>jupyter notebook –port 9999</em></li>
+<li>Nootbook dashboard<br>  <img src="https://images2015.cnblogs.com/blog/38465/201702/38465-20170213144027957-1866895760.png"></li>
+</ul>
+</li>
+<li><p>笔记操作</p>
+<ul>
+<li>打开已有笔记<br>  例如，打开网友分享的CS231课程笔记，<a target="_blank" rel="noopener" href="https://github.com/zlotus/cs231n">https://github.com/zlotus/cs231n</a><br>  下载zip包，解压到用户目录，刷新dashboard就能看到了<br>  <img src="https://images2015.cnblogs.com/blog/38465/201702/38465-20170213144028613-1675066940.png"><br>  .ipynb就是保存的笔记，单击打开，enjoy it！<br>  <img src="https://images2015.cnblogs.com/blog/38465/201702/38465-20170213144029379-1230425518.png"></li>
+<li>运行实例管理<br>  <img src="https://images2015.cnblogs.com/blog/38465/201702/38465-20170213144030004-1079356774.png"><br>  在running里可以查看正在运行的实例，可以shutdown</li>
+<li>新建笔记<br>  点击new菜单里的Python 3就可以创建一个笔记了<br>  <img src="https://images2015.cnblogs.com/blog/38465/201702/38465-20170213144030425-1666909010.png"></li>
+<li>插入代码<br>  <img src="https://images2015.cnblogs.com/blog/38465/201702/38465-20170213144032285-207623686.png"></li>
+<li>运行代码<br>  <img src="https://images2015.cnblogs.com/blog/38465/201702/38465-20170213144032785-1190858195.png">  <img src="https://images2015.cnblogs.com/blog/38465/201702/38465-20170213144033207-856058105.png"></li>
+<li>增加文本段<br>  点击新增（+），选择类型为markdown<br>  <img src="https://images2015.cnblogs.com/blog/38465/201702/38465-20170213144033863-833209297.png"></li>
+<li>保存<br>  CTRL+S 或点击save按钮保存<br>  <img src="https://images2015.cnblogs.com/blog/38465/201702/38465-20170213144034285-1049238861.png"></li>
+<li>命名<br>  点击标题，会弹出rename框<br>  <img src="https://images2015.cnblogs.com/blog/38465/201702/38465-20170213144034769-1640688543.png"></li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/01/17/jqpeng-java%E5%86%85%E5%B5%8Cjetty%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/01/17/jqpeng-java%E5%86%85%E5%B5%8Cjetty%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="post-title-link" itemprop="url">java内嵌jetty服务器</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-01-17 15:54:00" itemprop="dateCreated datePublished" datetime="2017-01-17T15:54:00+08:00">2017-01-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/6293422.html">java内嵌jetty服务器</a></p>
+<p>有的时候需要将一个简单的功能封装为服务，相比python使用flask、web.py的简洁，使用java-web显得太重量级，幸好，我们可以直接在java项目中使用jetty来搭建简易服务</p>
+<p>1、pom.xml加入jetty依赖</p>
+<pre><code>&lt;dependency&gt;
+&lt;groupId&gt;org.eclipse.jetty&lt;/groupId&gt;
+&lt;artifactId&gt;jetty-server&lt;/artifactId&gt;
+&lt;version&gt;9.4.0.v20161208&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+&lt;groupId&gt;org.eclipse.jetty&lt;/groupId&gt;
+&lt;artifactId&gt;jetty-webapp&lt;/artifactId&gt;
+&lt;version&gt;9.4.0.v20161208&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+&lt;groupId&gt;org.eclipse.jetty&lt;/groupId&gt;
+&lt;artifactId&gt;jetty-continuation&lt;/artifactId&gt;
+&lt;version&gt;9.4.0.v20161208&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+&lt;groupId&gt;org.eclipse.jetty&lt;/groupId&gt;
+&lt;artifactId&gt;jetty-jsp&lt;/artifactId&gt;
+&lt;version&gt;9.1.4.v20140401&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>2、增加Server</p>
+<pre><code>Serverserver=newServer(12580);
+</code></pre>
+<p>3、设置ServletContextHandler</p>
+<pre><code>ServletContextHandlercontext=newServletContextHandler(server,&quot;/&quot;);
+server.setHandler(context);
+</code></pre>
+<p>4、Context增加Servlet <br>4.1 创建Servlet 继承HttpServlet，重载doGet，doPost即可</p>
+<pre><code>public class XXXHandler extends HttpServlet &#123;
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        JSONObject ret =  new JSONObject();
+        try &#123;
+            String ttsTxt = req.getParameter(&quot;text&quot;);
+
+            String outFile = System.nanoTime() + &quot;.mp4&quot;;
+            String url = xx.xxx(ttsTxt,...);
+            ret.put(&quot;ret&quot;,&quot;0&quot;);
+            ret.put(&quot;url&quot;,url);
+        &#125;catch (Exception ex)&#123;
+            ret.put(&quot;ret&quot;,&quot;-1&quot;);
+            ret.put(&quot;error&quot;,ex.getMessage());
+        &#125;
+        if(req.getParameter(&quot;callback&quot;)!=null) &#123;
+            resp.getWriter().write(req.getParameter(&quot;callback&quot;)+&quot;(&quot;+ret.toString()+&quot;)&quot;);
+        &#125;else &#123;
+            resp.getWriter().write(ret.toString());
+        &#125;
+    &#125;
+
+&#125;
+</code></pre>
+<p>4.2 将Servlet 加入Context</p>
+<pre><code>context.addServlet(xxxHandler.class,&quot;/xxx&quot;);
+context.addServlet(Image2VideoHandler.class,&quot;/*&quot;);
+</code></pre>
+<p>5、启动server</p>
+<pre><code>server.start();
+server.join();
+</code></pre>
+<p>6、在浏览器访问<a target="_blank" rel="noopener" href="http://localhost:12580/XXX">http://localhost:12580/XXX</a> 即可</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2016/01/05/jqpeng-x%20%E5%BC%80%E5%A4%B4%E7%BC%96%E7%A0%81%E7%9A%84%E6%95%B0%E6%8D%AE%E8%A7%A3%E7%A0%81%E6%88%90%E4%B8%AD%E6%96%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/01/05/jqpeng-x%20%E5%BC%80%E5%A4%B4%E7%BC%96%E7%A0%81%E7%9A%84%E6%95%B0%E6%8D%AE%E8%A7%A3%E7%A0%81%E6%88%90%E4%B8%AD%E6%96%87/" class="post-title-link" itemprop="url">x 开头编码的数据解码成中文</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-01-05 11:38:00" itemprop="dateCreated datePublished" datetime="2016-01-05T11:38:00+08:00">2016-01-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/5101795.html">x 开头编码的数据解码成中文</a></p>
+<h2 id="Python-解码"><a href="#Python-解码" class="headerlink" title="Python 解码"></a>Python 解码</h2><p>在python里，直接decode(‘utf-8’)即可</p>
+<pre><code>&gt;&gt;&gt; &quot;\xE5\x85\x84\xE5\xBC\x9F\xE9\x9A\xBE\xE5\xBD\x93 \xE6\x9D\x9C\xE6\xAD\x8C&quot;.decode(&#39;utf-8&#39;)
+u&#39;\u5144\u5f1f\u96be\u5f53 \u675c\u6b4c&#39;
+&gt;&gt;&gt; print &quot;\xE5\x85\x84\xE5\xBC\x9F\xE9\x9A\xBE\xE5\xBD\x93 \xE6\x9D\x9C\xE6\xAD\x8C&quot;.decode(&#39;utf-8&#39;)
+兄弟难当 杜歌
+&gt;&gt;&gt;
+</code></pre>
+<h2 id="Java-解码"><a href="#Java-解码" class="headerlink" title="Java 解码"></a>Java 解码</h2><pre><code> public static void main(String[] args) throws UnsupportedEncodingException &#123;
+        String utf8String = &quot;\\xE5\\x85\\x84\\xE5\\xBC\\x9F\\xE9\\x9A\\xBE\\xE5\\xBD\\x93 \\xE6\\x9D\\x9C\\xE6\\xAD\\x8C&quot;;
+        System.out.println(decodeUTF8Str(utf8String));
+    &#125;
+
+    public static String decodeUTF8Str(String xStr) throws UnsupportedEncodingException &#123;
+        return URLDecoder.decode(xStr.replaceAll(&quot;\\\\x&quot;, &quot;%&quot;), &quot;utf-8&quot;);
+    &#125;
+</code></pre>
+<p>以上代码输出:</p>
+<pre><code>兄弟难当 杜歌
+
+Process finished with exit code 0
+</code></pre>
+<h2 id="深入理解："><a href="#深入理解：" class="headerlink" title="深入理解："></a>深入理解：</h2><p>要了解原理，推荐阅读<a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2007/10/ascii/_unicode/_and/_utf-8.html">http://www.ruanyifeng.com/blog/2007/10/ascii\_unicode\_and\_utf-8.html</a></p>
+<p>UTF-8是unicode编码的一种落地方案：</p>
+<p>Unicode符号范围 | UTF-8编码方式<br>(十六进制) | （二进制）<br>——————–+———————————————<br>0000 0000-0000 007F | 0xxxxxxx<br>0000 0080-0000 07FF | 110xxxxx 10xxxxxx<br>0000 0800-0000 FFFF | 1110xxxx 10xxxxxx 10xxxxxx<br>0001 0000-0010 FFFF | 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx</p>
+<p>\x对应的是UTF-8编码的数据，通过转化规则可以转换为Unicode编码，就能得到对应的汉字，转换规则很简单，先将\x去掉，转换为数字，然后进行对应的位移操作即可，需要注意的是先要判断utf-8的位数.</p>
+<p>可以通过下面的scala代码深入了解：</p>
+<pre><code> val pattern = &quot;&quot;&quot;(\d+\.\d+\.\d+\.\d+) \- (\S+) (\S+) \[([^\]]+)\] \&quot;(\w+) (\S+) \S+\&quot; (\S+) (\S+) \&quot;([^\&quot;]+)\&quot; \&quot;([^\&quot;]+)\&quot; \&quot;([^\&quot;]+)\&quot; \&quot;([^\&quot;]+)&quot;&quot;&quot;.r
+  val decodeDataPattern = &quot;&quot;&quot;(\\x([0-9A-Z])&#123;2&#125;)+&quot;&quot;&quot;.r
+  def decodeUtf8(utf8Str:String):String=&#123;
+    var data =   decodeDataPattern.replaceAllIn(utf8Str, m=&gt;&#123;
+        var item = decodeXdata(m.toString())
+        item
+     &#125;) 
+     return data
+   &#125;
+     
+   def decodeXdata(utf8Str:String):String=&#123;
+     var arr = utf8Str.split(&quot;\\\\x&quot;)
+     var result = new StringBuilder()
+     var isMatchEnd = true
+     var matchIndex = 0
+     var currentWordLength = 0
+     var current = 0
+     var e0=0xe0;
+     
+     for(item &lt;-arr)&#123;
+        var str = item.trim
+        if(str.length()&gt;0)&#123;
+           var currentCode =  Integer.parseInt(str, 16);
+           if(isMatchEnd)&#123;
+             isMatchEnd = false
+             var and = currentCode &amp; e0;
+             if(and == 0xe0)&#123;
+                matchIndex = 1;
+                currentWordLength = 3;
+                current =  (currentCode &amp; 0x1f) &lt;&lt;12  // 3位编码的
+             &#125;else if(and==96)&#123;
+                matchIndex = 1;
+                currentWordLength = 2;
+                current =  (currentCode &amp; 0x1f) &lt;&lt;6 // 2位编码的
+             &#125;else&#123;
+               current = currentCode  // 1位编码的
+             &#125;
+          &#125;else&#123;
+            matchIndex = matchIndex+1;
+            if(matchIndex == 2)
+            &#123;
+              current+=(currentCode &amp; 0x3f) &lt;&lt;6
+            &#125;else&#123;
+               current+=(currentCode &amp; 0x3f) 
+            &#125;
+          &#125;
+           if(matchIndex==currentWordLength)&#123;
+               var hex = Integer.toHexString(current)
+               hex = if(hex.length()&lt;4) &quot;\\u00&quot;+hex else &quot;\\u&quot;+hex  //补0
+               result.append(new String(StringEscapeUtils.unescapeJava(hex).getBytes,&quot;utf-8&quot;)) 
+               current = 0
+               matchIndex=0
+               isMatchEnd = true
+           &#125;
+        &#125;
+     &#125;
+     
+     return result.toString()
+   &#125;
+</code></pre>
+<p>Javascript解码：</p>
+<h1 id="Javascript-x-反斜杠x-16进制-编解码"><a href="#Javascript-x-反斜杠x-16进制-编解码" class="headerlink" title="Javascript \x 反斜杠x 16进制 编解码"></a><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/js-x-encode-decode.html">Javascript \x 反斜杠x 16进制 编解码</a></h1>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

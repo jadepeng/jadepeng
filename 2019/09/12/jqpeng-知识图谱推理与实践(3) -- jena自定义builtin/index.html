@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: 知识图谱推理与实践(3) – jena自定义builtin 在第2篇里，介绍了jena的The general purpose rule engine（通用规则引擎）及其使用，本篇继续探究，如何自定义builtin。 builtin介绍先回顾builtin为何物，官方叫Builtin primitives,可以理解为内置函数、内置指令，可以返回true或者fals">
+<meta property="og:type" content="article">
+<meta property="og:title" content="知识图谱推理与实践(3) -- jena自定义builtin">
+<meta property="og:url" content="http://blog.iflyresearch.com/2019/09/12/jqpeng-%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%8E%A8%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5(3)%20--%20jena%E8%87%AA%E5%AE%9A%E4%B9%89builtin/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: 知识图谱推理与实践(3) – jena自定义builtin 在第2篇里，介绍了jena的The general purpose rule engine（通用规则引擎）及其使用，本篇继续探究，如何自定义builtin。 builtin介绍先回顾builtin为何物，官方叫Builtin primitives,可以理解为内置函数、内置指令，可以返回true或者fals">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-12T01:29:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.585Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="知识图谱">
+<meta property="article:tag" content="Jena">
+<meta property="article:tag" content="推理">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2019/09/12/jqpeng-%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%8E%A8%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5(3)%20--%20jena%E8%87%AA%E5%AE%9A%E4%B9%89builtin/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>知识图谱推理与实践(3) -- jena自定义builtin | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/09/12/jqpeng-%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%8E%A8%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5(3)%20--%20jena%E8%87%AA%E5%AE%9A%E4%B9%89builtin/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          知识图谱推理与实践(3) -- jena自定义builtin
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-12 09:29:00" itemprop="dateCreated datePublished" datetime="2019-09-12T09:29:00+08:00">2019-09-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/kg-inference-3.html">知识图谱推理与实践(3) – jena自定义builtin</a></p>
+<p>在<a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/kg-inference-2.html">第2篇</a>里，介绍了<code>jena</code>的<code>The general purpose rule engine</code>（通用规则引擎）及其使用，本篇继续探究，如何自定义builtin。</p>
+<h2 id="builtin介绍"><a href="#builtin介绍" class="headerlink" title="builtin介绍"></a>builtin介绍</h2><p>先回顾builtin为何物，官方叫<code>Builtin primitives</code>,可以理解为内置函数、内置指令，可以返回true或者false用来检验rule是否匹配，官方包含如下的<code>primitives</code></p>
+<table>
+<thead>
+<tr>
+<th>Builtin</th>
+<th>Operations</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>isLiteral(?x) notLiteral(?x)             <br>isFunctor(?x) notFunctor(?x)             <br>isBNode(?x) notBNode(?x)</td>
+<td>Test whether the single argument is or is not a literal, a functor-valued</td>
+</tr>
+</tbody></table>
+<pre><code>      literal or a blank-node, respectively. |
+</code></pre>
+<p>| bound(?x…) unbound(?x..) | Test if all of the arguments are bound (not bound) variables |<br>| equal(?x,?y) notEqual(?x,?y) | Test if x=y (or x != y). The equality test is semantic equality so that,<br>          for example, the xsd:int 1 and the xsd:decimal 1 would test equal. |<br>| lessThan(?x, ?y), greaterThan(?x, ?y)             <br>le(?x, ?y), ge(?x, ?y) | Test if x is &lt;, &gt;, &lt;= or &gt;= y. Only passes if both x and y<br>          are numbers or time instants (can be integer or floating point or XSDDateTime). |<br>| sum(?a, ?b, ?c)             <br>addOne(?a, ?c)             <br>difference(?a, ?b, ?c)             <br>min(?a, ?b, ?c)             <br>max(?a, ?b, ?c)             <br>product(?a, ?b, ?c)             <br>quotient(?a, ?b, ?c) | Sets c to be (a+b), (a+1) (a-b), min(a,b), max(a,b), (a<br>          <em>b), (a/b). Note that these do not run backwards, if in<br>             <code>sum</code> a and c are bound and b is unbound then the test will<br>            fail rather than bind b to (c-a). This could be fixed.</em><br> |<br>| strConcat(?a1, .. ?an, ?t)             <br>uriConcat(?a1, .. ?an, ?t) | Concatenates the lexical form of all the arguments except the last, then<br>          binds the last argument to a plain literal (strConcat) or a URI node<br>          (uriConcat) with that lexical form. In both cases if an argument node<br>          is a URI node the URI will be used as the lexical form. |<br>| regex(?t, ?p)             <br>regex(?t, ?p, ?m1, .. ?mn) | Matches the lexical form of a literal (?t) against a regular expression<br>          pattern given by another literal (?p). If the match succeeds, and if<br>          there are any additional arguments then it will bind the first n capture<br>          groups to the arguments ?m1 to ?mn. The regular expression pattern syntax<br>          is that provided by java.util.regex. Note that the capture groups are<br>          numbered from 1 and the first capture group will be bound to ?m1, we<br>          ignore the implicit capture group 0 which corresponds to the entire matched<br>          string. So for example<br>          <br><br>    regexp(‘foo bar’, ‘(.) (.<br>                )’, ?m1, ?m2)<br>              <br><br><em>will bind<br>             <code>m1</code> to<br>             <code>&quot;foo&quot;</code> and<br>             <code>m2</code> to<br>             <code>&quot;bar&quot;</code>.</em><br> |<br>| now(?x) | Binds ?x to an xsd:dateTime value corresponding to the current time. |<br>| makeTemp(?x) | Binds ?x to a newly created blank node. |<br>| makeInstance(?x, ?p, ?v)<br>          <br>makeInstance(?x, ?p, ?t, ?v) | Binds ?v to be a blank node which is asserted as the value of the ?p property<br>          on resource ?x and optionally has type ?t. Multiple calls with the same<br>          arguments will return the same blank node each time - thus allowing this<br>          call to be used in backward rules. |<br>| makeSkolem(?x, ?v1, … ?vn) | Binds ?x to be a blank node. The blank node is generated based on the values<br>          of the remain ?vi arguments, so the same combination of arguments will<br>          generate the same bNode. |<br>| noValue(?x, ?p)<br>          <br>noValue(?x ?p ?v) | True if there is no known triple (x, p, ) or (x, p, v) in the model or<br>          the explicit forward deductions so far. |<br>| remove(n, …)<br>          <br>drop(n, …) | Remove the statement (triple) which caused the n’th body term of this (forward-only)<br>          rule to match. Remove will propagate the change to other consequent rules<br>          including the firing rule (which must thus be guarded by some other clauses).<br>          In particular, if the removed statement (triple) appears in the body<br>          of a rule that has already fired, the consequences of such rule are retracted<br>          from the deducted model. Drop will silently remove the triple(s) from<br>          the graph but not fire any rules as a consequence. These are clearly<br>          non-monotonic operations and, in particular, the behaviour of a rule<br>          set in which different rules both drop and create the same triple(s)<br>          is undefined. |<br>| isDType(?l, ?t) notDType(?l, ?t) | Tests if literal ?l is (or is not) an instance of the datatype defined<br>          by resource ?t. |<br>| print(?x, …) | Print (to standard out) a representation of each argument. This is useful<br>          for debugging rather than serious IO work. |<br>| listContains(?l, ?x)<br>           <br>listNotContains(?l, ?x) | Passes if ?l is a list which contains (does not contain) the element ?x,<br>          both arguments must be ground, can not be used as a generator. |<br>| listEntry(?list, ?index, ?val) | Binds ?val to the ?index’th entry in the RDF list ?list. If there is no<br>          such entry the variable will be unbound and the call will fail. Only<br>          usable in rule bodies. |<br>| listLength(?l, ?len) | Binds ?len to the length of the list ?l. |<br>| listEqual(?la, ?lb)<br>           <br>listNotEqual(?la, ?lb) | listEqual tests if the two arguments are both lists and contain the same<br>          elements. The equality test is semantic equality on literals (sameValueAs)<br>          but will not take into account owl:sameAs aliases. listNotEqual is the<br>          negation of this (passes if listEqual fails). |<br>| listMapAsObject(?s, ?p ?l)<br>           <br>listMapAsSubject(?l, ?p, ?o) | These can only be used as actions in the head of a rule. They deduce a<br>          set of triples derived from the list argument ?l : listMapAsObject asserts<br>          triples (?s ?p ?x) for each ?x in the list ?l, listMapAsSubject asserts<br>          triples (?x ?p ?o). |<br>| table(?p) tableAll() | Declare that all goals involving property ?p (or all goals) should be tabled<br>          by the backward engine. |<br>| hide(p) | Declares that statements involving the predicate p should be hidden. Queries<br>          to the model will not report such statements. This is useful to enable<br>          non-monotonic forward rules to define flag predicates which are only<br>          used for inference control and do not “pollute” the inference results. |</p>
+<h2 id="builtin-自定义"><a href="#builtin-自定义" class="headerlink" title="builtin 自定义"></a>builtin 自定义</h2><p>自定义很简单，实现<code>Builtin</code>接口, 然后使用<code>BuiltinRegistry.theRegistry.register</code>注册即可。</p>
+<p>Builtin接口定义如下：</p>
+<pre><code>public interface Builtin &#123;
+
+    /**
+     * Return a convenient name for this builtin, normally this will be the name of the 
+     * functor that will be used to invoke it and will often be the final component of the
+     * URI.
+     */
+    public String getName();
+    
+    /**
+     * Return the full URI which identifies this built in.
+     */
+    public String getURI();
+    
+    /**
+     * Return the expected number of arguments for this functor or 0 if the number is flexible.
+     */
+    public int getArgLength();
+    
+    /**
+     * This method is invoked when the builtin is called in a rule body.
+     * @param args the array of argument values for the builtin, this is an array 
+     * of Nodes, some of which may be Node_RuleVariables.
+     * @param length the length of the argument list, may be less than the length of the args array
+     * for some rule engines
+     * @param context an execution context giving access to other relevant data
+     * @return return true if the buildin predicate is deemed to have succeeded in
+     * the current environment
+     */
+    public boolean bodyCall(Node[] args, int length, RuleContext context);
+    
+    /**
+     * This method is invoked when the builtin is called in a rule head.
+     * Such a use is only valid in a forward rule.
+     * @param args the array of argument values for the builtin, this is an array 
+     * of Nodes.
+     * @param length the length of the argument list, may be less than the length of the args array
+     * for some rule engines
+     * @param context an execution context giving access to other relevant data
+     */
+    public void headAction(Node[] args, int length, RuleContext context);
+    
+    /**
+     * Returns false if this builtin has side effects when run in a body clause,
+     * other than the binding of environment variables.
+     */
+    public boolean isSafe();
+    
+    /**
+     * Returns false if this builtin is non-monotonic. This includes non-monotonic checks like noValue
+     * and non-monotonic actions like remove/drop. A non-monotonic call in a head is assumed to 
+     * be an action and makes the overall rule and ruleset non-monotonic. 
+     * Most JenaRules are monotonic deductive closure rules in which this should be false.
+     */
+    public boolean isMonotonic();
+&#125;
+</code></pre>
+<p>一般我们不用直接实现该接口，可以继承默认的实现<code>BaseBuiltin</code>, 一般只需要Override 下<code>getName</code>提供指令名称，实现<code>bodyCall</code>,提供函数调用即可。</p>
+<pre><code>    @Override
+    public String getName() &#123;
+        return &quot;semsim&quot;;
+    &#125;
+</code></pre>
+<p>比如，我们来自定义一个指令，用来计算两两语义相似度：</p>
+<pre><code>public class SemanticSimilarityBuiltin extends BaseBuiltin &#123;
+    /**
+     * Return a convenient name for this builtin, normally this will be the name of the
+     * functor that will be used to invoke it and will often be the final component of the
+     * URI.
+     */
+    @Override
+    public String getName() &#123;
+        return &quot;semsim&quot;;
+    &#125;
+
+    @Override
+    public int getArgLength() &#123;
+        return 3;
+    &#125;
+
+
+    /**
+     * This method is invoked when the builtin is called in a rule body.
+     *
+     * @param args    the array of argument values for the builtin, this is an array
+     *                of Nodes, some of which may be Node_RuleVariables.
+     * @param context an execution context giving access to other relevant data
+     * @return return true if the buildin predicate is deemed to have succeeded in
+     * the current environment
+     */
+    @Override
+    public boolean bodyCall(Node[] args, int length, RuleContext context) &#123;
+        checkArgs(length, context);
+        Node n1 = getArg(0, args, context);
+        Node n2 = getArg(1, args, context);
+        Node score = getArg(2,args,context);
+
+        if(!score.isLiteral()  || score.getLiteral().getValue()==null)&#123;
+         return false;
+        &#125;
+        String value;
+        Double hold = Double.parseDouble(score.getLiteralValue().toString());
+
+        //  n.isLiteral() &amp;&amp; n.getLiteralValue() instanceof Number
+
+        if (n1.isLiteral() &amp;&amp; n2.isLiteral()) &#123;
+            String v1 = n1.getLiteralValue().toString();
+            String v2 = n2.getLiteralValue().toString();
+
+            // 调用服务计算相似度
+            String requestUrl = &quot;http://API-URL:5101/similarity/cosine?s1=&quot;+v1+&quot;&amp;s2=&quot;+v2;
+            String result = HttpClientUtil.doGet(requestUrl);
+            JSONObject json = JSON.parseObject(result);
+            if(json.getDouble(&quot;similarity&quot;) &gt;= hold)&#123;
+                return true;
+            &#125;
+
+            return true;
+        &#125;
+        return false;
+    &#125;
+&#125;
+</code></pre>
+<ul>
+<li>这里有个getArgLength和checkArgs(length, context)，可以用来限制参数长度，检验必须符合该长度。</li>
+<li>可以通过getArg(idx, args, context)来获取待计算的参数</li>
+<li>上面的计算相似度，主要是调用外度的服务来计算两两的语义向量的cosine得分，如果满足阈值，我们就认为规则匹配</li>
+</ul>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>我们来测试上面的定义的计算语义相似度的指令<code>semsim</code>，还是用第2篇里的例子：</p>
+<p>我们新增加两个属性<code>主要业务</code>和<code>竞争对手</code>，我们定义，如果两个公司的主要业务语义上相似，我们就认为两家公司是竞争对手。</p>
+<pre><code>        Property 主要业务 = myMod.createProperty(finance + &quot;主要业务&quot;);
+        Property 竞争对手 = myMod.createProperty(finance + &quot;竞争对手&quot;);
+
+        // 加入三元组
+      
+        myMod.add(万达集团, 主要业务, &quot;房地产，文娱&quot;);
+        myMod.add(融创中国, 主要业务, &quot;房地产&quot;);
+      
+</code></pre>
+<p>然后定义规则：</p>
+<pre><code>[ruleCompetitor: (?c1 :主要业务 ?b1) (?c2 :主要业务 ?b2) notEqual(?c1,?c2) semsim(?b1,?b2,0.6)  -&gt; (?c1 :竞争对手 ?c2)] 
+</code></pre>
+<p>规则意思是，公司C1 主要业务是 b1,c2 主要业务是b2,并且c1和c2不是同一家公司，如果b1，b2的相似度大于0.6，那么C1和c2是竞争对手。</p>
+<p>完整测试代码：</p>
+<pre><code>       // 注册自定义builtin
+        BuiltinRegistry.theRegistry.register(new SemanticSimilarityBuiltin());
+
+        Model myMod = ModelFactory.createDefaultModel();
+        String finance = &quot;http://www.example.org/kse/finance#&quot;;
+        Resource 孙宏斌 = myMod.createResource(finance + &quot;孙宏斌&quot;);
+        Resource 融创中国 = myMod.createResource(finance + &quot;融创中国&quot;);
+        Resource 乐视网 = myMod.createResource(finance + &quot;乐视网&quot;);
+        Property 执掌 = myMod.createProperty(finance + &quot;执掌&quot;);
+        Resource 贾跃亭 = myMod.createResource(finance + &quot;贾跃亭&quot;);
+        Resource 地产公司 = myMod.createResource(finance + &quot;地产公司&quot;);
+        Resource 公司 = myMod.createResource(finance + &quot;公司&quot;);
+        Resource 法人实体 = myMod.createResource(finance + &quot;法人实体&quot;);
+        Resource 人 = myMod.createResource(finance + &quot;人&quot;);
+        Property 主要收入 = myMod.createProperty(finance + &quot;主要收入&quot;);
+        Resource 地产事业 = myMod.createResource(finance + &quot;地产事业&quot;);
+        Resource 王健林 = myMod.createResource(finance + &quot;王健林&quot;);
+        Resource 万达集团 = myMod.createResource(finance + &quot;万达集团&quot;);
+        Property 主要资产 = myMod.createProperty(finance + &quot;主要资产&quot;);
+
+
+        Property 股东 = myMod.createProperty(finance + &quot;股东&quot;);
+        Property 关联交易 = myMod.createProperty(finance + &quot;关联交易&quot;);
+        Property 收购 = myMod.createProperty(finance + &quot;收购&quot;);
+
+        Property 主要业务 = myMod.createProperty(finance + &quot;主要业务&quot;);
+        Property 竞争对手 = myMod.createProperty(finance + &quot;竞争对手&quot;);
+
+        // 加入三元组
+        myMod.add(孙宏斌, 执掌, 融创中国);
+        myMod.add(贾跃亭, 执掌, 乐视网);
+        myMod.add(王健林, 执掌, 万达集团);
+        myMod.add(乐视网, RDF.type, 公司);
+        myMod.add(万达集团, RDF.type, 公司);
+        myMod.add(融创中国, RDF.type, 地产公司);
+        myMod.add(地产公司, RDFS.subClassOf, 公司);
+        myMod.add(公司, RDFS.subClassOf, 法人实体);
+        myMod.add(孙宏斌, RDF.type, 人);
+        myMod.add(贾跃亭, RDF.type, 人);
+        myMod.add(王健林, RDF.type, 人);
+        myMod.add(万达集团, 主要资产, 地产事业);
+        myMod.add(万达集团, 主要业务, &quot;房地产，文娱&quot;);
+        myMod.add(融创中国, 主要收入, 地产事业);
+        myMod.add(融创中国, 主要业务, &quot;房地产&quot;);
+        myMod.add(孙宏斌, 股东, 乐视网);
+        myMod.add(孙宏斌, 收购, 万达集团);
+
+        PrintUtil.registerPrefix(&quot;&quot;, finance);
+
+        // 输出当前模型
+        StmtIterator i = myMod.listStatements(null, null, (RDFNode) null);
+        while (i.hasNext()) &#123;
+            System.out.println(&quot; - &quot; + PrintUtil.print(i.nextStatement()));
+        &#125;
+
+
+        GenericRuleReasoner reasoner = (GenericRuleReasoner) GenericRuleReasonerFactory.theInstance().create(null);
+        reasoner.setRules(Rule.parseRules(
+            &quot;[ruleHoldShare: (?p :执掌 ?c) -&gt; (?p :股东 ?c)] \n&quot;
+                + &quot;[ruleConnTrans: (?p :收购 ?c) -&gt; (?p :股东 ?c)] \n&quot;
+                + &quot;[ruleConnTrans: (?p :股东 ?c) (?p :股东 ?c2) -&gt; (?c :关联交易 ?c2)] \n&quot;
+                + &quot;[ruleCompetitor:: (?c1 :主要业务 ?b1) (?c2 :主要业务 ?b2) notEqual(?c1,?c2) semsim(?b1,?b2,0.6)  -&gt; (?c1 :竞争对手 ?c2)] \n&quot;
+                + &quot;-&gt; tableAll().&quot;));
+        reasoner.setMode(GenericRuleReasoner.HYBRID);
+
+        InfGraph infgraph = reasoner.bind(myMod.getGraph());
+        infgraph.setDerivationLogging(true);
+
+        System.out.println(&quot;推理后...\n&quot;);
+
+        Iterator&lt;Triple&gt; tripleIterator = infgraph.find(null, null, null);
+        while (tripleIterator.hasNext()) &#123;
+            System.out.println(&quot; - &quot; + PrintUtil.print(tripleIterator.next()));
+        &#125;
+</code></pre>
+<p>运行结果：</p>
+<pre><code> - (:万达集团 :关联交易 :乐视网)
+ - (:万达集团 :关联交易 :融创中国)
+ - (:万达集团 :竞争对手 :融创中国)
+ - (:万达集团 :关联交易 :万达集团)
+ - (:孙宏斌 :股东 :万达集团)
+ - (:孙宏斌 :股东 :融创中国)
+ - (:融创中国 :关联交易 :万达集团)
+ - (:融创中国 :竞争对手 :万达集团)
+ - (:融创中国 :关联交易 :乐视网)
+ - (:融创中国 :关联交易 :融创中国)
+ - (:乐视网 :关联交易 :万达集团)
+ - (:乐视网 :关联交易 :融创中国)
+ - (:乐视网 :关联交易 :乐视网)
+ - (:贾跃亭 :股东 :乐视网)
+ - (:王健林 :股东 :万达集团)
+ - (:公司 rdfs:subClassOf :法人实体)
+ - (:万达集团 :主要业务 &#39;房地产，文娱&#39;)
+ - (:万达集团 :主要资产 :地产事业)
+ - (:万达集团 rdf:type :公司)
+ - (:地产公司 rdfs:subClassOf :公司)
+ - (:融创中国 :主要业务 &#39;房地产&#39;)
+ - (:融创中国 :主要收入 :地产事业)
+ - (:融创中国 rdf:type :地产公司)
+ - (:孙宏斌 :收购 :万达集团)
+ - (:孙宏斌 :股东 :乐视网)
+ - (:孙宏斌 rdf:type :人)
+ - (:孙宏斌 :执掌 :融创中国)
+ - (:乐视网 rdf:type :公司)
+ - (:贾跃亭 rdf:type :人)
+ - (:贾跃亭 :执掌 :乐视网)
+ - (:王健林 rdf:type :人)
+ - (:王健林 :执掌 :万达集团)
+</code></pre>
+<p>可以根据需要，扩展更多的builtin，比如运行js，比如http请求。。。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" rel="tag"># 知识图谱</a>
+              <a href="/tags/Jena/" rel="tag"># Jena</a>
+              <a href="/tags/%E6%8E%A8%E7%90%86/" rel="tag"># 推理</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/09/10/jqpeng-conda%20docker%E9%95%9C%E5%83%8F/" rel="prev" title="conda docker镜像">
+      <i class="fa fa-chevron-left"></i> conda docker镜像
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/09/17/jqpeng-%E6%95%99%E7%A8%8B%20%E2%80%94%E2%80%94%20%E5%A6%82%E4%BD%95%E5%9C%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BA%94%E7%94%A8%E9%9B%86%E6%88%90superset/" rel="next" title="教程 —— 如何在自己的应用集成superset">
+      教程 —— 如何在自己的应用集成superset <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#builtin%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">builtin介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#builtin-%E8%87%AA%E5%AE%9A%E4%B9%89"><span class="nav-number">2.</span> <span class="nav-text">builtin 自定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">3.</span> <span class="nav-text">测试</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

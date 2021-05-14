@@ -1,0 +1,3628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JadePeng的技术笔记本">
+<meta property="og:type" content="website">
+<meta property="og:title" content="JadePeng的技术笔记本">
+<meta property="og:url" content="http://blog.iflyresearch.com/page/9/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="JadePeng的技术笔记本">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="JadePeng">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/page/9/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/12/22/jqpeng-kgtemp%E6%96%87%E4%BB%B6%E8%BD%ACmp3%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/12/22/jqpeng-kgtemp%E6%96%87%E4%BB%B6%E8%BD%ACmp3%E5%B7%A5%E5%85%B7/" class="post-title-link" itemprop="url">kgtemp文件转mp3工具</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-12-22 13:24:00" itemprop="dateCreated datePublished" datetime="2017-12-22T13:24:00+08:00">2017-12-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/8085563.html">kgtemp文件转mp3工具</a></p>
+<p>kgtemp文件是酷我音乐软件的缓存文件，本文从技术层面探讨如何解密该文件为mp3文件，并通过读取ID3信息来重命名。</p>
+<p>备注：针对老版本的酷我音乐生效，新版本不支持！！！</p>
+<h2 id="kgtemp解密"><a href="#kgtemp解密" class="headerlink" title="kgtemp解密"></a>kgtemp解密</h2><p>kgtemp文件前1024个字节是固定的包头信息，解密方案详细可以参见(<a target="_blank" rel="noopener" href="http://www.cnblogs.com/KMBlog/p/6877752.html">http://www.cnblogs.com/KMBlog/p/6877752.html</a>)：</p>
+<pre><code>class Program&#123;    static void Main(string[] args)    &#123;
+        byte[] key=&#123;0xAC,0xEC,0xDF,0x57&#125;;        using (var input = new FileStream(@&quot;E:\KuGou\Temp\236909b6016c6e98365e5225f488dd7a.kgtemp&quot;, FileMode.Open, FileAccess.Read))        &#123;            var output = File.OpenWrite(@&quot;d:\test.mp3&quot;);//输出文件            input.Seek(1024, SeekOrigin.Begin);//跳过1024字节的包头            byte[] buffer = new byte[key.Length];            int length;            while((length=input.Read(buffer,0,buffer.Length))&gt;0)            &#123;                for(int i=0;i&lt;length;i++)                &#123;                    var k = key[i];                    var kh = k &gt;&gt; 4;                    var kl = k &amp; 0xf;                    var b = buffer[i];                    var low = b &amp; 0xf ^ kl;//解密后的低4位                    var high = (b &gt;&gt; 4) ^ kh ^ low &amp; 0xf;//解密后的高4位                    buffer[i] = (byte)(high &lt;&lt; 4 | low);                &#125;                output.Write(buffer, 0, length);            &#125;            output.Close();        &#125;        Console.WriteLine(&quot;按任意键退出...&quot;);        Console.ReadKey();    &#125;&#125;
+</code></pre>
+<p>这样解密出来就是mp3文件了</p>
+<h2 id="读取ID3信息"><a href="#读取ID3信息" class="headerlink" title="读取ID3信息"></a>读取ID3信息</h2><p>解密出来的文件还需要手动命名，不是很方便，可以读取ID3V1信息重命名文件。<br> ID3V1比较简单，它是存放在MP3文件的末尾，用16进制的编辑器打开一个MP3文件，查看其末尾的128个顺序存放字节，数据结构定义如下：<br> char Header<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1513919861693.jpg" title="1513919861693">3</a>;    /<em>标签头必须是”TAG”否则认为没有标签</em>/<br> char Title[30];    /<em>标题</em>/<br> char Artist[30];   /<em>作者</em>/<br> char Album[30];    /<em>专集</em>/<br> char Year<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1513920067729.jpg" title="1513920067729">4</a>;    /<em>出品年代</em>/<br> char Comment[30];   /<em>备注</em>/<br> char Genre;    /<em>类型，流派</em>/</p>
+<p>解析代码比较简单，注意中文歌曲用GBK编码就可以了：</p>
+<pre><code>  private static Mp3Info FormatMp3Info(byte[] Info, System.Text.Encoding Encoding)    &#123;        Mp3Info myMp3Info = new Mp3Info();        string str = null;        int i;        int position = 0主要代码jia，; //循环的起始值        int currentIndex = 0; //Info的当前索引值
+        //获取TAG标识        for (i = currentIndex; i &lt; currentIndex + 3; i++)        &#123;            str = str + (char)Info[i];            position++;        &#125;        currentIndex = position;        myMp3Info.identify = str;
+        //获取歌名        str = null;        byte[] bytTitle = new byte[30]; //将歌名部分读到一个单独的数组中        int j = 0;        for (i = currentIndex; i &lt; currentIndex + 30; i++)        &#123;            bytTitle[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Title = ByteToString(bytTitle, Encoding);
+        //获取歌手名        str = null;        j = 0;        byte[] bytArtist = new byte[30]; //将歌手名部分读到一个单独的数组中        for (i = currentIndex; i &lt; currentIndex + 30; i++)        &#123;            bytArtist[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Artist = ByteToString(bytArtist, Encoding);
+        //获取唱片名        str = null;        j = 0;        byte[] bytAlbum = new byte[30]; //将唱片名部分读到一个单独的数组中        for (i = currentIndex; i &lt; currentIndex + 30; i++)        &#123;            bytAlbum[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Album = ByteToString(bytAlbum, Encoding);
+        //获取年        str = null;        j = 0;        byte[] bytYear = new byte[4]; //将年部分读到一个单独的数组中        for (i = currentIndex; i &lt; currentIndex + 4; i++)        &#123;            bytYear[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Year = ByteToString(bytYear, Encoding);
+        //获取注释        str = null;        j = 0;        byte[] bytComment = new byte[28]; //将注释部分读到一个单独的数组中        for (i = currentIndex; i &lt; currentIndex + 25; i++)        &#123;            bytComment[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Comment = ByteToString(bytComment, Encoding);
+        //以下获取保留位        myMp3Info.reserved1 = (char)Info[++position];        myMp3Info.reserved2 = (char)Info[++position];        myMp3Info.reserved3 = (char)Info[++position];
+        //        return myMp3Info;    &#125;
+</code></pre>
+<h2 id="转换小工具"><a href="#转换小工具" class="headerlink" title="转换小工具"></a>转换小工具</h2><p>写了一个小工具，来进行转换</p>
+<p><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1513919861693.jpg" alt="装换工具" title="1513919861693"></p>
+<p>下载地址：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1o7FIsPk">https://pan.baidu.com/s/1o7FIsPk</a></p>
+<p>PS:上面只读取了IDV1，部分歌曲可能不存在<br> 可以下载@缤纷 提供的程序，增加了ID3V2的支持：<br><a target="_blank" rel="noopener" href="https://files.cnblogs.com/files/gxlxzys/kgtemp%E6%96%87%E4%BB%B6%E8%BD%ACmp3%E5%B7%A5%E5%85%B7.zip">https://files.cnblogs.com/files/gxlxzys/kgtemp文件转mp3工具.zip</a></p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/12/08/jqpeng-%E4%BD%BF%E7%94%A8SpringBoot%E5%BC%80%E5%8F%91REST%E6%9C%8D%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/12/08/jqpeng-%E4%BD%BF%E7%94%A8SpringBoot%E5%BC%80%E5%8F%91REST%E6%9C%8D%E5%8A%A1/" class="post-title-link" itemprop="url">使用SpringBoot开发REST服务</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-12-08 16:35:00" itemprop="dateCreated datePublished" datetime="2017-12-08T16:35:00+08:00">2017-12-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/SpringBootRest.html">使用SpringBoot开发REST服务</a></p>
+<p>本文介绍如何基于Spring Boot搭建一个简易的REST服务框架，以及如何通过自定义注解实现Rest服务鉴权</p>
+<h1 id="搭建框架"><a href="#搭建框架" class="headerlink" title="搭建框架"></a>搭建框架</h1><h2 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h2><p>首先，引入相关依赖，数据库使用mongodb，同时使用redis做缓存</p>
+<pre><code>注意，这里没有使用tomcat，而是使用undertow
+
+
+
+    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter&lt;/artifactId&gt;    &lt;/dependency&gt;
+    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;        &lt;scope&gt;test&lt;/scope&gt;    &lt;/dependency&gt;
+    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;        &lt;exclusions&gt;            &lt;exclusion&gt;                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;                &lt;artifactId&gt;spring-boot-starter-tomcat&lt;/artifactId&gt;            &lt;/exclusion&gt;        &lt;/exclusions&gt;    &lt;/dependency&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-undertow&lt;/artifactId&gt;    &lt;/dependency&gt;
+    &lt;!--redis支持--&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;    &lt;/dependency&gt;
+    &lt;!--mongodb支持--&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-data-mongodb&lt;/artifactId&gt;    &lt;/dependency&gt;
+</code></pre>
+<ul>
+<li>引入spring-boot-starter-web支持web服务</li>
+<li>引入spring-boot-starter-data-redis 和spring-boot-starter-data-mongodb就可以方便的使用mongodb和redis了</li>
+</ul>
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><h3 id="profiles功能"><a href="#profiles功能" class="headerlink" title="profiles功能"></a>profiles功能</h3><p>为了方便 区分开发环境和线上环境，可以使用profiles功能，在application.properties里增加<br> spring.profiles.active=dev</p>
+<p>然后增加application-dev.properties作为dev配置文件。</p>
+<h3 id="mondb配置"><a href="#mondb配置" class="headerlink" title="mondb配置"></a>mondb配置</h3><p>配置数据库地址即可</p>
+<pre><code>spring.data.mongodb.uri=mongodb://ip:port/database?readPreference=primaryPreferred
+</code></pre>
+<h3 id="redis配置"><a href="#redis配置" class="headerlink" title="redis配置"></a>redis配置</h3><pre><code>spring.redis.database=0  
+# Redis服务器地址
+spring.redis.host=ip
+# Redis服务器连接端口
+spring.redis.port=6379  
+# Redis服务器连接密码（默认为空）
+spring.redis.password=
+# 连接池最大连接数（使用负值表示没有限制）
+spring.redis.pool.max-active=8  
+# 连接池最大阻塞等待时间（使用负值表示没有限制）
+spring.redis.pool.max-wait=-1  
+# 连接池中的最大空闲连接
+spring.redis.pool.max-idle=8  
+# 连接池中的最小空闲连接
+spring.redis.pool.min-idle=0  
+# 连接超时时间（毫秒）
+spring.redis.timeout=0  
+</code></pre>
+<h2 id="数据访问"><a href="#数据访问" class="headerlink" title="数据访问"></a>数据访问</h2><h3 id="mongdb"><a href="#mongdb" class="headerlink" title="mongdb"></a>mongdb</h3><p>mongdb访问很简单，直接定义接口extends MongoRepository即可，另外可以支持JPA语法，例如：</p>
+<pre><code>@Component
+public interface UserRepository extends MongoRepository&lt;User, Integer&gt; &#123;
+public User findByUserName(String userName);
+&#125;
+</code></pre>
+<p>使用时，加上@Autowired注解即可。</p>
+<pre><code>@Component
+public class AuthService extends BaseService &#123;
+@AutowiredUserRepository userRepository;&#125;
+</code></pre>
+<h3 id="Redis访问"><a href="#Redis访问" class="headerlink" title="Redis访问"></a>Redis访问</h3><p>使用StringRedisTemplate即可直接访问Redis</p>
+<pre><code>@Component
+public class BaseService &#123;@Autowiredprotected MongoTemplate mongoTemplate;
+@Autowiredprotected StringRedisTemplate stringRedisTemplate;
+&#125;
+</code></pre>
+<p>储存数据：</p>
+<pre><code>.stringRedisTemplate.opsForValue().set(token_key, user.getId()+&quot;&quot;,token_max_age, TimeUnit.SECONDS);
+</code></pre>
+<p>删除数据：</p>
+<pre><code>stringRedisTemplate.delete(getFormatToken(accessToken,platform));
+</code></pre>
+<h2 id="Web服务"><a href="#Web服务" class="headerlink" title="Web服务"></a>Web服务</h2><p>定义一个Controller类，加上RestController即可，使用RequestMapping用来设置url route</p>
+<pre><code>@RestController
+public class AuthController extends BaseController &#123;
+@RequestMapping(value = &#123;&quot;/&quot;&#125;, produces = &quot;application/json;charset=utf-8&quot;, method = &#123;RequestMethod.GET, RequestMethod.POST&#125;)@ResponseBodypublic String main() &#123;    return &quot;hello world！&quot;;&#125;
+
+&#125;
+</code></pre>
+<p>现在启动，应该就能看到hello world！了</p>
+<h1 id="服务鉴权"><a href="#服务鉴权" class="headerlink" title="服务鉴权"></a>服务鉴权</h1><h2 id="简易accessToken机制"><a href="#简易accessToken机制" class="headerlink" title="简易accessToken机制"></a>简易accessToken机制</h2><p>提供登录接口，认证成功后，生成一个accessToken，以后访问接口时，带上accessToken，服务端通过accessToken来判断是否是合法用户。</p>
+<p>为了方便，可以将accessToken存入redis，设定有效期。</p>
+<pre><code>        String token = EncryptionUtils.sha256Hex(String.format(&quot;%s%s&quot;, user.getUserName(), System.currentTimeMillis()));    String token_key = getFormatToken(token, platform);    this.stringRedisTemplate.opsForValue().set(token_key, user.getId()+&quot;&quot;,token_max_age, TimeUnit.SECONDS);
+</code></pre>
+<h2 id="拦截器身份认证"><a href="#拦截器身份认证" class="headerlink" title="拦截器身份认证"></a>拦截器身份认证</h2><p>为了方便做统一的身份认证，可以基于Spring的拦截器机制，创建一个拦截器来做统一认证。</p>
+<pre><code>public class AuthCheckInterceptor implements HandlerInterceptor &#123;
+&#125;
+</code></pre>
+<p>要使拦截器生效，还需要一步，增加配置：</p>
+<pre><code>@Configuration
+public class SessionConfiguration extends WebMvcConfigurerAdapter &#123;
+@AutowiredAuthCheckInterceptor authCheckInterceptor;
+@Overridepublic void addInterceptors(InterceptorRegistry registry) &#123;    super.addInterceptors(registry);    // 添加拦截器    registry.addInterceptor(authCheckInterceptor).addPathPatterns(&quot;/**&quot;);&#125;
+&#125;
+</code></pre>
+<h2 id="自定义认证注解"><a href="#自定义认证注解" class="headerlink" title="自定义认证注解"></a>自定义认证注解</h2><p>为了精细化权限认证，比如有的接口只能具有特定权限的人才能访问，可以通过自定义注解轻松解决。在自定义的注解里，加上roles即可。</p>
+<pre><code>/**
+ *  权限检验注解
+ */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface AuthCheck &#123;
+/** *  角色列表 * @return */String[] roles() default &#123;&#125;;
+&#125;
+</code></pre>
+<p>检验逻辑：</p>
+<ul>
+<li>只要接口加上了AuthCheck注解，就必须是登陆用户</li>
+<li>如果指定了roles，则除了登录外，用户还应该具备相应的角色。</li>
+</ul>
+<pre><code>    String[] ignoreUrls = new String[]&#123;
+            &quot;/user/.*&quot;,
+            &quot;/cat/.*&quot;,
+            &quot;/app/.*&quot;,
+            &quot;/error&quot;
+    &#125;;
+ public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception &#123;
+
+        // 0 检验公共参数
+        if(!checkParams(&quot;platform&quot;,httpServletRequest,httpServletResponse))&#123;
+            return  false;
+        &#125;
+
+        // 1、忽略验证的URL
+        String url = httpServletRequest.getRequestURI().toString();
+        for(String ignoreUrl :ignoreUrls)&#123;
+            if(url.matches(ignoreUrl))&#123;
+                return true;
+            &#125;
+        &#125;
+
+        // 2、查询验证注解
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Method method = handlerMethod.getMethod();
+        // 查询注解
+        AuthCheck authCheck = method.getAnnotation(AuthCheck.class);
+        if (authCheck == null) &#123;
+            // 无注解，不需要
+            return true;
+        &#125;
+
+        // 3、有注解，先检查accessToken
+        if(!checkParams(&quot;accessToken&quot;,httpServletRequest,httpServletResponse))&#123;
+            return  false;
+        &#125;
+        // 检验token是否过期
+        Integer userId = authService.getUserIdFromToken(httpServletRequest.getParameter(&quot;accessToken&quot;),
+                httpServletRequest.getParameter(&quot;platform&quot;));
+        if(userId==null)&#123;
+            logger.debug(&quot;accessToken timeout&quot;);
+            output(ResponseResult.Builder.error(&quot;accessToken已过期&quot;).build(),httpServletResponse);
+            return false;
+        &#125;
+
+        // 4、再检验是否包含必要的角色
+        if(authCheck.roles()!=null&amp;&amp;authCheck.roles().length&gt;0)&#123;
+            User user = authService.getUser(userId);
+            boolean isMatch = false;
+            for(String role : authCheck.roles())&#123;
+                if(user.getRole().getName().equals(role))&#123;
+                    isMatch =  true;
+                    break;
+                &#125;
+            &#125;
+            // 角色未匹配，验证失败
+            if(!isMatch)&#123;
+                return false;
+            &#125;
+        &#125;
+
+        return true;
+    &#125;
+</code></pre>
+<h1 id="服务响应结果封装"><a href="#服务响应结果封装" class="headerlink" title="服务响应结果封装"></a>服务响应结果封装</h1><p>增加一个Builder，方便生成最终结果</p>
+<pre><code>public class ResponseResult &#123;
+
+    public static class Builder&#123;
+        ResponseResult responseResult;
+
+        Map&lt;String,Object&gt; dataMap = Maps.newHashMap();
+
+        public Builder()&#123;
+            this.responseResult = new ResponseResult();
+        &#125;
+
+        public Builder(String state)&#123;
+            this.responseResult = new ResponseResult(state);
+        &#125;
+
+
+        public static Builder newBuilder()&#123;
+           return new Builder();
+        &#125;
+
+        public static Builder success()&#123;
+            return new Builder(&quot;success&quot;);
+        &#125;
+
+        public static Builder error(String message)&#123;
+            Builder builder =  new Builder(&quot;error&quot;);
+            builder.responseResult.setError(message);
+            return builder;
+        &#125;
+
+        public  Builder append(String key,Object data)&#123;
+            this.dataMap.put(key,data);
+            return this;
+        &#125;
+
+        /**
+         *  设置列表数据
+         * @param datas 数据
+         * @return
+         */
+        public  Builder setListData(List&lt;?&gt; datas)&#123;
+            this.dataMap.put(&quot;result&quot;,datas);
+            this.dataMap.put(&quot;total&quot;,datas.size());
+            return this;
+        &#125;
+
+        public  Builder setData(Object data)&#123;
+            this.dataMap.clear();
+            this.responseResult.setData(data);
+            return this;
+        &#125;
+
+        boolean wrapData = false;
+
+        /**
+         * 将数据包裹在data中
+         * @param wrapData
+         * @return
+         */
+        public  Builder wrap(boolean wrapData)&#123;
+            this.wrapData = wrapData;
+            return this;
+        &#125;
+
+        public String build()&#123;
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(&quot;state&quot;,this.responseResult.getState());
+            if(this.responseResult.getState().equals(&quot;error&quot;))&#123;
+                jsonObject.put(&quot;error&quot;,this.responseResult.getError());
+            &#125;
+            if(this.responseResult.getData()!=null)&#123;
+                jsonObject.put(&quot;data&quot;, JSON.toJSON(this.responseResult.getData()));
+            &#125;else  if(dataMap.size()&gt;0)&#123;
+                if(wrapData) &#123;
+                    JSONObject data = new JSONObject();
+                    dataMap.forEach((key, value) -&gt; &#123;
+                        data.put(key, value);
+                    &#125;);
+                    jsonObject.put(&quot;data&quot;, data);
+                &#125;else&#123;
+                    dataMap.forEach((key, value) -&gt; &#123;
+                        jsonObject.put(key, value);
+                    &#125;);
+                &#125;
+            &#125;
+            return jsonObject.toJSONString();
+        &#125;
+
+    &#125;
+
+    private String state;
+    private Object data;
+    private String error;
+
+
+    public String getError() &#123;
+        return error;
+    &#125;
+
+    public void setError(String error) &#123;
+        this.error = error;
+    &#125;
+
+    public ResponseResult()&#123;&#125;
+
+    public ResponseResult(String rc)&#123;
+        this.state = rc;
+    &#125;
+
+    /**
+     * 成功时返回
+     * @param rc
+     * @param result
+     */
+    public ResponseResult(String rc, Object result)&#123;
+        this.state = rc;
+        this.data = result;
+    &#125;
+
+    public String getState() &#123;
+        return state;
+    &#125;
+
+    public void setState(String state) &#123;
+        this.state = state;
+    &#125;
+
+    public Object getData() &#123;
+        return data;
+    &#125;
+
+    public void setData(Object data) &#123;
+        this.data = data;
+    &#125;
+
+&#125;
+</code></pre>
+<p>调用时可以优雅一点</p>
+<pre><code>    @RequestMapping(value = &#123;&quot;/user/login&quot;,&quot;/pc/user/login&quot;&#125;, produces = &quot;application/json;charset=utf-8&quot;, method = &#123;RequestMethod.GET, RequestMethod.POST&#125;)
+    @ResponseBody
+    public String login(String userName,String password,Integer platform) &#123;
+        User user = this.authService.login(userName,password);
+        if(user!=null)&#123;
+            //  登陆
+            String token = authService.updateToken(user,platform);
+            return ResponseResult.Builder                 .success()
+                    .append(&quot;accessToken&quot;,token)
+                    .append(&quot;userId&quot;,user.getId())
+                    .build();
+        &#125;
+        return ResponseResult.Builder.error(&quot;用户不存在或密码错误&quot;).build();
+    &#125;
+    protected String error(String message)&#123;
+        return  ResponseResult.Builder.error(message).build();
+    &#125;
+
+    protected String success()&#123;
+        return  ResponseResult.Builder
+                .success()
+                .build();
+    &#125;
+
+    protected String successDataList(List&lt;?&gt; data)&#123;
+        return ResponseResult.Builder
+                .success()
+                .wrap(true) // data包裹
+                .setListData(data)
+                .build();
+    &#125;
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/12/01/jqpeng-%E4%B8%80%E8%B5%B7%E8%AF%BB%E6%BA%90%E7%A0%81%E4%B9%8Bzookeeper(1)%20--%20%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/12/01/jqpeng-%E4%B8%80%E8%B5%B7%E8%AF%BB%E6%BA%90%E7%A0%81%E4%B9%8Bzookeeper(1)%20--%20%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">一起读源码之zookeeper(1) -- 启动分析</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-12-01 14:43:00" itemprop="dateCreated datePublished" datetime="2017-12-01T14:43:00+08:00">2017-12-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>22k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>20 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/7942234.html">一起读源码之zookeeper(1) – 启动分析</a></p>
+<p>从本文开始，不定期分析一个开源项目源代码，起篇从大名鼎鼎的zookeeper开始。<br> 为什么是zk，因为用到zk的场景实在太多了，大部分耳熟能详的分布式系统都有zookeeper的影子，比如hbase，storm，dubbo，kafka等等，另外前面提到的<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi/p/java-rpc.html">RPC框架原理与实现</a>也用到了zookeeper。</p>
+<p>目录</p>
+<ul>
+<li>1 环境准备<ul>
+<li>1.1 导入代码</li>
+<li>1.2 设置配置文件</li>
+<li>1.3 调试配置</li>
+</ul>
+</li>
+<li>2 启动分析<ul>
+<li>2.1 QuorumPeerMain</li>
+<li>2.2 ZooKeeperServerMain</li>
+<li>2.3 ServerCnxnFactory</li>
+<li>2.4 ZooKeeperServer</li>
+<li>2.5 服务启动<ul>
+<li>2.5.1 配置cnxnFactory</li>
+<li>2.5.2 启动cnxnFactory<ul>
+<li>socket处理线程</li>
+<li>socket网络请求处理</li>
+<li>读取连接请求</li>
+<li>创建session</li>
+</ul>
+</li>
+<li>2.5.3 zk服务器启动<ul>
+<li>SessionTracker</li>
+</ul>
+</li>
+<li>2.5.4  ZooKeeperServer请求处理器链介绍<ul>
+<li>RequestProcessor</li>
+<li>PrepRequestProcessor</li>
+<li>SyncRequestProcessor</li>
+<li>FinalRequestProcessor</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-环境准备"><a href="#1-环境准备" class="headerlink" title="1 环境准备"></a>1 环境准备</h2><p>首先，下载zk的新版本，最新的稳定版是3.4.10，由于已下载3.4.9.先直接使用。</p>
+<h3 id="1-1-导入代码"><a href="#1-1-导入代码" class="headerlink" title="1.1 导入代码"></a>1.1 导入代码</h3><p>IDEA直接打开zk目录：<br><img src="https://ooo.0o0.ooo/2017/04/27/590166a796fb3.jpg" alt="enter description here" title="1493264040459"></p>
+<p>项目设置为jdk1.7<br> 然后，将src/java下面的main和generated设置为源码目录，同时将lib目录添加为liabary。</p>
+<h3 id="1-2-设置配置文件"><a href="#1-2-设置配置文件" class="headerlink" title="1.2 设置配置文件"></a>1.2 设置配置文件</h3><p>在conf目录，新建zoo.cfg，拷贝sample.cfg即可</p>
+<p><img src="https://ooo.0o0.ooo/2017/04/27/5901674b5600d.jpg" alt="enter description here" title="1493264204261"></p>
+<h3 id="1-3-调试配置"><a href="#1-3-调试配置" class="headerlink" title="1.3 调试配置"></a>1.3 调试配置</h3><p>查看bin/zkServer</p>
+<pre><code>set ZOOMAIN=org.apache.zookeeper.server.quorum.QuorumPeerMain
+....
+endlocal
+</code></pre>
+<p>调用的是org.apache.zookeeper.server.quorum.QuorumPeerMain，因此QuorumPeerMain，配置调试程序，arguments设置conf/zoo.cfg</p>
+<p><img src="https://ooo.0o0.ooo/2017/04/27/5901838aed112.jpg" alt="enter description here" title="1493271435981"></p>
+<p>这样，就可以愉快的Debug代码了-😃</p>
+<h2 id="2-启动分析"><a href="#2-启动分析" class="headerlink" title="2 启动分析"></a>2 启动分析</h2><h3 id="2-1-QuorumPeerMain"><a href="#2-1-QuorumPeerMain" class="headerlink" title="2.1 QuorumPeerMain"></a>2.1 QuorumPeerMain</h3><p>QuorumPeerMain的main里，调用initializeAndRun</p>
+<pre><code>    protected void initializeAndRun(String[] args)
+        throws ConfigException, IOException
+    &#123;
+        QuorumPeerConfig config = new QuorumPeerConfig();
+        if (args.length == 1) &#123;
+            config.parse(args[0]);
+        &#125;
+
+        // Start and schedule the the purge task 清理任务
+        DatadirCleanupManager purgeMgr = new DatadirCleanupManager(config
+                .getDataDir(), config.getDataLogDir(), config
+                .getSnapRetainCount(), config.getPurgeInterval());
+        purgeMgr.start();
+
+        // 集群模式
+        if (args.length == 1 &amp;&amp; config.servers.size() &gt; 0) &#123;
+            runFromConfig(config);
+        &#125; else &#123;
+            LOG.warn(&quot;Either no config or no quorum defined in config, running &quot;
+                    + &quot; in standalone mode&quot;);
+            // there is only server in the quorum -- run as standalone
+            // 单机模式
+            ZooKeeperServerMain.main(args);
+        &#125;
+    &#125;
+</code></pre>
+<p>主要执行了：</p>
+<ul>
+<li>加载解析配置文件到QuorumPeerConfig</li>
+<li>执行清理任务</li>
+<li>判断是集群模式还是单机模式，我们的配置文件未配置server，所以是单机模式，执行 ZooKeeperServerMain.main</li>
+</ul>
+<blockquote>
+<p>本文重点分析单机模式下的zk，集群模式暂时不解读</p>
+</blockquote>
+<h3 id="2-2-ZooKeeperServerMain"><a href="#2-2-ZooKeeperServerMain" class="headerlink" title="2.2 ZooKeeperServerMain"></a>2.2 ZooKeeperServerMain</h3><p>ZooKeeperServerMain.main调用initializeAndRun</p>
+<pre><code> protected void initializeAndRun(String[] args)
+        throws ConfigException, IOException
+    &#123;
+        try &#123;
+            ManagedUtil.registerLog4jMBeans();
+        &#125; catch (JMException e) &#123;
+            LOG.warn(&quot;Unable to register log4j JMX control&quot;, e);
+        &#125;
+
+        ServerConfig config = new ServerConfig();
+        if (args.length == 1) &#123;
+            config.parse(args[0]);
+        &#125; else &#123;
+            config.parse(args);
+        &#125;
+
+        runFromConfig(config);
+    &#125;```
+
+读取配置，然后runFromConfig：
+
+``` java
+ public void runFromConfig(ServerConfig config) throws IOException &#123;
+        LOG.info(&quot;Starting server&quot;);
+        FileTxnSnapLog txnLog = null;
+        try &#123;
+            // Note that this thread isn&#39;t going to be doing anything else,
+            // so rather than spawning another thread, we will just call
+            // run() in this thread.
+            // create a file logger url from the command line args
+            final ZooKeeperServer zkServer = new ZooKeeperServer();
+            // Registers shutdown handler which will be used to know the
+            // server error or shutdown state changes.
+            final CountDownLatch shutdownLatch = new CountDownLatch(1);
+            zkServer.registerServerShutdownHandler(
+                    new ZooKeeperServerShutdownHandler(shutdownLatch));
+
+            // 快照
+            txnLog = new FileTxnSnapLog(new File(config.dataLogDir), new File(
+                    config.dataDir));
+            zkServer.setTxnLogFactory(txnLog);
+            zkServer.setTickTime(config.tickTime);
+            zkServer.setMinSessionTimeout(config.minSessionTimeout);
+            zkServer.setMaxSessionTimeout(config.maxSessionTimeout);
+            // socket工厂
+            cnxnFactory = ServerCnxnFactory.createFactory();
+            cnxnFactory.configure(config.getClientPortAddress(),
+                    config.getMaxClientCnxns());
+            cnxnFactory.startup(zkServer);
+
+            // Watch status of ZooKeeper server. It will do a graceful shutdown
+            // if the server is not running or hits an internal error.
+            shutdownLatch.await();
+            shutdown();
+
+            cnxnFactory.join();
+            if (zkServer.canShutdown()) &#123;
+                zkServer.shutdown();
+            &#125;
+        &#125; catch (InterruptedException e) &#123;
+            // warn, but generally this is ok
+            LOG.warn(&quot;Server interrupted&quot;, e);
+        &#125; finally &#123;
+            if (txnLog != null) &#123;
+                txnLog.close();
+            &#125;
+        &#125;
+    &#125;
+</code></pre>
+<p>几件事情：</p>
+<ul>
+<li>创建zkServer，对ZooKeeperServer设置一些配置参数，如tickTime、minSessionTimeout、maxSessionTimeout</li>
+<li>创建CountDownLatch，注释里写了，用来watch zk的状态，当zk关闭或者出现内部错误的时候<strong>优雅</strong>的关闭服务</li>
+<li>根据配置参数dataLogDir和dataDir创建FileTxnSnapLog，用来存储zk数据和日志快照</li>
+<li>创建cnxnFactory，zk的 socket工厂，负责处理网络请求，zk里有netty和NIO两种实现</li>
+<li>cnxnFactory.startup(zkServer)，启动zk服务器</li>
+</ul>
+<h3 id="2-3-ServerCnxnFactory"><a href="#2-3-ServerCnxnFactory" class="headerlink" title="2.3 ServerCnxnFactory"></a>2.3 ServerCnxnFactory</h3><p>cnxnFactory负责zk的网络请求，createFactory中，从系统配置中读取ZOOKEEPER_SERVER_CNXN_FACTORY，默认是没有这个配置的，因此默认是使用NIOServerCnxnFactory，基于java的NIO实现，</p>
+<pre><code>    static public ServerCnxnFactory createFactory() throws IOException &#123;
+        String serverCnxnFactoryName =
+            System.getProperty(ZOOKEEPER_SERVER_CNXN_FACTORY);
+        if (serverCnxnFactoryName == null) &#123;
+            serverCnxnFactoryName = NIOServerCnxnFactory.class.getName();
+        &#125;
+        try &#123;
+            return (ServerCnxnFactory) Class.forName(serverCnxnFactoryName)
+                                                .newInstance();
+        &#125; catch (Exception e) &#123;
+            IOException ioe = new IOException(&quot;Couldn&#39;t instantiate &quot;
+                    + serverCnxnFactoryName);
+            ioe.initCause(e);
+            throw ioe;
+        &#125;
+    &#125;
+</code></pre>
+<p>当然，我们可以很容易发现：<br><img src="https://ooo.0o0.ooo/2017/04/27/59018f04f17b9.jpg" alt="enter description here" title="1493274374075"></p>
+<p>ServerCnxnFactory还有个NettyServerCnxnFactory实现，基于Netty实现NIO。ServerCnxnFactory里具体负责什么，后面再来看。</p>
+<h3 id="2-4-ZooKeeperServer"><a href="#2-4-ZooKeeperServer" class="headerlink" title="2.4 ZooKeeperServer"></a>2.4 ZooKeeperServer</h3><p>现在，主角登场，我们来看ZooKeeperServer内部有什么玄妙。<br><img src="https://ooo.0o0.ooo/2017/04/27/59018cc60446f.jpg" alt="enter description here" title="1493273799033"></p>
+<p>ZooKeeperServer是单机模式使用的类，在集群模式下使用的是它的子类。<br> 我们先来看ZooKeeperServer包含哪些内容：</p>
+<pre><code>    public static final int DEFAULT_TICK_TIME = 3000;
+    protected int tickTime = DEFAULT_TICK_TIME;
+    /** value of -1 indicates unset, use default */
+    protected int minSessionTimeout = -1;
+    /** value of -1 indicates unset, use default */
+    protected int maxSessionTimeout = -1;
+    protected SessionTracker sessionTracker; //创建和管理session
+    private FileTxnSnapLog txnLogFactory = null; //文件快照
+    private ZKDatabase zkDb; // ZooKeeper树形数据的模型
+    private final AtomicLong hzxid = new AtomicLong(0); //原子增长Long，用于分配事务编号
+    public final static Exception ok = new Exception(&quot;No prob&quot;);
+    protected RequestProcessor firstProcessor; // ZooKeeperServer请求处理器链中的第一个处理器
+    protected volatile State state = State.INITIAL;
+
+    protected enum State &#123;
+        INITIAL, RUNNING, SHUTDOWN, ERROR;
+    &#125;
+
+    /**
+     * This is the secret that we use to generate passwords, for the moment it
+     * is more of a sanity check.
+     */
+    static final private long superSecret = 0XB3415C00L;
+
+    private final AtomicInteger requestsInProcess = new AtomicInteger(0);
+    final List&lt;ChangeRecord&gt; outstandingChanges = new ArrayList&lt;ChangeRecord&gt;();
+    // this data structure must be accessed under the outstandingChanges lock
+    final HashMap&lt;String, ChangeRecord&gt; outstandingChangesForPath =
+        new HashMap&lt;String, ChangeRecord&gt;();
+    
+    private ServerCnxnFactory serverCnxnFactory; //ServerSocket工厂，接受客户端的socket连接
+
+    private final ServerStats serverStats; //server的运行状态统计
+    private final ZooKeeperServerListener listener; // ZK运行状态监听
+    private ZooKeeperServerShutdownHandler zkShutdownHandler;
+</code></pre>
+<h3 id="2-5-服务启动"><a href="#2-5-服务启动" class="headerlink" title="2.5 服务启动"></a>2.5 服务启动</h3><p>前面有点跑偏，继续回归启动过程:</p>
+<pre><code>            cnxnFactory = ServerCnxnFactory.createFactory();
+            cnxnFactory.configure(config.getClientPortAddress(),
+                    config.getMaxClientCnxns());
+            cnxnFactory.startup(zkServer);
+</code></pre>
+<h4 id="2-5-1-配置cnxnFactory"><a href="#2-5-1-配置cnxnFactory" class="headerlink" title="2.5.1 配置cnxnFactory"></a>2.5.1 配置cnxnFactory</h4><p>进入configure：</p>
+<pre><code>    @Override
+    public void configure(InetSocketAddress addr, int maxcc) throws IOException &#123;
+        configureSaslLogin();
+
+        // ZK网络请求主线程
+        thread = new ZooKeeperThread(this, &quot;NIOServerCxn.Factory:&quot; + addr);
+        thread.setDaemon(true);
+
+        maxClientCnxns = maxcc;
+        this.ss = ServerSocketChannel.open();
+        ss.socket().setReuseAddress(true);
+        LOG.info(&quot;binding to port &quot; + addr);
+        ss.socket().bind(addr);
+        ss.configureBlocking(false);
+        ss.register(selector, SelectionKey.OP_ACCEPT);
+    &#125;
+</code></pre>
+<p>几件事情：</p>
+<ul>
+<li>configureSaslLogin，具体不细看，应该是处理鉴权</li>
+<li>初始化ZooKeeperThread，这个ZooKeeperThread的作用是负责处理未处理异常：</li>
+</ul>
+<pre><code>public class ZooKeeperThread extends Thread &#123;
+
+    private static final Logger LOG = LoggerFactory
+            .getLogger(ZooKeeperThread.class);
+
+    private UncaughtExceptionHandler uncaughtExceptionalHandler = new UncaughtExceptionHandler() &#123;
+
+        @Override
+        public void uncaughtException(Thread t, Throwable e) &#123;
+            handleException(t.getName(), e);
+        &#125;
+    &#125;;
+
+    public ZooKeeperThread(Runnable thread, String threadName) &#123;
+        super(thread, threadName);
+        setUncaughtExceptionHandler(uncaughtExceptionalHandler);
+    &#125;
+
+    protected void handleException(String thName, Throwable e) &#123;
+        LOG.warn(&quot;Exception occured from thread &#123;&#125;&quot;, thName, e);
+    &#125;
+&#125;
+</code></pre>
+<ul>
+<li>启动ServerSocketChannel，并绑定配置的addr，并且注册selector（可以搜索NIO了解细节）</li>
+</ul>
+<h4 id="2-5-2-启动cnxnFactory"><a href="#2-5-2-启动cnxnFactory" class="headerlink" title="2.5.2 启动cnxnFactory"></a>2.5.2 启动cnxnFactory</h4><p>继续分析，进入cnxnFactory.startup(zkServer)</p>
+<pre><code>    @Override
+    public void startup(ZooKeeperServer zks) throws IOException,
+            InterruptedException &#123;
+        start();
+        setZooKeeperServer(zks);
+        zks.startdata();
+        zks.startup();
+    &#125;
+</code></pre>
+<p>首先，start，判断线程状态，如果未启动则启动线程，注意只会启动一次。</p>
+<pre><code>    @Override
+    public void start() &#123;
+        // ensure thread is started once and only once
+        if (thread.getState() == Thread.State.NEW) &#123;
+            thread.start();
+        &#125;
+    &#125;
+</code></pre>
+<h5 id="socket处理线程"><a href="#socket处理线程" class="headerlink" title="socket处理线程"></a>socket处理线程</h5><p>启动后，就会执行cnxnFactory.run</p>
+<pre><code>    public void run() &#123;
+        while (!ss.socket().isClosed()) &#123;
+            try &#123;
+                selector.select(1000);
+                Set&lt;SelectionKey&gt; selected;
+                synchronized (this) &#123;
+                    selected = selector.selectedKeys();
+                &#125;
+                ArrayList&lt;SelectionKey&gt; selectedList = new ArrayList&lt;SelectionKey&gt;(
+                        selected);
+                Collections.shuffle(selectedList);
+                for (SelectionKey k : selectedList) &#123;
+                    if ((k.readyOps() &amp; SelectionKey.OP_ACCEPT) != 0) &#123;
+                        SocketChannel sc = ((ServerSocketChannel) k
+                                .channel()).accept();
+                        InetAddress ia = sc.socket().getInetAddress();
+                        int cnxncount = getClientCnxnCount(ia);
+                        if (maxClientCnxns &gt; 0 &amp;&amp; cnxncount &gt;= maxClientCnxns)&#123;
+                            LOG.warn(&quot;Too many connections from &quot; + ia
+                                     + &quot; - max is &quot; + maxClientCnxns );
+                            sc.close();
+                        &#125; else &#123;
+                            LOG.info(&quot;Accepted socket connection from &quot;
+                                     + sc.socket().getRemoteSocketAddress());
+                            sc.configureBlocking(false);
+                            SelectionKey sk = sc.register(selector,
+                                    SelectionKey.OP_READ);
+                            NIOServerCnxn cnxn = createConnection(sc, sk);
+                            sk.attach(cnxn);
+                            addCnxn(cnxn);
+                        &#125;
+                    &#125; else if ((k.readyOps() &amp; (SelectionKey.OP_READ | SelectionKey.OP_WRITE)) != 0) &#123;
+                        NIOServerCnxn c = (NIOServerCnxn) k.attachment();
+                        c.doIO(k);
+                    &#125; else &#123;
+                        if (LOG.isDebugEnabled()) &#123;
+                            LOG.debug(&quot;Unexpected ops in select &quot;
+                                      + k.readyOps());
+                        &#125;
+                    &#125;
+                &#125;
+                selected.clear();
+            &#125; catch (RuntimeException e) &#123;
+                LOG.warn(&quot;Ignoring unexpected runtime exception&quot;, e);
+            &#125; catch (Exception e) &#123;
+                LOG.warn(&quot;Ignoring exception&quot;, e);
+            &#125;
+        &#125;
+        closeAll();
+        LOG.info(&quot;NIOServerCnxn factory exited run method&quot;);
+    &#125;
+</code></pre>
+<p>这里相当于一个独立线程来处理网络连接，通过selector.select(1000)来获取网络请求，一旦有连接就绪，则开始处理：</p>
+<ul>
+<li>首先打乱 Collections.shuffle(selectedList);</li>
+<li>for循环处理<ul>
+<li>如果SelectionKey.OP_ACCEPT，代表一个新连接请求，创建SocketChannel，创建NIOServerCnxn，然后addCnxn</li>
+<li>如果可读写，则 NIOServerCnxn.doIO(k)，执行IO操作</li>
+</ul>
+</li>
+</ul>
+<h5 id="socket网络请求处理"><a href="#socket网络请求处理" class="headerlink" title="socket网络请求处理"></a>socket网络请求处理</h5><p>这里简单分析下doIO,摘录部分代码：</p>
+<pre><code>void doIO(SelectionKey k) throws InterruptedException &#123;
+        try &#123;
+            if (isSocketOpen() == false) &#123;
+                LOG.warn(&quot;trying to do i/o on a null socket for session:0x&quot;
+                         + Long.toHexString(sessionId));
+
+                return;
+            &#125;
+            if (k.isReadable()) &#123;
+                // 读取4个字节
+                int rc = sock.read(incomingBuffer);
+                if (rc &lt; 0) &#123;
+                    throw new EndOfStreamException(
+                            &quot;Unable to read additional data from client sessionid 0x&quot;
+                            + Long.toHexString(sessionId)
+                            + &quot;, likely client has closed socket&quot;);
+                &#125;
+                // 读满了
+                if (incomingBuffer.remaining() == 0) &#123;
+                    boolean isPayload;
+                    if (incomingBuffer == lenBuffer) &#123; // start of next request
+                        incomingBuffer.flip(); // 复位
+                        isPayload = readLength(k); // 读取载荷长度
+                        incomingBuffer.clear();
+                    &#125; else &#123;
+                        // continuation
+                        isPayload = true;
+                    &#125;
+                    if (isPayload) &#123; // not the case for 4letterword
+                        readPayload();
+                    &#125;
+                    else &#123;
+                        // four letter words take care
+                        // need not do anything else
+                        return;
+                    &#125;
+                &#125;
+            &#125;
+</code></pre>
+<p>读取4个字节，获取到数据长度，然后读取载荷，也就是请求</p>
+<pre><code>    private void readPayload() throws IOException, InterruptedException &#123;
+        if (incomingBuffer.remaining() != 0) &#123; // have we read length bytes?
+            int rc = sock.read(incomingBuffer); // sock is non-blocking, so ok
+            if (rc &lt; 0) &#123;
+                throw new EndOfStreamException(
+                        &quot;Unable to read additional data from client sessionid 0x&quot;
+                        + Long.toHexString(sessionId)
+                        + &quot;, likely client has closed socket&quot;);
+            &#125;
+        &#125;
+
+        if (incomingBuffer.remaining() == 0) &#123; // have we read length bytes?
+            packetReceived();
+            incomingBuffer.flip(); // 复位
+            if (!initialized) &#123;
+                readConnectRequest(); // 读取连接请求
+            &#125; else &#123;
+                readRequest();
+            &#125;
+            lenBuffer.clear();
+            incomingBuffer = lenBuffer;
+        &#125;
+    &#125;
+</code></pre>
+<p>先是读取数据，然后再读取请求，这里关注readConnectRequest</p>
+<h5 id="读取连接请求"><a href="#读取连接请求" class="headerlink" title="读取连接请求"></a>读取连接请求</h5><pre><code>    private void readConnectRequest() throws IOException, InterruptedException &#123;
+        if (zkServer == null) &#123;
+            throw new IOException(&quot;ZooKeeperServer not running&quot;);
+        &#125;
+        zkServer.processConnectRequest(this, incomingBuffer);
+        initialized = true;
+    &#125;
+</code></pre>
+<p>继续，下面是处理连接请求：</p>
+<pre><code>     public void processConnectRequest(ServerCnxn cnxn, ByteBuffer incomingBuffer) throws IOException &#123;
+        BinaryInputArchive bia = BinaryInputArchive.getArchive(new ByteBufferInputStream(incomingBuffer));
+        ConnectRequest connReq = new ConnectRequest();
+        connReq.deserialize(bia, &quot;connect&quot;); // 反序列化请求
+        ....
+        // 客户端设置的超时时间
+        int sessionTimeout = connReq.getTimeOut();
+        byte passwd[] = connReq.getPasswd();
+        int minSessionTimeout = getMinSessionTimeout();
+        if (sessionTimeout &lt; minSessionTimeout) &#123;
+            sessionTimeout = minSessionTimeout;
+        &#125;
+        // 服务端设置的最大超时时间
+        int maxSessionTimeout = getMaxSessionTimeout();
+        if (sessionTimeout &gt; maxSessionTimeout) &#123;
+            sessionTimeout = maxSessionTimeout;
+        &#125;
+        cnxn.setSessionTimeout(sessionTimeout);
+        // We don&#39;t want to receive any packets until we are sure that the
+        // session is setup
+        cnxn.disableRecv();
+        // 请求是否带上sessionid
+        long sessionId = connReq.getSessionId();
+        if (sessionId != 0) &#123;
+            // 请求带了sessionid
+            long clientSessionId = connReq.getSessionId();
+            LOG.info(&quot;Client attempting to renew session 0x&quot;
+                    + Long.toHexString(clientSessionId)
+                    + &quot; at &quot; + cnxn.getRemoteSocketAddress());
+            // 关闭请求
+            serverCnxnFactory.closeSession(sessionId);
+            cnxn.setSessionId(sessionId);
+            // 重新打开请求
+            reopenSession(cnxn, sessionId, passwd, sessionTimeout);
+        &#125; else &#123;
+            LOG.info(&quot;Client attempting to establish new session at &quot;
+                    + cnxn.getRemoteSocketAddress());
+            // 创建新sesssion
+            createSession(cnxn, passwd, sessionTimeout);
+        &#125;
+    &#125;
+</code></pre>
+<p>以上完成：</p>
+<ul>
+<li>将读取出来的incomingBuffer反序列化为ConnectRequest对象</li>
+<li>然后设置超时时间，ServerCnxn接收到该申请后，根据客户端传递过来的sessionTimeout时间以及ZooKeeperServer本身的minSessionTimeout、maxSessionTimeout参数，确定最终的sessionTimeout时间</li>
+<li>判断客户端的请求是否已经含有sessionId<ul>
+<li>如果含有，则执行sessionId的是否过期、密码是否正确等检查</li>
+<li>如果没有sessionId，则创建一个session</li>
+</ul>
+</li>
+</ul>
+<h5 id="创建session"><a href="#创建session" class="headerlink" title="创建session"></a>创建session</h5><p>所以，我们需要再看一下如何创建session：</p>
+<pre><code>    long createSession(ServerCnxn cnxn, byte passwd[], int timeout) &#123;
+        long sessionId = sessionTracker.createSession(timeout);
+        Random r = new Random(sessionId ^ superSecret);
+        r.nextBytes(passwd);
+        ByteBuffer to = ByteBuffer.allocate(4);
+        to.putInt(timeout);
+        cnxn.setSessionId(sessionId);
+        submitRequest(cnxn, sessionId, OpCode.createSession, 0, to, null);
+        return sessionId;
+    &#125;
+</code></pre>
+<ul>
+<li>使用sessionTracker生成一个sessionId</li>
+<li>submitRequest构建一个Request请求，请求的类型为OpCode.createSession</li>
+</ul>
+<pre><code>    private void submitRequest(ServerCnxn cnxn, long sessionId, int type,
+            int xid, ByteBuffer bb, List&lt;Id&gt; authInfo) &#123;
+        Request si = new Request(cnxn, sessionId, xid, type, bb, authInfo);
+        submitRequest(si);
+    &#125;
+    
+    public void submitRequest(Request si) &#123;
+        if (firstProcessor == null) &#123;
+            synchronized (this) &#123;
+                try &#123;
+                    // Since all requests are passed to the request
+                    // processor it should wait for setting up the request
+                    // processor chain. The state will be updated to RUNNING
+                    // after the setup.
+                    while (state == State.INITIAL) &#123;
+                        wait(1000);
+                    &#125;
+                &#125; catch (InterruptedException e) &#123;
+                    LOG.warn(&quot;Unexpected interruption&quot;, e);
+                &#125;
+                if (firstProcessor == null || state != State.RUNNING) &#123;
+                    throw new RuntimeException(&quot;Not started&quot;);
+                &#125;
+            &#125;
+        &#125;
+        try &#123;
+            touch(si.cnxn);
+            boolean validpacket = Request.isValid(si.type);
+            if (validpacket) &#123;
+                firstProcessor.processRequest(si);
+                if (si.cnxn != null) &#123;
+                    incInProcess();
+                &#125;
+            &#125; else &#123;
+                LOG.warn(&quot;Received packet at server of unknown type &quot; + si.type);
+                new UnimplementedRequestProcessor().processRequest(si);
+            &#125;
+        &#125; catch (MissingSessionException e) &#123;
+            if (LOG.isDebugEnabled()) &#123;
+                LOG.debug(&quot;Dropping request: &quot; + e.getMessage());
+            &#125;
+        &#125; catch (RequestProcessorException e) &#123;
+            LOG.error(&quot;Unable to process request:&quot; + e.getMessage(), e);
+        &#125;
+    &#125;
+</code></pre>
+<p>上面的代码：</p>
+<ul>
+<li>创建一个Request</li>
+<li>等待firstProcessor创建完成，然后调用firstProcessor.processRequest</li>
+</ul>
+<blockquote>
+<p>firstProcessor是什么东东，下面再揭晓</p>
+</blockquote>
+<h4 id="2-5-3-zk服务器启动"><a href="#2-5-3-zk服务器启动" class="headerlink" title="2.5.3 zk服务器启动"></a>2.5.3 zk服务器启动</h4><p>再次回到startup，  setZooKeeperServer(zks)，代码很简单</p>
+<pre><code> final public void setZooKeeperServer(ZooKeeperServer zk) &#123;
+        this.zkServer = zk;
+        if (zk != null) &#123;
+            zk.setServerCnxnFactory(this);
+        &#125;
+    &#125;
+</code></pre>
+<p>然后是zk服务器的startdata:</p>
+<pre><code>    public void startdata() 
+    throws IOException, InterruptedException &#123;
+        //check to see if zkDb is not null
+        if (zkDb == null) &#123;
+            zkDb = new ZKDatabase(this.txnLogFactory);
+        &#125;  
+        if (!zkDb.isInitialized()) &#123;
+            loadData();
+        &#125;
+    &#125;
+</code></pre>
+<p>初始化ZKDatabase，从txnLogFactory里读取快照数据。</p>
+<p>最后是zk服务器的startup：</p>
+<pre><code>    public synchronized void startup() &#123;
+        if (sessionTracker == null) &#123;
+            createSessionTracker();
+        &#125;
+        startSessionTracker();
+        setupRequestProcessors();
+
+        registerJMX();
+
+        setState(State.RUNNING);
+        notifyAll();
+    &#125;
+</code></pre>
+<p>几件事情：</p>
+<ul>
+<li>createSessionTracker创建sessionTracker</li>
+<li>startSessionTracker启动SessionTracker</li>
+<li>setupRequestProcessors 创建请求处理器链</li>
+<li>registerJMX 注册JMX</li>
+<li>setState(State.RUNNING) 设置状态为运行中</li>
+</ul>
+<h5 id="SessionTracker"><a href="#SessionTracker" class="headerlink" title="SessionTracker"></a>SessionTracker</h5><p>看SessionTracker的注释：</p>
+<blockquote>
+<p>This is the basic interface that ZooKeeperServer uses to track sessions.<br> 负责追踪Session的</p>
+</blockquote>
+<p>在zk里的实现是SessionTrackerImpl：</p>
+<pre><code>    protected void createSessionTracker() &#123;
+        sessionTracker = new SessionTrackerImpl(this, zkDb.getSessionWithTimeOuts(),
+                tickTime, 1, getZooKeeperServerListener());
+    &#125;
+    
+    protected void startSessionTracker() &#123;
+        ((SessionTrackerImpl)sessionTracker).start();
+    &#125;
+</code></pre>
+<p>SessionTrackerImpl后面再详细分析。</p>
+<h4 id="2-5-4-ZooKeeperServer请求处理器链介绍"><a href="#2-5-4-ZooKeeperServer请求处理器链介绍" class="headerlink" title="2.5.4  ZooKeeperServer请求处理器链介绍"></a>2.5.4  ZooKeeperServer请求处理器链介绍</h4><p>这里是zk的核心部分之一，zk接收到的请求最终在这里进行处理。</p>
+<pre><code> protected void setupRequestProcessors() &#123;
+        RequestProcessor finalProcessor = new FinalRequestProcessor(this);
+        RequestProcessor syncProcessor = new SyncRequestProcessor(this,
+                finalProcessor);
+        ((SyncRequestProcessor)syncProcessor).start();
+        firstProcessor = new PrepRequestProcessor(this, syncProcessor);
+        ((PrepRequestProcessor)firstProcessor).start();
+    &#125;
+</code></pre>
+<p>请求处理链介绍</p>
+<ul>
+<li>首先是PrepRequestProcessor</li>
+<li>然后是SyncRequestProcessor</li>
+<li>最后是finalProcessor</li>
+</ul>
+<p>下面依次解读：</p>
+<h5 id="RequestProcessor"><a href="#RequestProcessor" class="headerlink" title="RequestProcessor"></a>RequestProcessor</h5><blockquote>
+<p>RequestProcessors are chained together to process transactions.<br> RequestProcessors都是链在一起的事务处理链</p>
+</blockquote>
+<pre><code>public interface RequestProcessor &#123;
+    @SuppressWarnings(&quot;serial&quot;)
+    public static class RequestProcessorException extends Exception &#123;
+        public RequestProcessorException(String msg, Throwable t) &#123;
+            super(msg, t);
+        &#125;
+    &#125;
+
+    void processRequest(Request request) throws RequestProcessorException;
+
+    void shutdown();
+&#125;
+</code></pre>
+<p>包含下面这些实现：<br><img src="https://ooo.0o0.ooo/2017/04/27/5901abdf8ffaa.jpg" alt="enter description here" title="1493281760211"><br> 我们重点来看下面几个：</p>
+<h5 id="PrepRequestProcessor"><a href="#PrepRequestProcessor" class="headerlink" title="PrepRequestProcessor"></a>PrepRequestProcessor</h5><p>为什么成为请求处理链，看下PrepRequestProcessor代码就知道了：</p>
+<pre><code>    RequestProcessor nextProcessor;
+
+    ZooKeeperServer zks;
+
+    public PrepRequestProcessor(ZooKeeperServer zks,
+            RequestProcessor nextProcessor) &#123;
+        super(&quot;ProcessThread(sid:&quot; + zks.getServerId() + &quot; cport:&quot;
+                + zks.getClientPort() + &quot;):&quot;, zks.getZooKeeperServerListener());
+        this.nextProcessor = nextProcessor;
+        this.zks = zks;
+    &#125;protected void pRequest(Request request) throws RequestProcessorException &#123;
+        ……
+        nextProcessor.processRequest(request);
+    &#125;
+</code></pre>
+<p>构造函数里包含nextProcessor，在pRequest完成后，执行nextProcessor.processRequest，相当于链式执行。</p>
+<p>接着分析，再来看类的定义：</p>
+<pre><code>public class PrepRequestProcessor extends ZooKeeperCriticalThread implements
+            RequestProcessor &#123;
+
+        LinkedBlockingQueue&lt;Request&gt; submittedRequests = new LinkedBlockingQueue&lt;Request&gt;();
+
+        RequestProcessor nextProcessor;    
+&#125;
+</code></pre>
+<p>几个要点</p>
+<ul>
+<li>继承自ZooKeeperCriticalThread，是一个Thread</li>
+<li>重要属性submittedRequests 是一个LinkedBlockingQueue，LinkedBlockingQueue实现是线程安全的，实现了先进先出特性，是作为生产者消费者的首选。</li>
+</ul>
+<p>PrepRequestProcessor作为处理链的源头，对外提供processRequest方法收集请求，由于是单线程，所以需要将请求放入submittedRequests队列。</p>
+<pre><code>    public void processRequest(Request request) &#123;
+        // request.addRQRec(&quot;&gt;prep=&quot;+zks.outstandingChanges.size());
+        submittedRequests.add(request);
+    &#125;
+</code></pre>
+<p>放入队列后，PrepRequestProcessor本身就是一个Thread，所以start后执行run，在run方法中又会将用户提交的请求取出来进行处理：</p>
+<pre><code>    public void run() &#123;
+            while (true) &#123;
+                // 取出一个请求
+                Request request = submittedRequests.take();
+                if (Request.requestOfDeath == request) &#123;
+                    break;
+                &#125;
+                // 处理请求
+                pRequest(request);
+            &#125;
+        &#125;
+</code></pre>
+<p>再来看pRequest：<br><img src="https://ooo.0o0.ooo/2017/04/27/5901af5b683c8.jpg" alt="enter description here" title="1493282652397"></p>
+<p>根据request的type，构造对应的请求，对于增删改等影响数据状态的操作都被认为是事务（txn:transaction) ，需要创建出事务请求头(hdr)，调用pRequest2Txn，其他操作则不属于事务操作，需要验证下sessionId是否合法。</p>
+<pre><code> //create/close session don&#39;t require request record
+            case OpCode.createSession:
+            case OpCode.closeSession:
+                pRequest2Txn(request.type, zks.getNextZxid(), request, null, true);
+                break;
+ 
+            //All the rest don&#39;t need to create a Txn - just verify session
+            case OpCode.sync:
+            case OpCode.exists:
+            case OpCode.getData:
+            case OpCode.getACL:
+            case OpCode.getChildren:
+            case OpCode.getChildren2:
+            case OpCode.ping:
+            case OpCode.setWatches:
+                zks.sessionTracker.checkSession(request.sessionId,
+                        request.getOwner());
+                break;
+</code></pre>
+<p>来看pRequest2Txn，以create为例</p>
+<pre><code>  pRequest2Txn(request.type, zks.getNextZxid(), request, createRequest, true);
+ 
+   protected void pRequest2Txn(int type, long zxid, Request request, Record record, boolean deserialize)
+        throws KeeperException, IOException, RequestProcessorException
+    &#123;
+        request.hdr = new TxnHeader(request.sessionId, request.cxid, zxid,
+                                    zks.getTime(), type);
+
+        switch (type) &#123;
+            case OpCode.create:                
+                zks.sessionTracker.checkSession(request.sessionId, request.getOwner());
+                CreateRequest createRequest = (CreateRequest)record;   
+                if(deserialize)
+                    ByteBufferInputStream.byteBuffer2Record(request.request, createRequest);
+                String path = createRequest.getPath();
+                int lastSlash = path.lastIndexOf(&#39;/&#39;);
+                if (lastSlash == -1 || path.indexOf(&#39;\0&#39;) != -1 || failCreate) &#123;
+                    LOG.info(&quot;Invalid path &quot; + path + &quot; with session 0x&quot; +
+                            Long.toHexString(request.sessionId));
+                    throw new KeeperException.BadArgumentsException(path);
+                &#125;
+                List&lt;ACL&gt; listACL = removeDuplicates(createRequest.getAcl());
+                if (!fixupACL(request.authInfo, listACL)) &#123;
+                    throw new KeeperException.InvalidACLException(path);
+                &#125;
+                String parentPath = path.substring(0, lastSlash);
+                ChangeRecord parentRecord = getRecordForPath(parentPath);
+
+                checkACL(zks, parentRecord.acl, ZooDefs.Perms.CREATE,
+                        request.authInfo);
+                int parentCVersion = parentRecord.stat.getCversion();
+                CreateMode createMode =
+                    CreateMode.fromFlag(createRequest.getFlags());
+                if (createMode.isSequential()) &#123;
+                    path = path + String.format(Locale.ENGLISH, &quot;%010d&quot;, parentCVersion);
+                &#125;
+                validatePath(path, request.sessionId);
+                try &#123;
+                    if (getRecordForPath(path) != null) &#123;
+                        throw new KeeperException.NodeExistsException(path);
+                    &#125;
+                &#125; catch (KeeperException.NoNodeException e) &#123;
+                    // ignore this one
+                &#125;
+                boolean ephemeralParent = parentRecord.stat.getEphemeralOwner() != 0;
+                if (ephemeralParent) &#123;
+                    throw new KeeperException.NoChildrenForEphemeralsException(path);
+                &#125;
+                int newCversion = parentRecord.stat.getCversion()+1;
+                request.txn = new CreateTxn(path, createRequest.getData(),
+                        listACL,
+                        createMode.isEphemeral(), newCversion);
+                StatPersisted s = new StatPersisted();
+                if (createMode.isEphemeral()) &#123;
+                    s.setEphemeralOwner(request.sessionId);
+                &#125;
+                parentRecord = parentRecord.duplicate(request.hdr.getZxid());
+                parentRecord.childCount++;
+                parentRecord.stat.setCversion(newCversion);
+                addChangeRecord(parentRecord);
+                addChangeRecord(new ChangeRecord(request.hdr.getZxid(), path, s,
+                        0, listACL));
+                break;
+</code></pre>
+<ul>
+<li>首先是 zks.getNextZxid()创建一个事务id，AtomicLong hzxid是自增长id，初始化为0，每次加一</li>
+<li>在pRequest2Txn内部，先给request创建一个TxnHeader，这个header包含事务id</li>
+<li>然后判断请求类型</li>
+<li>zks.sessionTracker.checkSession(request.sessionId, request.getOwner()) 检查session</li>
+<li>反序列化为CreateRequest</li>
+</ul>
+<h5 id="SyncRequestProcessor"><a href="#SyncRequestProcessor" class="headerlink" title="SyncRequestProcessor"></a>SyncRequestProcessor</h5><h5 id="FinalRequestProcessor"><a href="#FinalRequestProcessor" class="headerlink" title="FinalRequestProcessor"></a>FinalRequestProcessor</h5><p>未完待续</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/11/21/jqpeng-%E4%BB%8E%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB%E3%80%81BK%E6%A0%91%E5%88%B0%E6%96%87%E6%9C%AC%E7%BA%A0%E9%94%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/11/21/jqpeng-%E4%BB%8E%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB%E3%80%81BK%E6%A0%91%E5%88%B0%E6%96%87%E6%9C%AC%E7%BA%A0%E9%94%99/" class="post-title-link" itemprop="url">从编辑距离、BK树到文本纠错</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-11-21 10:33:00" itemprop="dateCreated datePublished" datetime="2017-11-21T10:33:00+08:00">2017-11-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/BK-Tree.html">从编辑距离、BK树到文本纠错</a></p>
+<p>搜索引擎里有一个很重要的话题，就是文本纠错，主要有两种做法，一是从词典纠错，一是分析用户搜索日志，今天我们探讨使用基于词典的方式纠错，核心思想就是基于编辑距离，使用BK树。下面我们来逐一探讨：</p>
+<h1 id="编辑距离"><a href="#编辑距离" class="headerlink" title="编辑距离"></a>编辑距离</h1><p>1965年，俄国科学家Vladimir<br> Levenshtein给字符串相似度做出了一个明确的定义叫做Levenshtein距离，我们通常叫它“编辑距离”。</p>
+<p>字符串A到B的编辑距离是指，只用插入、删除和替换三种操作，最少需要多少步可以把A变成B。例如，从FAME到GATE需要两步（两次替换），从GAME到ACM则需要三步（删除G和E再添加C）。Levenshtein给出了编辑距离的一般求法，就是大家都非常熟悉的经典动态规划问题。</p>
+<pre><code> class LevenshteinDistanceFunction &#123;
+
+        private final boolean isCaseSensitive;
+
+        public LevenshteinDistanceFunction(boolean isCaseSensitive) &#123;
+            this.isCaseSensitive = isCaseSensitive;
+        &#125;
+
+        public int distance(CharSequence left, CharSequence right) &#123;
+            int leftLength = left.length(), rightLength = right.length();
+
+            // special cases.
+            if (leftLength == 0)
+                return rightLength;
+            if (rightLength == 0)
+                return leftLength;
+
+            // Use the iterative matrix method.
+            int[] currentRow = new int[rightLength + 1];
+            int[] nextRow    = new int[rightLength + 1];
+
+            // Fill first row with all edit counts.
+            for (int i = 0; i &lt;= rightLength; i++)
+                currentRow[i] = i;
+
+            for (int i = 1; i &lt;= leftLength; i++) &#123;
+                nextRow[0] = i;
+
+                for(int j = 1; j &lt;= rightLength; j++) &#123;
+                    int subDistance = currentRow[j - 1]; // Distance without insertions or deletions.
+                    if (!charEquals(left.charAt(i - 1), right.charAt(j - 1), isCaseSensitive))
+                            subDistance++; // Add one edit if letters are different.
+                    nextRow[j] = Math.min(Math.min(nextRow[j - 1], currentRow[j]) + 1, subDistance);
+                &#125;
+
+                // Swap rows, use last row for next row.
+                int[] t = currentRow;
+                currentRow = nextRow;
+                nextRow = t;
+            &#125;
+
+            return currentRow[rightLength];
+        &#125;
+
+    &#125;
+</code></pre>
+<h1 id="BK树"><a href="#BK树" class="headerlink" title="BK树"></a>BK树</h1><p>编辑距离的经典应用就是用于拼写检错，如果用户输入的词语不在词典中，自动从词典中找出编辑距离小于某个数n的单词，让用户选择正确的那一个，n通常取到2或者3。</p>
+<p>这个问题的难点在于，怎样才能快速在字典里找出最相近的单词？可以像 <a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi/archive/2012/08/10/2633025.html">使用贝叶斯做英文拼写检查（c#)</a> 里是那样，通过单词自动修改一个单词，检查是否在词典里，这样有暴力破解的嫌疑，是否有更优雅的方案呢？</p>
+<p>1973年，Burkhard和Keller提出的BK树有效地解决了这个问题。BK树的核心思想是：</p>
+<pre><code>令d(x,y)表示字符串x到y的Levenshtein距离，那么显然：
+d(x,y) = 0 当且仅当 x=y （Levenshtein距离为0 &lt;==&gt; 字符串相等）
+d(x,y) = d(y,x) （从x变到y的最少步数就是从y变到x的最少步数）
+d(x,y) + d(y,z) &gt;= d(x,z) （从x变到z所需的步数不会超过x先变成y再变成z的步数）
+</code></pre>
+<p>最后这一个性质叫做三角形不等式。就好像一个三角形一样，两边之和必然大于第三边。</p>
+<h2 id="BK建树"><a href="#BK建树" class="headerlink" title="BK建树"></a>BK建树</h2><p>首先我们随便找一个单词作为根（比如GAME）。以后插入一个单词时首先计算单词与根的Levenshtein距离：如果这个距离值是该节点处头一次出现，建立一个新的儿子节点；否则沿着对应的边递归下去。例如，我们插入单词FAME，它与GAME的距离为1，于是新建一个儿子，连一条标号为1的边；下一次插入GAIN，算得它与GAME的距离为2，于是放在编号为2的边下。再下次我们插入GATE，它与GAME距离为1，于是沿着那条编号为1的边下去，递归地插入到FAME所在子树；GATE与FAME的距离为2，于是把GATE放在FAME节点下，边的编号为2。</p>
+<p><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1511232052823.jpg" alt="enter description here" title="BK树"></p>
+<h2 id="BK查询"><a href="#BK查询" class="headerlink" title="BK查询"></a>BK查询</h2><p>如果我们需要返回与错误单词距离不超过n的单词，这个错误单词与树根所对应的单词距离为d，那么接下来我们只需要递归地考虑编号在d-n到d+n范围内的边所连接的子树。由于n通常很小，因此每次与某个节点进行比较时都可以<strong>排除很多子树</strong>。</p>
+<p>可以通过下图（来自 <a target="_blank" rel="noopener" href="http://blog.csdn.net/tradymeky/article/details/40581547">超酷算法（1）：BK树 （及个人理解）</a>）理解：</p>
+<p><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1511229083171.jpg" alt="enter description here" title="1511229083171"></p>
+<h2 id="BK-实现"><a href="#BK-实现" class="headerlink" title="BK 实现"></a>BK 实现</h2><p>知道了原理实现就简单了，这里从<a target="_blank" rel="noopener" href="https://github.com/sk-scd91/BKTree">github</a>找一段代码</p>
+<p>建树：</p>
+<pre><code>public boolean add(T t) &#123;
+        if (t == null)
+            throw new NullPointerException();
+
+        if (rootNode == null) &#123;
+            rootNode = new Node&lt;&gt;(t);
+            length = 1;
+            modCount++; // Modified tree by adding root.
+            return true;
+        &#125;
+
+        Node&lt;T&gt; parentNode = rootNode;
+        Integer distance;
+        while ((distance = distanceFunction.distance(parentNode.item, t)) != 0
+                || !t.equals(parentNode.item)) &#123;
+            Node&lt;T&gt; childNode = parentNode.children.get(distance);
+            if (childNode == null) &#123;
+                parentNode.children.put(distance, new Node&lt;&gt;(t));
+                length++;
+                modCount++; // Modified tree by adding a child.
+                return true;
+            &#125;
+            parentNode = childNode;
+        &#125;
+
+        return false;
+    &#125;
+</code></pre>
+<p>查找：</p>
+<pre><code> public List&lt;SearchResult&lt;T&gt;&gt; search(T t, int radius) &#123;
+        if (t == null)
+            return Collections.emptyList();
+        ArrayList&lt;SearchResult&lt;T&gt;&gt; searchResults = new ArrayList&lt;&gt;();
+        ArrayDeque&lt;Node&lt;T&gt;&gt; nextNodes = new ArrayDeque&lt;&gt;();
+        if (rootNode != null)
+            nextNodes.add(rootNode);
+
+        while(!nextNodes.isEmpty()) &#123;
+            Node&lt;T&gt; nextNode = nextNodes.poll();
+            int distance = distanceFunction.distance(nextNode.item, t);
+            if (distance &lt;= radius)
+                searchResults.add(new SearchResult&lt;&gt;(distance, nextNode.item));
+            int lowBound = Math.max(0, distance - radius), highBound = distance + radius;
+            for (Integer i = lowBound; i &lt;= highBound; i++) &#123;
+                if (nextNode.children.containsKey(i))
+                    nextNodes.add(nextNode.children.get(i));
+            &#125;
+        &#125;
+
+        searchResults.trimToSize();
+        Collections.sort(searchResults);
+        return Collections.unmodifiableList(searchResults);
+    &#125;
+</code></pre>
+<h1 id="使用BK树做文本纠错"><a href="#使用BK树做文本纠错" class="headerlink" title="使用BK树做文本纠错"></a>使用BK树做文本纠错</h1><p>准备词典，18万的影视名称：<br><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1511231191970.jpg" alt="enter description here" title="1511231191970"></p>
+<p>测试代码：</p>
+<pre><code>  static void outputSearchResult( List&lt;SearchResult&lt;CharSequence&gt;&gt; results)&#123;
+        for(SearchResult&lt;CharSequence&gt; item : results)&#123;
+            System.out.println(item.item);
+        &#125;
+    &#125;
+
+    static void test(BKTree&lt;CharSequence&gt; tree,String word)&#123;
+        System.out.println(word+&quot;的最相近结果：&quot;);
+        outputSearchResult(tree.search(word,Math.max(1,word.length()/4)));
+    &#125;
+
+    public static void main(String[] args) &#123;
+
+        BKTree&lt;CharSequence&gt; tree = new BKTree(DistanceFunctions.levenshteinDistance());
+        List&lt;String&gt; testStrings = FileUtil.readLine(&quot;./src/main/resources/act/name.txt&quot;);
+        System.out.println(&quot;词典条数：&quot;+testStrings.size());
+        long startTime = System.currentTimeMillis();
+        for(String testStr: testStrings)&#123;
+            tree.add(testStr.replace(&quot;.&quot;,&quot;&quot;));
+        &#125;
+        System.out.println(&quot;建树耗时：&quot;+(System.currentTimeMillis()-startTime)+&quot;ms&quot;);
+        startTime = System.currentTimeMillis();
+        String[] testWords = new String[]&#123;
+                &quot;湄公河凶案&quot;,
+                &quot;葫芦丝兄弟&quot;,
+                &quot;少林足球&quot;
+        &#125;;
+
+        for (String testWord: testWords)&#123;
+            test(tree,testWord);
+        &#125;
+        System.out.println(&quot;测试耗时：&quot;+(System.currentTimeMillis()-startTime)+&quot;ms&quot;);
+    &#125;
+</code></pre>
+<p>结果：</p>
+<pre><code>词典条数：18513
+建树耗时：421ms
+湄公河凶案的最相近结果：
+湄公河大案
+葫芦丝兄弟的最相近结果：
+葫芦兄弟
+少林足球的最相近结果：
+少林足球
+笑林足球
+测试耗时：20ms
+</code></pre>
+<p>参考：<br><a target="_blank" rel="noopener" href="http://blog.csdn.net/tradymeky/article/details/40581547">http://blog.csdn.net/tradymeky/article/details/40581547</a><br><a target="_blank" rel="noopener" href="https://github.com/sk-scd91/BKTree">https://github.com/sk-scd91/BKTree</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/data2value/p/5707973.html">https://www.cnblogs.com/data2value/p/5707973.html</a></p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/11/13/jqpeng-%E4%BB%8ETrie%E6%A0%91%E5%88%B0%E5%8F%8C%E6%95%B0%E7%BB%84Trie%E6%A0%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/11/13/jqpeng-%E4%BB%8ETrie%E6%A0%91%E5%88%B0%E5%8F%8C%E6%95%B0%E7%BB%84Trie%E6%A0%91/" class="post-title-link" itemprop="url">从Trie树到双数组Trie树</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-11-13 10:44:00" itemprop="dateCreated datePublished" datetime="2017-11-13T10:44:00+08:00">2017-11-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/Trie.html">从Trie树到双数组Trie树</a></p>
+<h1 id="Trie树"><a href="#Trie树" class="headerlink" title="Trie树"></a>Trie树</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>又称单词查找树，Trie树，是一种树形结构，是一种哈希树的变种。它的优点是：利用字符串的公共前缀来减少查询时间，最大限度地减少无谓的字符串比较，能在常数时间O(len)内实现插入和查询操作，是一种以空间换取时间的数据结构，广泛用于词频统计和输入统计领域。</p>
+<p>来看看Trie树长什么样，我们从百度找一张图片：</p>
+<p><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1509691910484.jpg" alt="enter description here" title="1509691910484"></p>
+<p>字典树在查找时，先看第一个字是否在字典树里，如果在继续往下，如果不在，则字典里不存在，因此，对于一个长度为len的字符串，可以在O（len)时间内完成查询。</p>
+<h2 id="实现trie树"><a href="#实现trie树" class="headerlink" title="实现trie树"></a>实现trie树</h2><p>怎么实现trie树呢，trie树的关键是一个节点要在O（1）时间跳转到下一级节点，因此链表方式不可取，最好用数组来存储下一级节点。问题就来了，如果是纯英文字母，长度26的数组就可以搞定，N个节点的数，就需要N个长度为26的数组。但是，如果包含中文等字符呢，就需要N个65535的数组，特别占用存储空间。当然，可以考虑使用map来存储下级节点。</p>
+<p>定义一个Node，包含节点的Character word，以及下级节点nexts和节点可能附件的值values：</p>
+<pre><code>public static class Node&lt;T&gt; &#123;
+        Character word;
+
+        List&lt;T&gt; values;
+
+        Map&lt;Character, Node&gt; nexts = new HashMap&lt;&gt;(24);
+
+        public Node() &#123;
+        &#125;
+
+        public Node(Character word) &#123;
+            this.word = word;
+        &#125;
+
+        public Character getWord() &#123;
+            return word;
+        &#125;
+
+        public void setWord(Character word) &#123;
+            this.word = word;
+        &#125;
+
+        public void addValue(T value)&#123;
+            if(values == null)&#123;
+                values = new ArrayList&lt;&gt;();
+            &#125;
+            values.add(value);
+        &#125;
+
+        public List&lt;T&gt; getValues() &#123;
+            return values;
+        &#125;
+
+        public Map&lt;Character, Node&gt; getNexts() &#123;
+            return nexts;
+        &#125;
+
+        /**
+         * @param node
+         */
+        public void addNext(Node node) &#123;
+            this.nexts.put(node.getWord(), node);
+        &#125;
+
+        public Node getNext(Character word) &#123;
+            return this.nexts.get(word);
+        &#125;
+    &#125;
+</code></pre>
+<p>来看如何构建字典树，首先定义一棵树，包含根节点即可</p>
+<pre><code>    public static class Trie&lt;T&gt; &#123;
+        Node&lt;T&gt; rootNode;
+
+        public Trie() &#123;
+            this.rootNode = new Node&lt;T&gt;();
+        &#125;
+
+        public Node&lt;T&gt; getRootNode() &#123;
+            return rootNode;
+        &#125;
+
+    &#125;
+</code></pre>
+<p>构建树，拆分成单字，然后逐级构建树。</p>
+<pre><code> public static class TrieBuilder &#123;
+        public static  Trie&lt;String&gt; buildTrie(String... values)&#123;
+            Trie&lt;String&gt; trie = new Trie&lt;String&gt;();
+            for(String sentence : values)&#123;
+                // 根节点
+                Node&lt;String&gt; currentNode = trie.getRootNode();
+                for (int i = 0; i &lt; sentence.length(); i++) &#123;
+                    Character character = sentence.charAt(i);
+                    // 寻找首个节点
+                    Node&lt;String&gt; node = currentNode.getNext(character);
+                    if(node == null)&#123;
+                        // 不存在，创建节点
+                        node = new Node&lt;String&gt;(character);
+                        currentNode.addNext(node);
+                    &#125;
+                    currentNode = node;
+                &#125;
+
+                // 添加数据
+                currentNode.addValue(sentence);
+            &#125;
+
+            return trie;
+        &#125;
+</code></pre>
+<h2 id="Trie树应用"><a href="#Trie树应用" class="headerlink" title="Trie树应用"></a>Trie树应用</h2><p>比如判断一个词是否在字典树里，非常简单，逐级匹配，末了判断最后的节点是否包含数据：</p>
+<pre><code>   public boolean isContains(String word) &#123;
+            if (word == null || word.length() == 0) &#123;
+                return false;
+            &#125;
+            Node&lt;T&gt; currentState = rootNode;
+            for (int i = 0; i &lt; word.length(); i++) &#123;
+                currentState = currentState.getNext(word.charAt(i));
+                if (currentState == null) &#123;
+                    return false;
+                &#125;
+            &#125;
+            return currentState.getValues()!=null;
+        &#125;
+</code></pre>
+<p>测试代码:</p>
+<pre><code>        public static void main(String[] args) &#123;
+
+            Trie trie = TrieBuilder.buildTrie(&quot;刘德华&quot;,&quot;刘三姐&quot;,&quot;刘德刚&quot;,&quot;江姐&quot;);
+            System.out.println(trie.isContains(&quot;刘德华&quot;));
+            System.out.println(trie.isContains(&quot;刘德&quot;));
+            System.out.println(trie.isContains(&quot;刘大大&quot;));
+        &#125;
+</code></pre>
+<p>结果：</p>
+<pre><code>true
+false
+false
+</code></pre>
+<h1 id="双数组Trie树"><a href="#双数组Trie树" class="headerlink" title="双数组Trie树"></a>双数组Trie树</h1><p>在Trie数实现过程中，我们发现了每个节点均需要 一个数组来存储next节点，非常占用存储空间，空间复杂度大，双数组Trie树正是解决这个问题的。双数组Trie树(DoubleArrayTrie)是一种空间复杂度低的Trie树，应用于字符区间大的语言（如中文、日文等）分词领域。</p>
+<h2 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h2><p>双数组的原理是，将原来需要多个数组才能表示的Trie树，使用两个数据就可以存储下来，可以极大的减小空间复杂度。具体来说：</p>
+<p>使用两个数组base和check来维护Trie树，base负责记录状态，check负责检查各个字符串是否是从同一个状态转移而来，当check[i]为负值时，表示此状态为字符串的结束。</p>
+<p>上面的有点抽象，举个例子，假定两个单词ta,tb,base和check的值会满足下面的条件：<br> base[t] + a.code = base[ta]<br> base[t] + b.code = base[tb]<br> check[ta] = check[tb]</p>
+<p>在每个节点插入的过程中会修改这两个数组，具体说来：</p>
+<p>1、初始化root节点base[0] = 1; check[0] = 0;</p>
+<p>2、对于每一群兄弟节点，寻找一个begin值使得check[begin + a1…an]  == 0，也就是找到了n个空闲空间,a1…an是siblings中的n个节点对应的code。</p>
+<p>3、然后将这群兄弟节点的check设为check[begin + a1…an] = begin</p>
+<p>4、接着对每个兄弟节点，如果它没有孩子，令其base为负值；否则为该节点的子节点的插入位置（也就是begin值），同时插入子节点（迭代跳转到步骤2）。</p>
+<pre><code>码表：
+   胶    名    动    知    下    成    举    一    能    天    万    
+33014 21517 21160 30693 19979 25104 20030 19968 33021 22825 19975 
+
+DoubleArrayTrie&#123;
+char =      ×    一    万     ×    举     ×    动     ×     下    名    ×    知      ×     ×    能    一    天    成    胶
+i    =      0 19970 19977 20032 20033 21162 21164 21519 21520 21522 30695 30699 33023 33024 33028 40001 44345 45137 66038
+base =      1     2     6    -1 20032    -2 21162    -3     5 21519    -4 30695    -5    -6 33023     3  1540     4 33024
+check=      0     1     1 20032     2 21162     3 21519  1540     4 30695     5 33023 33024     6 20032 21519 20032 33023
+size=66039, allocSize=2097152, key=[一举, 一举一动, 一举成名, 一举成名天下知, 万能, 万能胶], keySize=6, progress=6, nextCheckPos=33024, error_=0&#125;
+</code></pre>
+<p>首层:一[19968],万[ 19975]<br> base[一] = base[0]+19968-19968 = 1<br> base[万] = base[0]+19975-19968 =</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>参考 <a target="_blank" rel="noopener" href="http://www.hankcs.com/program/java/%E5%8F%8C%E6%95%B0%E7%BB%84trie%E6%A0%91doublearraytriejava%E5%AE%9E%E7%8E%B0.html">双数组Trie树(DoubleArrayTrie)Java实现</a><br> 开源项目：<a target="_blank" rel="noopener" href="https://github.com/komiya-atsushi/darts-java">https://github.com/komiya-atsushi/darts-java</a></p>
+<h1 id="双数组Trie-AC自动机"><a href="#双数组Trie-AC自动机" class="headerlink" title="双数组Trie+AC自动机"></a>双数组Trie+AC自动机</h1><p>参见：<a target="_blank" rel="noopener" href="http://www.hankcs.com/program/algorithm/aho-corasick-double-array-trie.html">http://www.hankcs.com/program/algorithm/aho-corasick-double-array-trie.html</a></p>
+<p>结合了AC自动机+双数组Trie树：<br> AC自动机能高速完成多模式匹配，然而具体实现聪明与否决定最终性能高低。大部分实现都是一个Map&lt;Character, State&gt;了事，无论是TreeMap的对数复杂度，还是HashMap的巨额空间复杂度与哈希函数的性能消耗，都会降低整体性能。</p>
+<p>双数组Trie树能高速O(n)完成单串匹配，并且内存消耗可控，然而软肋在于多模式匹配，如果要匹配多个模式串，必须先实现前缀查询，然后频繁截取文本后缀才可多匹配，这样一份文本要回退扫描多遍，性能极低。</p>
+<p>如果能用双数组Trie树表达AC自动机，就能集合两者的优点，得到一种近乎完美的数据结构。在我的Java实现中，我称其为AhoCorasickDoubleArrayTrie，支持泛型和持久化，自己非常喜爱。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/06/22/jqpeng-%E4%BD%BF%E7%94%A8websocket-sharp%E6%9D%A5%E5%88%9B%E5%BB%BAc#%E7%89%88%E6%9C%AC%E7%9A%84websocket%E6%9C%8D%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/06/22/jqpeng-%E4%BD%BF%E7%94%A8websocket-sharp%E6%9D%A5%E5%88%9B%E5%BB%BAc#%E7%89%88%E6%9C%AC%E7%9A%84websocket%E6%9C%8D%E5%8A%A1/" class="post-title-link" itemprop="url">使用websocket-sharp来创建c#版本的websocket服务</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-06-22 17:34:00" itemprop="dateCreated datePublished" datetime="2017-06-22T17:34:00+08:00">2017-06-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/websocket-sharp.html">使用websocket-sharp来创建c#版本的websocket服务</a></p>
+<p>当前有一个需求，需要网页端调用扫描仪，javascript不具备调用能力，因此需要在机器上提供一个ws服务给前端网页调用扫描仪。而扫描仪有一个c#版本的API，因此需要寻找一个c#的websocket库。</p>
+<p>java里有大名鼎鼎的netty，通过搜索，c#可以选择<a target="_blank" rel="noopener" href="https://github.com/sta/websocket-sharp">websocket-sharp</a>来实现websocket Server。</p>
+<h3 id="使用websocket-sharp创建websocket-server"><a href="#使用websocket-sharp创建websocket-server" class="headerlink" title="使用websocket-sharp创建websocket server###"></a>使用websocket-sharp创建websocket server###</h3><pre><code>using System;
+using WebSocketSharp;
+using WebSocketSharp.Server;
+
+namespace Example
+&#123;
+  public class Laputa : WebSocketBehavior
+  &#123;
+    protected override void OnMessage (MessageEventArgs e)
+    &#123;
+      var msg = e.Data == &quot;BALUS&quot;
+                ? &quot;I&#39;ve been balused already...&quot;
+                : &quot;I&#39;m not available now.&quot;;
+
+      Send (msg);
+    &#125;
+  &#125;
+
+  public class Program
+  &#123;
+    public static void Main (string[] args)
+    &#123;
+      var wssv = new WebSocketServer (&quot;ws://dragonsnest.far&quot;);
+      wssv.AddWebSocketService&lt;Laputa&gt; (&quot;/Laputa&quot;);
+      wssv.Start ();
+      Console.ReadKey (true);
+      wssv.Stop ();
+    &#125;
+  &#125;
+&#125;
+</code></pre>
+<h4 id="Step-1"><a href="#Step-1" class="headerlink" title="Step 1"></a>Step 1</h4><p>Required namespace.</p>
+<pre><code>using WebSocketSharp.Server;
+</code></pre>
+<p>The <code>WebSocketBehavior</code> and <code>WebSocketServer</code> 两个类需要引用 <code>WebSocketSharp.Server</code> namespace.</p>
+<h4 id="Step-2"><a href="#Step-2" class="headerlink" title="Step 2"></a>Step 2</h4><p>编写处理类，需要继承 <code>WebSocketBehavior</code> class.</p>
+<p>例如，如果你要创建一个echo Service,</p>
+<pre><code>using System;
+using WebSocketSharp;
+using WebSocketSharp.Server;
+
+public class Echo : WebSocketBehavior
+&#123;
+  protected override void OnMessage (MessageEventArgs e)
+  &#123;
+    Send (e.Data);
+  &#125;
+&#125;
+</code></pre>
+<p>再提供一个 chat service,</p>
+<pre><code>using System;
+using WebSocketSharp;
+using WebSocketSharp.Server;
+
+public class Chat : WebSocketBehavior
+&#123;
+  private string _suffix;
+
+  public Chat ()
+    : this (null)
+  &#123;
+  &#125;
+
+  public Chat (string suffix)
+  &#123;
+    _suffix = suffix ?? String.Empty;
+  &#125;
+
+  protected override void OnMessage (MessageEventArgs e)
+  &#123;
+    Sessions.Broadcast (e.Data + _suffix);
+  &#125;
+&#125;
+</code></pre>
+<p>可以通过继承<code>WebSocketBehavior</code>类来自定义Service.</p>
+<p>通过重载 <code>WebSocketBehavior.OnMessage (MessageEventArgs)</code> 方法, 来处理消息</p>
+<p>同时你也可以重载 <code>WebSocketBehavior.OnOpen ()</code>, <code>WebSocketBehavior.OnError (ErrorEventArgs)</code>, 和 <code>WebSocketBehavior.OnClose (CloseEventArgs)</code> 方法,来处理websocket连接事件。</p>
+<p>通过<code>WebSocketBehavior.Send</code> 方法来给客户端发送消息。</p>
+<p>If you would like to get the sessions in the service, you should access the <code>WebSocketBehavior.Sessions</code> property (returns a <code>WebSocketSharp.Server.WebSocketSessionManager</code>).</p>
+<p>The <code>WebSocketBehavior.Sessions.Broadcast</code> method can send data to every client in the service.</p>
+<h4 id="Step-3"><a href="#Step-3" class="headerlink" title="Step 3"></a>Step 3</h4><p>创建 <code>WebSocketServer</code> 对象.</p>
+<pre><code>var wssv = new WebSocketServer (4649);
+wssv.AddWebSocketService&lt;Echo&gt; (&quot;/Echo&quot;);
+wssv.AddWebSocketService&lt;Chat&gt; (&quot;/Chat&quot;);
+wssv.AddWebSocketService&lt;Chat&gt; (&quot;/ChatWithNyan&quot;, () =&gt; new Chat (&quot; Nyan!&quot;));
+</code></pre>
+<h4 id="Step-4"><a href="#Step-4" class="headerlink" title="Step 4"></a>Step 4</h4><p>启动 WebSocket server.</p>
+<pre><code>wssv.Start ();
+</code></pre>
+<h4 id="Step-5"><a href="#Step-5" class="headerlink" title="Step 5"></a>Step 5</h4><p>停止 WebSocket server.</p>
+<pre><code>wssv.Stop (code, reason);
+</code></pre>
+<h3 id="测试Demo"><a href="#测试Demo" class="headerlink" title="测试Demo"></a>测试Demo</h3><p><code>目的</code>：对外提供一个websocket服务，让网页端的js可以调用扫描仪</p>
+<h4 id="服务端代码"><a href="#服务端代码" class="headerlink" title="服务端代码"></a>服务端代码</h4><pre><code> class Program
+    &#123;
+        static void Main(string[] args)
+        &#123;
+            var wssv = new WebSocketServer(10086);
+            wssv.AddWebSocketService&lt;ScannerHandler&gt;(&quot;/scan&quot;);
+            wssv.Start();
+            if (wssv.IsListening)
+            &#123;
+                Console.WriteLine(&quot;Listening on port &#123;0&#125;, and providing WebSocket services:&quot;, wssv.Port);
+                foreach (var path in wssv.WebSocketServices.Paths)
+                    Console.WriteLine(&quot;- &#123;0&#125;&quot;, path);
+            &#125;
+
+            Console.WriteLine(&quot;\nPress Enter key to stop the server...&quot;);
+            Console.ReadLine();
+
+            wssv.Stop();
+        &#125;
+    &#125;
+
+    public class ScannerHandler : WebSocketBehavior
+    &#123;
+        protected override void OnMessage(MessageEventArgs e)
+        &#123;
+            if(e.Data == &quot;scan&quot;)
+            &#123;
+                ScanResult result = ScanerHelper.Scan(&quot;D:\\test.jpg&quot;);
+                if (result.Success)
+                &#123;
+                    Console.WriteLine(&quot;scan success&quot;);
+                    Send(&quot;scan success&quot;);
+                &#125;
+                else
+                &#123;
+                    Send(&quot;scan eror&quot;);
+                &#125;
+            &#125;
+           
+        &#125;
+    &#125;
+</code></pre>
+<h4 id="前端代码"><a href="#前端代码" class="headerlink" title="前端代码"></a>前端代码</h4><p>javascript代码</p>
+<pre><code>     var ws;
+    function initWS() &#123;
+        ws = new WebSocket(&quot;ws://127.0.0.1:10086/scan&quot;);
+        ws.onopen = function () &#123;
+            console.log(&quot;Openened connection to websocket&quot;);
+
+        &#125;;
+        ws.onclose = function () &#123;
+            console.log(&quot;Close connection to websocket&quot;);
+            // 断线重连
+            initWS();
+        &#125;
+
+        ws.onmessage = function (e) &#123;
+            alert(e.data)
+        &#125;
+    &#125;
+    initWS();
+    function scan() &#123;
+        ws &amp;&amp; ws.send(&#39;scan&#39;);
+    &#125;
+</code></pre>
+<p>html代码</p>
+<pre><code>&lt;button onclick=&quot;scan()&quot;&gt;扫描&lt;/button&gt;
+</code></pre>
+<ul>
+<li>initWS创建连接，支持断线重连</li>
+<li>可以调用scan函数，发送scan指令</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/06/19/jqpeng-IDEA+PHP+XDebug%E8%B0%83%E8%AF%95%E9%85%8D%E7%BD%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/06/19/jqpeng-IDEA+PHP+XDebug%E8%B0%83%E8%AF%95%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">IDEA+PHP+XDebug调试配置</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-06-19 14:38:00" itemprop="dateCreated datePublished" datetime="2017-06-19T14:38:00+08:00">2017-06-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/xdbug.html">IDEA+PHP+XDebug调试配置</a></p>
+<h2 id="XDebug调试配置"><a href="#XDebug调试配置" class="headerlink" title="XDebug调试配置"></a>XDebug调试配置</h2><p>临时需要调试服务器上的PHP web程序，因此安装xdebug，下面简单记录</p>
+<h3 id="安装xdebug"><a href="#安装xdebug" class="headerlink" title="安装xdebug"></a>安装xdebug</h3><h4 id="下载最新并解压"><a href="#下载最新并解压" class="headerlink" title="下载最新并解压"></a>下载最新并解压</h4><pre><code>wget https://xdebug.org/files/xdebug-2.5.4.tgz
+tar zxvf xdebug-2.5.4.tgz 
+cd xdebug-2.5.4/
+</code></pre>
+<h4 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h4><p>按照README里的步骤安装</p>
+<pre><code>./configure --enable-xdebug
+···
+
+报错
+&gt;checking Check for supported PHP versions... configure: error: not supported. Need a PHP version &gt;= 5.5.0 and &lt; 7.2.0 (found 5.3.10-1ubuntu3.21)
+
+
+原来服务器上的php版本比较低：
+&gt;PHP 5.3.10-1ubuntu3.26 with Suhosin-Patch (cli) (built: Feb 13 2017 20:37:53) 
+Copyright (c) 1997-2012 The PHP Group
+Zend Engine v2.3.0, Copyright (c) 1998-2012 Zend Technologies
+
+最稳妥起见，下载老版本的xdebug，下载2.2.2版本
+
+``` bash
+wget https://xdebug.org/files/xdebug-2.2.2.tgz
+tar zxvf xdebug-2.2.2.tgz 
+cd xdebug-2.2.2/
+./configure --enable-xdebug
+make
+</code></pre>
+<p>make完成后，modules下面就有了编译好的xdebug.so:</p>
+<pre><code>root@nginx01:/opt/research/xdebug-2.2.2# ll modules/
+total 808
+drwxr-xr-x 2 root root   4096 Jun 19 14:17 ./
+drwxr-xr-x 9 root root   4096 Jun 19 13:10 ../
+-rw-r--r-- 1 root root    939 Jun 19 13:09 xdebug.la
+-rwxr-xr-x 1 root root 814809 Jun 19 13:09 xdebug.so*
+</code></pre>
+<h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><p>修改php.ini，服务器使用的php5-fpm，配置文件在/etc/php5/fpm/php.ini</p>
+<p>修改，增加xdebug配置信息</p>
+<pre><code>zend_extension=&quot;/opt/research/xdebug-2.2.2/modules/xdebug.so&quot;
+xdebug.remote_enable = On
+xdebug.remote_handler = dbgp
+xdebug.remote_port = 9001 #端口9001
+xdebug.remote_connect_back = 1 
+#xdebug.remote_host= 192.168.xxx.xxx
+xdebug.idekey = PHPSTORM
+xdebug.remote_log = /opt/research/xdebug-2.2.2/xdebug.log
+</code></pre>
+<h3 id="IDEA-配置"><a href="#IDEA-配置" class="headerlink" title="IDEA 配置"></a>IDEA 配置</h3><h4 id="配置xdebug端口为9001"><a href="#配置xdebug端口为9001" class="headerlink" title="配置xdebug端口为9001"></a>配置xdebug端口为9001</h4><p>在设置里搜索XDEBUG，配置端口9001<br><img src="https://ooo.0o0.ooo/2017/06/19/5947709e37cf4.jpg" alt="enter description here" title="1497854105384"></p>
+<h4 id="调试配置"><a href="#调试配置" class="headerlink" title="调试配置"></a>调试配置</h4><p>在RUN-Edit Configuratins里，新增PHP Web Application<br><img src="https://ooo.0o0.ooo/2017/06/19/5947707361211.jpg" alt="enter description here" title="1497854062372"></p>
+<p>Server新增服务器地址，Debugger设置为Xdebug，将服务器上的绝对地址，映射到本地</p>
+<p><img src="https://ooo.0o0.ooo/2017/06/19/59477034b6e7f.jpg" alt="XDEBUG配置" title="1497853999274"></p>
+<p>然后就可以启动调试了</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/06/12/jqpeng-HTML5%E5%BD%95%E9%9F%B3%E6%8E%A7%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/06/12/jqpeng-HTML5%E5%BD%95%E9%9F%B3%E6%8E%A7%E4%BB%B6/" class="post-title-link" itemprop="url">HTML5录音控件</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-06-12 17:07:00" itemprop="dateCreated datePublished" datetime="2017-06-12T17:07:00+08:00">2017-06-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/6993912.html">HTML5录音控件</a></p>
+<p>最近的项目又需要用到录音，年前有过调研，再次翻出来使用，这里做一个记录。</p>
+<p>HTML5提供了录音支持，因此可以方便使用HTML5来录音，来实现录音、语音识别等功能，语音开发必备。但是ES标准提供的API并不人性化，不方便使用，并且不提供保存为wav的功能，开发起来费劲啊！！</p>
+<p>github寻找轮子，发现<a target="_blank" rel="noopener" href="https://github.com/mattdiamond/Recorderjs">Recorder.js</a>，基本上可以满足需求了，良好的封装，支持导出wav，但是存在：</p>
+<ul>
+<li>wav采样率不可调整</li>
+<li>recorder创建麻烦，需要自己初始化getUserMedia</li>
+<li>无实时数据回调，不方便绘制波形</li>
+<li>。。。</li>
+</ul>
+<h2 id="改造轮子"><a href="#改造轮子" class="headerlink" title="改造轮子"></a>改造轮子</h2><h3 id="创建recorder工具方法"><a href="#创建recorder工具方法" class="headerlink" title="创建recorder工具方法"></a>创建recorder工具方法</h3><p>提供创建recorder工具函数，封装audio接口：</p>
+<pre><code>static createRecorder(callback,config)&#123;
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        window.URL = window.URL || window.webkitURL;
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+        
+        if (navigator.getUserMedia) &#123;
+            navigator.getUserMedia(
+                &#123; audio: true &#125; //只启用音频
+                , function (stream) &#123;
+                    var audio_context = new AudioContext;
+                    var input = audio_context.createMediaStreamSource(stream);
+                    var rec = new Recorder(input, config);
+                    callback(rec);
+                &#125;
+                , function (error) &#123;
+                    switch (error.code || error.name) &#123;
+                        case &#39;PERMISSION_DENIED&#39;:
+                        case &#39;PermissionDeniedError&#39;:
+                            throwError(&#39;用户拒绝提供信息。&#39;);
+                            break;
+                        case &#39;NOT_SUPPORTED_ERROR&#39;:
+                        case &#39;NotSupportedError&#39;:
+                            throwError(&#39;浏览器不支持硬件设备。&#39;);
+                            break;
+                        case &#39;MANDATORY_UNSATISFIED_ERROR&#39;:
+                        case &#39;MandatoryUnsatisfiedError&#39;:
+                            throwError(&#39;无法发现指定的硬件设备。&#39;);
+                            break;
+                        default:
+                            throwError(&#39;无法打开麦克风。异常信息:&#39; + (error.code || error.name));
+                            break;
+                    &#125;
+                &#125;);
+        &#125; else &#123;
+            throwError(&#39;当前浏览器不支持录音功能。&#39;); return;
+        &#125;
+    &#125;
+</code></pre>
+<h3 id="采样率"><a href="#采样率" class="headerlink" title="采样率"></a>采样率</h3><p>H5录制的默认是44k的，文件大，不方便传输，因此需要进行重新采样，一般采用插值取点方法：</p>
+<p>以下代码主要来自stackoverflow：</p>
+<pre><code>             /**
+             * 转换采样率
+             * @param data
+             * @param newSampleRate 目标采样率
+             * @param oldSampleRate 原始数据采样率
+             * @returns &#123;any[]|Array&#125;
+             */
+            function interpolateArray(data, newSampleRate, oldSampleRate) &#123;
+                var fitCount = Math.round(data.length * (newSampleRate / oldSampleRate));
+                var newData = new Array();
+                var springFactor = new Number((data.length - 1) / (fitCount - 1));
+                newData[0] = data[0]; // for new allocation
+                for (var i = 1; i &lt; fitCount - 1; i++) &#123;
+                    var tmp = i * springFactor;
+                    var before = new Number(Math.floor(tmp)).toFixed();
+                    var after = new Number(Math.ceil(tmp)).toFixed();
+                    var atPoint = tmp - before;
+                    newData[i] = this.linearInterpolate(data[before], data[after], atPoint);
+                &#125;
+                newData[fitCount - 1] = data[data.length - 1]; // for new allocation
+                return newData;
+            &#125;
+
+            function linearInterpolate(before, after, atPoint) &#123;
+                return before + (after - before) * atPoint;
+            &#125;
+</code></pre>
+<p>修改导出wav函数exportWAV，增加采样率选项：</p>
+<pre><code>            /**
+             * 导出wav
+             * @param type
+             * @param desiredSamplingRate 期望的采样率
+             */
+            function exportWAV(type,desiredSamplingRate) &#123;
+                // 默认为16k
+                desiredSamplingRate = desiredSamplingRate || 16000;
+                var buffers = [];
+                for (var channel = 0; channel &lt; numChannels; channel++) &#123;
+                    var buffer = mergeBuffers(recBuffers[channel], recLength);
+                    // 需要转换采样率
+                    if (desiredSamplingRate!=sampleRate) &#123;
+                        // 插值去点
+                        buffer = interpolateArray(buffer, desiredSamplingRate, sampleRate);
+                    &#125;
+                    buffers.push(buffer);
+                &#125;
+                var interleaved = numChannels === 2 ? interleave(buffers[0], buffers[1]) : buffers[0];
+                var dataview = encodeWAV(interleaved,desiredSamplingRate);
+                var audioBlob = new Blob([dataview], &#123; type: type &#125;);
+                self.postMessage(&#123; command: &#39;exportWAV&#39;, data: audioBlob &#125;);
+            &#125;
+</code></pre>
+<h3 id="实时录音数据回调"><a href="#实时录音数据回调" class="headerlink" title="实时录音数据回调"></a>实时录音数据回调</h3><p>为了方便绘制音量、波形图，需要获取到实时数据：</p>
+<p>config新增一个回调函数onaudioprocess：</p>
+<pre><code>  config = &#123;
+        bufferLen: 4096,
+        numChannels: 1, // 默认单声道
+        mimeType: &#39;audio/wav&#39;,
+        onaudioprocess:null
+    &#125;;
+</code></pre>
+<p>修改录音数据处理函数：</p>
+<pre><code>        this.node.onaudioprocess = (e) =&gt; &#123;
+            if (!this.recording) return;
+            var buffer = [];
+
+            for (var channel = 0; channel &lt; this.config.numChannels; channel++) &#123;
+                buffer.push(e.inputBuffer.getChannelData(channel));
+            &#125;
+
+            // 发送给worker
+            this.worker.postMessage(&#123;
+                command: &#39;record&#39;,
+                buffer: buffer
+            &#125;);
+
+            // 数据回调
+            if(this.config.onaudioprocess)&#123;
+                this.config.onaudioprocess(buffer[0]);
+            &#125;
+        &#125;;
+</code></pre>
+<p>这样，在创建recorder时，配置onaudioprocess就可以获取到实时数据了</p>
+<h3 id="实时数据编码"><a href="#实时数据编码" class="headerlink" title="实时数据编码"></a>实时数据编码</h3><p>编码计算耗时，需要放到worker执行：</p>
+<p>接口函数新增encode，发送消息给worker，让worker执行：</p>
+<pre><code>    encode(cb,buffer,sampleRate) &#123;
+        cb = cb || this.config.callback;
+        if (!cb) throw new Error(&#39;Callback not set&#39;);
+        this.callbacks.encode.push(cb);
+        this.worker.postMessage(&#123; command: &#39;encode&#39;,buffer:buffer,sampleRate:sampleRate&#125;);
+    &#125;
+</code></pre>
+<p>worker里新增encode函数，处理encode请求，完成后执行回调</p>
+<pre><code> self.onmessage = function (e) &#123;
+                switch (e.data.command) &#123;
+
+                    case &#39;encode&#39;:
+                        encode(e.data.buffer,e.data.sampleRate);
+                        break;
+
+                &#125;
+            &#125;;        
+    encode(cb,buffer,sampleRate) &#123;
+        cb = cb || this.config.callback;
+        if (!cb) throw new Error(&#39;Callback not set&#39;);
+        this.callbacks.encode.push(cb);
+        this.worker.postMessage(&#123; command: &#39;encode&#39;,buffer:buffer,sampleRate:sampleRate&#125;);
+    &#125;
+</code></pre>
+<h3 id="wav上传"><a href="#wav上传" class="headerlink" title="wav上传"></a>wav上传</h3><p>增加一个上传函数：</p>
+<pre><code>     exportWAVAndUpload(url, callback) &#123;
+        var _url = url;
+        exportWAV(function(blob)&#123;
+            var fd = new FormData();
+            fd.append(&quot;audioData&quot;, blob);
+            var xhr = new XMLHttpRequest();
+            if (callback) &#123;
+                xhr.upload.addEventListener(&quot;progress&quot;, function (e) &#123;
+                    callback(&#39;uploading&#39;, e);
+                &#125;, false);
+                xhr.addEventListener(&quot;load&quot;, function (e) &#123;
+                    callback(&#39;ok&#39;, e);
+                &#125;, false);
+                xhr.addEventListener(&quot;error&quot;, function (e) &#123;
+                    callback(&#39;error&#39;, e);
+                &#125;, false);
+                xhr.addEventListener(&quot;abort&quot;, function (e) &#123;
+                    callback(&#39;cancel&#39;, e);
+                &#125;, false);
+            &#125;
+            xhr.open(&quot;POST&quot;, url);
+            xhr.send(fd);
+        &#125;)     
+    &#125;
+</code></pre>
+<h3 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h3><p>=<a target="_blank" rel="noopener" href="http://files.cnblogs.com/files/xiaoqi/recorder.js">点击下载</a></p>
+<h2 id="发现新轮子"><a href="#发现新轮子" class="headerlink" title="发现新轮子"></a>发现新轮子</h2><p>今天再次看这个项目，发现这个项目已经不维护了，</p>
+<blockquote>
+<p>Note: This repository is not being actively maintained due to lack of time and interest. If you maintain or know of a good fork, please let me know so I can direct future visitors to it. In the meantime, if this library isn’t working, you can find a list of popular forks here: <a target="_blank" rel="noopener" href="http://forked.yannick.io/mattdiamond/recorderjs">http://forked.yannick.io/mattdiamond/recorderjs</a>.</p>
+</blockquote>
+<p>作者推荐<a target="_blank" rel="noopener" href="https://github.com/chris-rudmin/Recorderjs">https://github.com/chris-rudmin/Recorderjs</a>，提供更多的功能：</p>
+<ul>
+<li><strong>bitRate</strong> (<em>optional</em>) Specifies the target bitrate in bits/sec. The encoder selects an application-specific default when this is not specified.</li>
+<li><strong>bufferLength</strong> - (<em>optional</em>) The length of the buffer that the internal JavaScriptNode uses to capture the audio. Can be tweaked if experiencing performance issues. Defaults to <code>4096</code>.</li>
+<li><strong>encoderApplication</strong> - (<em>optional</em>) Specifies the encoder application. Supported values are <code>2048</code> - Voice, <code>2049</code> - Full Band Audio, <code>2051</code> - Restricted Low Delay. Defaults to <code>2049</code>.</li>
+<li><strong>encoderComplexity</strong> - (<em>optional</em>) Value between 0 and 10 which determines latency and processing for resampling. <code>0</code> is fastest with lowest complexity. <code>10</code> is slowest with highest complexity. The encoder selects a default when this is not specified.</li>
+<li><strong>encoderFrameSize</strong> (<em>optional</em>) Specifies the frame size in ms used for encoding. Defaults to <code>20</code>.</li>
+<li><strong>encoderPath</strong> - (<em>optional</em>) Path to encoderWorker.min.js worker script. Defaults to <code>encoderWorker.min.js</code></li>
+<li><strong>encoderSampleRate</strong> - (<em>optional</em>) Specifies the sample rate to encode at. Defaults to <code>48000</code>. Supported values are <code>8000</code>, <code>12000</code>, <code>16000</code>, <code>24000</code> or <code>48000</code>.</li>
+<li><strong>leaveStreamOpen</strong> - (<em>optional</em>) Keep the stream around when trying to <code>stop</code> recording, so you can re-<code>start</code> without re-<code>initStream</code>. Defaults to <code>false</code>.</li>
+<li><strong>maxBuffersPerPage</strong> - (<em>optional</em>) Specifies the maximum number of buffers to use before generating an Ogg page. This can be used to lower the streaming latency. The lower the value the more overhead the ogg stream will incur. Defaults to <code>40</code>.</li>
+<li><strong>monitorGain</strong> - (<em>optional</em>) Sets the gain of the monitoring output. Gain is an a-weighted value between <code>0</code> and <code>1</code>. Defaults to <code>0</code></li>
+<li><strong>numberOfChannels</strong> - (<em>optional</em>) The number of channels to record. <code>1</code> = mono, <code>2</code> = stereo. Defaults to <code>1</code>. Maximum <code>2</code> channels are supported.</li>
+<li><strong>originalSampleRateOverride</strong> - (<em>optional</em>) Override the ogg opus ‘input sample rate’ field. Google Speech API requires this field to be <code>16000</code>.</li>
+<li><strong>resampleQuality</strong> - (<em>optional</em>) Value between 0 and 10 which determines latency and processing for resampling. <code>0</code> is fastest with lowest quality. <code>10</code> is slowest with highest quality. Defaults to <code>3</code>.</li>
+<li><strong>streamPages</strong> - (<em>optional</em>) <code>dataAvailable</code> event will fire after each encoded page. Defaults to <code>false</code>.</li>
+</ul>
+<p>推荐使用</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/06/07/jqpeng-Spring%20Boot%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%94%BE%E5%9C%A8jar%E5%A4%96%E9%83%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/06/07/jqpeng-Spring%20Boot%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%94%BE%E5%9C%A8jar%E5%A4%96%E9%83%A8/" class="post-title-link" itemprop="url">Spring Boot配置文件放在jar外部</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-06-07 09:17:00" itemprop="dateCreated datePublished" datetime="2017-06-07T09:17:00+08:00">2017-06-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/6955288.html">Spring Boot配置文件放在jar外部</a></p>
+<p>Spring Boot程序默认从application.properties或者application.yaml读取配置，如何将配置信息外置，方便配置呢？</p>
+<p>查询官网，可以得到下面的几种方案:</p>
+<h2 id="通过命令行指定"><a href="#通过命令行指定" class="headerlink" title="通过命令行指定"></a>通过命令行指定</h2><p>SpringApplication会默认将命令行选项参数转换为配置信息<br> 例如，启动时命令参数指定：</p>
+<pre><code>java -jar myproject.jar --server.port = 9000
+</code></pre>
+<p>从命令行指定配置项的优先级最高，不过你可以通过setAddCommandLineProperties来禁用</p>
+<pre><code>SpringApplication.setAddCommandLineProperties(false).
+</code></pre>
+<h2 id="外置配置文件"><a href="#外置配置文件" class="headerlink" title="外置配置文件"></a>外置配置文件</h2><p>Spring程序会按优先级从下面这些路径来加载application.properties配置文件</p>
+<ul>
+<li>当前目录下的/config目录</li>
+<li>当前目录</li>
+<li>classpath里的/config目录</li>
+<li>classpath 跟目录</li>
+</ul>
+<p>因此，要外置配置文件就很简单了，在jar所在目录新建config文件夹，然后放入配置文件，或者直接放在配置文件在jar目录</p>
+<h2 id="自定义配置文件"><a href="#自定义配置文件" class="headerlink" title="自定义配置文件"></a>自定义配置文件</h2><p>如果你不想使用application.properties作为配置文件，怎么办？完全没问题</p>
+<pre><code>java -jar myproject.jar --spring.config.location=classpath:/default.properties,classpath:/override.properties
+</code></pre>
+<p>或者</p>
+<pre><code>java -jar -Dspring.config.location=D:\config\config.properties springbootrestdemo-0.0.1-SNAPSHOT.jar 
+</code></pre>
+<p>当然，还能在代码里指定</p>
+<pre><code>@SpringBootApplication
+@PropertySource(value=&#123;&quot;file:config.properties&quot;&#125;)
+public class SpringbootrestdemoApplication &#123;
+
+    public static void main(String[] args) &#123;
+        SpringApplication.run(SpringbootrestdemoApplication.class, args);
+    &#125;
+&#125;
+</code></pre>
+<h2 id="按Profile不同环境读取不同配置"><a href="#按Profile不同环境读取不同配置" class="headerlink" title="按Profile不同环境读取不同配置"></a>按Profile不同环境读取不同配置</h2><p>不同环境的配置设置一个配置文件，例如：</p>
+<ul>
+<li>dev环境下的配置配置在application-dev.properties中；</li>
+<li>prod环境下的配置配置在application-prod.properties中。</li>
+</ul>
+<p>在application.properties中指定使用哪一个文件</p>
+<pre><code>spring.profiles.active = dev
+</code></pre>
+<p>当然，你也可以在运行的时候手动指定：</p>
+<pre><code>java -jar myproject.jar --spring.profiles.active = prod
+</code></pre>
+<p>参考：<br> 1    参见<a target="_blank" rel="noopener" href="http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html">Externalized Configuration</a></p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/06/01/jqpeng-Netty%E6%96%AD%E7%BA%BF%E9%87%8D%E8%BF%9E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/06/01/jqpeng-Netty%E6%96%AD%E7%BA%BF%E9%87%8D%E8%BF%9E/" class="post-title-link" itemprop="url">Netty断线重连</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-06-01 09:52:00" itemprop="dateCreated datePublished" datetime="2017-06-01T09:52:00+08:00">2017-06-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/6927387.html">Netty断线重连</a></p>
+<h1 id="Netty断线重连"><a href="#Netty断线重连" class="headerlink" title="Netty断线重连"></a>Netty断线重连</h1><p>最近使用Netty开发一个中转服务，需要一直保持与Server端的连接，网络中断后需要可以自动重连，查询官网资料，实现方案很简单，核心思想是在channelUnregistered钩子函数里执行重连。</p>
+<h2 id="创建连接"><a href="#创建连接" class="headerlink" title="创建连接"></a>创建连接</h2><p>需要把configureBootstrap重构为一个函数，方便后续复用</p>
+<ol>
+<li>EventLoopGroup group = new NioEventLoopGroup(); </li>
+</ol>
+<hr>
+<ol start="2">
+<li>private volatile Bootstrap bootstrap; </li>
+</ol>
+<hr>
+<ol start="3">
+<li><hr>
+</li>
+<li>public void init(String host, int port) throws RobotException { </li>
+</ol>
+<hr>
+<ol start="5">
+<li>this.serverIp = host; </li>
+</ol>
+<hr>
+<ol start="6">
+<li>this.serverPort = port; </li>
+</ol>
+<hr>
+<ol start="7">
+<li>try { </li>
+</ol>
+<hr>
+<ol start="8">
+<li>// 创建并初始化 Netty 客户端 Bootstrap 对象 </li>
+</ol>
+<hr>
+<ol start="9">
+<li>bootstrap = configureBootstrap(new Bootstrap(),group); </li>
+</ol>
+<hr>
+<ol start="10">
+<li>bootstrap.option(ChannelOption.TCP_NODELAY, true); </li>
+</ol>
+<hr>
+<ol start="11">
+<li>doConnect(bootstrap); </li>
+</ol>
+<hr>
+<ol start="12">
+<li>} </li>
+</ol>
+<hr>
+<ol start="13">
+<li>catch(Exception ex){ </li>
+</ol>
+<hr>
+<ol start="14">
+<li>ex.printStackTrace(); </li>
+</ol>
+<hr>
+<ol start="15">
+<li>throw new RobotException(“connect remote control server error!”,ex.getCause()); </li>
+</ol>
+<hr>
+<ol start="16">
+<li>} </li>
+</ol>
+<hr>
+<ol start="17">
+<li>} </li>
+</ol>
+<hr>
+<ol start="18">
+<li><hr>
+</li>
+<li>Bootstrap configureBootstrap(Bootstrap b, EventLoopGroup g) { </li>
+</ol>
+<hr>
+<ol start="20">
+<li>b.group(g).channel(NioSocketChannel.class) </li>
+</ol>
+<hr>
+<ol start="21">
+<li>.remoteAddress(serverIp, serverPort) </li>
+</ol>
+<hr>
+<ol start="22">
+<li>.handler(new ChannelInitializer&lt;SocketChannel&gt;() { </li>
+</ol>
+<hr>
+<ol start="23">
+<li>@Override </li>
+</ol>
+<hr>
+<ol start="24">
+<li>public void initChannel(SocketChannel channel) throws Exception { </li>
+</ol>
+<hr>
+<ol start="25">
+<li>ChannelPipeline pipeline = channel.pipeline(); </li>
+</ol>
+<hr>
+<ol start="26">
+<li>// 编解码器 </li>
+</ol>
+<hr>
+<ol start="27">
+<li>pipeline.addLast(protoCodec); </li>
+</ol>
+<hr>
+<ol start="28">
+<li>// 请求处理 </li>
+</ol>
+<hr>
+<ol start="29">
+<li>pipeline.addLast(RobotClient.this); </li>
+</ol>
+<hr>
+<ol start="30">
+<li>} </li>
+</ol>
+<hr>
+<ol start="31">
+<li>}); </li>
+</ol>
+<hr>
+<ol start="32">
+<li><hr>
+</li>
+<li>return b; </li>
+</ol>
+<hr>
+<ol start="34">
+<li>} </li>
+</ol>
+<hr>
+<ol start="35">
+<li><hr>
+</li>
+<li>void doConnect(Bootstrap b) { </li>
+</ol>
+<hr>
+<ol start="37">
+<li>try { </li>
+</ol>
+<hr>
+<ol start="38">
+<li><hr>
+</li>
+<li>ChannelFuture future = b.connect(); </li>
+</ol>
+<hr>
+<ol start="40">
+<li>future.addListener(new ChannelFutureListener() { </li>
+</ol>
+<hr>
+<ol start="41">
+<li>@Override </li>
+</ol>
+<hr>
+<ol start="42">
+<li>public void operationComplete(ChannelFuture future) throws Exception { </li>
+</ol>
+<hr>
+<ol start="43">
+<li>if (future.isSuccess()) { </li>
+</ol>
+<hr>
+<ol start="44">
+<li>System.out.println(“Started Tcp Client: “ + serverIp); </li>
+</ol>
+<hr>
+<ol start="45">
+<li>} else { </li>
+</ol>
+<hr>
+<ol start="46">
+<li>System.out.println(“Started Tcp Client Failed: “); </li>
+</ol>
+<hr>
+<ol start="47">
+<li>} </li>
+</ol>
+<hr>
+<ol start="48">
+<li>if (future.cause() != null) { </li>
+</ol>
+<hr>
+<ol start="49">
+<li>future.cause().printStackTrace(); </li>
+</ol>
+<hr>
+<ol start="50">
+<li>} </li>
+</ol>
+<hr>
+<ol start="51">
+<li><hr>
+</li>
+<li>} </li>
+</ol>
+<hr>
+<ol start="53">
+<li>}); </li>
+</ol>
+<hr>
+<ol start="54">
+<li>} catch (Exception e) { </li>
+</ol>
+<hr>
+<ol start="55">
+<li>e.printStackTrace(); </li>
+</ol>
+<hr>
+<ol start="56">
+<li>} </li>
+</ol>
+<hr>
+<ol start="57">
+<li>} </li>
+</ol>
+<hr>
+<h2 id="断线重连"><a href="#断线重连" class="headerlink" title="断线重连"></a>断线重连</h2><p>来看断线重连的关键代码：</p>
+<ol>
+<li>@ChannelHandler.Sharable </li>
+</ol>
+<hr>
+<ol start="2">
+<li>public class RobotClient extends SimpleChannelInboundHandler&lt;RobotProto&gt; { </li>
+</ol>
+<hr>
+<ol start="3">
+<li>@Override </li>
+</ol>
+<hr>
+<ol start="4">
+<li>public void channelUnregistered(ChannelHandlerContext ctx) throws Exception { </li>
+</ol>
+<hr>
+<ol start="5">
+<li>// 状态重置 </li>
+</ol>
+<hr>
+<ol start="6">
+<li>isConnected = false; </li>
+</ol>
+<hr>
+<ol start="7">
+<li>this.serverStatus = -1; </li>
+</ol>
+<hr>
+<ol start="8">
+<li><hr>
+</li>
+<li>final EventLoop loop = ctx.channel().eventLoop(); </li>
+</ol>
+<hr>
+<ol start="10">
+<li>loop.schedule(new Runnable() { </li>
+</ol>
+<hr>
+<ol start="11">
+<li>@Override </li>
+</ol>
+<hr>
+<ol start="12">
+<li>public void run() { </li>
+</ol>
+<hr>
+<ol start="13">
+<li>doConnect(configureBootstrap(new Bootstrap(), loop)); </li>
+</ol>
+<hr>
+<ol start="14">
+<li>} </li>
+</ol>
+<hr>
+<ol start="15">
+<li>}, 1, TimeUnit.SECONDS); </li>
+</ol>
+<hr>
+<ol start="16">
+<li>} </li>
+</ol>
+<hr>
+<ol start="17">
+<li>} </li>
+</ol>
+<hr>
+<p>需要注意，Client类需要添加@ChannelHandler.Sharable注解，否则重连时会报错</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

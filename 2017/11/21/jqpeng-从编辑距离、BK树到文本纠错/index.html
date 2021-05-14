@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: 从编辑距离、BK树到文本纠错 搜索引擎里有一个很重要的话题，就是文本纠错，主要有两种做法，一是从词典纠错，一是分析用户搜索日志，今天我们探讨使用基于词典的方式纠错，核心思想就是基于编辑距离，使用BK树。下面我们来逐一探讨： 编辑距离1965年，俄国科学家Vladimir Levenshtein给字符串相似度做出了一个明确的定义叫做Levenshtein距离，我们通">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从编辑距离、BK树到文本纠错">
+<meta property="og:url" content="http://blog.iflyresearch.com/2017/11/21/jqpeng-%E4%BB%8E%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB%E3%80%81BK%E6%A0%91%E5%88%B0%E6%96%87%E6%9C%AC%E7%BA%A0%E9%94%99/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: 从编辑距离、BK树到文本纠错 搜索引擎里有一个很重要的话题，就是文本纠错，主要有两种做法，一是从词典纠错，一是分析用户搜索日志，今天我们探讨使用基于词典的方式纠错，核心思想就是基于编辑距离，使用BK树。下面我们来逐一探讨： 编辑距离1965年，俄国科学家Vladimir Levenshtein给字符串相似度做出了一个明确的定义叫做Levenshtein距离，我们通">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1511232052823.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1511229083171.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1511231191970.jpg">
+<meta property="article:published_time" content="2017-11-21T02:33:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="BK树">
+<meta property="article:tag" content="文本纠错">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1511232052823.jpg">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2017/11/21/jqpeng-%E4%BB%8E%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB%E3%80%81BK%E6%A0%91%E5%88%B0%E6%96%87%E6%9C%AC%E7%BA%A0%E9%94%99/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>从编辑距离、BK树到文本纠错 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/11/21/jqpeng-%E4%BB%8E%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB%E3%80%81BK%E6%A0%91%E5%88%B0%E6%96%87%E6%9C%AC%E7%BA%A0%E9%94%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从编辑距离、BK树到文本纠错
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-11-21 10:33:00" itemprop="dateCreated datePublished" datetime="2017-11-21T10:33:00+08:00">2017-11-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/BK-Tree.html">从编辑距离、BK树到文本纠错</a></p>
+<p>搜索引擎里有一个很重要的话题，就是文本纠错，主要有两种做法，一是从词典纠错，一是分析用户搜索日志，今天我们探讨使用基于词典的方式纠错，核心思想就是基于编辑距离，使用BK树。下面我们来逐一探讨：</p>
+<h1 id="编辑距离"><a href="#编辑距离" class="headerlink" title="编辑距离"></a>编辑距离</h1><p>1965年，俄国科学家Vladimir<br> Levenshtein给字符串相似度做出了一个明确的定义叫做Levenshtein距离，我们通常叫它“编辑距离”。</p>
+<p>字符串A到B的编辑距离是指，只用插入、删除和替换三种操作，最少需要多少步可以把A变成B。例如，从FAME到GATE需要两步（两次替换），从GAME到ACM则需要三步（删除G和E再添加C）。Levenshtein给出了编辑距离的一般求法，就是大家都非常熟悉的经典动态规划问题。</p>
+<pre><code> class LevenshteinDistanceFunction &#123;
+
+        private final boolean isCaseSensitive;
+
+        public LevenshteinDistanceFunction(boolean isCaseSensitive) &#123;
+            this.isCaseSensitive = isCaseSensitive;
+        &#125;
+
+        public int distance(CharSequence left, CharSequence right) &#123;
+            int leftLength = left.length(), rightLength = right.length();
+
+            // special cases.
+            if (leftLength == 0)
+                return rightLength;
+            if (rightLength == 0)
+                return leftLength;
+
+            // Use the iterative matrix method.
+            int[] currentRow = new int[rightLength + 1];
+            int[] nextRow    = new int[rightLength + 1];
+
+            // Fill first row with all edit counts.
+            for (int i = 0; i &lt;= rightLength; i++)
+                currentRow[i] = i;
+
+            for (int i = 1; i &lt;= leftLength; i++) &#123;
+                nextRow[0] = i;
+
+                for(int j = 1; j &lt;= rightLength; j++) &#123;
+                    int subDistance = currentRow[j - 1]; // Distance without insertions or deletions.
+                    if (!charEquals(left.charAt(i - 1), right.charAt(j - 1), isCaseSensitive))
+                            subDistance++; // Add one edit if letters are different.
+                    nextRow[j] = Math.min(Math.min(nextRow[j - 1], currentRow[j]) + 1, subDistance);
+                &#125;
+
+                // Swap rows, use last row for next row.
+                int[] t = currentRow;
+                currentRow = nextRow;
+                nextRow = t;
+            &#125;
+
+            return currentRow[rightLength];
+        &#125;
+
+    &#125;
+</code></pre>
+<h1 id="BK树"><a href="#BK树" class="headerlink" title="BK树"></a>BK树</h1><p>编辑距离的经典应用就是用于拼写检错，如果用户输入的词语不在词典中，自动从词典中找出编辑距离小于某个数n的单词，让用户选择正确的那一个，n通常取到2或者3。</p>
+<p>这个问题的难点在于，怎样才能快速在字典里找出最相近的单词？可以像 <a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi/archive/2012/08/10/2633025.html">使用贝叶斯做英文拼写检查（c#)</a> 里是那样，通过单词自动修改一个单词，检查是否在词典里，这样有暴力破解的嫌疑，是否有更优雅的方案呢？</p>
+<p>1973年，Burkhard和Keller提出的BK树有效地解决了这个问题。BK树的核心思想是：</p>
+<pre><code>令d(x,y)表示字符串x到y的Levenshtein距离，那么显然：
+d(x,y) = 0 当且仅当 x=y （Levenshtein距离为0 &lt;==&gt; 字符串相等）
+d(x,y) = d(y,x) （从x变到y的最少步数就是从y变到x的最少步数）
+d(x,y) + d(y,z) &gt;= d(x,z) （从x变到z所需的步数不会超过x先变成y再变成z的步数）
+</code></pre>
+<p>最后这一个性质叫做三角形不等式。就好像一个三角形一样，两边之和必然大于第三边。</p>
+<h2 id="BK建树"><a href="#BK建树" class="headerlink" title="BK建树"></a>BK建树</h2><p>首先我们随便找一个单词作为根（比如GAME）。以后插入一个单词时首先计算单词与根的Levenshtein距离：如果这个距离值是该节点处头一次出现，建立一个新的儿子节点；否则沿着对应的边递归下去。例如，我们插入单词FAME，它与GAME的距离为1，于是新建一个儿子，连一条标号为1的边；下一次插入GAIN，算得它与GAME的距离为2，于是放在编号为2的边下。再下次我们插入GATE，它与GAME距离为1，于是沿着那条编号为1的边下去，递归地插入到FAME所在子树；GATE与FAME的距离为2，于是把GATE放在FAME节点下，边的编号为2。</p>
+<p><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1511232052823.jpg" alt="enter description here" title="BK树"></p>
+<h2 id="BK查询"><a href="#BK查询" class="headerlink" title="BK查询"></a>BK查询</h2><p>如果我们需要返回与错误单词距离不超过n的单词，这个错误单词与树根所对应的单词距离为d，那么接下来我们只需要递归地考虑编号在d-n到d+n范围内的边所连接的子树。由于n通常很小，因此每次与某个节点进行比较时都可以<strong>排除很多子树</strong>。</p>
+<p>可以通过下图（来自 <a target="_blank" rel="noopener" href="http://blog.csdn.net/tradymeky/article/details/40581547">超酷算法（1）：BK树 （及个人理解）</a>）理解：</p>
+<p><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1511229083171.jpg" alt="enter description here" title="1511229083171"></p>
+<h2 id="BK-实现"><a href="#BK-实现" class="headerlink" title="BK 实现"></a>BK 实现</h2><p>知道了原理实现就简单了，这里从<a target="_blank" rel="noopener" href="https://github.com/sk-scd91/BKTree">github</a>找一段代码</p>
+<p>建树：</p>
+<pre><code>public boolean add(T t) &#123;
+        if (t == null)
+            throw new NullPointerException();
+
+        if (rootNode == null) &#123;
+            rootNode = new Node&lt;&gt;(t);
+            length = 1;
+            modCount++; // Modified tree by adding root.
+            return true;
+        &#125;
+
+        Node&lt;T&gt; parentNode = rootNode;
+        Integer distance;
+        while ((distance = distanceFunction.distance(parentNode.item, t)) != 0
+                || !t.equals(parentNode.item)) &#123;
+            Node&lt;T&gt; childNode = parentNode.children.get(distance);
+            if (childNode == null) &#123;
+                parentNode.children.put(distance, new Node&lt;&gt;(t));
+                length++;
+                modCount++; // Modified tree by adding a child.
+                return true;
+            &#125;
+            parentNode = childNode;
+        &#125;
+
+        return false;
+    &#125;
+</code></pre>
+<p>查找：</p>
+<pre><code> public List&lt;SearchResult&lt;T&gt;&gt; search(T t, int radius) &#123;
+        if (t == null)
+            return Collections.emptyList();
+        ArrayList&lt;SearchResult&lt;T&gt;&gt; searchResults = new ArrayList&lt;&gt;();
+        ArrayDeque&lt;Node&lt;T&gt;&gt; nextNodes = new ArrayDeque&lt;&gt;();
+        if (rootNode != null)
+            nextNodes.add(rootNode);
+
+        while(!nextNodes.isEmpty()) &#123;
+            Node&lt;T&gt; nextNode = nextNodes.poll();
+            int distance = distanceFunction.distance(nextNode.item, t);
+            if (distance &lt;= radius)
+                searchResults.add(new SearchResult&lt;&gt;(distance, nextNode.item));
+            int lowBound = Math.max(0, distance - radius), highBound = distance + radius;
+            for (Integer i = lowBound; i &lt;= highBound; i++) &#123;
+                if (nextNode.children.containsKey(i))
+                    nextNodes.add(nextNode.children.get(i));
+            &#125;
+        &#125;
+
+        searchResults.trimToSize();
+        Collections.sort(searchResults);
+        return Collections.unmodifiableList(searchResults);
+    &#125;
+</code></pre>
+<h1 id="使用BK树做文本纠错"><a href="#使用BK树做文本纠错" class="headerlink" title="使用BK树做文本纠错"></a>使用BK树做文本纠错</h1><p>准备词典，18万的影视名称：<br><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1511231191970.jpg" alt="enter description here" title="1511231191970"></p>
+<p>测试代码：</p>
+<pre><code>  static void outputSearchResult( List&lt;SearchResult&lt;CharSequence&gt;&gt; results)&#123;
+        for(SearchResult&lt;CharSequence&gt; item : results)&#123;
+            System.out.println(item.item);
+        &#125;
+    &#125;
+
+    static void test(BKTree&lt;CharSequence&gt; tree,String word)&#123;
+        System.out.println(word+&quot;的最相近结果：&quot;);
+        outputSearchResult(tree.search(word,Math.max(1,word.length()/4)));
+    &#125;
+
+    public static void main(String[] args) &#123;
+
+        BKTree&lt;CharSequence&gt; tree = new BKTree(DistanceFunctions.levenshteinDistance());
+        List&lt;String&gt; testStrings = FileUtil.readLine(&quot;./src/main/resources/act/name.txt&quot;);
+        System.out.println(&quot;词典条数：&quot;+testStrings.size());
+        long startTime = System.currentTimeMillis();
+        for(String testStr: testStrings)&#123;
+            tree.add(testStr.replace(&quot;.&quot;,&quot;&quot;));
+        &#125;
+        System.out.println(&quot;建树耗时：&quot;+(System.currentTimeMillis()-startTime)+&quot;ms&quot;);
+        startTime = System.currentTimeMillis();
+        String[] testWords = new String[]&#123;
+                &quot;湄公河凶案&quot;,
+                &quot;葫芦丝兄弟&quot;,
+                &quot;少林足球&quot;
+        &#125;;
+
+        for (String testWord: testWords)&#123;
+            test(tree,testWord);
+        &#125;
+        System.out.println(&quot;测试耗时：&quot;+(System.currentTimeMillis()-startTime)+&quot;ms&quot;);
+    &#125;
+</code></pre>
+<p>结果：</p>
+<pre><code>词典条数：18513
+建树耗时：421ms
+湄公河凶案的最相近结果：
+湄公河大案
+葫芦丝兄弟的最相近结果：
+葫芦兄弟
+少林足球的最相近结果：
+少林足球
+笑林足球
+测试耗时：20ms
+</code></pre>
+<p>参考：<br><a target="_blank" rel="noopener" href="http://blog.csdn.net/tradymeky/article/details/40581547">http://blog.csdn.net/tradymeky/article/details/40581547</a><br><a target="_blank" rel="noopener" href="https://github.com/sk-scd91/BKTree">https://github.com/sk-scd91/BKTree</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/data2value/p/5707973.html">https://www.cnblogs.com/data2value/p/5707973.html</a></p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/BK%E6%A0%91/" rel="tag"># BK树</a>
+              <a href="/tags/%E6%96%87%E6%9C%AC%E7%BA%A0%E9%94%99/" rel="tag"># 文本纠错</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/11/13/jqpeng-%E4%BB%8ETrie%E6%A0%91%E5%88%B0%E5%8F%8C%E6%95%B0%E7%BB%84Trie%E6%A0%91/" rel="prev" title="从Trie树到双数组Trie树">
+      <i class="fa fa-chevron-left"></i> 从Trie树到双数组Trie树
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/12/01/jqpeng-%E4%B8%80%E8%B5%B7%E8%AF%BB%E6%BA%90%E7%A0%81%E4%B9%8Bzookeeper(1)%20--%20%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/" rel="next" title="一起读源码之zookeeper(1) -- 启动分析">
+      一起读源码之zookeeper(1) -- 启动分析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB"><span class="nav-number">1.</span> <span class="nav-text">编辑距离</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BK%E6%A0%91"><span class="nav-number">2.</span> <span class="nav-text">BK树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BK%E5%BB%BA%E6%A0%91"><span class="nav-number">2.1.</span> <span class="nav-text">BK建树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BK%E6%9F%A5%E8%AF%A2"><span class="nav-number">2.2.</span> <span class="nav-text">BK查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BK-%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.3.</span> <span class="nav-text">BK 实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8BK%E6%A0%91%E5%81%9A%E6%96%87%E6%9C%AC%E7%BA%A0%E9%94%99"><span class="nav-number">3.</span> <span class="nav-text">使用BK树做文本纠错</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

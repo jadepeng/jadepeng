@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: 推荐算法之： DeepFM及使用DeepCTR测试 算法介绍左边deep network，右边FM，所以叫deepFM  包含两个部分：  Part1： FM(Factorization machines)，因子分解机部分   在传统的一阶线性回归之上，加了一个二次项，可以表达两两特征的相互关系。  这里的公式可以简化，减少计算量，下图来至于网络。   Part2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="推荐算法之： DeepFM及使用DeepCTR测试">
+<meta property="og:url" content="http://blog.iflyresearch.com/2020/10/16/jqpeng-%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95%E4%B9%8B%EF%BC%9A%20DeepFM%E5%8F%8A%E4%BD%BF%E7%94%A8DeepCTR%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: 推荐算法之： DeepFM及使用DeepCTR测试 算法介绍左边deep network，右边FM，所以叫deepFM  包含两个部分：  Part1： FM(Factorization machines)，因子分解机部分   在传统的一阶线性回归之上，加了一个二次项，可以表达两两特征的相互关系。  这里的公式可以简化，减少计算量，下图来至于网络。   Part2">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764397990.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764448337.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764632765.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602765047458.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764969628.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602765456508.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764448337.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602765746903.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/16/1602819038585.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/16/1602819112460.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/16/1602819135487.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/16/1602819176970.png">
+<meta property="article:published_time" content="2020-10-16T06:21:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.585Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="DeepFM">
+<meta property="article:tag" content="推荐">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764397990.png">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2020/10/16/jqpeng-%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95%E4%B9%8B%EF%BC%9A%20DeepFM%E5%8F%8A%E4%BD%BF%E7%94%A8DeepCTR%E6%B5%8B%E8%AF%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>推荐算法之： DeepFM及使用DeepCTR测试 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/10/16/jqpeng-%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95%E4%B9%8B%EF%BC%9A%20DeepFM%E5%8F%8A%E4%BD%BF%E7%94%A8DeepCTR%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          推荐算法之： DeepFM及使用DeepCTR测试
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-16 14:21:00" itemprop="dateCreated datePublished" datetime="2020-10-16T14:21:00+08:00">2020-10-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/deepfm.html">推荐算法之： DeepFM及使用DeepCTR测试</a></p>
+<h2 id="算法介绍"><a href="#算法介绍" class="headerlink" title="算法介绍"></a>算法介绍</h2><p>左边deep network，右边FM，所以叫deepFM</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764397990.png" alt="DeepFm"></p>
+<p>包含两个部分：</p>
+<ul>
+<li>Part1： FM(Factorization machines)，因子分解机部分</li>
+</ul>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764448337.png" alt="FM"></p>
+<p>在传统的一阶线性回归之上，加了一个二次项，可以表达两两特征的相互关系。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764632765.png" alt="特征相互关系"></p>
+<p>这里的公式可以简化，减少计算量，下图来至于网络。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602765047458.png" alt="FM"></p>
+<ul>
+<li>Part2： Deep部分</li>
+</ul>
+<p>deep部分是多层dnn网络。</p>
+<h2 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h2><p>实现部分，<a target="_blank" rel="noopener" href="https://blog.csdn.net/songbinxu/article/details/80151814">用Keras实现一个DeepFM</a> 和<a target="_blank" rel="noopener" href="https://blog.csdn.net/u012969412/article/details/88684723">·清尘·《FM、FMM、DeepFM整理（pytorch）》</a></p>
+<p>讲的比较清楚，这里引用keras实现来说明。</p>
+<p>整体的网络结构：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764969628.png" alt="网络结构"></p>
+<h3 id="特征编码"><a href="#特征编码" class="headerlink" title="特征编码"></a>特征编码</h3><p>特征可以分为3类：</p>
+<ul>
+<li>连续型field，比如数字类型特征</li>
+<li>单值离散型特征，比如gender，可选为male、female</li>
+<li>多值离散型，比如tag，可以有多个</li>
+</ul>
+<p>连续型field，可以拼接到一起，dense数据。</p>
+<p>单值，多值field进行Onehot后，可见单值离散field对应的独热向量只有一位取1，而多值离散field对应的独热向量有多于一位取1，表示该field可以同时取多个特征值。</p>
+<table>
+<thead>
+<tr>
+<th>label</th>
+<th>shop_score</th>
+<th>gender=m</th>
+<th>gender=f</th>
+<th>interest=f</th>
+<th>interest=c</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>0.2</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0.8</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<h3 id="FM-部分"><a href="#FM-部分" class="headerlink" title="FM 部分"></a>FM 部分</h3><p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602765456508.png" alt="FM"></p>
+<p>看公式：<br><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764448337.png" alt="FM"></p>
+<p>先算 FM一次项：</p>
+<ul>
+<li>连续型field 可以用Dense(1)层实现</li>
+<li>单值离散型field 用Embedding(n,1), n是分类中值的个数</li>
+<li>多值离散型field可以同时取多个特征值，为了batch training，必须对样本进行补零padding。同样可以用Embedding实现，因为有多个Embedding，可以取下平均值。</li>
+</ul>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602765746903.png" alt="1次项"></p>
+<p>然后计算FM二次项，这里理解比较费劲一点。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012969412/article/details/88684723">·清尘·《FM、FMM、DeepFM整理（pytorch）》</a> 深入浅出的讲明白了这个过程，大家可以参见。</p>
+<p>我们来看具体实现方面，这里的<a target="_blank" rel="noopener" href="http://fancyerii.github.io/2019/12/19/deepfm/#fm-layer">DeepFM模型CTR预估理论与实战</a> 讲解更容易理解。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/16/1602819038585.png" alt="FM公式"></p>
+<p>假设只有前面的C1和C2两个Category的特征，词典大小还是3和2。假设输入还是C1=2，C2=2(下标从1开始)，则Embedding之后为V2=[e21,e22,e23,e24]和V5=[e51,e52,e53,e54]。</p>
+<p>因为xi和xj同时不为零才需要计算，所以上面的公式里需要计算的只有i=2和j=5的情况。因此：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/16/1602819112460.png" alt="FM"></p>
+<p>扩展到多个，比如C1,C2,C3，需要算内积</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/16/1602819135487.png"></p>
+<p>怎么用用矩阵乘法一次计算出来呢？我们可以看看这个</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/16/1602819176970.png"></p>
+<p>对应的代码就是</p>
+<pre><code>       square_of_sum = tf.square(reduce_sum(        concated_embeds_value, axis=1, keep_dims=True))    sum_of_square = reduce_sum(        concated_embeds_value * concated_embeds_value, axis=1, keep_dims=True)    cross_term = square_of_sum - sum_of_square    cross_term = 0.5 * reduce_sum(cross_term, axis=2, keep_dims=False)
+</code></pre>
+<p>其中concated_embeds_value是拼接起来的embeds_value。</p>
+<h3 id="Deep部分"><a href="#Deep部分" class="headerlink" title="Deep部分"></a>Deep部分</h3><p>DNN比较简单，FM的输入和DNN的输入都是同一个group_embedding_dict。</p>
+<h2 id="使用movielens-来测试"><a href="#使用movielens-来测试" class="headerlink" title="使用movielens 来测试"></a>使用movielens 来测试</h2><p>下载<code>ml-100k</code> 数据集</p>
+<pre><code>wget http://files.grouplens.org/datasets/movielens/ml-100k.zip
+unzip ml-100k.zip
+</code></pre>
+<p>安装相关软件包，sklearn，deepctr</p>
+<p>导入包：</p>
+<pre><code>import pandas
+import pandas as pd
+import sklearn
+from sklearn.metrics import log_loss, roc_auc_score
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from tensorflow.python.keras.preprocessing.sequence import pad_sequences
+import tensorflow as tf
+from tqdm import tqdm
+
+from deepctr.models import DeepFM
+from deepctr.feature_column import SparseFeat, VarLenSparseFeat, get_feature_names
+import numpy as np
+</code></pre>
+<p>读取评分数据：</p>
+<pre><code>u_data = pd.read_csv(&quot;ml-100k/u.data&quot;, sep=&#39;\t&#39;, header=None)
+u_data.columns = [&#39;user_id&#39;, &#39;movie_id&#39;, &#39;rating&#39;, &#39;timestamp&#39;]
+</code></pre>
+<p>有评分的设置为1，随机采用未评分的</p>
+<pre><code>def neg_sample(u_data, neg_rate=1):
+    # 全局随机采样
+    item_ids = u_data[&#39;movie_id&#39;].unique()
+    print(&#39;start neg sample&#39;)
+    neg_data = []
+    # 负采样
+    for user_id, hist in tqdm(u_data.groupby(&#39;user_id&#39;)):
+        # 当前用户movie
+        rated_movie_list = hist[&#39;movie_id&#39;].tolist()
+        candidate_set = list(set(item_ids) - set(rated_movie_list))
+        neg_list_id = np.random.choice(candidate_set, size=len(rated_movie_list) * neg_rate, replace=True)
+        for id in neg_list_id:
+            neg_data.append([user_id, id, -1, 0])
+    u_data_neg = pd.DataFrame(neg_data)
+    u_data_neg.columns = [&#39;user_id&#39;, &#39;movie_id&#39;, &#39;rating&#39;, &#39;timestamp&#39;]
+    u_data = pandas.concat([u_data, u_data_neg])
+    print(&#39;end neg sample&#39;)
+    return u_data
+</code></pre>
+<p>读取item数据</p>
+<pre><code>u_item = pd.read_csv(&quot;ml-100k/u.item&quot;, sep=&#39;|&#39;, header=None, error_bad_lines=False)
+    genres_columns = [&#39;Action&#39;, &#39;Adventure&#39;,
+                      &#39;Animation&#39;,
+                      &#39;Children&#39;, &#39;Comedy&#39;, &#39;Crime&#39;, &#39;Documentary&#39;, &#39;Drama&#39;, &#39;Fantasy&#39;,
+                      &#39;Film_Noir&#39;, &#39;Horror&#39;, &#39;Musical&#39;, &#39;Mystery&#39;, &#39;Romance&#39;, &#39;Sci-Fi&#39;,
+                      &#39;Thriller&#39;, &#39;War&#39;, &#39;Western&#39;]
+
+    u_item.columns = [&#39;movie_id&#39;, &#39;title&#39;, &#39;release_date&#39;, &#39;video_date&#39;, &#39;url&#39;, &#39;unknown&#39;] + genres_columns
+</code></pre>
+<p>处理genres并删除单独的genres列</p>
+<pre><code>     genres_list = []
+    for index, row in u_item.iterrows():
+        genres = []
+        for item in genres_columns:
+            if row[item]:
+                genres.append(item)
+        genres_list.append(&#39;|&#39;.join(genres))
+
+    u_item[&#39;genres&#39;] = genres_list
+    for item in genres_columns:
+        del u_item[item]
+</code></pre>
+<p>读取用户信息：</p>
+<pre><code>  # user id | age | gender | occupation(职业) | zip code（邮编，地区)
+    u_user = pd.read_csv(&quot;ml-100k/u.user&quot;, sep=&#39;|&#39;, header=None)
+    u_user.columns = [&#39;user_id&#39;, &#39;age&#39;, &#39;gender&#39;, &#39;occupation&#39;, &#39;zip&#39;]
+</code></pre>
+<p>join到一起：</p>
+<pre><code> data = pandas.merge(u_data, u_item, on=&quot;movie_id&quot;, how=&#39;left&#39;)
+ data = pandas.merge(data, u_user, on=&quot;user_id&quot;, how=&#39;left&#39;)
+ data.to_csv(&#39;ml-100k/data.csv&#39;, index=False)
+</code></pre>
+<p>处理特征：</p>
+<pre><code>sparse_features = [&quot;movie_id&quot;, &quot;user_id&quot;,
+                   &quot;gender&quot;, &quot;age&quot;, &quot;occupation&quot;, &quot;zip&quot;, ]
+
+data[sparse_features] = data[sparse_features].astype(str)
+target = [&#39;rating&#39;]
+
+# 评分
+data[&#39;rating&#39;] = [1 if int(x) &gt;= 0 else 0 for x in data[&#39;rating&#39;]]
+</code></pre>
+<p>先特征编码：</p>
+<pre><code>for feat in sparse_features:    lbe = LabelEncoder()    data[feat] = lbe.fit_transform(data[feat])
+</code></pre>
+<p>处理genres特征，一个movie有多个genres，先拆分，然后编码为数字，注意是从1开始；由于每个movie的genres长度不一样，可以计算最大长度，位数不足的后面补零（pad_sequences，在post补0）</p>
+<pre><code>     def split(x):        key_ans = x.split(&#39;|&#39;)        for key in key_ans:            if key not in key2index:                # Notice : input value 0 is a special &quot;padding&quot;,so we do not use 0 to encode valid feature for sequence input                key2index[key] = len(key2index) + 1        return list(map(lambda x: key2index[x], key_ans))
+
+    key2index = &#123;&#125;    genres_list = list(map(split, data[&#39;genres&#39;].values))    genres_length = np.array(list(map(len, genres_list)))    max_len = max(genres_length)    # Notice : padding=`post`    genres_list = pad_sequences(genres_list, maxlen=max_len, padding=&#39;post&#39;, )
+</code></pre>
+<p>构建deepctr的特征列，主要分为两类特征，一是定长的SparseFeat，稀疏的类别特征，二是可变长度的VarLenSparseFeat，像genres这样的包含多个的。</p>
+<pre><code>       fixlen_feature_columns = [SparseFeat(feat, data[feat].nunique(), embedding_dim=4)                              for feat in sparse_features]
+    use_weighted_sequence = False    if use_weighted_sequence:        varlen_feature_columns = [VarLenSparseFeat(SparseFeat(&#39;genres&#39;, vocabulary_size=len(            key2index) + 1, embedding_dim=4), maxlen=max_len, combiner=&#39;mean&#39;,                                                   weight_name=&#39;genres_weight&#39;)]  # Notice : value 0 is for padding for sequence input feature    else:        varlen_feature_columns = [VarLenSparseFeat(SparseFeat(&#39;genres&#39;, vocabulary_size=len(            key2index) + 1, embedding_dim=4), maxlen=max_len, combiner=&#39;mean&#39;,                                                   weight_name=None)]  # Notice : value 0 is for padding for sequence input feature
+    linear_feature_columns = fixlen_feature_columns + varlen_feature_columns    dnn_feature_columns = fixlen_feature_columns + varlen_feature_columns
+    feature_names = get_feature_names(linear_feature_columns + dnn_feature_columns)
+</code></pre>
+<p>封装训练数据，先shuffle（乱排）数据，然后生成dict input数据。</p>
+<pre><code>data = sklearn.utils.shuffle(data)
+train_model_input = &#123;name: data[name] for name in sparse_features&#125;  #
+train_model_input[&quot;genres&quot;] = genres_list
+</code></pre>
+<p>构建DeepFM模型，由于目标值是0,1，因此采用binary，损失函数用binary_crossentropy</p>
+<pre><code>model = DeepFM(linear_feature_columns, dnn_feature_columns, task=&#39;binary&#39;)
+
+model.compile(optimizer=tf.keras.optimizers.Adam(), loss=&#39;binary_crossentropy&#39;,
+              metrics=[&#39;AUC&#39;, &#39;Precision&#39;, &#39;Recall&#39;])
+model.summary()
+</code></pre>
+<p>训练模型：</p>
+<pre><code>model.fit(train_model_input, data[target].values,                    batch_size=256, epochs=20, verbose=2,                    validation_split=0.2            )
+</code></pre>
+<p>开始训练：</p>
+<pre><code>Epoch 1/20
+625/625 - 3s - loss: 0.5081 - auc: 0.8279 - precision: 0.7419 - recall: 0.7695 - val_loss: 0.4745 - val_auc: 0.8513 - val_precision: 0.7563 - val_recall: 0.7936
+Epoch 2/20
+625/625 - 2s - loss: 0.4695 - auc: 0.8538 - precision: 0.7494 - recall: 0.8105 - val_loss: 0.4708 - val_auc: 0.8539 - val_precision: 0.7498 - val_recall: 0.8127
+Epoch 3/20
+625/625 - 2s - loss: 0.4652 - auc: 0.8564 - precision: 0.7513 - recall: 0.8139 - val_loss: 0.4704 - val_auc: 0.8545 - val_precision: 0.7561 - val_recall: 0.8017
+Epoch 4/20
+625/625 - 2s - loss: 0.4624 - auc: 0.8579 - precision: 0.7516 - recall: 0.8146 - val_loss: 0.4724 - val_auc: 0.8542 - val_precision: 0.7296 - val_recall: 0.8526
+Epoch 5/20
+625/625 - 2s - loss: 0.4607 - auc: 0.8590 - precision: 0.7521 - recall: 0.8173 - val_loss: 0.4699 - val_auc: 0.8550 - val_precision: 0.7511 - val_recall: 0.8141
+Epoch 6/20
+625/625 - 2s - loss: 0.4588 - auc: 0.8602 - precision: 0.7545 - recall: 0.8165 - val_loss: 0.4717 - val_auc: 0.8542 - val_precision: 0.7421 - val_recall: 0.8265
+Epoch 7/20
+625/625 - 2s - loss: 0.4574 - auc: 0.8610 - precision: 0.7535 - recall: 0.8192 - val_loss: 0.4722 - val_auc: 0.8547 - val_precision: 0.7549 - val_recall: 0.8023
+Epoch 8/20
+625/625 - 2s - loss: 0.4561 - auc: 0.8619 - precision: 0.7543 - recall: 0.8201 - val_loss: 0.4717 - val_auc: 0.8548 - val_precision: 0.7480 - val_recall: 0.8185
+Epoch 9/20
+625/625 - 2s - loss: 0.4531 - auc: 0.8643 - precision: 0.7573 - recall: 0.8210 - val_loss: 0.4696 - val_auc: 0.8583 - val_precision: 0.7598 - val_recall: 0.8103
+Epoch 10/20
+625/625 - 2s - loss: 0.4355 - auc: 0.8768 - precision: 0.7787 - recall: 0.8166 - val_loss: 0.4435 - val_auc: 0.8769 - val_precision: 0.7756 - val_recall: 0.8293
+Epoch 11/20
+625/625 - 2s - loss: 0.4093 - auc: 0.8923 - precision: 0.7915 - recall: 0.8373 - val_loss: 0.4301 - val_auc: 0.8840 - val_precision: 0.7806 - val_recall: 0.8390
+Epoch 12/20
+625/625 - 2s - loss: 0.3970 - auc: 0.8988 - precision: 0.7953 - recall: 0.8497 - val_loss: 0.4286 - val_auc: 0.8867 - val_precision: 0.7903 - val_recall: 0.8299
+Epoch 13/20
+625/625 - 2s - loss: 0.3896 - auc: 0.9029 - precision: 0.8001 - recall: 0.8542 - val_loss: 0.4253 - val_auc: 0.8888 - val_precision: 0.7913 - val_recall: 0.8322
+Epoch 14/20
+625/625 - 2s - loss: 0.3825 - auc: 0.9067 - precision: 0.8038 - recall: 0.8584 - val_loss: 0.4205 - val_auc: 0.8917 - val_precision: 0.7885 - val_recall: 0.8506
+Epoch 15/20
+625/625 - 2s - loss: 0.3755 - auc: 0.9102 - precision: 0.8074 - recall: 0.8624 - val_loss: 0.4204 - val_auc: 0.8940 - val_precision: 0.7868 - val_recall: 0.8607
+Epoch 16/20
+625/625 - 2s - loss: 0.3687 - auc: 0.9136 - precision: 0.8117 - recall: 0.8653 - val_loss: 0.4176 - val_auc: 0.8956 - val_precision: 0.8097 - val_recall: 0.8236
+Epoch 17/20
+625/625 - 2s - loss: 0.3617 - auc: 0.9170 - precision: 0.8155 - recall: 0.8682 - val_loss: 0.4166 - val_auc: 0.8966 - val_precision: 0.8056 - val_recall: 0.8354
+Epoch 18/20
+625/625 - 2s - loss: 0.3553 - auc: 0.9201 - precision: 0.8188 - recall: 0.8716 - val_loss: 0.4168 - val_auc: 0.8977 - val_precision: 0.7996 - val_recall: 0.8492
+Epoch 19/20
+625/625 - 2s - loss: 0.3497 - auc: 0.9227 - precision: 0.8214 - recall: 0.8741 - val_loss: 0.4187 - val_auc: 0.8973 - val_precision: 0.8079 - val_recall: 0.8358
+Epoch 20/20
+625/625 - 2s - loss: 0.3451 - auc: 0.9248 - precision: 0.8244 - recall: 0.8753 - val_loss: 0.4210 - val_auc: 0.8982 - val_precision: 0.7945 - val_recall: 0.8617
+</code></pre>
+<p>最后我们测试下数据：</p>
+<pre><code> pred_ans = model.predict(train_model_input, batch_size=256)
+ count = 0
+    for (i, j) in zip(pred_ans, data[&#39;rating&#39;].values):
+        print(i, j)
+        count += 1
+        if count &gt; 10:
+            break
+</code></pre>
+<p>输出如下：</p>
+<pre><code>[0.20468083] 0
+[0.1988303] 0
+[7.7236204e-05] 0
+[0.9439401] 1
+[0.76648283] 0
+[0.80082995] 1
+[0.7689271] 0
+[0.8515004] 1
+[0.93311656] 1
+[0.40019292] 0
+[0.60735244] 0
+</code></pre>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/w55100/article/details/90295932">deepFM in pytorch</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/itplus/article/details/40534923">皮果提《Factorization Machines 学习笔记（二）模型方程》</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012969412/article/details/88684723">·清尘·《FM、FMM、DeepFM整理（pytorch）》</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/songbinxu/article/details/80151814">用Keras实现一个DeepFM</a></li>
+</ul>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/DeepFM/" rel="tag"># DeepFM</a>
+              <a href="/tags/%E6%8E%A8%E8%8D%90/" rel="tag"># 推荐</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/12/jqpeng-%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95%E4%B9%8B%EF%BC%9A%20LFM%20%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95/" rel="prev" title="推荐算法之： LFM 推荐算法">
+      <i class="fa fa-chevron-left"></i> 推荐算法之： LFM 推荐算法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/11/02/jqpeng-%E7%BB%99Swagger%E6%8D%A2%E4%B8%80%E5%A5%97%E7%9A%AE%E8%82%A4%20Knife4j%E9%9B%86%E6%88%90%E8%AE%B0%E5%BD%95/" rel="next" title="给Swagger换一套皮肤 Knife4j集成记录">
+      给Swagger换一套皮肤 Knife4j集成记录 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">算法介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">算法实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E7%BC%96%E7%A0%81"><span class="nav-number">2.1.</span> <span class="nav-text">特征编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FM-%E9%83%A8%E5%88%86"><span class="nav-number">2.2.</span> <span class="nav-text">FM 部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deep%E9%83%A8%E5%88%86"><span class="nav-number">2.3.</span> <span class="nav-text">Deep部分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8movielens-%E6%9D%A5%E6%B5%8B%E8%AF%95"><span class="nav-number">3.</span> <span class="nav-text">使用movielens 来测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

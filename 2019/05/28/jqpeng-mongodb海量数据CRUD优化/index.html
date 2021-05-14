@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: mongodb海量数据CRUD优化 1. 批量保存优化避免一条一条查询，采用bulkWrite, 基于ReplaceOneModel，启用upsert:  public void batchSave(List&lt;?&gt; spoTriples, KgInstance kgInstance) &amp;#123;         MongoConverter conv">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mongodb海量数据CRUD优化">
+<meta property="og:url" content="http://blog.iflyresearch.com/2019/05/28/jqpeng-mongodb%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AECRUD%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: mongodb海量数据CRUD优化 1. 批量保存优化避免一条一条查询，采用bulkWrite, 基于ReplaceOneModel，启用upsert:  public void batchSave(List&lt;?&gt; spoTriples, KgInstance kgInstance) &amp;#123;         MongoConverter conv">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-28/1559041614698.png">
+<meta property="article:published_time" content="2019-05-28T11:47:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="MongoDB">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-28/1559041614698.png">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2019/05/28/jqpeng-mongodb%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AECRUD%E4%BC%98%E5%8C%96/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>mongodb海量数据CRUD优化 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/05/28/jqpeng-mongodb%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AECRUD%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mongodb海量数据CRUD优化
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-28 19:47:00" itemprop="dateCreated datePublished" datetime="2019-05-28T19:47:00+08:00">2019-05-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/java-mongo-crud.html">mongodb海量数据CRUD优化</a></p>
+<h2 id="1-批量保存优化"><a href="#1-批量保存优化" class="headerlink" title="1. 批量保存优化"></a>1. 批量保存优化</h2><p>避免一条一条查询，采用<code>bulkWrite</code>, 基于<code>ReplaceOneModel</code>，启用<code>upsert</code>:</p>
+<pre><code> public void batchSave(List&lt;?&gt; spoTriples, KgInstance kgInstance) &#123;
+        MongoConverter converter = mongoTemplate.getConverter();
+        List&lt;ReplaceOneModel&lt;Document&gt;&gt; bulkOperationList = spoTriples.stream()
+                .map(thing -&gt; &#123;
+                    org.bson.Document dbDoc = new org.bson.Document();
+                    converter.write(thing, dbDoc);
+                    ReplaceOneModel&lt;org.bson.Document&gt; replaceOneModel = new ReplaceOneModel(
+                            Filters.eq(UNDERSCORE_ID, dbDoc.get(UNDERSCORE_ID)), 
+                            dbDoc,
+                            new UpdateOptions().upsert(true));
+                    return replaceOneModel;
+                &#125;)
+                .collect(Collectors.toList());
+        mongoTemplate.getCollection(getCollection(kgInstance)).bulkWrite(bulkOperationList);
+    &#125;
+</code></pre>
+<h2 id="2-分页优化"><a href="#2-分页优化" class="headerlink" title="2. 分页优化"></a>2. 分页优化</h2><p>经常用于查询的字段，需要确保建立了索引。</p>
+<p>对于包含多个键的查询，可以创建符合索引。</p>
+<h3 id="2-1-避免不必要的count"><a href="#2-1-避免不必要的count" class="headerlink" title="2.1 避免不必要的count"></a>2.1 避免不必要的count</h3><p>查询时，走索引，速度并不慢，但是如果返回分页<code>Page&lt;?&gt;</code>，需要查询<code>totalcount</code>，当单表数据过大时，count会比较耗时，但是设想意向，你真的需要准确的数字吗？</p>
+<p>在google、百度等搜索引擎搜索关键词时，只会给你有限的几个结果，因此，我们也不必给出准确的数字，设定一个阈值，比如1万，当我们发现总量大于1万时，返回1万，前端显示大于1万条即可。</p>
+<p>原理也很鉴定啊，我们skip掉<code>MAX_PAGE_COUNT</code>，看是否还有数据，如果有就说明总量大于<code>MAX_PAGE_COUNT</code>，返回<code>MAX_PAGE_COUNT</code>即可，否则，计算真正的count。</p>
+<pre><code>int MAX_PAGE_COUNT = 10000;
+
+
+/**
+     * 当总数大于阈值时，不再计算总数
+     *
+     * @param mongoTemplate
+     * @param query
+     * @param collectionName
+     * @return
+     */
+    private long count(MongoTemplate mongoTemplate, Query query, String collectionName) &#123;
+        query = query.with(PageRequest.of(MAX_PAGE_COUNT, 1));
+        if (mongoTemplate.find(query, Thing.class, collectionName).size() &gt; 0) &#123;
+            return MAX_PAGE_COUNT;
+        &#125;
+        return mongoTemplate.count(query, collectionName);
+    &#125;
+</code></pre>
+<p>前端显示：</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-28/1559041614698.png" alt="大于10000"></p>
+<h3 id="2-2-避免过多的skip"><a href="#2-2-避免过多的skip" class="headerlink" title="2.2 避免过多的skip"></a>2.2 避免过多的skip</h3><p>分页不过避免需要先跳过一些数据，这个过程是需要消耗时间的，可以通过一个小技巧避免跳过。</p>
+<p>比如，显示列表时，排序为按最后修改时间倒序，每页显示100条，现在要显示第100页。<br> 按照正常的做法，需要跳过<code>99*100</code>条数据，非常大的代价。换一个角度思考，因为数据是有序的，因此第100页的数据的最后修改时间是小于第99页最小的修改时间，查询时加上这个条件，就可以直接取符合条件的前100条即可。</p>
+<h2 id="3-全量导出优化"><a href="#3-全量导出优化" class="headerlink" title="3. 全量导出优化"></a>3. 全量导出优化</h2><h3 id="3-1-去掉不需要的字段"><a href="#3-1-去掉不需要的字段" class="headerlink" title="3.1 去掉不需要的字段"></a>3.1 去掉不需要的字段</h3><p>查询时，指定真正有用的字段，这样可以有效减少数据传输量，加快查询效率。<br> 例如：</p>
+<pre><code>         Query query = new Query();
+        query.fields().include(&quot;_id&quot;).include(&quot;name&quot;).include(&quot;hot&quot;).include(&quot;alias&quot;);
+</code></pre>
+<h3 id="3-2-避免使用findAll或者分页查询，改用stream"><a href="#3-2-避免使用findAll或者分页查询，改用stream" class="headerlink" title="3.2 避免使用findAll或者分页查询，改用stream"></a>3.2 避免使用findAll或者分页查询，改用stream</h3><p>全量导出有两个误区，一是直接<code>findAll</code>,当数据量过大时，很容易导致服务器<code>OutofMermory</code>，就算没有OOM，也会对服务器造成极大的负载，影响兄弟服务。另外，FindAll一次性加载数据到内存，整个速度也会比较慢，需要等待所有数据进入内存后才能开始处理。</p>
+<p>另外一个误区是，分页查询，依次处理。分页查询可以有效减少服务器负担，不失为一种可行的方法。但是就和上面分页说的那样，分页到后面的时候，需要skip掉前面的数据，存在无用功。稍微好一点的做法就是按照之前说的，将skip转换为condtion，这种方式效率OK，但不推荐，存在代码冗余。</p>
+<pre><code>            Page&lt;Thing&gt; dataList = entityDao.findAllByPage(kgDataStoreService.getKgCollectionByKgInstance(kg), page);
+            Map&lt;String, Individual&gt; thingId2Resource = new ConcurrentHashMap&lt;&gt;();
+
+            appendThingsToModel(model, concept2OntClass, hot, alias, dataList, thingId2Resource);
+
+            while (dataList.hasNext()) &#123;
+                page = PageRequest.of(page.getPageNumber() + 1, page.getPageSize());
+                dataList = entityDao.findAllByPage(kgDataStoreService.getKgCollectionByKgInstance(kg), page);
+                appendThingsToModel(model, concept2OntClass, hot, alias, dataList, thingId2Resource);
+            &#125;
+</code></pre>
+<p>更推荐的做法是，采用mongoTemplate的steam方法,返回<code>CloseableIterator</code>迭代器，读一条数据处理一条数据，实现高效处理：</p>
+<pre><code>@Overridepublic &lt;T&gt; CloseableIterator&lt;T&gt; stream(final Query query, final Class&lt;T&gt; entityType, final String collectionName) &#123;    return doStream(query, entityType, collectionName, entityType);&#125;
+</code></pre>
+<p>改用方法后，代码可以更简化高效：</p>
+<pre><code>  CloseableIterator&lt;Thing&gt; dataList = kgDataStoreService.getSimpleInfoIterator(kg);
+
+            // 实体导入
+            // Page&lt;Thing&gt; dataList = entityDao.findAllByPage(kgDataStoreService.getKgCollectionByKgInstance(kg), page);
+            Map&lt;String, Individual&gt; thingId2Resource = new ConcurrentHashMap&lt;&gt;();
+
+            appendThingsToModel(model, concept2OntClass, hot, alias, dataList, thingId2Resource);
+</code></pre>
+<p>待续。。。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/05/24/jqpeng-%E5%A4%9A%E8%AF%AD%E8%A8%80%E4%B8%9A%E5%8A%A1%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Sentry%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" rel="prev" title="多语言业务错误日志收集监控工具Sentry 安装与使用">
+      <i class="fa fa-chevron-left"></i> 多语言业务错误日志收集监控工具Sentry 安装与使用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/08/08/jqpeng-Docker%E5%90%AF%E7%94%A8TLS%E8%BF%9B%E8%A1%8C%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/" rel="next" title="Docker启用TLS进行安全配置">
+      Docker启用TLS进行安全配置 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%89%B9%E9%87%8F%E4%BF%9D%E5%AD%98%E4%BC%98%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">1. 批量保存优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%88%86%E9%A1%B5%E4%BC%98%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">2. 分页优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E9%81%BF%E5%85%8D%E4%B8%8D%E5%BF%85%E8%A6%81%E7%9A%84count"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 避免不必要的count</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%81%BF%E5%85%8D%E8%BF%87%E5%A4%9A%E7%9A%84skip"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 避免过多的skip</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%85%A8%E9%87%8F%E5%AF%BC%E5%87%BA%E4%BC%98%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">3. 全量导出优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%8E%BB%E6%8E%89%E4%B8%8D%E9%9C%80%E8%A6%81%E7%9A%84%E5%AD%97%E6%AE%B5"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 去掉不需要的字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E9%81%BF%E5%85%8D%E4%BD%BF%E7%94%A8findAll%E6%88%96%E8%80%85%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2%EF%BC%8C%E6%94%B9%E7%94%A8stream"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 避免使用findAll或者分页查询，改用stream</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

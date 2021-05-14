@@ -1,0 +1,2866 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JadePeng的技术笔记本">
+<meta property="og:type" content="website">
+<meta property="og:title" content="JadePeng的技术笔记本">
+<meta property="og:url" content="http://blog.iflyresearch.com/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="JadePeng的技术笔记本">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="JadePeng">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/04/27/%E7%9F%A5%E8%AF%86%E5%BA%93%E5%BF%85%E7%9C%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/27/%E7%9F%A5%E8%AF%86%E5%BA%93%E5%BF%85%E7%9C%8B/" class="post-title-link" itemprop="url">知识库必看</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+                    <i class="fa fa-thumb-tack"></i>
+                    <font color=7D26CD>置顶</font>
+                    <span class="post-meta-divider">|</span>
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-27 11:37:44" itemprop="dateCreated datePublished" datetime="2021-04-27T11:37:44+08:00">2021-04-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>36</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="必读"><a href="#必读" class="headerlink" title="必读"></a>必读</h2><ul>
+<li><a href="/blog/team/">团队章程</a></li>
+<li><a href="/blog/share/">技术培训材料（培训后需要将材料放入）</a></li>
+<li><a href="/blog/help/">如何贡献内容(使用帮助)</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/04/27/%E5%8D%9A%E5%AE%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/27/%E5%8D%9A%E5%AE%A2/" class="post-title-link" itemprop="url">博客</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-27 11:37:44" itemprop="dateCreated datePublished" datetime="2021-04-27T11:37:44+08:00">2021-04-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>这里放部门规范</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/04/27/%E5%9B%A2%E9%98%9F%E7%AB%A0%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/27/%E5%9B%A2%E9%98%9F%E7%AB%A0%E7%A8%8B/" class="post-title-link" itemprop="url">团队章程</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-27 11:37:44" itemprop="dateCreated datePublished" datetime="2021-04-27T11:37:44+08:00">2021-04-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%83%A8%E9%97%A8%E8%A7%84%E8%8C%83/" itemprop="url" rel="index"><span itemprop="name">部门规范</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="2021年目标"><a href="#2021年目标" class="headerlink" title="2021年目标"></a>2021年目标</h2><p>1、实施项目制，形成符合团队实际的项目管理最佳实践，提升研发效率30%<br>2、数据中台自运营之路走通，提供行业刚需数据解决方案，一站式自助式标注工具平台，私有化解决方案<br>3、通过信息化、智能标注，助力资源部效能提升10%<br>4、AIMind发展为成熟产品，深入支持医疗BU</p>
+<h2 id="分工与职责"><a href="#分工与职责" class="headerlink" title="分工与职责"></a>分工与职责</h2><p>组长、副组长： 辅导组员与发展人才，关心组员成长与诉求，申请资源和争取荣誉，对小组员工负责</p>
+<h2 id="虚拟团队角色与职责："><a href="#虚拟团队角色与职责：" class="headerlink" title="虚拟团队角色与职责："></a>虚拟团队角色与职责：</h2><p>项目经理：负责项目全生命周期管理，包含项目人力、内容、进度、质量、风险等管理，在项目期间对项目成员具有管理和考核权，项目的第一责任人。<br>产品经理：负责需求分析和收集，产品的调研和设计，实施跟踪以及验收等，对产品成功负责。<br>架构师：系统方案设计、识别重难点任务并组织调研和评审，代码review与查漏补缺、研发补位<br>开发经理：任务评估、任务分配、代码review与查漏补缺、研发补位<br>测试经理：负责组织测试工作开展及风险问题总结，引入提升团队工作效率质量方法及工具，对版本质量负责</p>
+<p>开发组员：负责日常开发工作和项目的具体实施，主动发起设计和代码评审，遇问题及时向上反馈<br>测试组员：积极主动完成测试实施工作，发起上线评审、跟进客户问题验证</p>
+<h2 id="应当"><a href="#应当" class="headerlink" title="应当"></a>应当</h2><p>1、高效工作，日事日毕，不能完成，需及时同步并协商一致<br>2、主动共享信息，积极分享观点<br>3、严格遵守团队代码规范，保证代码质量<br>4、自我学习提升专业能力，并与团队分享<br>5、以团队利益为先，主动查漏补缺，增加团队贡献<br>6、做事有始有终，确保工作做到位，有条理、有计划、有产物<br>7、积极乐观、永葆热情</p>
+<h2 id="禁止"><a href="#禁止" class="headerlink" title="禁止"></a>禁止</h2><p>1、会议无故迟到或缺席、无效讨论<br>2、只顾及自己小组的利益，不注重部门利益<br>3、扯皮、甩锅<br>4、藏匿潜在问题，侥幸度过<br>5、事不关己，高高挂起<br>6、核心代码未进行代码review，直接上线<br>7、任务分配时挑三拣四</p>
+<h2 id="运作规则"><a href="#运作规则" class="headerlink" title="运作规则"></a>运作规则</h2><h3 id="1、-会议类型："><a href="#1、-会议类型：" class="headerlink" title="1、 会议类型："></a>1、 会议类型：</h3><p>（1）月例会：每月第一周或第二周，由部门领导发起，全员参与<br>（2）小组周例会：每周一，由组长和项目经理发起，相关成员参与<br>（3）项目周会：每周一次，由项目经理发起<br>（4）项目晨会：项目经理发起，项目重点攻关时期每天一次<br>（5）临时会议：根据临时事项决定，如需求会、评审会、启动会等，成员需主动发起</p>
+<h3 id="2、会议要求"><a href="#2、会议要求" class="headerlink" title="2、会议要求"></a>2、会议要求</h3><p>（1）发起人需至少提前半天发送会议邀请并确保通知到位，与会人员最好提前5分钟到达会议室<br>无故迟到缺席者，罚款100元，超过10分钟的罚款200元（罚款用于团队零食水果购买）<br>项目流程规范中的必要会议，在完成后需要进行评分，总分5分，平均分小于3.5分的，发起人需要总结会议不及预期原因，罚款100元；<br>（2）会议纪要由发起人负责记录整理，会议纪要需要包含出席和迟到情况、会议评分和原因分析，并及时通报与会人员和部门领导，最迟次日中午前发出，形成闭环；<br>未及时发出会议纪要，或者未形成闭环的扣100元，特殊情况可申请豁免<br>（3）重难点工作的方案设计必须发起评审，因未发起评审导致项目出现延期或者重大问题的，罚款200元，月度绩效D；</p>
+<h3 id="3、日常工作规范要求"><a href="#3、日常工作规范要求" class="headerlink" title="3、日常工作规范要求"></a>3、日常工作规范要求</h3><p>（1）周报要求：周报最迟周一10点发出，推荐周日完成，超时罚款100元，周一24:00前未发送罚款200元（遇节假日按上班第一天计算）<br>（2）月度考核要求：须于每月10日前提交考核计划，30日前完成绩效自评，次月5日还未自评的，罚款200元，默认分档D</p>
+<h3 id="4、团队建设："><a href="#4、团队建设：" class="headerlink" title="4、团队建设："></a>4、团队建设：</h3><p>（1）每季度1次团队座谈复盘会，瓜子花生到位<br>（2）不定期组织运动项目，诸如爬山、体育比赛，劳逸结合<br>（3）每季度一次团建，每年1~2次亲子会活动（可带家属参加）<br>（4）每周零食福利，由罚款和部门费用买单</p>
+<h3 id="5、团队421克拉之星"><a href="#5、团队421克拉之星" class="headerlink" title="5、团队421克拉之星"></a>5、团队421克拉之星</h3><p>(1) 对团队行为准则遵循良好或者遵循不到位的，成员可以反馈到项目负责人或者部门负责人，考核时会进行加减分<br>（2）除主动反馈外，每月通过调查问卷内部调研<br>（3）每月度评选一个月度之星，考核B或A<br>每季度评选一次团队421之星，考核A</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/04/27/%E6%8A%80%E6%9C%AF%E5%9F%B9%E8%AE%AD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/27/%E6%8A%80%E6%9C%AF%E5%9F%B9%E8%AE%AD/" class="post-title-link" itemprop="url">技术培训</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-27 11:37:44" itemprop="dateCreated datePublished" datetime="2021-04-27T11:37:44+08:00">2021-04-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>445</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>部门培训材料</p>
+<h2 id="前端培训"><a href="#前端培训" class="headerlink" title="前端培训"></a>前端培训</h2><blockquote>
+<p>课程名称-讲师-时间</p>
+</blockquote>
+<h2 id="后端培训"><a href="#后端培训" class="headerlink" title="后端培训"></a>后端培训</h2><table>
+<thead>
+<tr>
+<th>时间</th>
+<th>课程名称</th>
+<th>讲师</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><a href="/blog/2021/04/29/TDD%E5%AE%9E%E8%B7%B5/">高效编码之TDD 实践</a></td>
+<td>钟明星</td>
+<td>外部</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>课程名称-讲师-时间</p>
+</blockquote>
+<h2 id="帮助"><a href="#帮助" class="headerlink" title="帮助"></a>帮助</h2><p><strong>分页网页的永久链接地址</strong></p>
+<pre><code>:year/:month/:day/:title/    /blog/2013/07/14/hello-world/
+</code></pre>
+<p>比如</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: TDD实践</span><br><span class="line">tags:</span><br><span class="line"><span class="bullet">  -</span> TDD</span><br><span class="line">categories: 技术分享</span><br><span class="line">date: 2021-04-29 10:00:56</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+
+<p>对应的链接: <code>/blog/2021/04/29/TDD实践/</code></p>
+<pre><code>[高效编码之TDD 实践 - 钟明星 - 2021 年 4月 28 日](/blog/2021/04/29/TDD%E5%AE%9E%E8%B7%B5/)
+</code></pre>
+<p><strong>附件保存</strong></p>
+<p>如果有图片、附件，可以放到<code>source/images</code> 文件夹里</p>
+<p><strong>在文章里插入pdf</strong></p>
+<p>培训课程可以将ppt转为pdf，方便在线预览。</p>
+<p>将pdf放到<code>source/images</code> 文件夹，然后在markdown中引用。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% pdf /blog/images/your/file.pdf %&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/04/25/jqpeng-chemfig%E5%8C%96%E5%AD%A6%E5%BC%8F%E8%BD%AC%E6%8D%A2%E4%B8%BApdf/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/25/jqpeng-chemfig%E5%8C%96%E5%AD%A6%E5%BC%8F%E8%BD%AC%E6%8D%A2%E4%B8%BApdf/" class="post-title-link" itemprop="url">chemfig化学式转换为pdf</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-25 19:37:00" itemprop="dateCreated datePublished" datetime="2021-04-25T19:37:00+08:00">2021-04-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/chemfig.html">chemfig化学式转换为pdf</a></p>
+<h2 id="SMILES-与-chemfig"><a href="#SMILES-与-chemfig" class="headerlink" title="SMILES 与 chemfig"></a>SMILES 与 chemfig</h2><p>针对化学分子结构，可以用<code>SMILES</code> （用ASCII字符串明确描述分子结构的规范）来定义。</p>
+<blockquote>
+<p>SMILES（Simplified molecular input line entry specification），简化分子线性输入规范，是一种用ASCII字符串明确描述分子结构的规范。SMILES由Arthur Weininger和David Weininger于20世纪80年代晚期开发，并由其他人，尤其是日光化学信息系统有限公司（Daylight Chemical Information Systems Inc.），修改和扩展</p>
+</blockquote>
+<p>但是<code>SMILES</code>需要一定的化学基础，而<code>chemfig</code>则是从图形层面定义了一套规范，方便定义和显示化学式。当然，<code>SMILES</code>可以方便的转换到<code>chemfig</code>.</p>
+<p>比如:</p>
+<pre><code>CN1C=NC2=C1C(=O)N(C(=O)N2C)C
+</code></pre>
+<p>可通过mol2chemfig进行转换：</p>
+<pre><code>mol2chemfig -wz -i direct &#39;CN1C=NC2=C1C(=O)N(C(=O)N2C)C&#39; &gt; caffeine.tex
+</code></pre>
+<p>转换后：</p>
+<pre><code>\chemfig&#123;-[:138]N-[:84]=^[:156]N-[:228]=[:300](-[:240](-[:180]N(-[:240]%
+)-[:120](-[:60]N(-[:120])-)=[:180]O)=[:300]O)-[:12]\phantom&#123;N&#125;&#125;
+</code></pre>
+<h2 id="chemfig-转换为pdf"><a href="#chemfig-转换为pdf" class="headerlink" title="chemfig 转换为pdf"></a>chemfig 转换为pdf</h2><p>我们可以通过pdflatex（textlive的一个工具）来转换tex为pdf：</p>
+<p>拉取txtlive镜像：</p>
+<pre><code>docker pull listx/texlive:2020
+docker run -it --rm -v `pwd`:/app listx/texlive:2020 bash
+</code></pre>
+<p>然后用pdflatex转换。首先，我们生成一个tex文件<code>test.tex</code>，一个空tex文件，使用<code>mol2chemfig</code>(可从mol2chemfig下载),中间放上<code>\chemfig&#123;H_3C-[:30]N**6(-(=O)-(**5(-N(-CH_3)--N-))--N(-CH_3)-(=O)-)&#125;</code>，</p>
+<pre><code>\documentclass&#123;minimal&#125;
+\usepackage&#123;xcolor, mol2chemfig&#125;
+\usepackage[margin=(margin)spt,papersize=&#123;%(width)spt, %(height)spt&#125;]&#123;geometry&#125;
+
+\usepackage[helvet]&#123;sfmath&#125;
+\setcrambond&#123;2.5pt&#125;&#123;0.4pt&#125;&#123;1.0pt&#125;
+\setbondoffset&#123;1pt&#125;
+\setdoublesep&#123;2pt&#125;
+\setatomsep&#123;%(atomsep)spt&#125;
+\renewcommand&#123;\printatom&#125;[1]&#123;\fontsize&#123;8pt&#125;&#123;10pt&#125;\selectfont&#123;\ensuremath&#123;\mathsf&#123;#1&#125;&#125;&#125;&#125;
+
+\setlength&#123;\parindent&#125;&#123;0pt&#125;
+\setlength&#123;\fboxsep&#125;&#123;0pt&#125;
+\begin&#123;document&#125;
+\vspace*&#123;\fill&#125;
+\vspace&#123;-8pt&#125;
+\begin&#123;center&#125;
+
+\chemfig&#123;H_3C-[:30]N**6(-(=O)-(**5(-N(-CH_3)--N-))--N(-CH_3)-(=O)-)&#125;
+
+\end&#123;center&#125;
+\vspace*&#123;\fill&#125;
+\end&#123;document&#125;
+</code></pre>
+<p>然后执行转换：</p>
+<pre><code>pdflatex -interaction=nonstopmode  test.tex
+</code></pre>
+<p>等待1~2s，可以看到生成的pdf，打开：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/4/25/1619350402339.png" alt="PDF"></p>
+<p>如何返回给前端呢，可以读取文件，然后转换为base64，python代码：</p>
+<pre><code>pdfstring = open(&#39;test.pdf&#39;).read()
+encoded = base64.encodestring(pdfstring)
+pdflink = &quot;data:application/pdf;base64,&#123;&#125;&quot;.format(encoded)
+</code></pre>
+<hr>
+<p>感谢您的认真阅读。</p>
+<p>如果你觉得有帮助，欢迎点赞支持！</p>
+<p>不定期分享软件开发经验，欢迎关注作者, 一起交流软件开发：</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/04/13/jqpeng-%E4%BB%8Ewav%E5%88%B0Ogg%20Opus%20%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8java%E8%A7%A3%E7%A0%81OPUS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/13/jqpeng-%E4%BB%8Ewav%E5%88%B0Ogg%20Opus%20%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8java%E8%A7%A3%E7%A0%81OPUS/" class="post-title-link" itemprop="url">从wav到Ogg Opus 以及使用java解码OPUS</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-13 10:09:00" itemprop="dateCreated datePublished" datetime="2021-04-13T10:09:00+08:00">2021-04-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/ogg-opus.html">从wav到Ogg Opus 以及使用java解码OPUS</a></p>
+<h2 id="PCM"><a href="#PCM" class="headerlink" title="PCM"></a>PCM</h2><p>自然界中的声音非常复杂，波形极其复杂，通常我们采用的是脉冲代码调制编码，即PCM编码。PCM通过抽样、量化、编码三个步骤将连续变化的模拟信号转换为数字编码。</p>
+<p><strong>采样率</strong></p>
+<p>采样频率，也称为采样速度或者采样率，定义了每秒从连续信号中提取并组成离散信号的采样个数，它用赫兹（Hz）来表示。采样频率的倒数是采样周期或者叫作采样时间，它是采样之间的时间间隔。通俗的讲采样频率是指计算机每秒钟采集多少个信号样本。</p>
+<p>工业界常用的16K，就是1s有16000个采样点。</p>
+<h2 id="WAV"><a href="#WAV" class="headerlink" title="WAV"></a>WAV</h2><p>PCM是原始语音，依据采样率的定义，我们知道要播放PCM，需要知道采样率，因此需要一个文件格式可以封装PCM，<code>wav</code>就是微软公司专门为Windows开发的一种标准数字音频文件，该文件能记录各种单声道或立体声的声音信息。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/4/13/1618277649258.png" alt="WAV格式"></p>
+<p>wav文件前44个字节，定义了采样率，channel等参数，播放器通过这个数据就可以播放PCM数据了。</p>
+<h2 id="MP3"><a href="#MP3" class="headerlink" title="MP3"></a>MP3</h2><p><code>wav</code> 很好的解决了PCM播放的问题，但是PCM实在是太大了，因此出现了<code>mp3</code>等音频格式，通过一定的压缩算法压缩语音，以便于互联网传输分享。</p>
+<h2 id="Ogg-与-Opus"><a href="#Ogg-与-Opus" class="headerlink" title="Ogg 与 Opus"></a>Ogg 与 Opus</h2><p>随着音视频应用的越来越广泛，工业界有了越来越多的编解码器，比如<code>Speek</code>,<code>Opus</code></p>
+<p>Opus编解码器是专门设计用于互联网的交互式语音和音频传输。它是由IETF的编解码器工作组设计的，合并了Skype的SILK和Xiph. Org的CELT技术。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/4/13/1618278091526.png" alt="OPUS"></p>
+<p>OPUS编解码</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/lostromb/concentus">https://github.com/lostromb/concentus</a> 是一个纯java库，可以编解码OPUS。</p>
+<p>OPUS一般是分帧编码，比如一个320采样点（640字节）的数据，编码后为70多个字节，和PCM一样，编码后的OPUS不能直接播放：</p>
+<ul>
+<li>无法从文件本身获取音频的元数据(采样率,声道数,码率等)</li>
+<li>缺少帧分隔标识,无法从连续的文件流中分隔帧(尤其是vbr情况)</li>
+</ul>
+<p>伴随着HTML5的发展，出现了OGG媒体文件格式，Ogg是一个自由且开放标准的多媒体文件格式，由Xiph.Org基金会所维护。Ogg格式并不受到软件专利的限制，并设计用于有效率地流媒体和处理高质量的数字多媒体。“Ogg”意指一种文件格式，可以纳入各式各样自由和开放源代码的编解码器，包含音效、视频、文字（像字幕）与元数据的处理。</p>
+<p>OGG音频</p>
+<table>
+<thead>
+<tr>
+<th>压缩类型</th>
+<th>格式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>有损</td>
+<td>Speek</td>
+<td>以低比特率处理语音数据（〜2.1-32 kbit / s /通道）</td>
+</tr>
+<tr>
+<td></td>
+<td>Vorbis</td>
+<td>处理中高级可变比特率（每通道≈16-500kbit / s）的一般音频数据</td>
+</tr>
+<tr>
+<td></td>
+<td>Opus：</td>
+<td>以低和高可变比特率处理语音，音乐和通用音频（每通道≈6-510kbit / s）</td>
+</tr>
+<tr>
+<td>无损</td>
+<td>FLAC</td>
+<td>处理文件和高保真音频数据</td>
+</tr>
+<tr>
+<td>未压缩</td>
+<td>OggPCM</td>
+<td>处理未压缩的PCM音频,与WAV类似</td>
+</tr>
+</tbody></table>
+<p>参考: <a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904016254599175">https://juejin.cn/post/6844904016254599175</a></p>
+<p>借博主的图:</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/4/13/1618278801473.png" alt="OGG封装"></p>
+<h2 id="java-解码OPUS文件"><a href="#java-解码OPUS文件" class="headerlink" title="java 解码OPUS文件"></a>java 解码OPUS文件</h2><p>通过ffmpeg可以轻松的将wav转换为opus文件，本质是一个ogg封装的opus，我们可以通过<code>vorbis-java</code> 来读取opus文件。</p>
+<p>通过OpusInfoTool，可以打印OPUS文件信息：</p>
+<pre><code>Processing file &quot;C:\Users\jqpeng\Downloads\opus\wav16k.opus&quot;
+
+Opus Headers:
+  Version: 1
+  Vendor: Lavf58.27.103
+  Channels: 1
+  Rate: 16000Hz
+  Pre-Skip: 104
+  Playback Gain: 0dB
+
+User Comments:
+  encoder=Lavc58.53.100 libopus
+
+Logical stream 81c1bbc0 (-2118009920) completed
+
+Opus Audio:
+  Total Data Packets: 579
+  Total Data Length: 41406
+  Audio Length Seconds: 11.564333333333334
+  Audio Length: 00:00:11.56
+  Packet duration:     20.0ms (max),     20.0ms (avg),     20.0ms (min)
+  Page duration:     1000.0ms (max),    965.0ms (avg),    580.0ms (min)
+  Total data length: 41406 (overhead: 2.34%)
+  Playback length: 00:00:11.56
+  Average bitrate: 28.70 kb/s, w/o overhead: 27.97 kb/s
+</code></pre>
+<p>再借助<code>concentus </code>，我们来解码OPUS文件为PCM文件。</p>
+<pre><code>public void testDecode() throws IOException, OpusException &#123;
+        FileInputStream fs = new FileInputStream(&quot;\\wav16k.opus&quot;);
+        OggFile ogg = new OggFile(fs);
+        OpusFile of = new OpusFile(ogg);
+        OpusAudioData ad = null;
+
+        System.out.println(of.getInfo().getSampleRate());
+        System.out.println(of.getInfo().getNumChannels());
+
+        OpusDecoder decoder = new OpusDecoder(of.getInfo().getSampleRate(),
+                                              of.getInfo().getNumChannels());
+        System.out.println(of.getTags());
+        FileOutputStream fileOut = new FileOutputStream(&quot;wav16k.pcm&quot;);
+        // 
+        byte[] data_packet = new byte[of.getInfo().getSampleRate()];
+        int samples = 0;
+        while ((ad = of.getNextAudioPacket()) != null) &#123;
+            // NOTE: samplesDecoded 是decode出来的short个数，byte需要*2
+            int samplesDecoded =
+                    decoder.decode(ad.getData(), 0, ad.getData().length
+                            , data_packet, 0, of.getInfo().getSampleRate() / 2,
+                                   false);
+
+            fileOut.write(data_packet, 0, samplesDecoded * 2);
+            samples += samplesDecoded;
+        &#125;
+
+        System.out.println(&quot;samples: &quot; + samples);
+        System.out.println(&quot;durationSeconds: &quot; + (samples / 16000f));
+        fileOut.close();
+    &#125;
+</code></pre>
+<hr>
+<p>感谢您的认真阅读。</p>
+<p>如果你觉得有帮助，欢迎点赞支持！</p>
+<p>不定期分享软件开发经验，欢迎关注作者, 一起交流软件开发：</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/03/15/jqpeng-%E4%BD%BF%E7%94%A8jhipster%20%E5%8A%A0%E9%80%9Fjava%20web%E5%BC%80%E5%8F%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/15/jqpeng-%E4%BD%BF%E7%94%A8jhipster%20%E5%8A%A0%E9%80%9Fjava%20web%E5%BC%80%E5%8F%91/" class="post-title-link" itemprop="url">使用jhipster 加速java web开发</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-15 16:14:00" itemprop="dateCreated datePublished" datetime="2021-03-15T16:14:00+08:00">2021-03-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>30k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>27 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/jhipster.html">使用jhipster 加速java web开发</a></p>
+<p>jhipster，中文释义： Java 热爱者!</p>
+<blockquote>
+<p>JHipster is a development platform to quickly generate, develop, &amp; deploy modern web applications &amp; microservice architectures.</p>
+</blockquote>
+<p>JHipster 可以通过代码生成，让你快速开发web应用和微服务。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ol>
+<li>安装<a target="_blank" rel="noopener" href="https://adoptopenjdk.net/">Java</a>,<a target="_blank" rel="noopener" href="https://git-scm.com/">Git</a> <a target="_blank" rel="noopener" href="https://nodejs.org/">Node.js</a></li>
+<li>安装 JHipster <code>npm install -g generator-jhipster</code><ul>
+<li>建议安装最新的<a target="_blank" rel="noopener" href="https://github.com/jhipster/generator-jhipster/releases/">7.0版本</a>,</li>
+</ul>
+</li>
+<li>创建应用目录 <code>mkdir myApp &amp;&amp; cd myApp</code></li>
+<li>运行<code>jhipster</code>命令，根据提示设置应用</li>
+<li>可以通过<a target="_blank" rel="noopener" href="https://start.jhipster.tech/jdl-studio/">JDL Studio</a> 来生成<code>jhipster-jdl.jh</code>文件</li>
+<li>然后通过<code>jhipster jdl jhipster-jdl.jh</code>来生成代码，<code>JDL</code> 后续会重点介绍</li>
+</ol>
+<h2 id="JDL-入门"><a href="#JDL-入门" class="headerlink" title="JDL 入门"></a>JDL 入门</h2><p>JDL 是jhipster的数据模型定义文件，通过这个文件我们可以定义数据结构，然后jhipster基于这个JDL，就可以生成实体类、服务类以及前端页面。</p>
+<p>例如，我们要开发投诉建议，假如设计的数据表如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>comment</th>
+<th>类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>record_id</td>
+<td>主键</td>
+<td>Bigint</td>
+<td>自增</td>
+</tr>
+<tr>
+<td>feedback_type</td>
+<td>反馈类型</td>
+<td>unsigned tinyint</td>
+<td>枚举值：[1:意见与建议;5:投诉]</td>
+</tr>
+<tr>
+<td>title</td>
+<td>标题</td>
+<td>varchar(64)</td>
+<td></td>
+</tr>
+<tr>
+<td>content</td>
+<td>问题描述</td>
+<td>varchar(512)</td>
+<td></td>
+</tr>
+<tr>
+<td>feedback_status</td>
+<td>反馈状态</td>
+<td>unsigned tinyint</td>
+<td>枚举值：[1:待提交;5:待回复;10:待确认;15:已解决;]</td>
+</tr>
+<tr>
+<td>last_reply_time</td>
+<td>最后回复时间</td>
+<td>timestamp</td>
+<td>与feedback_status联合使用，当状态为2的时候，更新此时间，用于超时判断</td>
+</tr>
+<tr>
+<td>close_type</td>
+<td>关闭类型</td>
+<td>unsigned tinyint</td>
+<td>枚举值：[1:正常关闭;5:超时关闭;]</td>
+</tr>
+<tr>
+<td>created_date</td>
+<td>创建时间</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>创建者</td>
+<td>char(32)</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>使用<code>jhipster</code>,我们可以用<code>jdl</code>来定义：</p>
+<pre><code>/**
+ * 反馈记录表
+ */
+entity FeedbackRecord &#123;
+    /** 反馈类型*/
+    feedbackType FeedbackType,
+    /** 问题描述 */
+    title String,
+    /** 反馈状态     */
+    feedbackStatus FeedbackStatus,
+     /** 是否已完成 */
+    lastReplyTime Integer,
+     /** 关闭类型     */
+    closeType FeedbackCloseType,
+     /** 创建时间 */
+    createdDate Instant,
+    /**     创建者 */
+    createdBy String
+&#125;
+/** 反馈类型 */
+enum FeedbackType &#123;
+    ADVICE,
+    COMPLAINTS
+&#125;
+/** 反馈状态 */
+enum FeedbackStatus &#123;
+    TO_BE_SUBMIT, TO_BE_REPLY, TO_BE_CONFIRMED
+&#125;
+/** 关闭类型 */
+enum FeedbackCloseType &#123;
+    NORMALLY, TIMEOUT
+&#125;
+
+dto * with mapstruct
+service all with serviceImpl
+paginate all with pagination
+</code></pre>
+<p>详细讲解：</p>
+<h3 id="实体和字段"><a href="#实体和字段" class="headerlink" title="实体和字段"></a>实体和字段</h3><p>entity 表示一个实体，可以增加字段，注意，不用增加id</p>
+<p>语法是：</p>
+<pre><code>[&lt;entity javadoc&gt;]
+[&lt;entity annotation&gt;*]
+entity &lt;entity name&gt; [(&lt;table name&gt;)] &#123;
+  [&lt;field javadoc&gt;]
+  [&lt;field annotation&gt;*]
+  &lt;field name&gt; &lt;field type&gt; [&lt;validation&gt;*]
+&#125;
+</code></pre>
+<p>例如：</p>
+<pre><code>entity A &#123;
+  name String required
+  age Integer min(42) max(42)
+&#125;
+</code></pre>
+<p>可以增加<code>required</code>、<code>min</code>、<code>max</code>等验证</p>
+<p>字段的注释:</p>
+<pre><code>/**
+ * This is a comment
+ * about a class
+ * @author Someone
+ */
+entity A &#123;
+  /** 名称 */
+   name String
+   age Integer // this is yet another comment
+&#125;
+</code></pre>
+<p>JHipster支持许多字段类型。这种支持取决于您的数据库后端，因此我们使用Java类型来描述它们：Java<code>String</code>将以不同的方式存储在Oracle或Cassandra中，这是JHipster的优势之一，可以为您生成正确的数据库访问代码。</p>
+<ul>
+<li><code>String</code>: Java字符串。它的默认大小取决于基础后端（如果使用JPA，默认情况下为255），但是您可以使用校验规则进行更改（例如，修改 <code>max</code>大小为1024）。</li>
+<li><code>Integer</code>: Java整数。</li>
+<li><code>Long</code>: Java长整数。</li>
+<li><code>Float</code>: Java浮点数.</li>
+<li><code>Double</code>: Java双精度浮点数.</li>
+<li><code>BigDecimal</code>: <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/math/BigDecimal.html">java.math.BigDecimal</a>对象, 当您需要精确的数学计算时使用（通常用于财务操作）。</li>
+<li><code>LocalDate</code>: <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html">java.time.LocalDate</a>对象, 用于正确管理Java中的日期。</li>
+<li><code>Instant</code>: <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/time/Instant.html">java.time.Instant</a>对象, 用于表示时间戳，即时间线上的瞬时点。</li>
+<li><code>ZonedDateTime</code>: <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/time/ZonedDateTime.html">java.time.ZonedDateTime</a>对象, 用于表示给定时区（通常是日历中会议、约定）中的本地日期时间。请注意，REST和持久层都不支持时区，因此您很可能应该使用<code>Instant</code>。</li>
+<li><code>Duration</code>: <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html">java.time.Duration</a>对象, 用于表示时间量。</li>
+<li><code>UUID</code>: <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/util/UUID.html">java.util.UUID</a>对象.</li>
+<li><code>Boolean</code>: Java布尔型.</li>
+<li><code>Enumeration</code>:Java枚举对象。选择此类型后，子生成器将询问您要在枚举中使用哪些值，并将创建一个特定的<code>enum</code>类来存储它们。</li>
+<li><code>Blob</code>: Blob对象，用于存储一些二进制数据。选择此类型时，子生成器将询问您是否要存储通用二进制数据，图像对象或CLOB（长文本）。图像将专门在Angular侧进行优化处理，因此可以将其正常显示给最终用户。</li>
+</ul>
+<p>字段的数据类型及数据库支持：</p>
+<p><img src="http://ainotedoc.iflyresearch.com/images/b8149b95c85096326712cb9228e7245ad86e778ae01e53f8cf59c3541aac229f.png" alt="数据类型"></p>
+<h3 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h3><p>对于可枚举的状态，建议采用枚举值：</p>
+<pre><code>enum [&lt;enum name&gt;] &#123;
+  &lt;ENUM KEY&gt; ([&lt;enum value&gt;])
+&#125;
+</code></pre>
+<p>例如：</p>
+<pre><code>/** 反馈类型 */
+enum FeedbackType &#123;
+    ADVICE,
+    COMPLAINTS
+&#125;
+</code></pre>
+<h3 id="关系"><a href="#关系" class="headerlink" title="关系"></a>关系</h3><p>SQL数据库支持表和表的关联：</p>
+<ul>
+<li><code>OneToOne</code></li>
+<li><code>OneToMany</code></li>
+<li><code>ManyToOne</code></li>
+<li><code>ManyToMany</code></li>
+</ul>
+<p>如何定义关系呢？</p>
+<pre><code>relationship (OneToMany | ManyToOne | OneToOne | ManyToMany) &#123;
+  &lt;from entity&gt;[&#123;&lt;relationship name&gt;[(&lt;display field&gt;)]&#125;] to &lt;to entity&gt;[&#123;&lt;relationship name&gt;[(&lt;display field&gt;)]&#125;]+
+&#125;
+</code></pre>
+<p>例如, 下面的例子里，我们定义两个对象，<code>File</code>和<code>Chunk</code>，1个<code>Chunk</code>属于一个<code>File</code>：</p>
+<pre><code>/**
+ * 文件
+ */
+entity File &#123;
+    /** 文件名 */
+    name String,
+    /** 文件大小 */
+    size Long,
+    /** 文件路径 */
+    path String,
+    /** 分片数 */
+    chunks Integer,
+     /** 是否已完成 */
+    complete Integer
+&#125;
+
+/**
+ * 文件分片
+ */
+entity Chunk &#123;
+    /** md5值 */
+    md5 String,
+    /** 分片序号 */
+    number Integer,
+    /** 分片名称 */
+    name String
+&#125;
+
+relationship ManyToOne &#123;
+    /** 所属文件 */
+    Chunk&#123;file&#125; to File
+&#125;
+</code></pre>
+<p>对应的关系图：</p>
+<p><img src="http://ainotedoc.iflyresearch.com/images/5678aa9b0f1462f73e224f3a075fc3ebf7ebcb54f39f2fab44498e4cba7f0330.png" alt="关系图"></p>
+<h3 id="生成代码配置"><a href="#生成代码配置" class="headerlink" title="生成代码配置"></a>生成代码配置</h3><p>JHipster提供了丰富的配置，可以用来指定生成代码时的策略，例如是否要生成<code>DTO对象</code>，是否需要支持分页，是否需要生成service类，如果生成service，是使用<code>serviceClass</code>还是<code>serviceImpl</code>。</p>
+<p>示例如下：</p>
+<pre><code>entity A &#123;
+  name String required
+&#125;
+entity B
+entity C
+
+// 筛选实体
+filter *
+
+// 生成dto
+dto A, B with mapstruct
+
+// 分页
+paginate A with infinite-scroll
+paginate B with pagination
+paginate C with pager  // pager is only available in AngularJS
+
+// 生成service
+service A with serviceClass
+service C with serviceImpl
+</code></pre>
+<h2 id="生成代码"><a href="#生成代码" class="headerlink" title="生成代码"></a>生成代码</h2><p>首先定义<code>jdl</code>文件：</p>
+<pre><code>/**
+ * 反馈记录表
+ */
+entity FeedbackRecord &#123;
+    /** 反馈类型*/
+    feedbackType FeedbackType,
+    /** 问题描述 */
+    title String,
+    /** 反馈状态     */
+    feedbackStatus FeedbackStatus,
+     /** 是否已完成 */
+    lastReplyTime Integer,
+     /** 关闭类型     */
+    closeType FeedbackCloseType,
+     /** 创建时间 */
+    createdDate Instant,
+    /**     创建者 */
+    createdBy String
+&#125;
+/** 反馈类型 */
+enum FeedbackType &#123;
+    ADVICE,
+    COMPLAINTS
+&#125;
+/** 反馈状态 */
+enum FeedbackStatus &#123;
+    TO_BE_SUBMIT, TO_BE_REPLY, TO_BE_CONFIRMED
+&#125;
+/** 关闭类型 */
+enum FeedbackCloseType &#123;
+    NORMALLY, TIMEOUT
+&#125;
+// 筛选实体
+filter *
+// 生成DTO
+dto * with mapstruct
+// 生成带接口和实现的service
+service all with serviceImpl
+// 支持分页
+paginate all with pagination
+</code></pre>
+<p>然后生成代码：</p>
+<pre><code>jhipster jdl feedback.jh --force
+</code></pre>
+<p>可以看到类似下面的输出</p>
+<pre><code>D:\Project\jhipster-7&gt;jhipster jdl feedback.jh --force
+INFO! Using JHipster version installed locally in current project&#39;s node_modules
+INFO! Executing import-jdl feedback.jh
+INFO! The JDL is being parsed.
+info: The dto option is set for FeedbackRecord, the &#39;serviceClass&#39; value for the &#39;service&#39; is gonna be set for this entity if no other value has been set.
+INFO! Found entities: FeedbackRecord.
+INFO! The JDL has been successfully parsed
+INFO! Generating 0 applications.
+INFO! Generating 1 entity.
+INFO! Generating entities for application undefined in a new parallel process
+
+Found the D:\Project\jhipster-7\.jhipster\File.json configuration file, entity can be automatically generated!
+
+
+Found the D:\Project\jhipster-7\.jhipster\Chunk.json configuration file, entity can be automatically generated!
+
+
+Found the D:\Project\jhipster-7\.jhipster\FeedbackRecord.json configuration file, entity can be automatically generated!
+
+     info Creating changelog for entities File,Chunk,FeedbackRecord
+    force .yo-rc.json
+    force .jhipster\FeedbackRecord.json
+    force .jhipster\File.json
+    force .jhipster\Chunk.json
+    force src\main\java\com\company\blog\domain\File.java
+    force src\main\java\com\company\blog\web\rest\FileResource.java
+    force src\main\java\com\company\blog\repository\FileRepository.java
+    force src\main\java\com\company\blog\service\FileService.java
+    force src\main\java\com\company\blog\service\impl\FileServiceImpl.java
+    force src\main\java\com\company\blog\service\dto\FileDTO.java
+    force src\main\java\com\company\blog\service\mapper\EntityMapper.java
+    force src\main\java\com\company\blog\service\mapper\FileMapper.java
+    force src\test\java\com\company\blog\web\rest\FileResourceIT.java
+    force src\test\java\com\company\blog\domain\FileTest.java
+    force src\test\java\com\company\blog\service\dto\FileDTOTest.java
+    force src\test\java\com\company\blog\service\mapper\FileMapperTest.java
+    force src\main\webapp\app\shared\model\file.model.ts
+    force src\main\webapp\app\entities\file\file-details.vue
+    force src\main\webapp\app\entities\file\file-details.component.ts
+    force src\main\webapp\app\entities\file\file.vue
+    force src\main\webapp\app\entities\file\file.component.ts
+    force src\main\webapp\app\entities\file\file.service.ts
+    force src\main\webapp\app\entities\file\file-update.vue
+    force src\main\webapp\app\entities\file\file-update.component.ts
+    force src\test\javascript\spec\app\entities\file\file.component.spec.ts
+    force src\test\javascript\spec\app\entities\file\file-details.component.spec.ts
+    force src\test\javascript\spec\app\entities\file\file.service.spec.ts
+    force src\test\javascript\spec\app\entities\file\file-update.component.spec.ts
+    force src\main\webapp\app\router\entities.ts
+    force src\main\webapp\app\main.ts
+    force src\main\webapp\app\core\jhi-navbar\jhi-navbar.vue
+    force src\main\webapp\i18n\zh-cn\file.json
+    force src\main\webapp\i18n\zh-cn\global.json
+    force src\main\webapp\i18n\en\file.json
+    force src\main\webapp\i18n\en\global.json
+    force src\main\java\com\company\blog\domain\Chunk.java
+    force src\main\java\com\company\blog\web\rest\ChunkResource.java
+    force src\main\java\com\company\blog\repository\ChunkRepository.java
+    force src\main\java\com\company\blog\service\ChunkService.java
+    force src\main\java\com\company\blog\service\impl\ChunkServiceImpl.java
+    force src\main\java\com\company\blog\service\dto\ChunkDTO.java
+    force src\main\java\com\company\blog\service\mapper\ChunkMapper.java
+    force src\test\java\com\company\blog\web\rest\ChunkResourceIT.java
+    force src\test\java\com\company\blog\domain\ChunkTest.java
+    force src\test\java\com\company\blog\service\dto\ChunkDTOTest.java
+    force src\test\java\com\company\blog\service\mapper\ChunkMapperTest.java
+    force src\main\webapp\app\shared\model\chunk.model.ts
+    force src\main\webapp\app\entities\chunk\chunk-details.vue
+    force src\main\webapp\app\entities\chunk\chunk-details.component.ts
+    force src\main\webapp\app\entities\chunk\chunk.vue
+    force src\main\webapp\app\entities\chunk\chunk.component.ts
+    force src\main\webapp\app\entities\chunk\chunk.service.ts
+    force src\main\webapp\app\entities\chunk\chunk-update.vue
+    force src\main\webapp\app\entities\chunk\chunk-update.component.ts
+    force src\test\javascript\spec\app\entities\chunk\chunk.component.spec.ts
+    force src\test\javascript\spec\app\entities\chunk\chunk-details.component.spec.ts
+    force src\test\javascript\spec\app\entities\chunk\chunk.service.spec.ts
+    force src\test\javascript\spec\app\entities\chunk\chunk-update.component.spec.ts
+    force src\main\webapp\i18n\zh-cn\chunk.json
+    force src\main\webapp\i18n\en\chunk.json
+   create src\main\java\com\company\blog\domain\FeedbackRecord.java
+   create src\main\java\com\company\blog\web\rest\FeedbackRecordResource.java
+   create src\main\java\com\company\blog\repository\FeedbackRecordRepository.java
+   create src\main\java\com\company\blog\service\FeedbackRecordService.java
+   create src\main\java\com\company\blog\service\impl\FeedbackRecordServiceImpl.java
+   create src\main\java\com\company\blog\service\dto\FeedbackRecordDTO.java
+   create src\main\java\com\company\blog\service\mapper\FeedbackRecordMapper.java
+   create src\test\java\com\company\blog\web\rest\FeedbackRecordResourceIT.java
+   create src\test\java\com\company\blog\domain\FeedbackRecordTest.java
+   create src\test\java\com\company\blog\service\dto\FeedbackRecordDTOTest.java
+   create src\test\java\com\company\blog\service\mapper\FeedbackRecordMapperTest.java
+   create src\main\java\com\company\blog\domain\enumeration\FeedbackType.java
+   create src\main\java\com\company\blog\domain\enumeration\FeedbackStatus.java
+   create src\main\java\com\company\blog\domain\enumeration\FeedbackCloseType.java
+   create src\main\webapp\app\shared\model\feedback-record.model.ts
+   create src\main\webapp\app\entities\feedback-record\feedback-record-details.vue
+   create src\main\webapp\app\entities\feedback-record\feedback-record-details.component.ts
+   create src\main\webapp\app\entities\feedback-record\feedback-record.vue
+   create src\main\webapp\app\entities\feedback-record\feedback-record.component.ts
+   create src\main\webapp\app\entities\feedback-record\feedback-record.service.ts
+    force src\main\resources\config\liquibase\changelog\20210312045459_added_entity_File.xml
+    force src\main\resources\config\liquibase\fake-data\file.csv
+   create src\main\webapp\app\entities\feedback-record\feedback-record-update.vue
+    force src\main\resources\config\liquibase\master.xml
+    force src\main\resources\config\liquibase\changelog\20210312045500_added_entity_Chunk.xml
+    force src\main\resources\config\liquibase\changelog\20210312045500_added_entity_constraints_Chunk.xml
+    force src\main\resources\config\liquibase\fake-data\chunk.csv
+   create src\main\resources\config\liquibase\changelog\20210312072243_added_entity_FeedbackRecord.xml
+   create src\main\resources\config\liquibase\fake-data\feedback_record.csv
+   create src\main\webapp\app\entities\feedback-record\feedback-record-update.component.ts
+   create src\test\javascript\spec\app\entities\feedback-record\feedback-record.component.spec.ts
+   create src\test\javascript\spec\app\entities\feedback-record\feedback-record-details.component.spec.ts
+   create src\test\javascript\spec\app\entities\feedback-record\feedback-record.service.spec.ts
+   create src\test\javascript\spec\app\entities\feedback-record\feedback-record-update.component.spec.ts
+   create src\main\webapp\app\shared\model\enumerations\feedback-type.model.ts
+   create src\main\webapp\app\shared\model\enumerations\feedback-status.model.ts
+   create src\main\webapp\app\shared\model\enumerations\feedback-close-type.model.ts
+   create src\main\webapp\i18n\zh-cn\feedbackType.json
+   create src\main\webapp\i18n\en\feedbackType.json
+   create src\main\webapp\i18n\zh-cn\feedbackStatus.json
+   create src\main\webapp\i18n\en\feedbackStatus.json
+   create src\main\webapp\i18n\zh-cn\feedbackCloseType.json
+   create src\main\webapp\i18n\en\feedbackCloseType.json
+   create src\main\webapp\i18n\zh-cn\feedbackRecord.json
+   create src\main\webapp\i18n\en\feedbackRecord.json
+Entity File generated successfully.
+Entity Chunk generated successfully.
+Entity FeedbackRecord generated successfully.
+
+Running `webapp:build` to update client app
+</code></pre>
+<p>包含domain、service、controller等都有生成：</p>
+<h2 id="测试生成程序"><a href="#测试生成程序" class="headerlink" title="测试生成程序"></a>测试生成程序</h2><p>运行程序，</p>
+<p>列表页面：</p>
+<p><img src="http://ainotedoc.iflyresearch.com/images/dfb9592f5a57bfd645ff822113534f78480cb8d52cd59b915f6dd8d017f22a46.png" alt="列表页面"></p>
+<p>编辑页面：</p>
+<p><img src="http://ainotedoc.iflyresearch.com/images/0dc5aa933e3186e0b3daf6c44637601204cecd894a66acfc38142fdda7713243.png" alt="编辑页面"></p>
+<h2 id="生成代码介绍"><a href="#生成代码介绍" class="headerlink" title="生成代码介绍"></a>生成代码介绍</h2><h3 id="Domain"><a href="#Domain" class="headerlink" title="Domain"></a>Domain</h3><pre><code>package com.company.blog.domain;
+
+import com.company.blog.domain.enumeration.FeedbackCloseType;
+import com.company.blog.domain.enumeration.FeedbackStatus;
+import com.company.blog.domain.enumeration.FeedbackType;
+import java.io.Serializable;
+import java.time.Instant;
+import javax.persistence.*;
+
+/**
+ * 反馈记录表
+ */
+@Entity
+@Table(name = &quot;feedback_record&quot;)
+public class FeedbackRecord implements Serializable &#123;
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /**
+     * 反馈类型
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;feedback_type&quot;)
+    private FeedbackType feedbackType;
+
+    /**
+     * 问题描述
+     */
+    @Column(name = &quot;title&quot;)
+    private String title;
+
+    /**
+     * 反馈状态
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;feedback_status&quot;)
+    private FeedbackStatus feedbackStatus;
+
+    /**
+     * 是否已完成
+     */
+    @Column(name = &quot;last_reply_time&quot;)
+    private Integer lastReplyTime;
+
+    /**
+     * 关闭类型
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;close_type&quot;)
+    private FeedbackCloseType closeType;
+
+    /**
+     * 创建时间
+     */
+    @Column(name = &quot;created_date&quot;)
+    private Instant createdDate;
+
+    /**
+     * 创建者
+     */
+    @Column(name = &quot;created_by&quot;)
+    private String createdBy;
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here
+    public Long getId() &#123;
+        return id;
+    &#125;
+
+    public void setId(Long id) &#123;
+        this.id = id;
+    &#125;
+
+    public FeedbackRecord id(Long id) &#123;
+        this.id = id;
+        return this;
+    &#125;
+
+    public FeedbackType getFeedbackType() &#123;
+        return this.feedbackType;
+    &#125;
+
+    public FeedbackRecord feedbackType(FeedbackType feedbackType) &#123;
+        this.feedbackType = feedbackType;
+        return this;
+    &#125;
+
+    public void setFeedbackType(FeedbackType feedbackType) &#123;
+        this.feedbackType = feedbackType;
+    &#125;
+
+    public String getTitle() &#123;
+        return this.title;
+    &#125;
+
+    public FeedbackRecord title(String title) &#123;
+        this.title = title;
+        return this;
+    &#125;
+
+    public void setTitle(String title) &#123;
+        this.title = title;
+    &#125;
+
+    public FeedbackStatus getFeedbackStatus() &#123;
+        return this.feedbackStatus;
+    &#125;
+
+    public FeedbackRecord feedbackStatus(FeedbackStatus feedbackStatus) &#123;
+        this.feedbackStatus = feedbackStatus;
+        return this;
+    &#125;
+
+    public void setFeedbackStatus(FeedbackStatus feedbackStatus) &#123;
+        this.feedbackStatus = feedbackStatus;
+    &#125;
+
+    public Integer getLastReplyTime() &#123;
+        return this.lastReplyTime;
+    &#125;
+
+    public FeedbackRecord lastReplyTime(Integer lastReplyTime) &#123;
+        this.lastReplyTime = lastReplyTime;
+        return this;
+    &#125;
+
+    public void setLastReplyTime(Integer lastReplyTime) &#123;
+        this.lastReplyTime = lastReplyTime;
+    &#125;
+
+    public FeedbackCloseType getCloseType() &#123;
+        return this.closeType;
+    &#125;
+
+    public FeedbackRecord closeType(FeedbackCloseType closeType) &#123;
+        this.closeType = closeType;
+        return this;
+    &#125;
+
+    public void setCloseType(FeedbackCloseType closeType) &#123;
+        this.closeType = closeType;
+    &#125;
+
+    public Instant getCreatedDate() &#123;
+        return this.createdDate;
+    &#125;
+
+    public FeedbackRecord createdDate(Instant createdDate) &#123;
+        this.createdDate = createdDate;
+        return this;
+    &#125;
+
+    public void setCreatedDate(Instant createdDate) &#123;
+        this.createdDate = createdDate;
+    &#125;
+
+    public String getCreatedBy() &#123;
+        return this.createdBy;
+    &#125;
+
+    public FeedbackRecord createdBy(String createdBy) &#123;
+        this.createdBy = createdBy;
+        return this;
+    &#125;
+
+    public void setCreatedBy(String createdBy) &#123;
+        this.createdBy = createdBy;
+    &#125;
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+
+    @Override
+    public boolean equals(Object o) &#123;
+        if (this == o) &#123;
+            return true;
+        &#125;
+        if (!(o instanceof FeedbackRecord)) &#123;
+            return false;
+        &#125;
+        return id != null &amp;&amp; id.equals(((FeedbackRecord) o).id);
+    &#125;
+
+    @Override
+    public int hashCode() &#123;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
+    &#125;
+
+    // prettier-ignore
+    @Override
+    public String toString() &#123;
+        return &quot;FeedbackRecord&#123;&quot; +
+            &quot;id=&quot; + getId() +
+            &quot;, feedbackType=&#39;&quot; + getFeedbackType() + &quot;&#39;&quot; +
+            &quot;, title=&#39;&quot; + getTitle() + &quot;&#39;&quot; +
+            &quot;, feedbackStatus=&#39;&quot; + getFeedbackStatus() + &quot;&#39;&quot; +
+            &quot;, lastReplyTime=&quot; + getLastReplyTime() +
+            &quot;, closeType=&#39;&quot; + getCloseType() + &quot;&#39;&quot; +
+            &quot;, createdDate=&#39;&quot; + getCreatedDate() + &quot;&#39;&quot; +
+            &quot;, createdBy=&#39;&quot; + getCreatedBy() + &quot;&#39;&quot; +
+            &quot;&#125;&quot;;
+    &#125;
+&#125;
+</code></pre>
+<h3 id="Repository"><a href="#Repository" class="headerlink" title="Repository"></a>Repository</h3><pre><code>@SuppressWarnings(&quot;unused&quot;)
+@Repository
+public interface FeedbackRecordRepository extends JpaRepository&lt;FeedbackRecord, Long&gt;, JpaSpecificationExecutor&lt;FeedbackRecord&gt; &#123;&#125;
+</code></pre>
+<h3 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h3><pre><code>/**
+ * Service Interface for managing &#123;@link com.company.blog.domain.FeedbackRecord&#125;.
+ */
+public interface FeedbackRecordService &#123;
+    /**
+     * Save a feedbackRecord.
+     *
+     * @param feedbackRecordDTO the entity to save.
+     * @return the persisted entity.
+     */
+    FeedbackRecordDTO save(FeedbackRecordDTO feedbackRecordDTO);
+
+    /**
+     * Partially updates a feedbackRecord.
+     *
+     * @param feedbackRecordDTO the entity to update partially.
+     * @return the persisted entity.
+     */
+    Optional&lt;FeedbackRecordDTO&gt; partialUpdate(FeedbackRecordDTO feedbackRecordDTO);
+
+    /**
+     * Get all the feedbackRecords.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Page&lt;FeedbackRecordDTO&gt; findAll(Pageable pageable);
+
+    /**
+     * Get the &quot;id&quot; feedbackRecord.
+     *
+     * @param id the id of the entity.
+     * @return the entity.
+     */
+    Optional&lt;FeedbackRecordDTO&gt; findOne(Long id);
+
+    /**
+     * Delete the &quot;id&quot; feedbackRecord.
+     *
+     * @param id the id of the entity.
+     */
+    void delete(Long id);
+&#125;
+</code></pre>
+<h3 id="Controller"><a href="#Controller" class="headerlink" title="Controller"></a>Controller</h3><pre><code>/**
+ * REST controller for managing &#123;@link com.company.blog.domain.FeedbackRecord&#125;.
+ */
+@RestController
+@RequestMapping(&quot;/api&quot;)
+public class FeedbackRecordResource &#123;
+
+    private final Logger log = LoggerFactory.getLogger(FeedbackRecordResource.class);
+
+    private static final String ENTITY_NAME = &quot;feedbackRecord&quot;;
+
+    @Value(&quot;$&#123;jhipster.clientApp.name&#125;&quot;)
+    private String applicationName;
+
+    private final FeedbackRecordService feedbackRecordService;
+
+    private final FeedbackRecordQueryService feedbackRecordQueryService;
+
+    public FeedbackRecordResource(FeedbackRecordService feedbackRecordService, FeedbackRecordQueryService feedbackRecordQueryService) &#123;
+        this.feedbackRecordService = feedbackRecordService;
+        this.feedbackRecordQueryService = feedbackRecordQueryService;
+    &#125;
+
+    /**
+     * &#123;@code POST  /feedback-records&#125; : Create a new feedbackRecord.
+     *
+     * @param feedbackRecordDTO the feedbackRecordDTO to create.
+     * @return the &#123;@link ResponseEntity&#125; with status &#123;@code 201 (Created)&#125; and with body the new feedbackRecordDTO, or with status &#123;@code 400 (Bad Request)&#125; if the feedbackRecord has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping(&quot;/feedback-records&quot;)
+    public ResponseEntity&lt;FeedbackRecordDTO&gt; createFeedbackRecord(@RequestBody FeedbackRecordDTO feedbackRecordDTO)
+        throws URISyntaxException &#123;
+        log.debug(&quot;REST request to save FeedbackRecord : &#123;&#125;&quot;, feedbackRecordDTO);
+        if (feedbackRecordDTO.getId() != null) &#123;
+            throw new BadRequestAlertException(&quot;A new feedbackRecord cannot already have an ID&quot;, ENTITY_NAME, &quot;idexists&quot;);
+        &#125;
+        FeedbackRecordDTO result = feedbackRecordService.save(feedbackRecordDTO);
+        return ResponseEntity
+            .created(new URI(&quot;/api/feedback-records/&quot; + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    &#125;
+
+    /**
+     * &#123;@code PUT  /feedback-records&#125; : Updates an existing feedbackRecord.
+     *
+     * @param feedbackRecordDTO the feedbackRecordDTO to update.
+     * @return the &#123;@link ResponseEntity&#125; with status &#123;@code 200 (OK)&#125; and with body the updated feedbackRecordDTO,
+     * or with status &#123;@code 400 (Bad Request)&#125; if the feedbackRecordDTO is not valid,
+     * or with status &#123;@code 500 (Internal Server Error)&#125; if the feedbackRecordDTO couldn&#39;t be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PutMapping(&quot;/feedback-records&quot;)
+    public ResponseEntity&lt;FeedbackRecordDTO&gt; updateFeedbackRecord(@RequestBody FeedbackRecordDTO feedbackRecordDTO)
+        throws URISyntaxException &#123;
+        log.debug(&quot;REST request to update FeedbackRecord : &#123;&#125;&quot;, feedbackRecordDTO);
+        if (feedbackRecordDTO.getId() == null) &#123;
+            throw new BadRequestAlertException(&quot;Invalid id&quot;, ENTITY_NAME, &quot;idnull&quot;);
+        &#125;
+        FeedbackRecordDTO result = feedbackRecordService.save(feedbackRecordDTO);
+        return ResponseEntity
+            .ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, feedbackRecordDTO.getId().toString()))
+            .body(result);
+    &#125;
+
+    /**
+     * &#123;@code PATCH  /feedback-records&#125; : Updates given fields of an existing feedbackRecord.
+     *
+     * @param feedbackRecordDTO the feedbackRecordDTO to update.
+     * @return the &#123;@link ResponseEntity&#125; with status &#123;@code 200 (OK)&#125; and with body the updated feedbackRecordDTO,
+     * or with status &#123;@code 400 (Bad Request)&#125; if the feedbackRecordDTO is not valid,
+     * or with status &#123;@code 404 (Not Found)&#125; if the feedbackRecordDTO is not found,
+     * or with status &#123;@code 500 (Internal Server Error)&#125; if the feedbackRecordDTO couldn&#39;t be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = &quot;/feedback-records&quot;, consumes = &quot;application/merge-patch+json&quot;)
+    public ResponseEntity&lt;FeedbackRecordDTO&gt; partialUpdateFeedbackRecord(@RequestBody FeedbackRecordDTO feedbackRecordDTO)
+        throws URISyntaxException &#123;
+        log.debug(&quot;REST request to update FeedbackRecord partially : &#123;&#125;&quot;, feedbackRecordDTO);
+        if (feedbackRecordDTO.getId() == null) &#123;
+            throw new BadRequestAlertException(&quot;Invalid id&quot;, ENTITY_NAME, &quot;idnull&quot;);
+        &#125;
+
+        Optional&lt;FeedbackRecordDTO&gt; result = feedbackRecordService.partialUpdate(feedbackRecordDTO);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, feedbackRecordDTO.getId().toString())
+        );
+    &#125;
+
+    /**
+     * &#123;@code GET  /feedback-records&#125; : get all the feedbackRecords.
+     *
+     * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
+     * @return the &#123;@link ResponseEntity&#125; with status &#123;@code 200 (OK)&#125; and the list of feedbackRecords in body.
+     */
+    @GetMapping(&quot;/feedback-records&quot;)
+    public ResponseEntity&lt;List&lt;FeedbackRecordDTO&gt;&gt; getAllFeedbackRecords(FeedbackRecordCriteria criteria, Pageable pageable) &#123;
+        log.debug(&quot;REST request to get FeedbackRecords by criteria: &#123;&#125;&quot;, criteria);
+        Page&lt;FeedbackRecordDTO&gt; page = feedbackRecordQueryService.findByCriteria(criteria, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    &#125;
+
+    /**
+     * &#123;@code GET  /feedback-records/count&#125; : count all the feedbackRecords.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the &#123;@link ResponseEntity&#125; with status &#123;@code 200 (OK)&#125; and the count in body.
+     */
+    @GetMapping(&quot;/feedback-records/count&quot;)
+    public ResponseEntity&lt;Long&gt; countFeedbackRecords(FeedbackRecordCriteria criteria) &#123;
+        log.debug(&quot;REST request to count FeedbackRecords by criteria: &#123;&#125;&quot;, criteria);
+        return ResponseEntity.ok().body(feedbackRecordQueryService.countByCriteria(criteria));
+    &#125;
+
+    /**
+     * &#123;@code GET  /feedback-records/:id&#125; : get the &quot;id&quot; feedbackRecord.
+     *
+     * @param id the id of the feedbackRecordDTO to retrieve.
+     * @return the &#123;@link ResponseEntity&#125; with status &#123;@code 200 (OK)&#125; and with body the feedbackRecordDTO, or with status &#123;@code 404 (Not Found)&#125;.
+     */
+    @GetMapping(&quot;/feedback-records/&#123;id&#125;&quot;)
+    public ResponseEntity&lt;FeedbackRecordDTO&gt; getFeedbackRecord(@PathVariable Long id) &#123;
+        log.debug(&quot;REST request to get FeedbackRecord : &#123;&#125;&quot;, id);
+        Optional&lt;FeedbackRecordDTO&gt; feedbackRecordDTO = feedbackRecordService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(feedbackRecordDTO);
+    &#125;
+
+    /**
+     * &#123;@code DELETE  /feedback-records/:id&#125; : delete the &quot;id&quot; feedbackRecord.
+     *
+     * @param id the id of the feedbackRecordDTO to delete.
+     * @return the &#123;@link ResponseEntity&#125; with status &#123;@code 204 (NO_CONTENT)&#125;.
+     */
+    @DeleteMapping(&quot;/feedback-records/&#123;id&#125;&quot;)
+    public ResponseEntity&lt;Void&gt; deleteFeedbackRecord(@PathVariable Long id) &#123;
+        log.debug(&quot;REST request to delete FeedbackRecord : &#123;&#125;&quot;, id);
+        feedbackRecordService.delete(id);
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
+    &#125;
+&#125;
+</code></pre>
+<h3 id="测试接口"><a href="#测试接口" class="headerlink" title="测试接口"></a>测试接口</h3><p>获取数据</p>
+<pre><code>    @GetMapping(&quot;/feedback-records&quot;)
+    public ResponseEntity&lt;List&lt;FeedbackRecordDTO&gt;&gt; getAllFeedbackRecords(FeedbackRecordCriteria criteria, Pageable pageable) &#123;
+        log.debug(&quot;REST request to get FeedbackRecords by criteria: &#123;&#125;&quot;, criteria);
+        Page&lt;FeedbackRecordDTO&gt; page = feedbackRecordQueryService.findByCriteria(criteria, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    &#125;
+</code></pre>
+<p>这里有意思的是<code>FeedbackRecordCriteria</code>，可以针对实体中的每个字段进行过滤，不用单独写业务代码去过滤：</p>
+<p>比如<code>feedbackStatus</code>是一个枚举，那么可以使用<code>equals</code>，<code>in</code> 等过过滤器。</p>
+<p><img src="http://ainotedoc.iflyresearch.com/images/1d9808d0eda2d85271774a65f23b896fccad85c64dd2809615ced2118f3cad4b.png" alt="feedbackStatus"></p>
+<p>关于过滤器：</p>
+<p><img src="http://ainotedoc.iflyresearch.com/images/d8bb64214258bdc59187a085495f9a07e5b94ae8de47490d23c8969a4a3fb43f.png" alt="过滤器"></p>
+<p>我们测试下，比如查询<code>feedbackStatus</code> 为 <code>TO_BE_REPLY</code>的，那么可以使用<code>feedbackStatus.equals=TO_BE_REPLY</code></p>
+<pre><code>GET http://localhost:8080/api/feedback-records?sort=id,asc&amp;page=0&amp;size=20&amp;feedbackStatus.equals=TO_BE_REPLY
+
+
+
+
+[
+    &#123;
+        &quot;id&quot;: 1,
+        &quot;feedbackType&quot;: &quot;COMPLAINTS&quot;,
+        &quot;title&quot;: &quot;SMTP lavender Table&quot;,
+        &quot;feedbackStatus&quot;: &quot;TO_BE_REPLY&quot;,
+        &quot;lastReplyTime&quot;: 9391,
+        &quot;closeType&quot;: &quot;NORMALLY&quot;,
+        &quot;createdDate&quot;: &quot;2021-03-11T21:38:31Z&quot;,
+        &quot;createdBy&quot;: &quot;新疆 Central Soft&quot;
+    &#125;,
+    &#123;
+        &quot;id&quot;: 2,
+        &quot;feedbackType&quot;: &quot;ADVICE&quot;,
+        &quot;title&quot;: &quot;上海市 haptic&quot;,
+        &quot;feedbackStatus&quot;: &quot;TO_BE_REPLY&quot;,
+        &quot;lastReplyTime&quot;: 53521,
+        &quot;closeType&quot;: &quot;NORMALLY&quot;,
+        &quot;createdDate&quot;: &quot;2021-03-11T18:04:14Z&quot;,
+        &quot;createdBy&quot;: &quot;Rubber connect 桥&quot;
+    &#125;,
+    &#123;
+        &quot;id&quot;: 4,
+        &quot;feedbackType&quot;: &quot;ADVICE&quot;,
+        &quot;title&quot;: &quot;Senior index&quot;,
+        &quot;feedbackStatus&quot;: &quot;TO_BE_REPLY&quot;,
+        &quot;lastReplyTime&quot;: 67874,
+        &quot;closeType&quot;: &quot;TIMEOUT&quot;,
+        &quot;createdDate&quot;: &quot;2021-03-11T14:53:15Z&quot;,
+        &quot;createdBy&quot;: &quot;Uganda&quot;
+    &#125;,
+    &#123;
+        &quot;id&quot;: 6,
+        &quot;feedbackType&quot;: &quot;ADVICE&quot;,
+        &quot;title&quot;: &quot;Expanded Sports compelling&quot;,
+        &quot;feedbackStatus&quot;: &quot;TO_BE_REPLY&quot;,
+        &quot;lastReplyTime&quot;: 8032,
+        &quot;closeType&quot;: &quot;TIMEOUT&quot;,
+        &quot;createdDate&quot;: &quot;2021-03-12T03:53:46Z&quot;,
+        &quot;createdBy&quot;: &quot;deposit Chicken mesh&quot;
+    &#125;,
+    &#123;
+        &quot;id&quot;: 7,
+        &quot;feedbackType&quot;: &quot;ADVICE&quot;,
+        &quot;title&quot;: &quot;Division overriding&quot;,
+        &quot;feedbackStatus&quot;: &quot;TO_BE_REPLY&quot;,
+        &quot;lastReplyTime&quot;: 38000,
+        &quot;closeType&quot;: &quot;NORMALLY&quot;,
+        &quot;createdDate&quot;: &quot;2021-03-11T07:57:51Z&quot;,
+        &quot;createdBy&quot;: &quot;Account stable&quot;
+    &#125;,
+    &#123;
+        &quot;id&quot;: 9,
+        &quot;feedbackType&quot;: &quot;ADVICE&quot;,
+        &quot;title&quot;: &quot;Loan&quot;,
+        &quot;feedbackStatus&quot;: &quot;TO_BE_REPLY&quot;,
+        &quot;lastReplyTime&quot;: 99908,
+        &quot;closeType&quot;: &quot;TIMEOUT&quot;,
+        &quot;createdDate&quot;: &quot;2021-03-11T09:47:44Z&quot;,
+        &quot;createdBy&quot;: &quot;Re-engineered&quot;
+    &#125;
+]
+</code></pre>
+<h2 id="JHipster-管理界面介绍"><a href="#JHipster-管理界面介绍" class="headerlink" title="JHipster 管理界面介绍"></a>JHipster 管理界面介绍</h2><p>JHipster 自动生成的前端代码里，包含了一些管理界面：</p>
+<p><img src="http://ainotedoc.iflyresearch.com/images/1ae0597aba92bc958635fce65666676237a007614ad17227a6bb84a46af2f3ef.png" alt="管理界面"></p>
+<p>资源监控：</p>
+<p><img src="http://ainotedoc.iflyresearch.com/images/cd050dc19d39a0a3171ea4e8d883e921a76b0bb768cd51c2535f0124dcbcff26.png" alt="资源监控"></p>
+<h2 id="开发实践"><a href="#开发实践" class="headerlink" title="开发实践"></a>开发实践</h2><h3 id="更新实体增加字段"><a href="#更新实体增加字段" class="headerlink" title="更新实体增加字段"></a>更新实体增加字段</h3><p>在项目的工程目录下，有一个<code>.jhipster</code>文件夹，里面包含了已有的实体。</p>
+<p><img src="http://ainotedoc.iflyresearch.com/images/ad9cdc11084c56f5f78ff6aed3647038a94199516d87c59bf5aac780d928f1cd.png" alt="已有实体"></p>
+<p>要为实体增加字段，可以打开json文件，在fields里新增即可，比如我们增加一个content字段。</p>
+<pre><code>&#123;
+  &quot;name&quot;: &quot;FeedbackRecord&quot;,
+  &quot;fields&quot;: [
+    &#123;
+      &quot;fieldName&quot;: &quot;feedbackType&quot;,
+      &quot;fieldType&quot;: &quot;FeedbackType&quot;,
+      &quot;javadoc&quot;: &quot;反馈类型&quot;,
+      &quot;fieldValues&quot;: &quot;ADVICE,COMPLAINTS&quot;
+    &#125;,
+    &#123;
+      &quot;fieldName&quot;: &quot;title&quot;,
+      &quot;fieldType&quot;: &quot;String&quot;,
+      &quot;javadoc&quot;: &quot;问题描述&quot;
+    &#125;,
+    &#123;
+      &quot;fieldName&quot;: &quot;content&quot;,
+      &quot;fieldType&quot;: &quot;String&quot;,
+      &quot;javadoc&quot;: &quot;问题详情&quot;
+    &#125;,
+    &#123;
+      &quot;fieldName&quot;: &quot;feedbackStatus&quot;,
+      &quot;fieldType&quot;: &quot;FeedbackStatus&quot;,
+      &quot;javadoc&quot;: &quot;反馈状态&quot;,
+      &quot;fieldValues&quot;: &quot;TO_BE_SUBMIT,TO_BE_REPLY,TO_BE_CONFIRMED&quot;
+    &#125;,
+    &#123;
+      &quot;fieldName&quot;: &quot;lastReplyTime&quot;,
+      &quot;fieldType&quot;: &quot;Integer&quot;,
+      &quot;javadoc&quot;: &quot;是否已完成&quot;
+    &#125;,
+    &#123;
+      &quot;fieldName&quot;: &quot;closeType&quot;,
+      &quot;fieldType&quot;: &quot;FeedbackCloseType&quot;,
+      &quot;javadoc&quot;: &quot;关闭类型&quot;,
+      &quot;fieldValues&quot;: &quot;NORMALLY,TIMEOUT&quot;
+    &#125;,
+    &#123;
+      &quot;fieldName&quot;: &quot;createdDate&quot;,
+      &quot;fieldType&quot;: &quot;Instant&quot;,
+      &quot;javadoc&quot;: &quot;创建时间&quot;
+    &#125;,
+    &#123;
+      &quot;fieldName&quot;: &quot;createdBy&quot;,
+      &quot;fieldType&quot;: &quot;String&quot;,
+      &quot;javadoc&quot;: &quot;创建者&quot;
+    &#125;
+  ],
+  &quot;relationships&quot;: [],
+  &quot;javadoc&quot;: &quot;反馈记录表&quot;,
+  &quot;entityTableName&quot;: &quot;feedback_record&quot;,
+  &quot;dto&quot;: &quot;mapstruct&quot;,
+  &quot;pagination&quot;: &quot;pagination&quot;,
+  &quot;service&quot;: &quot;serviceImpl&quot;,
+  &quot;jpaMetamodelFiltering&quot;: true,
+  &quot;fluentMethods&quot;: true,
+  &quot;readOnly&quot;: false,
+  &quot;embedded&quot;: false,
+  &quot;applications&quot;: &quot;*&quot;,
+  &quot;changelogDate&quot;: &quot;20210312072243&quot;
+&#125;
+</code></pre>
+<p>再次运行实体生成器：</p>
+<pre><code>jhipster entity FeedbackRecord
+</code></pre>
+<p>当您为现有实体运行实体子生成器时，系统会询问您“Do you want to update the entity? This will replace the existing files for this entity, all your custom code will be overwritten”(您确定需要更新实体吗？这将替换该实体的现有文件，所有自定义代码将被覆盖)，并具有以下选项：</p>
+<ul>
+<li><code>Yes, re generate the entity</code> - 这将重新生成您的实体。提示：这可以通过在运行子生成器时传递<code>--regenerate</code>标志来强制执行</li>
+<li><code>Yes, add more fields and relationships</code> - 这将需要您回答一些问题，以添加更多字段和关系</li>
+<li><code>Yes, remove fields and relationships</code> - 这将需要您回答一些问题，以便从实体中删除现有字段和关系</li>
+<li><code>No, exit</code> - 这将存在子生成器而无需更改任何内容</li>
+</ul>
+<p>您可能由于以下原因而要更新您的实体：</p>
+<p>提示：要立即重新生成所有实体，可以使用以下命令（不提供<code>--force</code>标识会在文件更改时询问覆盖选项）。</p>
+<ul>
+<li>Linux &amp; Mac: <code>for f in</code>ls .jhipster<code>; do jhipster entity $&#123;f%.*&#125; --force ; done</code></li>
+<li>Windows: <code>for %f in (.jhipster/*) do jhipster entity %~nf --force</code></li>
+</ul>
+<h3 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h3>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/02/08/jqpeng-%E4%BB%8ESpring%E6%A1%86%E6%9E%B6%E7%9C%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%A6%82%E4%BD%95%E7%81%B5%E6%B4%BB%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/08/jqpeng-%E4%BB%8ESpring%E6%A1%86%E6%9E%B6%E7%9C%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%A6%82%E4%BD%95%E7%81%B5%E6%B4%BB%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">从Spring框架看设计模式如何灵活使用</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-08 18:05:00" itemprop="dateCreated datePublished" datetime="2021-02-08T18:05:00+08:00">2021-02-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/spring-design-pattern.html">从Spring框架看设计模式如何灵活使用</a></p>
+<h2 id="Singleton-单例模式"><a href="#Singleton-单例模式" class="headerlink" title="Singleton 单例模式"></a>Singleton 单例模式</h2><p>单例模式是确保每个应用程序只存在一个实例的机制。默认情况下，Spring将所有bean创建为单例。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/8/1612778162513.png" alt="单例模式"></p>
+<p>你用@Autowired获取的bean，全局唯一。</p>
+<pre><code>@RestController
+public class LibraryController &#123;
+    
+    @Autowired
+    private BookRepository repository;
+
+    @GetMapping(&quot;/count&quot;)
+    public Long findCount() &#123;
+        System.out.println(repository);
+        return repository.count();
+    &#125;
+&#125;
+</code></pre>
+<h2 id="工厂方法模式"><a href="#工厂方法模式" class="headerlink" title="工厂方法模式"></a>工厂方法模式</h2><p>Spring 定义了BeanFactory接口，抽象对象容器：</p>
+<pre><code>public interface BeanFactory &#123;
+
+    getBean(Class&lt;T&gt; requiredType);
+    getBean(Class&lt;T&gt; requiredType, Object... args);
+    getBean(String name);
+
+    // ...
+]
+</code></pre>
+<p>每一个<code>getBean</code> 方法其实就是一个工厂方法。</p>
+<h2 id="代理模式-Proxy"><a href="#代理模式-Proxy" class="headerlink" title="代理模式(Proxy)"></a>代理模式(Proxy)</h2><p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/8/1612778397869.png" alt="代理模式"></p>
+<p>在Spring中，对于事务，我们可以加一个<code>@Transactional</code>注解，</p>
+<pre><code>@Service
+public class BookManager &#123;
+    
+    @Autowired
+    private BookRepository repository;
+
+    @Transactional
+    public Book create(String author) &#123;
+        System.out.println(repository.getClass().getName());
+        return repository.create(author);
+    &#125;
+&#125;
+</code></pre>
+<p>Spring框架，通过AOP做Proxy。</p>
+<h2 id="Decorator装饰器模式"><a href="#Decorator装饰器模式" class="headerlink" title="Decorator装饰器模式"></a>Decorator装饰器模式</h2><p><code>Spring</code> 中的<code>TransactionAwareCacheDecorator</code> 就做了对<code>Cache</code> 的包装：</p>
+<pre><code>public interface Cache &#123;
+    String getName();
+
+    Object getNativeCache();
+
+    @Nullable
+    Cache.ValueWrapper get(Object var1);
+
+    @Nullable
+    &lt;T&gt; T get(Object var1, @Nullable Class&lt;T&gt; var2);
+
+    @Nullable
+    &lt;T&gt; T get(Object var1, Callable&lt;T&gt; var2);
+
+    void put(Object var1, @Nullable Object var2);
+&#125;
+</code></pre>
+<p><code>TransactionAwareCacheDecorator</code> 实现了<code>Cache</code>接口，构造时传入一个<code>targetCache</code>，在调用<code>put</code>等方法时，增加了自己装饰逻辑在里面。</p>
+<pre><code>public class TransactionAwareCacheDecorator implements Cache &#123;
+    private final Cache targetCache;
+
+    public TransactionAwareCacheDecorator(Cache targetCache) &#123;
+        Assert.notNull(targetCache, &quot;Target Cache must not be null&quot;);
+        this.targetCache = targetCache;
+    &#125;
+
+    public void put(final Object key, @Nullable final Object value) &#123;
+        if (TransactionSynchronizationManager.isSynchronizationActive()) &#123;
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() &#123;
+                public void afterCommit() &#123;
+                    TransactionAwareCacheDecorator.this.targetCache.put(key, value);
+                &#125;
+            &#125;);
+        &#125; else &#123;
+            this.targetCache.put(key, value);
+        &#125;
+
+    &#125;
+</code></pre>
+<h3 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h3><ul>
+<li>装饰模式是继承的有力补充。相比于继承，装饰模式可以增加代码的可维护性、扩展性、复用性。在一些情况下装饰模式可以替代继承，解决类膨胀问题。</li>
+<li>装饰模式有利于程序的可扩展性。在一个项目中，有很多因素考虑不周，特别是业务的变更。通过装饰模式重新封装一个装饰类，可以避免修改继承体系中的中间类，而是使用装饰类修饰中间类，这样原有的程序没有变更，通过扩展完成了这次变更。</li>
+</ul>
+<h2 id="组合模式-Composite"><a href="#组合模式-Composite" class="headerlink" title="组合模式(Composite)"></a>组合模式(Composite)</h2><p>Spring actuate 提供<code>HealthIndicator</code>, 用于监控服务健康状态。</p>
+<pre><code>@FunctionalInterface
+public interface HealthIndicator &#123;
+
+    /**
+     * Return an indication of health.
+     * @return the health for
+     */
+    Health health();
+
+&#125;
+</code></pre>
+<p>实现类里，有一个<code>CompositeHealthIndicator</code>, 可以<code>add</code>多个<code>HealthIndicator</code>,放入<code>indicators</code>里，最后返回<code>health</code>时，聚合所有<code>indicators</code>的<code>Health</code>。</p>
+<pre><code>public class CompositeHealthIndicator implements HealthIndicator &#123;
+
+    private final Map&lt;String, HealthIndicator&gt; indicators;
+
+    private final HealthAggregator healthAggregator;
+
+    /**
+     * Create a new &#123;@link CompositeHealthIndicator&#125;.
+     * @param healthAggregator the health aggregator
+     */
+    public CompositeHealthIndicator(HealthAggregator healthAggregator) &#123;
+        this(healthAggregator, new LinkedHashMap&lt;&gt;());
+    &#125;
+
+    /**
+     * Create a new &#123;@link CompositeHealthIndicator&#125; from the specified indicators.
+     * @param healthAggregator the health aggregator
+     * @param indicators a map of &#123;@link HealthIndicator&#125;s with the key being used as an
+     * indicator name.
+     */
+    public CompositeHealthIndicator(HealthAggregator healthAggregator,
+            Map&lt;String, HealthIndicator&gt; indicators) &#123;
+        Assert.notNull(healthAggregator, &quot;HealthAggregator must not be null&quot;);
+        Assert.notNull(indicators, &quot;Indicators must not be null&quot;);
+        this.indicators = new LinkedHashMap&lt;&gt;(indicators);
+        this.healthAggregator = healthAggregator;
+    &#125;
+
+    public void addHealthIndicator(String name, HealthIndicator indicator) &#123;
+        this.indicators.put(name, indicator);
+    &#125;
+
+    @Override
+    public Health health() &#123;
+        Map&lt;String, Health&gt; healths = new LinkedHashMap&lt;&gt;();
+        for (Map.Entry&lt;String, HealthIndicator&gt; entry : this.indicators.entrySet()) &#123;
+            healths.put(entry.getKey(), entry.getValue().health());
+        &#125;
+        return this.healthAggregator.aggregate(healths);
+    &#125;
+
+&#125;
+</code></pre>
+<hr>
+<p>感谢您的认真阅读。</p>
+<p>如果你觉得有帮助，欢迎点赞支持！</p>
+<p>不定期分享软件开发经验，欢迎关注作者, 一起交流软件开发：</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/02/04/jqpeng-%E6%8F%90%E5%8D%87NginxTLSSSL%20HTTPS%20%E6%80%A7%E8%83%BD%E7%9A%847%E6%9D%A1%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/04/jqpeng-%E6%8F%90%E5%8D%87NginxTLSSSL%20HTTPS%20%E6%80%A7%E8%83%BD%E7%9A%847%E6%9D%A1%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/" class="post-title-link" itemprop="url">提升NginxTLSSSL HTTPS 性能的7条优化建议</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-04 21:27:00" itemprop="dateCreated datePublished" datetime="2021-02-04T21:27:00+08:00">2021-02-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/nginx-tls.html">提升NginxTLSSSL HTTPS 性能的7条优化建议</a></p>
+<p>自2018年7月起，谷歌浏览器开始将“ HTTP”网站标记为“不安全”。在过去的几年中，互联网已经迅速过渡到HTTPS，Chrome浏览器的流量超过70％，并且Web排名前100位的网站中有80多个现在默认使用HTTPS 当前Nginx作为最常见的服务器，广泛用于负载均衡（LB)、网关、反向代理。考虑到这一点，让我们看一下Nginx调优技巧，改善Nginx + HTTPS的性能以获得更好的TTFB和更少的延迟。</p>
+<p><img src="https://p3-tt.byteimg.com/origin/dfic-imagehandler/0f5b86a5-a1d0-4d4e-a386-43fa9dbda992?from=pc" alt="提升Nginx SSL/HTTPS性能的7条建议"></p>
+<p>HTTPS 优化</p>
+<h1 id="1-开启-HTTP-2"><a href="#1-开启-HTTP-2" class="headerlink" title="1. 开启 HTTP/2"></a>1. 开启 HTTP/2</h1><p>HTTP/2最初是在Nginx版本1.9.5中实现的，以取代spdy。在Nginx上启用HTTP/2模块很简单。</p>
+<p>原先的配置：</p>
+<pre><code>listen 443 ssl;
+</code></pre>
+<p>修改为：</p>
+<pre><code>listen 443 ssl http2;
+</code></pre>
+<p>可以通过curl来验证：</p>
+<pre><code>curl --http2 -I https://domain.com/
+</code></pre>
+<h1 id="2-开启-SSL-session-缓存"><a href="#2-开启-SSL-session-缓存" class="headerlink" title="2. 开启 SSL session 缓存"></a>2. 开启 SSL session 缓存</h1><p>启用 SSL Session 缓存可以减少 TLS 的反复验证，减少 TLS 握手。 1M 的内存就可以缓存 4000 个连接，非常划算，现在内存便宜，尽量开启。</p>
+<pre><code>ssl_session_cache shared:SSL:50m; # 1m 4000个，
+ssl_session_timeout 1h; # 1小时过期 1 hour during which sessions can be re-used.
+</code></pre>
+<h1 id="3-禁用-SSL-session-tickets"><a href="#3-禁用-SSL-session-tickets" class="headerlink" title="3. 禁用 SSL session tickets"></a>3. 禁用 SSL session tickets</h1><p>由于Nginx中尚未实现SSL session tickets，可以关闭。</p>
+<pre><code>ssl_session_tickets off;
+</code></pre>
+<h1 id="4-禁用-TLS-version-1-0"><a href="#4-禁用-TLS-version-1-0" class="headerlink" title="4. 禁用 TLS version 1.0"></a>4. 禁用 TLS version 1.0</h1><p>1.3已经出来。1.0可以丢进历史垃圾堆</p>
+<pre><code>ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+</code></pre>
+<p>修改为</p>
+<pre><code>ssl_protocols TLSv1.2 TLSv1.3;
+</code></pre>
+<h1 id="5-启用OCSP-Stapling"><a href="#5-启用OCSP-Stapling" class="headerlink" title="5. 启用OCSP Stapling"></a>5. 启用OCSP Stapling</h1><p>如果不启用 OCSP Stapling 的话，在用户连接你的服务器的时候，需要去验证证书，这个验证证书的时间不可控，我们开启OCSP Stapling后，可以省掉这一步。</p>
+<pre><code>ssl_stapling on;
+ssl_stapling_verify on;
+ssl_trusted_certificate /path/to/full_chain.pem;
+resolver 8.8.8.8 8.8.4.4 valid=300s;
+resolver_timeout 5s;
+</code></pre>
+<h1 id="6-减小ssl-buffer-size"><a href="#6-减小ssl-buffer-size" class="headerlink" title="6. 减小ssl buffer size"></a>6. 减小ssl buffer size</h1><p>ssl_buffer_size 控制在发送数据时的 buffer 大小，默认情况下，缓冲区设置为16k，为了最大程度地减少TTFB（至第一个字节的时间），最好使用较小的值，这样TTFB可以节省大约30 – 50ms。</p>
+<pre><code>ssl_buffer_size 4k;
+</code></pre>
+<h1 id="7-调整-Cipher-优先级"><a href="#7-调整-Cipher-优先级" class="headerlink" title="7. 调整 Cipher 优先级"></a>7. 调整 Cipher 优先级</h1><p>更新更快的 Cipher放前面，这样延迟更小。</p>
+<pre><code># 手动启用 cipher 列表
+ssl_prefer_server_ciphers on;  # prefer a list of ciphers to prevent old and slow ciphers
+ssl_ciphers &#39;EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH&#39;;
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/02/02/jqpeng-%E9%AB%98%E6%95%88%E5%9B%A2%E9%98%9F%E7%9A%84gitlab%20flow%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/02/jqpeng-%E9%AB%98%E6%95%88%E5%9B%A2%E9%98%9F%E7%9A%84gitlab%20flow%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">高效团队的gitlab flow最佳实践</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-02 20:38:00" itemprop="dateCreated datePublished" datetime="2021-02-02T20:38:00+08:00">2021-02-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/gitlab-flow.html">高效团队的gitlab flow最佳实践</a></p>
+<p>当前git是大部分开发团队的首选版本管理工具，一个好的流程规范可以让大家有效地合作，像流水线一样有条不紊地进行团队协作。</p>
+<p>业界包含三种flow：</p>
+<ul>
+<li>Git flow</li>
+<li>Github flow</li>
+<li>Gitlab flow</li>
+</ul>
+<p>下面我们先来分析，然后再基于gitlab flow来设计一个适合我们团队的git规范。</p>
+<h2 id="从git-flow到gitlab-flow"><a href="#从git-flow到gitlab-flow" class="headerlink" title="从git flow到gitlab flow"></a>从git flow到gitlab flow</h2><h3 id="git-flow"><a href="#git-flow" class="headerlink" title="git flow"></a>git flow</h3><p>先说git flow，大概是这样的。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612267487337.png" alt="gitflow"></p>
+<p>然后，我们老的git规范是参考git flow实现的。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612267545738.png" alt="当前git流程"></p>
+<p>综合考虑了开发、测试、新功能开发、临时需求、热修复，理想很丰满，现实很骨干，这一套运行起来实在是太复杂了。那么如何精简流程呢？</p>
+<p>我们来看业界的做法，首先是github flow。</p>
+<h3 id="github-flow"><a href="#github-flow" class="headerlink" title="github flow"></a>github flow</h3><p>Github flow 是Git flow的简化版，专门配合”持续发布”。它是 Github.com 使用的工作流程。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612267831741.png" alt="github flow"></p>
+<p>整个流程：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612267888369.png" alt="流程"></p>
+<ul>
+<li>第一步：根据需求，从master拉出新分支，不区分功能分支或补丁分支。</li>
+<li>第二步：新分支开发完成后，或者需要讨论的时候，就向master发起一个pull request（简称PR）。</li>
+<li>第三步：Pull Request既是一个通知，让别人注意到你的请求，又是一种对话机制，大家一起评审和讨论你的代码。对话过程中，你还可以不断提交代码。</li>
+<li>第四步：你的Pull Request被接受，合并进master，重新部署后，原来你拉出来的那个分支就被删除。（先部署再合并也可。）</li>
+</ul>
+<p>github flow这种方式，要保证高质量，对于贡献者的素质要求很高，换句话说，如果代码贡献者素质不那么高，质量就无法得到保证。</p>
+<blockquote>
+<p>github flow这一套对于库、框架、工具这样并非最终应用的产品来说，没问题，但是，如果如果一个产品是“最终应用”，github flow可能就不合适了。</p>
+</blockquote>
+<h3 id="gitlab-flow"><a href="#gitlab-flow" class="headerlink" title="gitlab flow"></a>gitlab flow</h3><p>Gitlab flow 是 Git flow 与 Github flow 的综合。它吸取了两者的优点，既有适应不同开发环境的弹性，又有单一主分支的简单和便利。它是 Gitlab.com 推荐的做法。</p>
+<p>Gitlab flow 的最大原则叫做”上游优先”（upsteam first），即只存在一个主分支master，它是所有其他分支的”上游”。只有上游分支采纳的代码变化，才能应用到其他分支。</p>
+<p>对于”持续发布”的项目，它建议在master分支以外，再建立不同的环境分支。比如，”开发环境”的分支是master，”预发环境”的分支是pre-production，”生产环境”的分支是production。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612268052916.png" alt="gitlab flow"></p>
+<p>只有紧急情况，才允许跳过上游，直接合并到下游分支。</p>
+<p>对于”版本发布”的项目，建议的做法是每一个稳定版本，都要从master分支拉出一个分支，比如2-3-stable、2-4-stable等等。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612268111739.png" alt="版本发布"></p>
+<p>gitlab flow 如何处理hotfix？ git flow之所以这么复杂，一大半原因就是把hotfix考虑得太周全了。hotfix的意思是，当代码部署到产品环境之后发现的问题，需要火速fix。gitlab flow 可以基于后续分支，修改后上线。</p>
+<h2 id="团队git规范"><a href="#团队git规范" class="headerlink" title="团队git规范"></a>团队git规范</h2><p>综合上面的介绍，我们决定采用gitlab flow，按照版本发布的模式实施，具体来说：</p>
+<ol>
+<li>新的迭代开始，所有开发人员从主干master拉个人分支开发特性, 分支命名规范 feature-name</li>
+<li>开发完成后，在迭代结束前，合入master分支</li>
+<li>master分支合并后，自动cicd到dev环境</li>
+<li>开发自测通过后，从master拉取要发布的分支，release-$version，将这个分支部署到测试环境进行测试</li>
+<li>测出的bug，通过从release-$versio拉出分支进行修复，修复完成后，再合入release-$versio</li>
+<li>正式发布版本，如果上线后，又有bug，根据5的方式处理</li>
+<li>等发布版本稳定后，将release-$versio反合入主干</li>
+</ol>
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><h3 id="开发feature功能"><a href="#开发feature功能" class="headerlink" title="开发feature功能"></a>开发feature功能</h3><p>新建分支，比如<code>feat-test</code></p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612263756008.png" alt="新分支"></p>
+<p>开发代码，增加新功能，提交：</p>
+<pre><code>@GetMapping(path = &quot;/test&quot;, produces = &quot;application/json&quot;)@ResponseBodypublic Map&lt;String, Object&gt; test() &#123;    return singletonMap(&quot;test&quot;, &quot;test&quot;);&#125;
+
+
+
+git commit -m &quot;feat: add test code&quot;
+git push origin feat-test
+</code></pre>
+<h3 id="提交MR"><a href="#提交MR" class="headerlink" title="提交MR"></a>提交MR</h3><p>提交代码后，可以提交<code>mr</code>到<code>master</code>，申请合并代码</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612264109605.png" alt="mr"></p>
+<p><strong>Note</strong>：</p>
+<ul>
+<li>这里可以增加自动代码审查,</li>
+</ul>
+<h3 id="合并代码"><a href="#合并代码" class="headerlink" title="合并代码"></a>合并代码</h3><p>研发组长，打开mr，review代码，可以添加建议：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612264544465.png" alt="添加评论"></p>
+<p>开发同学根据建议修复代码，或者线下修改后commit代码。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612264598028.png" alt="应用建议"></p>
+<p>研发组长确认没有问题后，可以合并到master。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612264745987.png" alt="合并"></p>
+<p>合并完成，可以删除feat分支。</p>
+<p>新功能开发好，可以进行提测。</p>
+<h3 id="发布版本"><a href="#发布版本" class="headerlink" title="发布版本"></a>发布版本</h3><h4 id="语义化版本号"><a href="#语义化版本号" class="headerlink" title="语义化版本号"></a>语义化版本号</h4><p>版本格式：主版本号.次版本号.修订号，版本号递增规则如下：</p>
+<p>主版本号：当你做了不兼容的 API 修改，<br> 次版本号：当你做了向下兼容的功能性新增，<br> 修订号：当你做了向下兼容的问题修正。<br> 先行版本号及版本编译元数据可以加到“主版本号.次版本号.修订号”的后面，作为延伸。</p>
+<p>主版本号为0，代表还未发布正式版本。</p>
+<h4 id="测试发布"><a href="#测试发布" class="headerlink" title="测试发布"></a>测试发布</h4><p>master分支，自动部署到开发环境（dev）</p>
+<p>功能开发完成，并自测通过后，代码合并到待发布版本，</p>
+<p>分支规则：</p>
+<pre><code>release-version
+</code></pre>
+<p>版本规则</p>
+<pre><code>主版本号.次版本号
+</code></pre>
+<p>构建时，自动增加修订号：</p>
+<pre><code>主版本号.次版本号.修订号
+</code></pre>
+<p>从最新的master新拉一个分支<code>release-$version</code>，比如<code>release-0.1</code></p>
+<pre><code>git checkout -b release-0.1
+</code></pre>
+<p><code>release-$version</code>会自动构建，版本号为<code>$version.$buildNumber</code></p>
+<p>设定<code>release-$version</code> 分支为保护分支，不允许直接推送，只能通过merge不允许直接提交代码，接受<code>MR</code>。</p>
+<h4 id="bug修复"><a href="#bug修复" class="headerlink" title="bug修复"></a>bug修复</h4><p>需要修改bug时，从<code>release-$version</code>新拉分支，修改完成后再合并到<code>release-$version</code>分支.</p>
+<ul>
+<li>Q: 从<code>release-$version</code>拉的分支，如何测试？</li>
+<li>A:  这个节点定义为bug修复节点，建议开发同学优先本地测试验证，严重通过再合并到release分支。</li>
+<li>Q: <code>release-$version</code>太多怎么办？</li>
+<li>A:  可以保留最近的10个版本。历史的打tag后，删除分支。</li>
+</ul>
+<hr>
+<p>感谢您的认真阅读。</p>
+<p>如果你觉得有帮助，欢迎点赞支持！</p>
+<p>不定期分享软件开发经验，欢迎关注作者, 一起交流软件开发：</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

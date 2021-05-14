@@ -1,0 +1,2685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JadePeng的技术笔记本">
+<meta property="og:type" content="website">
+<meta property="og:title" content="JadePeng的技术笔记本">
+<meta property="og:url" content="http://blog.iflyresearch.com/page/6/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="JadePeng的技术笔记本">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="JadePeng">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/page/6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/08/08/jqpeng-Docker%E5%90%AF%E7%94%A8TLS%E8%BF%9B%E8%A1%8C%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/08/jqpeng-Docker%E5%90%AF%E7%94%A8TLS%E8%BF%9B%E8%A1%8C%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">Docker启用TLS进行安全配置</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-08 20:08:00" itemprop="dateCreated datePublished" datetime="2019-08-08T20:08:00+08:00">2019-08-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/docker-tls.html">Docker启用TLS进行安全配置</a></p>
+<p>之前开启了docker的2375 Remote API，接到公司安全部门的要求，需要启用授权，翻了下官方文档</p>
+<p><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/security/https/">Protect the Docker daemon socket</a></p>
+<h2 id="启用TLS"><a href="#启用TLS" class="headerlink" title="启用TLS"></a>启用TLS</h2><p>在docker服务器，生成CA私有和公共密钥</p>
+<pre><code>$ openssl genrsa -aes256 -out ca-key.pem 4096
+Generating RSA private key, 4096 bit long modulus
+............................................................................................................................................................................................++
+........++
+e is 65537 (0x10001)
+Enter pass phrase for ca-key.pem:
+Verifying - Enter pass phrase for ca-key.pem:
+
+$ openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem
+Enter pass phrase for ca-key.pem:
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter &#39;.&#39;, the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:
+State or Province Name (full name) [Some-State]:Queensland
+Locality Name (eg, city) []:Brisbane
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:Docker Inc
+Organizational Unit Name (eg, section) []:Sales
+Common Name (e.g. server FQDN or YOUR name) []:$HOST
+Email Address []:Sven@home.org.au
+</code></pre>
+<p>有了CA后，可以创建一个服务器密钥和证书签名请求(CSR)</p>
+<blockquote>
+<p>$HOST 是你的服务器ip</p>
+</blockquote>
+<pre><code>$ openssl genrsa -out server-key.pem 4096
+Generating RSA private key, 4096 bit long modulus
+.....................................................................++
+.................................................................................................++
+e is 65537 (0x10001)
+
+$ openssl req -subj &quot;/CN=$HOST&quot; -sha256 -new -key server-key.pem -out server.csr
+</code></pre>
+<p>接着，用CA来签署公共密钥:</p>
+<pre><code>$ echo subjectAltName = DNS:$HOST,IP:$HOST:127.0.0.1 &gt;&gt; extfile.cnf
+
+ $ echo extendedKeyUsage = serverAuth &gt;&gt; extfile.cnf
+ 
+</code></pre>
+<p>生成key：</p>
+<pre><code>$ openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem \
+  -CAcreateserial -out server-cert.pem -extfile extfile.cnf
+Signature ok
+subject=/CN=your.host.com
+Getting CA Private Key
+Enter pass phrase for ca-key.pem:
+</code></pre>
+<p>创建客户端密钥和证书签名请求:</p>
+<pre><code>$ openssl genrsa -out key.pem 4096
+Generating RSA private key, 4096 bit long modulus
+.........................................................++
+................++
+e is 65537 (0x10001)
+
+$ openssl req -subj &#39;/CN=client&#39; -new -key key.pem -out client.csr
+</code></pre>
+<p>修改<code>extfile.cnf</code>：</p>
+<pre><code>echo extendedKeyUsage = clientAuth &gt; extfile-client.cnf
+</code></pre>
+<p>生成签名私钥：</p>
+<pre><code>$ openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem \
+  -CAcreateserial -out cert.pem -extfile extfile-client.cnf
+Signature ok
+subject=/CN=client
+Getting CA Private Key
+Enter pass phrase for ca-key.pem:
+</code></pre>
+<p>将Docker服务停止，然后修改docker服务文件</p>
+<pre><code>[Unit]
+Description=Docker Application Container Engine
+Documentation=http://docs.docker.io
+
+[Service]
+Environment=&quot;PATH=/opt/kube/bin:/bin:/sbin:/usr/bin:/usr/sbin&quot;
+ExecStart=/opt/kube/bin/dockerd  --tlsverify --tlscacert=/root/docker/ca.pem --tlscert=/root/docker/server-cert.pem --tlskey=/root/docker/server-key.pem -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375
+ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+Delegate=yes
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<p>然后重启服务</p>
+<pre><code>systemctl daemon-reload
+systemctl restart docker.service 
+
+
+
+重启后查看服务状态：
+
+systemctl status docker.service
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/etc/systemd/system/docker.service; enabled; vendor preset: enabled)
+   Active: active (running) since Thu 2019-08-08 19:22:26 CST; 1 min ago
+</code></pre>
+<p>已经生效。</p>
+<p>使用证书连接：</p>
+<p>复制<code>ca.pem</code>,<code>cert.pem</code>,<code>key.pem</code>三个文件到客户端</p>
+<p><code>docker --tlsverify --tlscacert=ca.pem --tlscert=cert.pem --tlskey=key.pem -H=$HOST:2375 version</code>连接即可</p>
+<h2 id="docker-java-启用TLS"><a href="#docker-java-启用TLS" class="headerlink" title="docker-java 启用TLS"></a>docker-java 启用TLS</h2><p>项目里使用docker的java客户端<code>docker-java</code>调用docker，为了支持TLS，在创建客户端时，需要增加TLS设置。</p>
+<p>首先将<code>ca.pem cert.pem key.pem </code>这三个文件拷贝到本地，例如<code>E:\\docker\\&quot;</code>,</p>
+<p>然后<code>DefaultDockerClientConfig</code>里<code>withDockerTlsVerify</code>设为true，并设置<code>certpath</code>为刚拷贝的目录。</p>
+<pre><code>DefaultDockerClientConfig.Builder builder =
+                DefaultDockerClientConfig.createDefaultConfigBuilder()
+                    .withDockerHost(&quot;tcp://&quot; + server + &quot;:2375&quot;)
+                    .withApiVersion(&quot;1.30&quot;);
+            if (containerConfiguration.getDockerTlsVerify()) &#123;
+                builder = builder.withDockerTlsVerify(true)
+                    .withDockerCertPath(&quot;E:\\docker\\&quot;);
+            &#125;return  DockerClientBuilder.getInstance(builder.build()).build()        
+</code></pre>
+<p>大工搞定。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/05/28/jqpeng-mongodb%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AECRUD%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/28/jqpeng-mongodb%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AECRUD%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">mongodb海量数据CRUD优化</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-28 19:47:00" itemprop="dateCreated datePublished" datetime="2019-05-28T19:47:00+08:00">2019-05-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/java-mongo-crud.html">mongodb海量数据CRUD优化</a></p>
+<h2 id="1-批量保存优化"><a href="#1-批量保存优化" class="headerlink" title="1. 批量保存优化"></a>1. 批量保存优化</h2><p>避免一条一条查询，采用<code>bulkWrite</code>, 基于<code>ReplaceOneModel</code>，启用<code>upsert</code>:</p>
+<pre><code> public void batchSave(List&lt;?&gt; spoTriples, KgInstance kgInstance) &#123;
+        MongoConverter converter = mongoTemplate.getConverter();
+        List&lt;ReplaceOneModel&lt;Document&gt;&gt; bulkOperationList = spoTriples.stream()
+                .map(thing -&gt; &#123;
+                    org.bson.Document dbDoc = new org.bson.Document();
+                    converter.write(thing, dbDoc);
+                    ReplaceOneModel&lt;org.bson.Document&gt; replaceOneModel = new ReplaceOneModel(
+                            Filters.eq(UNDERSCORE_ID, dbDoc.get(UNDERSCORE_ID)), 
+                            dbDoc,
+                            new UpdateOptions().upsert(true));
+                    return replaceOneModel;
+                &#125;)
+                .collect(Collectors.toList());
+        mongoTemplate.getCollection(getCollection(kgInstance)).bulkWrite(bulkOperationList);
+    &#125;
+</code></pre>
+<h2 id="2-分页优化"><a href="#2-分页优化" class="headerlink" title="2. 分页优化"></a>2. 分页优化</h2><p>经常用于查询的字段，需要确保建立了索引。</p>
+<p>对于包含多个键的查询，可以创建符合索引。</p>
+<h3 id="2-1-避免不必要的count"><a href="#2-1-避免不必要的count" class="headerlink" title="2.1 避免不必要的count"></a>2.1 避免不必要的count</h3><p>查询时，走索引，速度并不慢，但是如果返回分页<code>Page&lt;?&gt;</code>，需要查询<code>totalcount</code>，当单表数据过大时，count会比较耗时，但是设想意向，你真的需要准确的数字吗？</p>
+<p>在google、百度等搜索引擎搜索关键词时，只会给你有限的几个结果，因此，我们也不必给出准确的数字，设定一个阈值，比如1万，当我们发现总量大于1万时，返回1万，前端显示大于1万条即可。</p>
+<p>原理也很鉴定啊，我们skip掉<code>MAX_PAGE_COUNT</code>，看是否还有数据，如果有就说明总量大于<code>MAX_PAGE_COUNT</code>，返回<code>MAX_PAGE_COUNT</code>即可，否则，计算真正的count。</p>
+<pre><code>int MAX_PAGE_COUNT = 10000;
+
+
+/**
+     * 当总数大于阈值时，不再计算总数
+     *
+     * @param mongoTemplate
+     * @param query
+     * @param collectionName
+     * @return
+     */
+    private long count(MongoTemplate mongoTemplate, Query query, String collectionName) &#123;
+        query = query.with(PageRequest.of(MAX_PAGE_COUNT, 1));
+        if (mongoTemplate.find(query, Thing.class, collectionName).size() &gt; 0) &#123;
+            return MAX_PAGE_COUNT;
+        &#125;
+        return mongoTemplate.count(query, collectionName);
+    &#125;
+</code></pre>
+<p>前端显示：</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-28/1559041614698.png" alt="大于10000"></p>
+<h3 id="2-2-避免过多的skip"><a href="#2-2-避免过多的skip" class="headerlink" title="2.2 避免过多的skip"></a>2.2 避免过多的skip</h3><p>分页不过避免需要先跳过一些数据，这个过程是需要消耗时间的，可以通过一个小技巧避免跳过。</p>
+<p>比如，显示列表时，排序为按最后修改时间倒序，每页显示100条，现在要显示第100页。<br> 按照正常的做法，需要跳过<code>99*100</code>条数据，非常大的代价。换一个角度思考，因为数据是有序的，因此第100页的数据的最后修改时间是小于第99页最小的修改时间，查询时加上这个条件，就可以直接取符合条件的前100条即可。</p>
+<h2 id="3-全量导出优化"><a href="#3-全量导出优化" class="headerlink" title="3. 全量导出优化"></a>3. 全量导出优化</h2><h3 id="3-1-去掉不需要的字段"><a href="#3-1-去掉不需要的字段" class="headerlink" title="3.1 去掉不需要的字段"></a>3.1 去掉不需要的字段</h3><p>查询时，指定真正有用的字段，这样可以有效减少数据传输量，加快查询效率。<br> 例如：</p>
+<pre><code>         Query query = new Query();
+        query.fields().include(&quot;_id&quot;).include(&quot;name&quot;).include(&quot;hot&quot;).include(&quot;alias&quot;);
+</code></pre>
+<h3 id="3-2-避免使用findAll或者分页查询，改用stream"><a href="#3-2-避免使用findAll或者分页查询，改用stream" class="headerlink" title="3.2 避免使用findAll或者分页查询，改用stream"></a>3.2 避免使用findAll或者分页查询，改用stream</h3><p>全量导出有两个误区，一是直接<code>findAll</code>,当数据量过大时，很容易导致服务器<code>OutofMermory</code>，就算没有OOM，也会对服务器造成极大的负载，影响兄弟服务。另外，FindAll一次性加载数据到内存，整个速度也会比较慢，需要等待所有数据进入内存后才能开始处理。</p>
+<p>另外一个误区是，分页查询，依次处理。分页查询可以有效减少服务器负担，不失为一种可行的方法。但是就和上面分页说的那样，分页到后面的时候，需要skip掉前面的数据，存在无用功。稍微好一点的做法就是按照之前说的，将skip转换为condtion，这种方式效率OK，但不推荐，存在代码冗余。</p>
+<pre><code>            Page&lt;Thing&gt; dataList = entityDao.findAllByPage(kgDataStoreService.getKgCollectionByKgInstance(kg), page);
+            Map&lt;String, Individual&gt; thingId2Resource = new ConcurrentHashMap&lt;&gt;();
+
+            appendThingsToModel(model, concept2OntClass, hot, alias, dataList, thingId2Resource);
+
+            while (dataList.hasNext()) &#123;
+                page = PageRequest.of(page.getPageNumber() + 1, page.getPageSize());
+                dataList = entityDao.findAllByPage(kgDataStoreService.getKgCollectionByKgInstance(kg), page);
+                appendThingsToModel(model, concept2OntClass, hot, alias, dataList, thingId2Resource);
+            &#125;
+</code></pre>
+<p>更推荐的做法是，采用mongoTemplate的steam方法,返回<code>CloseableIterator</code>迭代器，读一条数据处理一条数据，实现高效处理：</p>
+<pre><code>@Overridepublic &lt;T&gt; CloseableIterator&lt;T&gt; stream(final Query query, final Class&lt;T&gt; entityType, final String collectionName) &#123;    return doStream(query, entityType, collectionName, entityType);&#125;
+</code></pre>
+<p>改用方法后，代码可以更简化高效：</p>
+<pre><code>  CloseableIterator&lt;Thing&gt; dataList = kgDataStoreService.getSimpleInfoIterator(kg);
+
+            // 实体导入
+            // Page&lt;Thing&gt; dataList = entityDao.findAllByPage(kgDataStoreService.getKgCollectionByKgInstance(kg), page);
+            Map&lt;String, Individual&gt; thingId2Resource = new ConcurrentHashMap&lt;&gt;();
+
+            appendThingsToModel(model, concept2OntClass, hot, alias, dataList, thingId2Resource);
+</code></pre>
+<p>待续。。。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/05/24/jqpeng-%E5%A4%9A%E8%AF%AD%E8%A8%80%E4%B8%9A%E5%8A%A1%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Sentry%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/24/jqpeng-%E5%A4%9A%E8%AF%AD%E8%A8%80%E4%B8%9A%E5%8A%A1%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Sentry%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">多语言业务错误日志收集监控工具Sentry 安装与使用</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-24 16:04:00" itemprop="dateCreated datePublished" datetime="2019-05-24T16:04:00+08:00">2019-05-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/sentry.html">多语言业务错误日志收集监控工具Sentry 安装与使用</a></p>
+<p>Sentry 是一个实时事件日志记录和汇集的平台。其专注于错误监控以及提取一切事后处理所需信息而不依赖于麻烦的用户反馈。</p>
+<p>Sentry是一个日志平台, 它分为客户端和服务端，客户端(目前客户端有Python, PHP,C#, Ruby等多种语言)就嵌入在你的应用程序中间，程序出现异常就向服务端发送消息，服务端将消息记录到数据库中并提供一个web节目方便查看。Sentry由python编写，源码开放，性能卓越，易于扩展，目前著名的用户有Disqus, Path, mozilla, Pinterest等。</p>
+<h2 id="通过docker安装"><a href="#通过docker安装" class="headerlink" title="通过docker安装"></a>通过docker安装</h2><p>官方提供了 On-Premise 安装方式</p>
+<pre><code>git clone https://github.com/getsentry/onpremise
+cd onpremise
+</code></pre>
+<p>然后创建volume，持久化存储</p>
+<pre><code>docker volume create --name=sentry-data &amp;&amp; docker volume create --name=sentry-postgres
+</code></pre>
+<p>创建环境变量配置文件：</p>
+<pre><code>cp -n .env.example .env - create env config file
+</code></pre>
+<p>docker-compose build镜像，这一步会拉取官方镜像和redis等依赖，耐心等待    ：</p>
+<pre><code>docker-compose build - Build and tag the Docker services
+</code></pre>
+<p>创建secret-key，执行后得到一个key，添加到.env中的SENTRY_SECRET_KEY</p>
+<pre><code>docker-compose run --rm web config generate-secret-key 
+</code></pre>
+<p>创建DB和初始化用户,等待创建数据库和</p>
+<pre><code>docker-compose run --rm web upgrade
+Created internal Sentry project (slug=internal, id=1)
+
+Would you like to create a user account now? [Y/n]: y
+Email: 
+Password: 
+Repeat for confirmation: 
+Should this user be a superuser? [y/N]: y
+Added to organization: sentry
+Running migrations for sentry.nodestore:
+ - Migrating forwards to 0001_initial.
+</code></pre>
+<p>最后-d启动，启动成功后可以访问<a target="_blank" rel="noopener" href="http://server-ip:9000/">http://server-ip:9000</a></p>
+<pre><code>docker-compose up -d 
+</code></pre>
+<p>访问：</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558680516195.png" alt="sentry"></p>
+<h2 id="创建项目并集成"><a href="#创建项目并集成" class="headerlink" title="创建项目并集成"></a>创建项目并集成</h2><p>先创建一个project，支持多种语言，我们创建一个java的</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558680561117.png" alt="create project"></p>
+<h3 id="DSN（Client-Keys）"><a href="#DSN（Client-Keys）" class="headerlink" title="DSN（Client Keys）"></a>DSN（Client Keys）</h3><p>DSN格式为：</p>
+<p>DSN=”<a href="https://public:private@host:port/project\_id&quot;">https://public:private@host:port/project\_id&quot;</a></p>
+<p>可以在项目的setting-Client Keys（DSN）里查看。</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558684229783.png" alt="DSK"></p>
+<p>然后根据格式拼成DSN即可。</p>
+<h3 id="java项目集成"><a href="#java项目集成" class="headerlink" title="java项目集成"></a>java项目集成</h3><p>有多种集成方式：</p>
+<h4 id="基本集成方式"><a href="#基本集成方式" class="headerlink" title="基本集成方式"></a>基本集成方式</h4><p>添加maven引用：</p>
+<pre><code>    &lt;dependency&gt;    &lt;groupId&gt;io.sentry&lt;/groupId&gt;    &lt;artifactId&gt;sentry&lt;/artifactId&gt;    &lt;version&gt;1.7.16&lt;/version&gt;&lt;/dependency&gt;
+</code></pre>
+<p>然后在全局异常处理里集成：</p>
+<pre><code> String dsn = &quot;http://&lt;SENTRY_PUBLIC_KEY&gt;:&lt;SENTRY_PRIVATE_KEY&gt;@host:port/&lt;PROJECT_ID&gt;&quot;;
+ Sentry.init(dsn);
+</code></pre>
+<p>在有异常的地方：</p>
+<pre><code>      try &#123;
+            unsafeMethod();
+        &#125; catch (Exception e) &#123;
+            // This sends an exception event to Sentry using the statically stored instance
+            // that was created in the ``main`` method.
+            Sentry.capture(e);
+        &#125;
+</code></pre>
+<h4 id="logback集成"><a href="#logback集成" class="headerlink" title="logback集成"></a>logback集成</h4><p>logback配置：</p>
+<pre><code>&lt;configuration&gt;
+
+  &lt;appender name=&quot;Console&quot; class=&quot;ch.qos.logback.core.ConsoleAppender&quot;&gt;
+    &lt;encoder&gt;
+      &lt;pattern&gt;%d&#123;HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;36&#125; - %msg%n&lt;/pattern&gt;
+    &lt;/encoder&gt;
+  &lt;/appender&gt;
+
+  &lt;appender name=&quot;Sentry&quot; class=&quot;io.sentry.logback.SentryAppender&quot;&gt;
+    &lt;filter class=&quot;ch.qos.logback.classic.filter.ThresholdFilter&quot;&gt;
+      &lt;level&gt;WARN&lt;/level&gt;
+    &lt;/filter&gt;
+  &lt;/appender&gt;
+
+  &lt;root level=&quot;DEBUG&quot;&gt;
+    &lt;appender-ref ref=&quot;Console&quot; /&gt;
+    &lt;appender-ref ref=&quot;Sentry&quot;/&gt;
+  &lt;/root&gt;
+
+&lt;/configuration&gt;
+</code></pre>
+<h4 id="spring-boot集成"><a href="#spring-boot集成" class="headerlink" title="spring-boot集成"></a>spring-boot集成</h4><p>先添加引用：</p>
+<pre><code>        &lt;dependency&gt;        &lt;groupId&gt;io.sentry&lt;/groupId&gt;        &lt;artifactId&gt;sentry-spring&lt;/artifactId&gt;        &lt;version&gt;1.7.16&lt;/version&gt;    &lt;/dependency&gt;
+</code></pre>
+<p>在Application里集成：</p>
+<pre><code>import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+
+@Controller
+@EnableAutoConfiguration
+@SpringBootApplication
+public class Application &#123;
+    /*
+    Register a HandlerExceptionResolver that sends all exceptions to Sentry
+    and then defers all handling to the other HandlerExceptionResolvers.
+    You should only register this is you are not using a logging integration,
+    otherwise you may double report exceptions.
+     */
+    @Bean
+    public HandlerExceptionResolver sentryExceptionResolver() &#123;
+        return new io.sentry.spring.SentryExceptionResolver();
+    &#125;
+
+    /*
+    Register a ServletContextInitializer that installs the SentryServletRequestListener
+    so that Sentry events contain HTTP request information.
+    This should only be necessary in Spring Boot applications. &quot;Classic&quot; Spring
+    should automatically load the `io.sentry.servlet.SentryServletContainerInitializer`.
+     */
+    @Bean
+    public ServletContextInitializer sentryServletContextInitializer() &#123;
+        return new io.sentry.spring.SentryServletContextInitializer();
+    &#125;
+
+    @RequestMapping(&quot;/&quot;)
+    @ResponseBody
+    String home() &#123;
+        int x = 1 / 0;
+
+        return &quot;Hello World!&quot;;
+    &#125;
+
+    public static void main(String[] args) &#123;
+        SpringApplication.run(Application.class, args);
+    &#125;
+&#125;
+</code></pre>
+<h3 id="前端项目集成"><a href="#前端项目集成" class="headerlink" title="前端项目集成"></a>前端项目集成</h3><p>前端集成更简单，引用sentry的js，然后init即可</p>
+<pre><code>&lt;script src=&quot;https://browser.sentry-cdn.com/5.1.0/bundle.min.js&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+Sentry.init(&#123; dsn: &#39;dsn&#39; &#125;);
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a> 您的支持是对博主最大的鼓励，感谢您的认真阅读。 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/05/08/jqpeng-VS%20Code%20Remote%EF%BC%8C%E5%9C%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E5%BC%80%E5%8F%91%E7%A8%8B%E5%BA%8F%EF%BC%8C%E5%BC%80%E5%90%AF%E5%85%A8%E6%96%B0%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/08/jqpeng-VS%20Code%20Remote%EF%BC%8C%E5%9C%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E5%BC%80%E5%8F%91%E7%A8%8B%E5%BA%8F%EF%BC%8C%E5%BC%80%E5%90%AF%E5%85%A8%E6%96%B0%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">VS Code Remote，在服务器上开发程序，开启全新开发模式</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-08 11:19:00" itemprop="dateCreated datePublished" datetime="2019-05-08T11:19:00+08:00">2019-05-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/vs-code-remote.html">VS Code Remote，在服务器上开发程序，开启全新开发模式</a></p>
+<p>一直使用Idea开发java 程序，头疼的是太太太占用内存了，笔记本电脑经常卡爆，在服务器开发的话又太麻烦，VS Code Remote的带来，解决了这一烦恼。下面来实战一下。</p>
+<h2 id="VS-Code-Remote"><a href="#VS-Code-Remote" class="headerlink" title="VS Code Remote"></a>VS Code Remote</h2><p>2019 年 5 月 3 日，在 PyCon 2019 大会上，微软发布了 VS Code Remote，开启了远程开发的新时代<br> 。</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-8/1557283868532.png" alt="VS"></p>
+<p>Visual Studio Code Remote 允许开发者将容器，远程计算机，或 Windows Subsystem for Linux (WSL) 作为完整的开发环境。你可以：</p>
+<ul>
+<li>在部署相同的操作系统上进行开发，或者使用更大或更专业的硬件。</li>
+<li>把开发环境作为沙箱，以避免影响本地计算机配置。</li>
+<li>让新手轻松上手，让每个人都保持一致的开发环境。</li>
+<li>使用原本在本地环境不可用的工具或运行时，或者管理它们的多个版本。</li>
+<li>在 WSL 里开发 Linux 应用。</li>
+<li>从多台不同的计算机访问现有的开发环境。</li>
+<li>调试在其他位置（比如客户网站或云端）运行的应用程序。</li>
+</ul>
+<p>所有以上的功能，并不需要在你的本地开发环境有源代码。通过 VS Code Remote，轻松连接上远程环境，在本地进行开发。</p>
+<p>下面来实战。</p>
+<h2 id="安装vs-code-insiders"><a href="#安装vs-code-insiders" class="headerlink" title="安装vs code insiders"></a>安装vs code insiders</h2><p>需要先安装最新的内部体验版，<a target="_blank" rel="noopener" href="https://code.visualstudio.com/insiders/">https://code.visualstudio.com/insiders/</a></p>
+<p>然后安装Remote Development插件</p>
+<p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack">https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack</a></p>
+<p>为了简单起见，我们采用SSH模式。需要先在windows机器安装OpenSSH</p>
+<h2 id="windows-10-安装OpenSSH"><a href="#windows-10-安装OpenSSH" class="headerlink" title="windows 10 安装OpenSSH"></a>windows 10 安装OpenSSH</h2><p>使用 PowerShell 安装 OpenSSH</p>
+<p>若要安装使用 PowerShell 的 OpenSSH，请首先以管理员身份启动 PowerShell。 若要确保 OpenSSH 功能以安装方式提供：</p>
+<p>PowerShell复制</p>
+<pre><code>Get-WindowsCapability -Online | ? Name -like &#39;OpenSSH*&#39;
+
+# This should return the following output:
+
+Name  : OpenSSH.Client~~~~0.0.1.0
+State : NotPresent
+Name  : OpenSSH.Server~~~~0.0.1.0
+State : NotPresent
+</code></pre>
+<p>然后，安装服务器和/或客户端功能：</p>
+<p>PowerShell复制</p>
+<pre><code># Install the OpenSSH Client
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+
+# Install the OpenSSH Server
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+
+# Both of these should return the following output:
+
+Path          :
+Online        : True
+RestartNeeded : False
+</code></pre>
+<h2 id="SSH-认证"><a href="#SSH-认证" class="headerlink" title="SSH 认证"></a>SSH 认证</h2><ul>
+<li>先ssh-keygen生车密钥</li>
+<li>然后ssh-copy-id 到服务器</li>
+</ul>
+<pre><code> ssh-copy-id root@YOUR-SERVER-IP
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: &quot;/c/Users/jqpeng/.ssh/id_ed25519.pub&quot;
+The authenticity of host &#39;YOUR-SERVER-IP&#39; can&#39;t be established.
+ECDSA key fingerprint is SHA256:HRwsmslg5ge+JYcOjW6zRtUxrFeWJ5V2AojlIvLaykc.
+Are you sure you want to continue connecting (yes/no)? yes
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filterout any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+root@YOUR-SERVER-IP&#39;s password:
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   &quot;ssh &#39;root@YOUR-SERVER-IP&#39;&quot;
+and check to make sure that only the key(s) you wanted were added.
+</code></pre>
+<h2 id="使用VS-code-inside-开发程序"><a href="#使用VS-code-inside-开发程序" class="headerlink" title="使用VS code inside 开发程序"></a>使用VS code inside 开发程序</h2><p>准备工作：</p>
+<ul>
+<li>确保服务器已有JDK，mvn，没有的话先安装好</li>
+<li>将代码签出到服务器一个目录</li>
+</ul>
+<p>打开VS code，命令行：</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-8/1557284388601.png" alt="enter description here"></p>
+<p>选择<code>connect to host</code>:</p>
+<p>然后输入root@YOUR_SERVETR_IP</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-8/1557284444999.png" alt="enter description here"></p>
+<p>回车，VS 会自动在服务器准备相关环境。</p>
+<p>搞定后，点击文件打开文件夹，VS Code会列出服务器的目录，选择项目所在地址打开即可。</p>
+<p><img src="https://markdown.xiaoshujiang.com/img/spinner.gif" alt="enter description here" title="[[[1557284521346]]]"></p>
+<p>接下来安装必要的语言插件，打开一个java文件，vs code会自动图惨案安装一些插件，把java相关的安装好：</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-8/1557284624056.png" alt="enter description here"></p>
+<h2 id="调试程序"><a href="#调试程序" class="headerlink" title="调试程序"></a>调试程序</h2><p>打开包含main的java文件，点击调试菜单，会自动生成一个启动文件，配置下即可：</p>
+<pre><code>&#123;
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    &quot;version&quot;: &quot;0.2.0&quot;,
+    &quot;configurations&quot;: [
+        &#123;
+            &quot;type&quot;: &quot;java&quot;,
+            &quot;name&quot;: &quot;AimindWebApplication&quot;,
+            &quot;request&quot;: &quot;launch&quot;,
+            &quot;mainClass&quot;: &quot;com.xxx.xxx.XXXWebApplication&quot;
+        &#125;
+    ]
+&#125;
+</code></pre>
+<p>然后启动。</p>
+<p>惊喜的发现，在main函数上方，自动出现了RUN|DEBUG，见下图，点击debug即可启动调试</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-8/1557285054203.png" alt="自动识别的main"></p>
+<p>在调试控制台可以看到对应的输出。</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-8/1557285150474.png" alt="调试控制台"></p>
+<h2 id="内存占用"><a href="#内存占用" class="headerlink" title="内存占用"></a>内存占用</h2><p>之前IDEA启动调试后，内存占用2G+，VS code呢？400M+！</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-8/1557285229259.png" alt="VS CODE remote 内存占用"></p>
+<p>把耗费计算资源、内存的都放到服务器上去执行了，本地只需要负责View，所以资源占用极小。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/02/19/jqpeng-makefilen%20%20missing%20separator.%20Stop/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/02/19/jqpeng-makefilen%20%20missing%20separator.%20Stop/" class="post-title-link" itemprop="url">makefilen  missing separator. Stop</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-02-19 17:09:00" itemprop="dateCreated datePublished" datetime="2019-02-19T17:09:00+08:00">2019-02-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>254</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/10402353.html">makefilen  missing separator. Stop</a></p>
+<p>makefile has a very stupid relation with tabs, all actions of every rule are identified by tabs …… and No 4 spaces don’t make a tab, only a tab makes a tab…</p>
+<p>makefile使用tab来作为separator.如果你使用4个空格就会报错，makefile:n: *** missing separator. Stop，其中n是第几行</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/01/22/jqpeng-drone%E7%9A%84pipeline%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/01/22/jqpeng-drone%E7%9A%84pipeline%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">drone的pipeline原理与代码分析</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-01-22 17:11:00" itemprop="dateCreated datePublished" datetime="2019-01-22T17:11:00+08:00">2019-01-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>14k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>13 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/drone-pipeline.html">drone的pipeline原理与代码分析</a></p>
+<p>最近的一个项目，需要实现一个工作任务流（task pipeline），基于之前CICD的经验，jenkins pipeline和drone的pipeline进入候选。</p>
+<p>drone是基于go的cicd解决方案，github上有1.6万+star，本文简单对比了其和jenkins的区别，重点介绍了drone的pipeline原理，并简单分析了代码。</p>
+<h2 id="jenkins-与-drone"><a href="#jenkins-与-drone" class="headerlink" title="jenkins 与 drone"></a>jenkins 与 drone</h2><table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>jenkins</th>
+<th>drone</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pipeline定义</td>
+<td>编写jenkinsfile</td>
+<td>编写流程yml</td>
+</tr>
+<tr>
+<td>运行方式</td>
+<td>在一个pod里运行</td>
+<td>每一步骤起对应的container，通过挂载volume实现数据共享</td>
+</tr>
+<tr>
+<td>运行环境</td>
+<td>物理机或者容器环境，包括K8S</td>
+<td>docker容器环境</td>
+</tr>
+<tr>
+<td>开发语言</td>
+<td>java</td>
+<td>golang</td>
+</tr>
+</tbody></table>
+<p>drone pipeline好处是相对更轻量级，yml定义也相对简洁清晰，按照功能来划分容器，可以方便的实现task的复用，而jenkins则是完全打包到一个镜像，会造成单个镜像体积过大，比如jenkins的单个镜像超过2G。</p>
+<p>drone的pipeline，是基于<a target="_blank" rel="noopener" href="https://github.com/cncd/pipeline">https://github.com/cncd/pipeline</a> 实现的，这里简单分析下其原理。</p>
+<h2 id="编译和执行-drone-pipeline"><a href="#编译和执行-drone-pipeline" class="headerlink" title="编译和执行 drone pipeline"></a>编译和执行 drone pipeline</h2><p>要了解一个程序的原理，先从输入输出讲起。</p>
+<p>先安装：</p>
+<pre><code>go get -u github.com/cncd/pipeline
+go install github.com/cncd/pipeline/pipec
+</code></pre>
+<p>然后测试</p>
+<pre><code>cd $GOPATH/github.com/cncd/pipeline/samples/sample_1
+# ll
+total 28
+drwxr-xr-x  2 root root 4096 Jan 22 11:44 ./
+drwxr-xr-x 13 root root 4096 Jan 22 11:02 ../
+-rw-r--r--  1 root root  549 Jan 22 11:02 .env
+-rw-r--r--  1 root root 6804 Jan 22 16:30 pipeline.json
+-rw-r--r--  1 root root  229 Jan 22 11:02 pipeline.yml
+-rw-r--r--  1 root root  138 Jan 22 11:02 README.md
+</code></pre>
+<ul>
+<li>pipeline.yml 定义文件</li>
+<li>pipeline.json 编译后的配置文件</li>
+<li>.env 环境变量</li>
+</ul>
+<p>先来查看<code>pipeline.yml</code> 定义</p>
+<pre><code>workspace:
+  base: /go
+  path: src/github.com/drone/envsubst
+
+clone:
+  git:
+    image: plugins/git
+    depth: 50
+
+pipeline:
+  build:
+    image: golang:1.7
+    commands:
+      - go get -t ./...
+      - go build
+      - go test -v
+</code></pre>
+<p>上面的yml定义了：</p>
+<ul>
+<li>工作目录workspace</li>
+<li>初始化工作，git clone仓库,仓库地址在.env里定义</li>
+<li>然后是定义pipeline，<ul>
+<li>pipeline下面是step数组，这里只有一个build</li>
+<li>使用golang:1.7镜像</li>
+<li>构建命令在commands数组里定义</li>
+</ul>
+</li>
+</ul>
+<p>通过<code>pipec compile</code>compile配置文件：</p>
+<pre><code># pipec compile
+Successfully compiled pipeline.yml to pipeline.json
+</code></pre>
+<p>查看编译后的<code>pipeline.json</code></p>
+<pre><code>&#123;
+  &quot;pipeline&quot;: [
+    &#123;
+      &quot;name&quot;: &quot;pipeline_clone_0&quot;,
+      &quot;alias&quot;: &quot;git&quot;,
+      &quot;steps&quot;: [
+        &#123;
+          &quot;name&quot;: &quot;pipeline_clone_0&quot;,
+          &quot;alias&quot;: &quot;git&quot;,
+          &quot;image&quot;: &quot;plugins/git:latest&quot;,
+          &quot;working_dir&quot;: &quot;/go/src/github.com/drone/envsubst&quot;,
+          &quot;environment&quot;: &#123;
+            &quot;CI&quot;: &quot;drone&quot;,
+            &quot;CI_BUILD_CREATED&quot;: &quot;1486119586&quot;,
+            &quot;CI_BUILD_EVENT&quot;: &quot;push&quot;,
+            &quot;CI_BUILD_NUMBER&quot;: &quot;6&quot;,
+            &quot;CI_BUILD_STARTED&quot;: &quot;1486119585&quot;,
+            &quot;CI_COMMIT_AUTHOR&quot;: &quot;bradrydzewski&quot;,
+            &quot;CI_COMMIT_AUTHOR_NAME&quot;: &quot;bradrydzewski&quot;,
+            &quot;CI_COMMIT_BRANCH&quot;: &quot;master&quot;,
+            &quot;CI_COMMIT_MESSAGE&quot;: &quot;added a few more test cases for escaping behavior&quot;,
+            &quot;CI_COMMIT_REF&quot;: &quot;refs/heads/master&quot;,
+            &quot;CI_COMMIT_SHA&quot;: &quot;d0876d3176965f9552a611cbd56e24a9264355e6&quot;,
+            &quot;CI_REMOTE_URL&quot;: &quot;https://github.com/drone/envsubst.git&quot;,
+            &quot;CI_REPO&quot;: &quot;drone/envsubst&quot;,
+            &quot;CI_REPO_LINK&quot;: &quot;https://github.com/drone/envsubst&quot;,
+            &quot;CI_REPO_NAME&quot;: &quot;drone/envsubst&quot;,
+            &quot;CI_REPO_REMOTE&quot;: &quot;https://github.com/drone/envsubst.git&quot;,
+            &quot;CI_SYSTEM&quot;: &quot;pipec&quot;,
+            &quot;CI_SYSTEM_ARCH&quot;: &quot;linux/amd64&quot;,
+            &quot;CI_SYSTEM_LINK&quot;: &quot;https://github.com/cncd/pipec&quot;,
+            &quot;CI_SYSTEM_NAME&quot;: &quot;pipec&quot;,
+            &quot;CI_WORKSPACE&quot;: &quot;/go/src/github.com/drone/envsubst&quot;,
+            &quot;DRONE&quot;: &quot;true&quot;,
+            &quot;DRONE_ARCH&quot;: &quot;linux/amd64&quot;,
+            &quot;DRONE_BRANCH&quot;: &quot;master&quot;,
+            &quot;DRONE_BUILD_CREATED&quot;: &quot;1486119586&quot;,
+            &quot;DRONE_BUILD_EVENT&quot;: &quot;push&quot;,
+            &quot;DRONE_BUILD_LINK&quot;: &quot;https://github.com/cncd/pipec/drone/envsubst/6&quot;,
+            &quot;DRONE_BUILD_NUMBER&quot;: &quot;6&quot;,
+            &quot;DRONE_BUILD_STARTED&quot;: &quot;1486119585&quot;,
+            &quot;DRONE_COMMIT&quot;: &quot;d0876d3176965f9552a611cbd56e24a9264355e6&quot;,
+            &quot;DRONE_COMMIT_AUTHOR&quot;: &quot;bradrydzewski&quot;,
+            &quot;DRONE_COMMIT_BRANCH&quot;: &quot;master&quot;,
+            &quot;DRONE_COMMIT_MESSAGE&quot;: &quot;added a few more test cases for escaping behavior&quot;,
+            &quot;DRONE_COMMIT_REF&quot;: &quot;refs/heads/master&quot;,
+            &quot;DRONE_COMMIT_SHA&quot;: &quot;d0876d3176965f9552a611cbd56e24a9264355e6&quot;,
+            &quot;DRONE_JOB_STARTED&quot;: &quot;1486119585&quot;,
+            &quot;DRONE_REMOTE_URL&quot;: &quot;https://github.com/drone/envsubst.git&quot;,
+            &quot;DRONE_REPO&quot;: &quot;drone/envsubst&quot;,
+            &quot;DRONE_REPO_LINK&quot;: &quot;https://github.com/drone/envsubst&quot;,
+            &quot;DRONE_REPO_NAME&quot;: &quot;envsubst&quot;,
+            &quot;DRONE_REPO_OWNER&quot;: &quot;drone&quot;,
+            &quot;DRONE_REPO_SCM&quot;: &quot;git&quot;,
+            &quot;DRONE_WORKSPACE&quot;: &quot;/go/src/github.com/drone/envsubst&quot;,
+            &quot;PLUGIN_DEPTH&quot;: &quot;50&quot;
+          &#125;,
+          &quot;volumes&quot;: [
+            &quot;pipeline_default:/go&quot;
+          ],
+          &quot;networks&quot;: [
+            &#123;
+              &quot;name&quot;: &quot;pipeline_default&quot;,
+              &quot;aliases&quot;: [
+                &quot;git&quot;
+              ]
+            &#125;
+          ],
+          &quot;on_success&quot;: true,
+          &quot;auth_config&quot;: &#123;&#125;
+        &#125;
+      ]
+    &#125;,
+    &#123;
+      &quot;name&quot;: &quot;pipeline_stage_0&quot;,
+      &quot;alias&quot;: &quot;build&quot;,
+      &quot;steps&quot;: [
+        &#123;
+          &quot;name&quot;: &quot;pipeline_step_0&quot;,
+          &quot;alias&quot;: &quot;build&quot;,
+          &quot;image&quot;: &quot;golang:1.7&quot;,
+          &quot;working_dir&quot;: &quot;/go/src/github.com/drone/envsubst&quot;,
+          &quot;environment&quot;: &#123;
+            &quot;CI&quot;: &quot;drone&quot;,
+            &quot;CI_BUILD_CREATED&quot;: &quot;1486119586&quot;,
+            &quot;CI_BUILD_EVENT&quot;: &quot;push&quot;,
+            &quot;CI_BUILD_NUMBER&quot;: &quot;6&quot;,
+            &quot;CI_BUILD_STARTED&quot;: &quot;1486119585&quot;,
+            &quot;CI_COMMIT_AUTHOR&quot;: &quot;bradrydzewski&quot;,
+            &quot;CI_COMMIT_AUTHOR_NAME&quot;: &quot;bradrydzewski&quot;,
+            &quot;CI_COMMIT_BRANCH&quot;: &quot;master&quot;,
+            &quot;CI_COMMIT_MESSAGE&quot;: &quot;added a few more test cases for escaping behavior&quot;,
+            &quot;CI_COMMIT_REF&quot;: &quot;refs/heads/master&quot;,
+            &quot;CI_COMMIT_SHA&quot;: &quot;d0876d3176965f9552a611cbd56e24a9264355e6&quot;,
+            &quot;CI_REMOTE_URL&quot;: &quot;https://github.com/drone/envsubst.git&quot;,
+            &quot;CI_REPO&quot;: &quot;drone/envsubst&quot;,
+            &quot;CI_REPO_LINK&quot;: &quot;https://github.com/drone/envsubst&quot;,
+            &quot;CI_REPO_NAME&quot;: &quot;drone/envsubst&quot;,
+            &quot;CI_REPO_REMOTE&quot;: &quot;https://github.com/drone/envsubst.git&quot;,
+            &quot;CI_SCRIPT&quot;: &quot;CmlmIFsgLW4gIiRDSV9ORVRSQ19NQUNISU5FIiBdOyB0aGVuCmNhdCA8PEVPRiA+ICRIT01FLy5uZXRyYwptYWNoaW5lICRDSV9ORVRSQ19NQUNISU5FCmxvZ2luICRDSV9ORVRSQ19VU0VSTkFNRQpwYXNzd29yZCAkQ0lfTkVUUkNfUEFTU1dPUkQKRU9GCmNobW9kIDA2MDAgJEhPTUUvLm5ldHJjCmZpCnVuc2V0IENJX05FVFJDX1VTRVJOQU1FCnVuc2V0IENJX05FVFJDX1BBU1NXT1JECnVuc2V0IENJX1NDUklQVAp1bnNldCBEUk9ORV9ORVRSQ19VU0VSTkFNRQp1bnNldCBEUk9ORV9ORVRSQ19QQVNTV09SRAoKZWNobyArICJnbyBnZXQgLXQgLi8uLi4iCmdvIGdldCAtdCAuLy4uLgoKZWNobyArICJnbyBidWlsZCIKZ28gYnVpbGQKCmVjaG8gKyAiZ28gdGVzdCAtdiIKZ28gdGVzdCAtdgoK&quot;,
+            &quot;CI_SYSTEM&quot;: &quot;pipec&quot;,
+            &quot;CI_SYSTEM_ARCH&quot;: &quot;linux/amd64&quot;,
+            &quot;CI_SYSTEM_LINK&quot;: &quot;https://github.com/cncd/pipec&quot;,
+            &quot;CI_SYSTEM_NAME&quot;: &quot;pipec&quot;,
+            &quot;CI_WORKSPACE&quot;: &quot;/go/src/github.com/drone/envsubst&quot;,
+            &quot;DRONE&quot;: &quot;true&quot;,
+            &quot;DRONE_ARCH&quot;: &quot;linux/amd64&quot;,
+            &quot;DRONE_BRANCH&quot;: &quot;master&quot;,
+            &quot;DRONE_BUILD_CREATED&quot;: &quot;1486119586&quot;,
+            &quot;DRONE_BUILD_EVENT&quot;: &quot;push&quot;,
+            &quot;DRONE_BUILD_LINK&quot;: &quot;https://github.com/cncd/pipec/drone/envsubst/6&quot;,
+            &quot;DRONE_BUILD_NUMBER&quot;: &quot;6&quot;,
+            &quot;DRONE_BUILD_STARTED&quot;: &quot;1486119585&quot;,
+            &quot;DRONE_COMMIT&quot;: &quot;d0876d3176965f9552a611cbd56e24a9264355e6&quot;,
+            &quot;DRONE_COMMIT_AUTHOR&quot;: &quot;bradrydzewski&quot;,
+            &quot;DRONE_COMMIT_BRANCH&quot;: &quot;master&quot;,
+            &quot;DRONE_COMMIT_MESSAGE&quot;: &quot;added a few more test cases for escaping behavior&quot;,
+            &quot;DRONE_COMMIT_REF&quot;: &quot;refs/heads/master&quot;,
+            &quot;DRONE_COMMIT_SHA&quot;: &quot;d0876d3176965f9552a611cbd56e24a9264355e6&quot;,
+            &quot;DRONE_JOB_STARTED&quot;: &quot;1486119585&quot;,
+            &quot;DRONE_REMOTE_URL&quot;: &quot;https://github.com/drone/envsubst.git&quot;,
+            &quot;DRONE_REPO&quot;: &quot;drone/envsubst&quot;,
+            &quot;DRONE_REPO_LINK&quot;: &quot;https://github.com/drone/envsubst&quot;,
+            &quot;DRONE_REPO_NAME&quot;: &quot;envsubst&quot;,
+            &quot;DRONE_REPO_OWNER&quot;: &quot;drone&quot;,
+            &quot;DRONE_REPO_SCM&quot;: &quot;git&quot;,
+            &quot;DRONE_WORKSPACE&quot;: &quot;/go/src/github.com/drone/envsubst&quot;,
+            &quot;HOME&quot;: &quot;/root&quot;,
+            &quot;SHELL&quot;: &quot;/bin/sh&quot;
+          &#125;,
+          &quot;entrypoint&quot;: [
+            &quot;/bin/sh&quot;,
+            &quot;-c&quot;
+          ],
+          &quot;command&quot;: [
+            &quot;echo $CI_SCRIPT | base64 -d | /bin/sh -e&quot;
+          ],
+          &quot;volumes&quot;: [
+            &quot;pipeline_default:/go&quot;
+          ],
+          &quot;networks&quot;: [
+            &#123;
+              &quot;name&quot;: &quot;pipeline_default&quot;,
+              &quot;aliases&quot;: [
+                &quot;build&quot;
+              ]
+            &#125;
+          ],
+          &quot;on_success&quot;: true,
+          &quot;auth_config&quot;: &#123;&#125;
+        &#125;
+      ]
+    &#125;
+  ],
+  &quot;networks&quot;: [
+    &#123;
+      &quot;name&quot;: &quot;pipeline_default&quot;,
+      &quot;driver&quot;: &quot;bridge&quot;
+    &#125;
+  ],
+  &quot;volumes&quot;: [
+    &#123;
+      &quot;name&quot;: &quot;pipeline_default&quot;,
+      &quot;driver&quot;: &quot;local&quot;
+    &#125;
+  ],
+  &quot;secrets&quot;: null
+&#125;
+</code></pre>
+<p>简单分析结构：</p>
+<ul>
+<li>pipeline 定义了执行的stage，每个stage有一个或者多个step</li>
+<li>networks、volumes、secrets 分别定义网络、存储和secrets<ul>
+<li>通过network，实现container互通</li>
+<li>通过volumes实现数据共享</li>
+</ul>
+</li>
+</ul>
+<p>最后执行，通过<code>pipec exec</code>：</p>
+<pre><code># pipec exec
+proc &quot;pipeline_clone_0&quot; started
++ git init
+Initialized empty Git repository in /go/src/github.com/drone/envsubst/.git/
++ git remote add origin https://github.com/drone/envsubst.git
++ git fetch --no-tags --depth=50 origin +refs/heads/master:
+From https://github.com/drone/envsubst
+ * branch            master     -&gt; FETCH_HEAD
+ * [new branch]      master     -&gt; origin/master
++ git reset --hard -q d0876d3176965f9552a611cbd56e24a9264355e6
++ git submodule update --init --recursive
+proc &quot;pipeline_clone_0&quot; exited with status 0
+proc &quot;pipeline_step_0&quot; started
++ go get -t ./...
++ go build
++ go test -v
+=== RUN   TestExpand
+--- PASS: TestExpand (0.00s)
+=== RUN   TestFuzz
+--- PASS: TestFuzz (0.01s)
+=== RUN   Test_len
+--- PASS: Test_len (0.00s)
+=== RUN   Test_lower
+--- PASS: Test_lower (0.00s)
+=== RUN   Test_lowerFirst
+--- PASS: Test_lowerFirst (0.00s)
+=== RUN   Test_upper
+--- PASS: Test_upper (0.00s)
+=== RUN   Test_upperFirst
+--- PASS: Test_upperFirst (0.00s)
+=== RUN   Test_default
+--- PASS: Test_default (0.00s)
+PASS
+ok      github.com/drone/envsubst    0.009s
+proc &quot;pipeline_step_0&quot; exited with status 0
+</code></pre>
+<h2 id="pipeline-原理分析"><a href="#pipeline-原理分析" class="headerlink" title="pipeline 原理分析"></a>pipeline 原理分析</h2><h3 id="编译过程"><a href="#编译过程" class="headerlink" title="编译过程"></a>编译过程</h3><p>可以形象的理解为 .env+pipeline.yml –&gt; pipeline.json</p>
+<p>编译过程不复杂，主要是解析pipeline.yml为<code>Config</code>:</p>
+<pre><code>Config struct &#123;    Cache     libcompose.Stringorslice    Platform  string    Branches  Constraint    Workspace Workspace    Clone     Containers    Pipeline  Containers    Services  Containers    Networks  Networks    Volumes   Volumes    Labels    libcompose.SliceorMap&#125;
+</code></pre>
+<p>然后转换为json对应的config：</p>
+<pre><code>Config struct &#123;    Stages   []*Stage   `json:&quot;pipeline&quot;` // pipeline stages    Networks []*Network `json:&quot;networks&quot;` // network definitions    Volumes  []*Volume  `json:&quot;volumes&quot;`  // volume definitions    Secrets  []*Secret  `json:&quot;secrets&quot;`  // secret definitions&#125;
+</code></pre>
+<p>该部分主要代码在pipeline/frontend里</p>
+<h3 id="执行过程"><a href="#执行过程" class="headerlink" title="执行过程"></a>执行过程</h3><p>我们主要关注执行过程，主要代码在pipeline/backend里。</p>
+<p>首先是读取配置文件为backend.Config</p>
+<pre><code>config, err := pipeline.Parse(reader)if err != nil &#123;    return err&#125;
+</code></pre>
+<p>然后创建执行环境，目前的代码仅docker可用，k8s是空代码。</p>
+<pre><code>var engine backend.Engineif c.Bool(&quot;kubernetes&quot;) &#123;    engine = kubernetes.New(        c.String(&quot;kubernetes-namepsace&quot;),        c.String(&quot;kubernetes-endpoint&quot;),        c.String(&quot;kubernetes-token&quot;),    )&#125; else &#123;    engine, err = docker.NewEnv()    if err != nil &#123;        return err    &#125;&#125;
+</code></pre>
+<p>接着开始执行</p>
+<pre><code>    ctx, cancel := context.WithTimeout(context.Background(), c.Duration(&quot;timeout&quot;))defer cancel()ctx = interrupt.WithContext(ctx)
+return pipeline.New(config,    pipeline.WithContext(ctx),    pipeline.WithLogger(defaultLogger),    pipeline.WithTracer(defaultTracer),    pipeline.WithEngine(engine),).Run()
+</code></pre>
+<p>其中pipeline.NEW创建了<code>Runtime</code>对象;</p>
+<pre><code>type Runtime struct &#123;err     error  // 错误信息spec    *backend.Config  // 配置信息engine  backend.Engine  // docker enginestarted int64 // 开始时间
+ctx    context.Contexttracer Tracerlogger Logger
+&#125;
+</code></pre>
+<p>其中Engine，操作容器的interface，目前仅docker可用。</p>
+<pre><code>// Engine defines a container orchestration backend and is used
+// to create and manage container resources.
+type Engine interface &#123;// Setup the pipeline environment.Setup(context.Context, *Config) error// Start the pipeline step.Exec(context.Context, *Step) error// Kill the pipeline step.Kill(context.Context, *Step) error// Wait for the pipeline step to complete and returns// the completion results.Wait(context.Context, *Step) (*State, error)// Tail the pipeline step logs.Tail(context.Context, *Step) (io.ReadCloser, error)// Destroy the pipeline environment.Destroy(context.Context, *Config) error
+&#125;
+</code></pre>
+<p>关注Run：</p>
+<pre><code>// Run starts the runtime and waits for it to complete.
+func (r *Runtime) Run() error &#123;
+    // 延迟函数，用于销毁docker envdefer func() &#123;    r.engine.Destroy(r.ctx, r.spec)&#125;()// 初始化docker enginer.started = time.Now().Unix()if err := r.engine.Setup(r.ctx, r.spec); err != nil &#123;    return err&#125;
+   
+   // 依次运行stagefor _, stage := range r.spec.Stages &#123;    select &#123;    case &lt;-r.ctx.Done():        return ErrCancel    // 执行    case err := &lt;-r.execAll(stage.Steps):        if err != nil &#123;            r.err = err        &#125;    &#125;&#125;
+return r.err
+&#125;
+</code></pre>
+<p>重点在于使用errgroup.Group通过协程方式运行step：</p>
+<pre><code>// 执行所有steps
+func (r *Runtime) execAll(procs []*backend.Step) &lt;-chan error &#123;var g errgroup.Groupdone := make(chan error)
+    // 遍历执行stepfor _, proc := range procs &#123;   // 协程 exec    proc := proc    g.Go(func() error &#123;        return r.exec(proc)    &#125;)&#125;
+go func() &#123;    done &lt;- g.Wait()    close(done)&#125;()return done
+&#125;
+
+// 执行单个step
+func (r *Runtime) exec(proc *backend.Step) error &#123;switch &#123;case r.err != nil &amp;&amp; proc.OnFailure == false:    return nilcase r.err == nil &amp;&amp; proc.OnSuccess == false:    return nil&#125;// trace日志if r.tracer != nil &#123;    state := new(State)    state.Pipeline.Time = r.started    state.Pipeline.Error = r.err    state.Pipeline.Step = proc    state.Process = new(backend.State) // empty    if err := r.tracer.Trace(state); err == ErrSkip &#123;        return nil    &#125; else if err != nil &#123;        return err    &#125;&#125;
+   
+   // docker engine执行if err := r.engine.Exec(r.ctx, proc); err != nil &#123;    return err&#125;
+   
+   // 记录日志信息if r.logger != nil &#123;    rc, err := r.engine.Tail(r.ctx, proc)    if err != nil &#123;        return err    &#125;
+    go func() &#123;        r.logger.Log(proc, multipart.New(rc))        rc.Close()    &#125;()&#125;
+if proc.Detached &#123;    return nil&#125;
+
+   // 等待docker engine执行完成wait, err := r.engine.Wait(r.ctx, proc)if err != nil &#123;    return err&#125;
+if r.tracer != nil &#123;    state := new(State)    state.Pipeline.Time = r.started    state.Pipeline.Error = r.err    state.Pipeline.Step = proc    state.Process = wait    if err := r.tracer.Trace(state); err != nil &#123;        return err    &#125;&#125;
+   if wait.OOMKilled &#123;    return &amp;OomError&#123;        Name: proc.Name,        Code: wait.ExitCode,    &#125;&#125; else if wait.ExitCode != 0 &#123;    return &amp;ExitError&#123;        Name: proc.Name,        Code: wait.ExitCode,    &#125;&#125;return nil
+&#125;
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/01/22/jqpeng-Docker%20Client%20%EF%BC%88another%20java%20docker%20client%20api%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/01/22/jqpeng-Docker%20Client%20%EF%BC%88another%20java%20docker%20client%20api%EF%BC%89/" class="post-title-link" itemprop="url">Docker Client （another java docker client api）</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-01-22 15:30:00" itemprop="dateCreated datePublished" datetime="2019-01-22T15:30:00+08:00">2019-01-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/java-Docker-Client.html">Docker Client （another java docker client api）</a></p>
+<p>前一篇提到了docker-java，这里介绍另一个docker client 库，<a target="_blank" rel="noopener" href="https://github.com/spotify/docker-client">Docker Client</a></p>
+<h2 id="版本兼容"><a href="#版本兼容" class="headerlink" title="版本兼容"></a>版本兼容</h2><p>兼容17.03.1<del>ce - 17.12.1</del>ce (点 [here][1]查看).</p>
+<h2 id="下载jar包"><a href="#下载jar包" class="headerlink" title="下载jar包"></a>下载jar包</h2><p>点击 [via Maven][maven-search]搜索和下载最新的jar包.</p>
+<p>pom.xml配置如下：</p>
+<pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;com.spotify&lt;/groupId&gt;
+  &lt;artifactId&gt;docker-client&lt;/artifactId&gt;
+  &lt;version&gt;LATEST-VERSION&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>当前最新的是8.15.0</p>
+<pre><code>&lt;dependency&gt;&lt;groupId&gt;com.spotify&lt;/groupId&gt;&lt;artifactId&gt;docker-client&lt;/artifactId&gt;&lt;version&gt;8.15.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h2 id="使用举例"><a href="#使用举例" class="headerlink" title="使用举例"></a>使用举例</h2><pre><code>// Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
+final DockerClient docker = DefaultDockerClient.fromEnv().build();
+
+// Pull an image
+docker.pull(&quot;busybox&quot;);
+
+// Bind container ports to host ports
+final String[] ports = &#123;&quot;80&quot;, &quot;22&quot;&#125;;
+final Map&lt;String, List&lt;PortBinding&gt;&gt; portBindings = new HashMap&lt;&gt;();
+for (String port : ports) &#123;
+    List&lt;PortBinding&gt; hostPorts = new ArrayList&lt;&gt;();
+    hostPorts.add(PortBinding.of(&quot;0.0.0.0&quot;, port));
+    portBindings.put(port, hostPorts);
+&#125;
+
+// Bind container port 443 to an automatically allocated available host port.
+List&lt;PortBinding&gt; randomPort = new ArrayList&lt;&gt;();
+randomPort.add(PortBinding.randomPort(&quot;0.0.0.0&quot;));
+portBindings.put(&quot;443&quot;, randomPort);
+
+final HostConfig hostConfig = HostConfig.builder().portBindings(portBindings).build();
+
+// Create container with exposed ports
+final ContainerConfig containerConfig = ContainerConfig.builder()
+    .hostConfig(hostConfig)
+    .image(&quot;busybox&quot;).exposedPorts(ports)
+    .cmd(&quot;sh&quot;, &quot;-c&quot;, &quot;while :; do sleep 1; done&quot;)
+    .build();
+
+final ContainerCreation creation = docker.createContainer(containerConfig);
+final String id = creation.id();
+
+// Inspect container
+final ContainerInfo info = docker.inspectContainer(id);
+
+// Start container
+docker.startContainer(id);
+
+// Exec command inside running container with attached STDOUT and STDERR
+final String[] command = &#123;&quot;sh&quot;, &quot;-c&quot;, &quot;ls&quot;&#125;;
+final ExecCreation execCreation = docker.execCreate(
+    id, command, DockerClient.ExecCreateParam.attachStdout(),
+    DockerClient.ExecCreateParam.attachStderr());
+final LogStream output = docker.execStart(execCreation.id());
+final String execOutput = output.readFully();
+
+// Kill container
+docker.killContainer(id);
+
+// Remove container
+docker.removeContainer(id);
+
+// Close the docker client
+docker.close();
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/01/22/jqpeng-docker-java%20Docker%E7%9A%84java%20API/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/01/22/jqpeng-docker-java%20Docker%E7%9A%84java%20API/" class="post-title-link" itemprop="url">docker-java Docker的java API</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-01-22 09:28:00" itemprop="dateCreated datePublished" datetime="2019-01-22T09:28:00+08:00">2019-01-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/docker-java.html">docker-java Docker的java API</a></p>
+<h2 id="docker-java"><a href="#docker-java" class="headerlink" title="docker-java"></a>docker-java</h2><p>docker-java 是 Docker的 Java 版本API  <a target="_blank" rel="noopener" href="http://docs.docker.io/" title="Docker">Docker</a></p>
+<p><strong>当前的实现基于 Jersey 2.x 因此 classpath 不兼容老版本的 Jersey 1.x !</strong></p>
+<p>开发者论坛 <a target="_blank" rel="noopener" href="https://groups.google.com/forum/#!forum/docker-java-dev" title="docker-java">docker-java</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/docker-java/docker-java/blob/master/CHANGELOG.md">Changelog</a>  </p>
+<p><a target="_blank" rel="noopener" href="https://github.com/docker-java/docker-java/wiki">Wiki</a></p>
+<h2 id="版本支持"><a href="#版本支持" class="headerlink" title="版本支持"></a>版本支持</h2><p>Supports a subset of the Docker Remote API <a target="_blank" rel="noopener" href="https://docs.docker.com/engine/api/v1.37/">v1.37</a>, Docker Server version since 1.12.6</p>
+<pre><code>&lt;dependency&gt;
+      &lt;groupId&gt;com.github.docker-java&lt;/groupId&gt;
+      &lt;artifactId&gt;docker-java&lt;/artifactId&gt;
+      &lt;!-- use latest version https://github.com/docker-java/docker-java/releases --&gt;
+      &lt;version&gt;3.X.Y&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>当前最新的版本是3.1.0，可以点击<a target="_blank" rel="noopener" href="https://github.com/docker-java/docker-java/releases">这里</a>查看最新版本。</p>
+<pre><code>    &lt;dependency&gt;
+        &lt;groupId&gt;com.github.docker-java&lt;/groupId&gt;
+        &lt;artifactId&gt;docker-java&lt;/artifactId&gt;
+        &lt;version&gt;3.1.0&lt;/version&gt;
+    &lt;/dependency&gt;
+</code></pre>
+<h2 id="wiki文档"><a href="#wiki文档" class="headerlink" title="wiki文档"></a>wiki文档</h2><p>For code examples, please look at the <a target="_blank" rel="noopener" href="https://github.com/docker-java/docker-java/wiki">Wiki</a> or <a target="_blank" rel="noopener" href="https://github.com/docker-java/docker-java/tree/master/src/test/java/com/github/dockerjava/core/command" title="Test cases">Test cases</a></p>
+<h2 id="配置Docker环境"><a href="#配置Docker环境" class="headerlink" title="配置Docker环境"></a>配置Docker环境</h2><p>系统的可配置项及默认值如下:</p>
+<ul>
+<li><code>DOCKER_HOST</code> The Docker Host URL, e.g. <code>tcp://localhost:2376</code> or <code>unix:///var/run/docker.sock</code></li>
+<li><code>DOCKER_TLS_VERIFY</code> enable/disable TLS verification (switch between <code>http</code> and <code>https</code> protocol)</li>
+<li><code>DOCKER_CERT_PATH</code> Path to the certificates needed for TLS verification</li>
+<li><code>DOCKER_CONFIG</code> Path for additional docker configuration files (like <code>.dockercfg</code>)</li>
+<li><code>api.version</code> The API version, e.g. <code>1.23</code>.</li>
+<li><code>registry.url</code> Your registry’s address.</li>
+<li><code>registry.username</code> Your registry username (required to push containers).</li>
+<li><code>registry.password</code> Your registry password.</li>
+<li><code>registry.email</code> Your registry email.</li>
+</ul>
+<p>There are three ways to configure, in descending order of precedence:</p>
+<h3 id="编程方式配置"><a href="#编程方式配置" class="headerlink" title="编程方式配置:"></a>编程方式配置:</h3><pre><code>DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+    .withDockerHost(&quot;tcp://my-docker-host.tld:2376&quot;)
+    .withDockerTlsVerify(true)
+    .withDockerCertPath(&quot;/home/user/.docker/certs&quot;)
+    .withDockerConfig(&quot;/home/user/.docker&quot;)
+    .withApiVersion(&quot;1.30&quot;) // optional
+    .withRegistryUrl(&quot;https://index.docker.io/v1/&quot;)
+    .withRegistryUsername(&quot;dockeruser&quot;)
+    .withRegistryPassword(&quot;ilovedocker&quot;)
+    .withRegistryEmail(&quot;dockeruser@github.com&quot;)
+    .build();
+DockerClient docker = DockerClientBuilder.getInstance(config).build();
+</code></pre>
+<h3 id="通过Properties-docker-java-properties"><a href="#通过Properties-docker-java-properties" class="headerlink" title="通过Properties (docker-java.properties)"></a>通过Properties (docker-java.properties)</h3><pre><code>DOCKER_HOST=tcp://localhost:2376
+DOCKER_TLS_VERIFY=1
+DOCKER_CERT_PATH=/home/user/.docker/certs
+DOCKER_CONFIG=/home/user/.docker
+api.version=1.23
+registry.url=https://index.docker.io/v1/
+registry.username=dockeruser
+registry.password=ilovedocker
+registry.email=dockeruser@github.com
+</code></pre>
+<h3 id="通过System-Properties"><a href="#通过System-Properties" class="headerlink" title="通过System Properties:"></a>通过System Properties:</h3><pre><code>java -DDOCKER_HOST=tcp://localhost:2375 -Dregistry.username=dockeruser pkg.Main
+</code></pre>
+<h3 id="通过-Environment"><a href="#通过-Environment" class="headerlink" title="通过 Environment"></a>通过 Environment</h3><pre><code>export DOCKER_HOST=tcp://localhost:2376
+export DOCKER_TLS_VERIFY=1
+export DOCKER_CERT_PATH=/home/user/.docker/certs
+export DOCKER_CONFIG=/home/user/.docker
+</code></pre>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>我们来简单测试下：</p>
+<pre><code>    DockerClient dockerClient = createClient();
+
+    // docker info
+    Info info = dockerClient.infoCmd().exec();
+    System.out.print(info);
+
+    // 搜索镜像
+    List&lt;SearchItem&gt; dockerSearch = dockerClient.searchImagesCmd(&quot;busybox&quot;).exec();
+    System.out.println(&quot;Search returned&quot; + dockerSearch.toString());
+
+    // pull
+
+    dockerClient.pullImageCmd(&quot;busybox:latest&quot;).exec(new ResultCallback&lt;PullResponseItem&gt;() &#123;
+        public void onStart(Closeable closeable) &#123;
+
+        &#125;
+
+        public void onNext(PullResponseItem object) &#123;
+            System.out.println(object.getStatus());
+        &#125;
+
+        public void onError(Throwable throwable) &#123;
+            throwable.printStackTrace();
+        &#125;
+
+        public void onComplete() &#123;
+            System.out.println(&quot;pull finished&quot;);
+        &#125;
+
+        public void close() throws IOException &#123;
+
+        &#125;
+    &#125;);
+
+
+
+
+    // 创建container 并测试
+
+    // create
+    CreateContainerResponse container = dockerClient.createContainerCmd(&quot;busybox&quot;)
+            .withCmd(&quot;/bin/bash&quot;)
+            .exec();
+    // start
+    dockerClient.startContainerCmd(container.getId()).exec();
+    dockerClient.stopContainerCmd(container.getId()).exec();
+    dockerClient.removeContainerCmd(container.getId()).exec();
+
+    EventsResultCallback callback = new EventsResultCallback() &#123;
+        @Override
+        public void onNext(Event event) &#123;
+            System.out.println(&quot;Event: &quot; + event);
+            super.onNext(event);
+        &#125;
+    &#125;;
+
+    dockerClient.eventsCmd().exec(callback).awaitCompletion().close();
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/01/03/jqpeng-docker%E8%BF%90%E8%A1%8Cphp%E7%BD%91%E7%AB%99%E7%A8%8B%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/01/03/jqpeng-docker%E8%BF%90%E8%A1%8Cphp%E7%BD%91%E7%AB%99%E7%A8%8B%E5%BA%8F/" class="post-title-link" itemprop="url">docker运行php网站程序</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-01-03 09:07:00" itemprop="dateCreated datePublished" datetime="2019-01-03T09:07:00+08:00">2019-01-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/docker-php.html">docker运行php网站程序</a></p>
+<p>有一个之前的php网站程序需要迁移到K8S，简单调研了下。</p>
+<h2 id="基础镜像"><a href="#基础镜像" class="headerlink" title="基础镜像"></a>基础镜像</h2><p>官方提供了诸如php:7.1-apache的基础镜像，但是确认必要的扩展，例如gd，当然官方提供了<code>docker-php-ext-install</code>命令，可以用来安装需要的扩展。但是每次构建都重新安装非常费时，最好的办法是构建一个包含必要扩展的基础镜像。</p>
+<pre><code>FROM php:7.1-apache
+ENV PORT 80
+EXPOSE 80
+
+RUN buildDeps=&quot; \
+        default-libmysqlclient-dev \
+        libbz2-dev \
+        libsasl2-dev \
+    &quot; \
+    runtimeDeps=&quot; \
+        curl \
+        git \
+        libfreetype6-dev \
+        libicu-dev \
+        libjpeg-dev \
+        libmcrypt-dev \
+        libpng-dev \
+        libpq-dev \
+        libxml2-dev \
+    &quot; \
+    sed -i &#39;s/deb.debian.org/mirrors.ustc.edu.cn/g&#39; /etc/apt/sources.list  \
+    &amp;&amp; apt-get update &amp;&amp; DEBIAN_FRONTEND=noninteractive apt-get install -y $buildDeps $runtimeDeps \
+    &amp;&amp; docker-php-ext-install bcmath bz2 calendar iconv intl mbstring mcrypt mysqli opcache pdo_mysql pdo_pgsql pgsql soap zip \
+    &amp;&amp; docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    &amp;&amp; docker-php-ext-install gd \
+    &amp;&amp; apt-get purge -y --auto-remove $buildDeps \
+    &amp;&amp; rm -r /var/lib/apt/lists/* 
+
+ENV PATH=$PATH:/root/composer/vendor/bin COMPOSER_ALLOW_SUPERUSER=1
+</code></pre>
+<p>然后构建基础镜像</p>
+<pre><code>docker build -t common/php:7.1-apache .
+</code></pre>
+<p>PS： 更多的php镜像，查看 <a target="_blank" rel="noopener" href="https://github.com/chialab/docker-php">https://github.com/chialab/docker-php</a></p>
+<h2 id="使用基础镜像"><a href="#使用基础镜像" class="headerlink" title="使用基础镜像"></a>使用基础镜像</h2><p>Dockerfile应用刚构建好的基础镜像：</p>
+<pre><code>FROM common/php:7.1-apache
+ENV PORT 80
+EXPOSE 80
+COPY . /var/www/html
+RUN usermod -u 1000 www-data; \a2enmod rewrite; \chown -R www-data:www-data /var/www/html
+</code></pre>
+<p>构建即可：</p>
+<pre><code>docker build -t common/zhifou:v0.0.12 .
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/11/27/jqpeng-%E6%98%93%E4%BC%81%E7%A7%80H5%20json%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%A7%A3%E5%AF%86%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/27/jqpeng-%E6%98%93%E4%BC%81%E7%A7%80H5%20json%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%A7%A3%E5%AF%86%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">易企秀H5 json配置文件解密分析</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-27 19:36:00" itemprop="dateCreated datePublished" datetime="2018-11-27T19:36:00+08:00">2018-11-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/10028472.html">易企秀H5 json配置文件解密分析</a></p>
+<p>最近需要参考下易企秀H5的json配置文件，发现已经做了加密，其实前端的加密分析起来只是麻烦点。</p>
+<h2 id="抓包分析"><a href="#抓包分析" class="headerlink" title="抓包分析"></a>抓包分析</h2><p>先看一个H5： <a target="_blank" rel="noopener" href="https://h5.eqxiu.com/s/XvEn30op">https://h5.eqxiu.com/s/XvEn30op</a></p>
+<p>F12可以看到，配置json地址是：<a target="_blank" rel="noopener" href="https://s1-cdn.eqxiu.com/eqs/page/142626394?code=XvEn30op&amp;time=1542972816000">https://s1-cdn.eqxiu.com/eqs/page/142626394?code=XvEn30op&amp;time=1542972816000</a></p>
+<p>对应的json：</p>
+<p>{“success”:true,”code”:200,”msg”:”操作成功”,”obj”:”加密后的字符串”}</p>
+<p>obj对应的是正式的配置信息</p>
+<h2 id="解码分析"><a href="#解码分析" class="headerlink" title="解码分析"></a>解码分析</h2><p>需要对加密信息进行解密，首先可以定位到解密代码</p>
+<pre><code>function _0x230bc7(_0x2fb175) &#123;
+    return _0x3c31(&#39;0xee&#39;) == typeof _0x2fb175[_0x3c31(&#39;0x25&#39;)] &amp;&amp; _0x2fb175[&#39;\x6f\x62\x6a&#39;][_0x3c31(&#39;0xe&#39;)] &gt; 0x64 ? _0x54c90c[_0x3c31(&#39;0x31f&#39;)]()[&#39;\x74\x68\x65\x6e&#39;](function() &#123;
+        _0x249a60();
+        var _0x5ab652 = null
+          , _0x2cf0a4 = null
+          , _0x4d1175 = null;
+        try &#123;
+            var _0x3dbfaa = _0x2fb175[_0x3c31(&#39;0x25&#39;)][&#39;\x73\x75\x62\x73\x74\x72\x69\x6e\x67&#39;](0x0, 0x13)
+              , _0x360e25 = _0x2fb175[_0x3c31(&#39;0x25&#39;)][_0x3c31(&#39;0xeb&#39;)](0x13 + 0x10);
+            _0x2cf0a4 = _0x2fb175[_0x3c31(&#39;0x25&#39;)][_0x3c31(&#39;0xeb&#39;)](0x13, 0x13 + 0x10),
+            _0x4d1175 = _0x2cf0a4,
+            _0x5ab652 = _0x3dbfaa + _0x360e25,
+            _0x2cf0a4 = CryptoJS[&#39;\x65\x6e\x63&#39;][_0x3c31(&#39;0x320&#39;)][_0x3c31(&#39;0x6b&#39;)](_0x2cf0a4),
+            _0x4d1175 = CryptoJS[_0x3c31(&#39;0x321&#39;)][_0x3c31(&#39;0x320&#39;)][&#39;\x70\x61\x72\x73\x65&#39;](_0x4d1175);
+            var _0x57e61a = CryptoJS[_0x3c31(&#39;0x322&#39;)][_0x3c31(&#39;0x323&#39;)](_0x5ab652, _0x2cf0a4, &#123;
+                &#39;\x69\x76&#39;: _0x4d1175,
+                &#39;\x6d\x6f\x64\x65&#39;: CryptoJS[_0x3c31(&#39;0x324&#39;)][_0x3c31(&#39;0x325&#39;)],
+                &#39;\x70\x61\x64\x64\x69\x6e\x67&#39;: CryptoJS[_0x3c31(&#39;0x326&#39;)][_0x3c31(&#39;0x327&#39;)]
+            &#125;);
+            return _0x2fb175[_0x3c31(&#39;0x36&#39;)] = JSON[_0x3c31(&#39;0x6b&#39;)](CryptoJS[_0x3c31(&#39;0x321&#39;)][_0x3c31(&#39;0x320&#39;)][_0x3c31(&#39;0x267&#39;)](_0x57e61a)),
+            _0x2fb175;
+        &#125; catch (_0x36fffe) &#123;
+            _0x5ab652 = _0x2fb175[_0x3c31(&#39;0x25&#39;)][&#39;\x73\x75\x62\x73\x74\x72\x69\x6e\x67&#39;](0x0, _0x2fb175[_0x3c31(&#39;0x25&#39;)][_0x3c31(&#39;0xe&#39;)] - 0x10),
+            _0x2cf0a4 = _0x2fb175[_0x3c31(&#39;0x25&#39;)][_0x3c31(&#39;0xeb&#39;)](_0x2fb175[_0x3c31(&#39;0x25&#39;)][_0x3c31(&#39;0xe&#39;)] - 0x10),
+            _0x4d1175 = _0x2cf0a4,
+            _0x2cf0a4 = CryptoJS[_0x3c31(&#39;0x321&#39;)][_0x3c31(&#39;0x320&#39;)][_0x3c31(&#39;0x6b&#39;)](_0x2cf0a4),
+            _0x4d1175 = CryptoJS[_0x3c31(&#39;0x321&#39;)][_0x3c31(&#39;0x320&#39;)][_0x3c31(&#39;0x6b&#39;)](_0x4d1175);
+            var _0x4ff7de = CryptoJS[_0x3c31(&#39;0x322&#39;)][_0x3c31(&#39;0x323&#39;)](_0x5ab652, _0x2cf0a4, &#123;
+                &#39;\x69\x76&#39;: _0x4d1175,
+                &#39;\x6d\x6f\x64\x65&#39;: CryptoJS[&#39;\x6d\x6f\x64\x65&#39;][_0x3c31(&#39;0x325&#39;)],
+                &#39;\x70\x61\x64\x64\x69\x6e\x67&#39;: CryptoJS[_0x3c31(&#39;0x326&#39;)][_0x3c31(&#39;0x327&#39;)]
+            &#125;);
+            return _0x2fb175[_0x3c31(&#39;0x36&#39;)] = JSON[_0x3c31(&#39;0x6b&#39;)](CryptoJS[_0x3c31(&#39;0x321&#39;)][&#39;\x55\x74\x66\x38&#39;][_0x3c31(&#39;0x267&#39;)](_0x4ff7de)),
+            _0x2fb175;
+        &#125;
+    &#125;) : Promise[_0x3c31(&#39;0x1e&#39;)](_0x2fb175);
+</code></pre>
+<p>这个代码基本不可读，简单分析下可以发现，_0x3c31(‘0x321’)对应一个字符串，’\x6f\x62\x6a’等也可以转义：</p>
+<p>先转义：</p>
+<pre><code>function decode(xData) &#123;
+    return xData.replace(/\\x(\w&#123;2&#125;)/g, function (_, $1) &#123; return String.fromCharCode(parseInt($1, 16)) &#125;);
+&#125;
+</code></pre>
+<p>然后替换下：</p>
+<pre><code>Function.prototype.getMultiLine = function () &#123;
+    var lines = new String(this);
+    lines = lines.substring(lines.indexOf(&quot;/*&quot;) + 3, lines.lastIndexOf(&quot;*/&quot;));
+    return lines;
+&#125;
+
+function decode(xData) &#123;
+    return xData.replace(/\\x(\w&#123;2&#125;)/g, function (_, $1) &#123; return String.fromCharCode(parseInt($1, 16)) &#125;);
+&#125;
+
+var str1 = function () &#123;
+    /* 
+   var _0x5ab652 = _0x50019d(_0x3c31(&#39;0x30c&#39;))
+, _0x2cf0a4 = _0x50019d(&#39;\x63\x6f\x6d\x70\x4b\x65\x79&#39;)
+, _0x5cba8a = &#123;
+  &#39;\x74\x79\x70\x65&#39;: _0x3c31(&#39;0x16c&#39;),
+  &#39;\x75\x72\x6c&#39;: _0x8aa6f1()
+&#125;
+, _0xfca4af = &#123;
+  &#39;\x74\x79\x70\x65&#39;: _0x3c31(&#39;0x16c&#39;),
+  &#39;\x75\x72\x6c&#39;: _0xefaeb()
+&#125;;
+_0x31f1b8 &amp;&amp; (_0x5cba8a[_0x3c31(&#39;0x2cb&#39;)] = &#123;
+  &#39;\x70\x61\x73\x73\x77\x6f\x72\x64&#39;: _0x31f1b8
+&#125;);
+var _0x11871b = null
+, _0x170c7e = Promise[_0x3c31(&#39;0x1e&#39;)](null);
+ 
+var _0x256cd0 = _0x2cf0a4(0x16)
+, _0x36150e = _0x2cf0a4(0x15)
+, _0x42a8d9 = _0x36150e[&#39;\x61\x6a\x61\x78&#39;]
+, _0xdc46dc = _0x36150e[_0x3c31(&#39;0x1ef&#39;)]
+, _0xcca797 = _0x2cf0a4(0x18)
+, _0x50019d = _0xcca797[_0x3c31(&#39;0x5f&#39;)]
+, _0x5c77e3 = _0xcca797[&#39;\x70\x61\x72\x73\x65\x55\x72\x6c&#39;]
+, _0x36d54a = _0x2cf0a4(0x3a)[&#39;\x70\x65\x72\x66\x65\x63\x74\x4d\x65\x74\x61&#39;]
+, _0x4c6a9e = _0x2cf0a4(0x2c)[_0x3c31(&#39;0x328&#39;)]
+, _0x296a9b = _0x2cf0a4(0x2c)[_0x3c31(&#39;0x329&#39;)]
+, _0x54c90c = _0x2cf0a4(0x17)
+, _0x50f238 = _0x2cf0a4(0x3d)[_0x3c31(&#39;0x32a&#39;)]
+, 0x13 = 0x13
+, 0x0 = 0x0
+, 0x10 = 0x10
+, CryptoJS = null;
+    function _0x230bc7(_0x2fb175) &#123;
+    return _0x3c31(&#39;0xee&#39;) == typeof _0x2fb175[_0x3c31(&#39;0x25&#39;)] &amp;&amp; _0x2fb175[&#39;\x6f\x62\x6a&#39;][_0x3c31(&#39;0xe&#39;)] &gt; 0x64 ? _0x54c90c[_0x3c31(&#39;0x31f&#39;)]()[&#39;\x74\x68\x65\x6e&#39;](function() &#123;
+        _0x249a60();
+        var _0x5ab652 = null
+          , _0x2cf0a4 = null
+          , _0x4d1175 = null;
+        try &#123;
+            var _0x3dbfaa = _0x2fb175[_0x3c31(&#39;0x25&#39;)][&#39;\x73\x75\x62\x73\x74\x72\x69\x6e\x67&#39;](0x0, 0x13)
+              , _0x360e25 = _0x2fb175[_0x3c31(&#39;0x25&#39;)][_0x3c31(&#39;0xeb&#39;)](0x13 + 0x10);
+            _0x2cf0a4 = _0x2fb175[_0x3c31(&#39;0x25&#39;)][_0x3c31(&#39;0xeb&#39;)](0x13, 0x13 + 0x10),
+            _0x4d1175 = _0x2cf0a4,
+            _0x5ab652 = _0x3dbfaa + _0x360e25,
+            _0x2cf0a4 = CryptoJS[&#39;\x65\x6e\x63&#39;][_0x3c31(&#39;0x320&#39;)][_0x3c31(&#39;0x6b&#39;)](_0x2cf0a4),
+            _0x4d1175 = CryptoJS[_0x3c31(&#39;0x321&#39;)][_0x3c31(&#39;0x320&#39;)][&#39;\x70\x61\x72\x73\x65&#39;](_0x4d1175);
+            var _0x57e61a = CryptoJS[_0x3c31(&#39;0x322&#39;)][_0x3c31(&#39;0x323&#39;)](_0x5ab652, _0x2cf0a4, &#123;
+                &#39;\x69\x76&#39;: _0x4d1175,
+                &#39;\x6d\x6f\x64\x65&#39;: CryptoJS[_0x3c31(&#39;0x324&#39;)][_0x3c31(&#39;0x325&#39;)],
+                &#39;\x70\x61\x64\x64\x69\x6e\x67&#39;: CryptoJS[_0x3c31(&#39;0x326&#39;)][_0x3c31(&#39;0x327&#39;)]
+            &#125;);
+            return _0x2fb175[_0x3c31(&#39;0x36&#39;)] = JSON[_0x3c31(&#39;0x6b&#39;)](CryptoJS[_0x3c31(&#39;0x321&#39;)][_0x3c31(&#39;0x320&#39;)][_0x3c31(&#39;0x267&#39;)](_0x57e61a)),
+            _0x2fb175;
+        &#125; catch (_0x36fffe) &#123;
+            _0x5ab652 = _0x2fb175[_0x3c31(&#39;0x25&#39;)][&#39;\x73\x75\x62\x73\x74\x72\x69\x6e\x67&#39;](0x0, _0x2fb175[_0x3c31(&#39;0x25&#39;)][_0x3c31(&#39;0xe&#39;)] - 0x10),
+            _0x2cf0a4 = _0x2fb175[_0x3c31(&#39;0x25&#39;)][_0x3c31(&#39;0xeb&#39;)](_0x2fb175[_0x3c31(&#39;0x25&#39;)][_0x3c31(&#39;0xe&#39;)] - 0x10),
+            _0x4d1175 = _0x2cf0a4,
+            _0x2cf0a4 = CryptoJS[_0x3c31(&#39;0x321&#39;)][_0x3c31(&#39;0x320&#39;)][_0x3c31(&#39;0x6b&#39;)](_0x2cf0a4),
+            _0x4d1175 = CryptoJS[_0x3c31(&#39;0x321&#39;)][_0x3c31(&#39;0x320&#39;)][_0x3c31(&#39;0x6b&#39;)](_0x4d1175);
+            var _0x4ff7de = CryptoJS[_0x3c31(&#39;0x322&#39;)][_0x3c31(&#39;0x323&#39;)](_0x5ab652, _0x2cf0a4, &#123;
+                &#39;\x69\x76&#39;: _0x4d1175,
+                &#39;\x6d\x6f\x64\x65&#39;: CryptoJS[&#39;\x6d\x6f\x64\x65&#39;][_0x3c31(&#39;0x325&#39;)],
+                &#39;\x70\x61\x64\x64\x69\x6e\x67&#39;: CryptoJS[_0x3c31(&#39;0x326&#39;)][_0x3c31(&#39;0x327&#39;)]
+            &#125;);
+            return _0x2fb175[_0x3c31(&#39;0x36&#39;)] = JSON[_0x3c31(&#39;0x6b&#39;)](CryptoJS[_0x3c31(&#39;0x321&#39;)][&#39;\x55\x74\x66\x38&#39;][_0x3c31(&#39;0x267&#39;)](_0x4ff7de)),
+            _0x2fb175;
+        &#125;
+    &#125;) : Promise[_0x3c31(&#39;0x1e&#39;)](_0x2fb175);
+&#125;&quot;
+  */
+&#125;
+var js1 = decode(str1.getMultiLine());
+js1 = js1.replace(/_0x3c31\(&#39;([^\&#39;]+)&#39;\)/g, function ($v, $g) &#123; return _0x3c31($g); &#125;)
+</code></pre>
+<p>得到</p>
+<pre><code>var _0x5ab652 = _0x50019d(userKey)
+, _0x2cf0a4 = _0x50019d(&#39;compKey&#39;)
+, _0x5cba8a = &#123;
+  &#39;type&#39;: GET,
+  &#39;url&#39;: _0x8aa6f1()
+&#125;
+, _0xfca4af = &#123;
+  &#39;type&#39;: GET,
+  &#39;url&#39;: _0xefaeb()
+&#125;;
+_0x31f1b8 &amp;&amp; (_0x5cba8a[data] = &#123;
+  &#39;password&#39;: _0x31f1b8
+&#125;);
+var _0x11871b = null
+, _0x170c7e = Promise[resolve](null);
+ 
+var _0x256cd0 = _0x2cf0a4(0x16)
+, _0x36150e = _0x2cf0a4(0x15)
+, _0x42a8d9 = _0x36150e[&#39;ajax&#39;]
+, _0xdc46dc = _0x36150e[$ajax]
+, _0xcca797 = _0x2cf0a4(0x18)
+, _0x50019d = _0xcca797[getUrlParam]
+, _0x5c77e3 = _0xcca797[&#39;parseUrl&#39;]
+, _0x36d54a = _0x2cf0a4(0x3a)[&#39;perfectMeta&#39;]
+, _0x4c6a9e = _0x2cf0a4(0x2c)[isVipScene]
+, _0x296a9b = _0x2cf0a4(0x2c)[isTgScene]
+, _0x54c90c = _0x2cf0a4(0x17)
+, _0x50f238 = _0x2cf0a4(0x3d)[setJsCrypto]
+, 0x13 = 0x13
+, 0x0 = 0x0
+, 0x10 = 0x10
+, CryptoJS = null;
+    function _0x230bc7(_0x2fb175) &#123;
+    return string == typeof _0x2fb175[obj] &amp;&amp; _0x2fb175[&#39;obj&#39;][length] &gt; 0x64 ? _0x54c90c[$loadCryptoJS]()[&#39;then&#39;](function() &#123;
+        _0x249a60();
+        var _0x5ab652 = null
+          , _0x2cf0a4 = null
+          , _0x4d1175 = null;
+        try &#123;
+            var _0x3dbfaa = _0x2fb175[obj][&#39;substring&#39;](0x0, 0x13)
+              , _0x360e25 = _0x2fb175[obj][substring](0x13 + 0x10);
+            _0x2cf0a4 = _0x2fb175[obj][substring](0x13, 0x13 + 0x10),
+            _0x4d1175 = _0x2cf0a4,
+            _0x5ab652 = _0x3dbfaa + _0x360e25,
+            _0x2cf0a4 = CryptoJS[&#39;enc&#39;][Utf8][parse](_0x2cf0a4),
+            _0x4d1175 = CryptoJS[enc][Utf8][&#39;parse&#39;](_0x4d1175);
+            var _0x57e61a = CryptoJS[AES][decrypt](_0x5ab652, _0x2cf0a4, &#123;
+                &#39;iv&#39;: _0x4d1175,
+                &#39;mode&#39;: CryptoJS[mode][CFB],
+                &#39;padding&#39;: CryptoJS[pad][NoPadding]
+            &#125;);
+            return _0x2fb175[list] = JSON[parse](CryptoJS[enc][Utf8][stringify](_0x57e61a)),
+            _0x2fb175;
+        &#125; catch (_0x36fffe) &#123;
+            _0x5ab652 = _0x2fb175[obj][&#39;substring&#39;](0x0, _0x2fb175[obj][length] - 0x10),
+            _0x2cf0a4 = _0x2fb175[obj][substring](_0x2fb175[obj][length] - 0x10),
+            _0x4d1175 = _0x2cf0a4,
+            _0x2cf0a4 = CryptoJS[enc][Utf8][parse](_0x2cf0a4),
+            _0x4d1175 = CryptoJS[enc][Utf8][parse](_0x4d1175);
+            var _0x4ff7de = CryptoJS[AES][decrypt](_0x5ab652, _0x2cf0a4, &#123;
+                &#39;iv&#39;: _0x4d1175,
+                &#39;mode&#39;: CryptoJS[&#39;mode&#39;][CFB],
+                &#39;padding&#39;: CryptoJS[pad][NoPadding]
+            &#125;);
+            return _0x2fb175[list] = JSON[parse](CryptoJS[enc][&#39;Utf8&#39;][stringify](_0x4ff7de)),
+            _0x2fb175;
+        &#125;
+    &#125;) : Promise[resolve](_0x2fb175);
+&#125;&quot;
+</code></pre>
+<p>基板上可以读了，使用CryptoJS做的前端解密，然后直接给最后的代码：</p>
+<pre><code>// 依赖： https://lib.eqh5.com/CryptoJS/1.0.1/cryptoJs.js
+function decrypt(result) &#123;
+    var ciphertext = null
+        , key = null
+        , iv = null;
+    try &#123;
+        var part0 = result.obj.substring(0x0, 0x13)
+            , part1 = result.obj.substring(0x13 + 0x10);
+        key = result.obj.substring(0x13, 0x13 + 0x10),
+            iv = key,
+            ciphertext = part0 + part1,
+            key = CryptoJS.enc.Utf8.parse(key),
+            iv = CryptoJS.enc.Utf8.parse(iv);
+        var decryptData = CryptoJS.AES.decrypt(ciphertext, key, &#123;
+            &#39;iv&#39;: iv,
+            &#39;mode&#39;: CryptoJS.mode.CFB,
+            &#39;padding&#39;: CryptoJS.pad.NoPadding
+        &#125;);
+        return CryptoJS.enc.Utf8.stringify(decryptData);
+    &#125; catch (_0x36fffe) &#123;
+        ciphertext = result[obj][&#39;substring&#39;](0x0, result.obj.length - 0x10),
+            key = result[obj][substring](result.obj.length - 0x10),
+            iv = key,
+            key = CryptoJS.enc.Utf8.parse(key),
+            iv = CryptoJS.enc.Utf8.parse(iv);
+        var decryptData = CryptoJS.AES.decrypt(ciphertext, key, &#123;
+            &#39;iv&#39;: iv,
+            &#39;mode&#39;: CryptoJS.mode.CFB,
+            &#39;padding&#39;: CryptoJS.pad.NoPadding
+        &#125;);
+        return CryptoJS.enc.Utf8.stringify(decryptData)
+    &#125;
+&#125;     
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

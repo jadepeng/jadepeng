@@ -1,0 +1,2684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JadePeng的技术笔记本">
+<meta property="og:type" content="website">
+<meta property="og:title" content="JadePeng的技术笔记本">
+<meta property="og:url" content="http://blog.iflyresearch.com/page/3/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="JadePeng的技术笔记本">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="JadePeng">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/page/3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/09/29/jqpeng-%E9%98%BF%E9%87%8C%E5%BC%80%E6%BA%90JDK%20dragonwell8%E5%9C%A8%E5%AE%B9%E5%99%A8%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/29/jqpeng-%E9%98%BF%E9%87%8C%E5%BC%80%E6%BA%90JDK%20dragonwell8%E5%9C%A8%E5%AE%B9%E5%99%A8%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">阿里开源JDK dragonwell8在容器环境使用</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-29 15:30:00" itemprop="dateCreated datePublished" datetime="2020-09-29T15:30:00+08:00">2020-09-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/dragonwell8-docker.html">阿里开源JDK dragonwell8在容器环境使用</a></p>
+<p>Alibaba Dragonwell 是阿里巴巴的Open JDK 发行版，提供长期支持。 阿里宣传称在阿里生产环境实现了应用。Alibaba Dragonwell兼容 Java SE 标准，因此可以方便切换。</p>
+<h2 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h2><p>可以到<a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases?spm=5176.cndragonwell.0.0.4c5a7568DpYPsp">https://github.com/alibaba/dragonwell8/releases?spm=5176.cndragonwell.0.0.4c5a7568DpYPsp</a> 下载，当前的最新版是8.4.4 GA</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/9/29/1601363568094.png" alt="ali jdk8"></p>
+<p>阿里也提供了镜像下载地址，可以加速下载：</p>
+<blockquote>
+<p>8.4.4GA</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>File name</th>
+<th>中国大陆</th>
+<th>United States</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Alibaba_Dragonwell_8.4.4-GA_Linux_x64.tar.gz</td>
+<td><a target="_blank" rel="noopener" href="https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/Alibaba_Dragonwell_8.4.4-GA_Linux_x64.tar.gz">download</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/download/dragonwell-8.4.4_jdk8u262-ga/Alibaba_Dragonwell_8.4.4-GA_Linux_x64.tar.gz">download</a></td>
+</tr>
+<tr>
+<td>Alibaba_Dragonwell_8.4.4-GA_source.tar.gz</td>
+<td><a target="_blank" rel="noopener" href="https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/Alibaba_Dragonwell_8.4.4-GA_source.tar.gz">download</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/download/dragonwell-8.4.4_jdk8u262-ga/Alibaba_Dragonwell_8.4.4-GA_source.tar.gz">download</a></td>
+</tr>
+<tr>
+<td>Alibaba_Dragonwell_8.4.4-Experimental_Windows_x64.tar.gz</td>
+<td><a target="_blank" rel="noopener" href="https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/Alibaba_Dragonwell_8.4.4-Experimental_Windows_x64.tar.gz">download</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/download/dragonwell-8.4.4_jdk8u262-ga/Alibaba_Dragonwell_8.4.4-Experimental_Windows_x64.tar.gz">download</a></td>
+</tr>
+<tr>
+<td>java8-api-8.4.4-javadoc.jar</td>
+<td><a target="_blank" rel="noopener" href="https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/java8-api-8.4.4-javadoc.jar">download</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/download/dragonwell-8.4.4_jdk8u262-ga/java8-api-8.4.4-javadoc.jar">download</a></td>
+</tr>
+<tr>
+<td>java8-api-8.4.4-sources.jar</td>
+<td><a target="_blank" rel="noopener" href="https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/java8-api-8.4.4-sources.jar">download</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/download/dragonwell-8.4.4_jdk8u262-ga/java8-api-8.4.4-sources.jar">download</a></td>
+</tr>
+<tr>
+<td>java8-api-8.4.4.jar</td>
+<td><a target="_blank" rel="noopener" href="https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/java8-api-8.4.4.jar">download</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/download/dragonwell-8.4.4_jdk8u262-ga/java8-api-8.4.4.jar">download</a></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/tag/dragonwell-8.4.4_jdk8u262-ga">SHA256 checksum</a></p>
+</blockquote>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><pre><code>wget https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/Alibaba_Dragonwell_8.4.4-GA_Linux_x64.tar.gz
+tar zxvf Alibaba_Dragonwell_8.4.4-GA_Linux_x64.tar.gz 
+cd jdk8u262-b10/
+ bin/java -version
+</code></pre>
+<p>输出：</p>
+<pre><code>openjdk version &quot;1.8.0_262&quot;
+OpenJDK Runtime Environment (Alibaba Dragonwell 8.4.4) (build 1.8.0_262-b10)
+OpenJDK 64-Bit Server VM (Alibaba Dragonwell 8.4.4) (build 25.262-b10, mixed mode)
+</code></pre>
+<h2 id="容器环境使用"><a href="#容器环境使用" class="headerlink" title="容器环境使用"></a>容器环境使用</h2><p>我们需要准备一个基础镜像包，我们以openjdk:8-jdk-slim为基础包，把jdk替换为dragonwell8</p>
+<pre><code> FROM openjdk:8-jdk-slim
+ MAINTAINER jadepeng
+ 
+ RUN sed -i &#39;s#http://deb.debian.org#https://mirrors.163.com#g&#39; /etc/apt/sources.list \
+     &amp;&amp; apt-get update\
+     &amp;&amp; apt-get install -y procps unzip curl bash tzdata ttf-dejavu \
+     &amp;&amp; rm -rf /var/cache/apt/ \
+     &amp;&amp; ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+     &amp;&amp; echo &quot;Asia/Shanghai&quot; &gt; /etc/timezone
+ 
+ RUN rm -r -f /usr/local/openjdk-8
+ 
+ ADD jdk8u262-b10  /usr/local/openjdk-8
+</code></pre>
+<p>构建：</p>
+<pre><code>docker build -t dragonwell8:8.4.4 .
+</code></pre>
+<p>java应用就可以用<code>dragonwell8:8.4.4 </code>为底包执行了。</p>
+<h2 id="dragonwell8-协程使用"><a href="#dragonwell8-协程使用" class="headerlink" title="dragonwell8 协程使用"></a>dragonwell8 协程使用</h2><p>dragonwell8的一大特色就是协程（Coroutine ）</p>
+<p>官方有一个demo：</p>
+<p>以一个pingpong 1,000,000次的程序为例，这是一个需要阻塞，切换密集型的应用。</p>
+<pre><code>           o      .   _______ _______
+              \_ 0     /______//______/|   @_o
+                /\_,  /______//______/     /\
+               | \    |      ||      |     / |
+
+static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
+
+public static void main(String[] args) throws Exception &#123;
+    BlockingQueue&lt;Byte&gt; q1 = new LinkedBlockingQueue&lt;&gt;(), q2 = new LinkedBlockingQueue&lt;&gt;();
+    THREAD_POOL.submit(() -&gt; pingpong(q2, q1)); // thread A
+    Future&lt;?&gt; f = THREAD_POOL.submit(() -&gt; pingpong(q1, q2)); // thread B
+    q1.put((byte) 1);
+    System.out.println(f.get() + &quot; ms&quot;);
+&#125;
+
+private static long pingpong(BlockingQueue&lt;Byte&gt; in, BlockingQueue&lt;Byte&gt; out) throws Exception &#123;
+    long start = System.currentTimeMillis();
+    for (int i = 0; i &lt; 1_000_000; i++) out.put(in.take());
+    return System.currentTimeMillis() - start;
+&#125;
+</code></pre>
+<p>运行，查看执行时间:</p>
+<pre><code>$java PingPong
+13212 ms
+
+// 开启Wisp2
+$java -XX:+UseWisp2 -XX:ActiveProcessorCount=1 PingPong
+882 ms
+</code></pre>
+<p>开启Wisp2后整体运行效率提升了近十多倍，只需要启动时增加参数<code>-XX:+UseWisp2</code>即可。不用修改一行代码，即可享受协程带来的优势。</p>
+<p>随后可以通过jstack观察到起来的线程都以协程的方式在运行了。</p>
+<pre><code> - Coroutine [0x7f6d6d60fb20] &quot;Thread-978&quot; #1076 active=1 steal=0 steal_fail=0 preempt=0 park=0/-1
+        at java.dyn.CoroutineSupport.unsafeSymmetricYieldTo(CoroutineSupport.java:138)
+--
+ - Coroutine [0x7f6d6d60f880] &quot;Thread-912&quot; #1009 active=1 steal=0 steal_fail=0 preempt=0 park=0/-1
+        at java.dyn.CoroutineSupport.unsafeSymmetricYieldTo(CoroutineSupport.java:138)
+
+...
+</code></pre>
+<p>可以看到最上方的frame上的方法是协程切换，因为线程调用了sleep，yield出了执行权。</p>
+<p>开启Wisp2后，Java线程不再简单地映射到内核级线程，而是对应到一个协程，JVM在少量内核线上调度大量协程执行，以减少内核的调度开销，提高web服务器的性能。</p>
+<p>在阿里的生产环境，性能指标：</p>
+<ul>
+<li>在复杂的业务应用中(tomcat + 大量基于netty的中间件)我们获得了大约10%的性能提升。</li>
+<li>在中间件应用(数据库代理，MQ)中我们获得大约20%的性能提升。</li>
+</ul>
+<p>更多Wisp的设计实现与API相关信息，请参考<a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/wiki/Wisp%E6%96%87%E6%A1%A3">Wisp文档</a>。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/08/31/jqpeng-%E6%9D%A5%EF%BC%8C%E6%88%91%E4%BB%AC%E4%B8%80%E8%B5%B7%E6%89%93%E9%80%A0%E4%B8%80%E6%AC%BE%E4%BB%A3%E7%A0%81%E5%91%BD%E5%90%8D%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/31/jqpeng-%E6%9D%A5%EF%BC%8C%E6%88%91%E4%BB%AC%E4%B8%80%E8%B5%B7%E6%89%93%E9%80%A0%E4%B8%80%E6%AC%BE%E4%BB%A3%E7%A0%81%E5%91%BD%E5%90%8D%E5%B7%A5%E5%85%B7/" class="post-title-link" itemprop="url">来，我们一起打造一款代码命名工具</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-31 20:34:00" itemprop="dateCreated datePublished" datetime="2020-08-31T20:34:00+08:00">2020-08-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/code-naming-tool.html">来，我们一起打造一款代码命名工具</a></p>
+<p>你是否还在为代码命名而纠结不已？</p>
+<blockquote>
+<p>here are only two hard things in Computer Science: cache invalidation and naming things.– Phil Karlton</p>
+</blockquote>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/31/1598875275591.png" alt="代码命名"></p>
+<p>那么如何更好的命名呢？ 是否有好的工具可以支持我们命名呢？网上搜索一圈没有发现满意的，于是自己动手丰衣足食，<a target="_blank" rel="noopener" href="https://jadepeng.gitee.io/code-naming-tool/">https://jadepeng.gitee.io/code-naming-tool/</a>。</p>
+<p>使用方法： 打开网页后，在中文输入框中输入 中文命名，然后回车即可。也可以直接在英文输入框输入英文，搜索候选。</p>
+<h2 id="现有的工具"><a href="#现有的工具" class="headerlink" title="现有的工具"></a>现有的工具</h2><p>unbug.github.io/codelf/ 提供了一个选择，作者先调用有道、百度等翻译，然后调用searchcode搜索代码，从搜索的代码中提取变量名。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/31/1598875386957.png" alt="codeif"></p>
+<p>界面做的很酷，但是推荐出来的变量名称质量参差不齐，失去了参考意义。</p>
+<h2 id="新的思路"><a href="#新的思路" class="headerlink" title="新的思路"></a>新的思路</h2><p>我们常说以史为鉴，换一个思路，我们可以从优秀的开源库中去吸收他们命名的经验，看看他们是如何命名的，来供我们参考。</p>
+<p>实现思路：  </p>
+<ol>
+<li>从spring、apache等代码库，读取变量、方法、类名称  </li>
+<li>根据关键词匹配出候选命名  </li>
+<li>候选结果排序</li>
+</ol>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/31/1598875225454.png" alt="工具"></p>
+<h2 id="获取优秀命名"><a href="#获取优秀命名" class="headerlink" title="获取优秀命名"></a>获取优秀命名</h2><p>要获取命名，首先想到的是读取代码库，需要先下载代码，然后解析  ———— 工作量巨大，PASS。</p>
+<p>那怎么做呢，换个角度，可以通过java的反射来实现。</p>
+<p>首先添加一个辅助库：</p>
+<pre><code>&lt;dependency&gt;
+            &lt;groupId&gt;org.reflections&lt;/groupId&gt;
+            &lt;artifactId&gt;reflections&lt;/artifactId&gt;
+            &lt;version&gt;0.9.12&lt;/version&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>然后初始化Reflections,FilterBuilder可以用来过滤类库，我们设置”org”,”javax”,”com”,”io”, 基本上囊库了主要的开源类库，比如spring，apache等.</p>
+<pre><code> List&lt;ClassLoader&gt; classLoadersList = new LinkedList&lt;ClassLoader&gt;();
+        classLoadersList.add(ClasspathHelper.contextClassLoader());
+        classLoadersList.add(ClasspathHelper.staticClassLoader());
+
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .setScanners(new SubTypesScanner(false), new ResourcesScanner())
+                .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
+                .filterInputsBy(new FilterBuilder().includePackage(&quot;org&quot;,&quot;javax&quot;,&quot;com&quot;,&quot;io&quot;)));
+</code></pre>
+<p>然后，可以通过<code>reflections.getSubTypesOf(Object.class);</code>来获取相关的class了,注意，我们初始化一个<code> Map&lt;String, Integer&gt; name2count = new HashMap&lt;String, Integer&gt;();</code>用来存储代码命名以及对应的出现次数。</p>
+<pre><code>Set&lt;Class&lt;? extends Object&gt;&gt; allClasses =
+                reflections.getSubTypesOf(Object.class);
+        Map&lt;String, Integer&gt; name2count = new HashMap&lt;String, Integer&gt;();
+        for (Class&lt;?&gt; clazz : allClasses) &#123;
+            System.out.println(clazz.getName());
+            try &#123;
+                appendToNameMap(name2count, clazz.getSimpleName());
+
+                Field[] fields = clazz.getDeclaredFields();
+                for (Field field : fields) &#123;
+                    String name = field.getName();
+                    appendToNameMap(name2count, name);
+                &#125;
+                Method[] methods = clazz.getMethods();
+                for (Method method : methods) &#123;
+                    String name = method.getName();
+                    appendToNameMap(name2count, name);
+                    // parameters
+                    Parameter[] parameters =  method.getParameters();
+                    for (Parameter param : parameters) &#123;
+                        name = param.getName();
+                        appendToNameMap(name2count, name);
+                    &#125;
+                &#125;
+            &#125;catch(Throwable t)
+            &#123; &#125;
+</code></pre>
+<p>其中<code>appendToNameMap</code>:</p>
+<pre><code> private static void appendToNameMap(Map&lt;String, Integer&gt; name2count, String name) &#123;
+        // filter
+        if(name.contains(&quot;-&quot;) || name.contains(&quot;_&quot;)|| name.contains(&quot;$&quot;))&#123;
+            return;
+        &#125;
+
+        if (!name2count.containsKey(name)) &#123;
+            name2count.put(name, 1);
+        &#125; else &#123;
+            name2count.put(name, name2count.get(name) +1);
+        &#125;
+    &#125;
+</code></pre>
+<p>最后把结果存储到文件，作为我们的资源。</p>
+<pre><code>FileUtils.writeAllText(JSON.toJSONString(name2count), new File(&quot;name2count.txt&quot;));
+</code></pre>
+<p>可以到<code>https://gitee.com/jadepeng/code-naming-tool/blob/master/vars.js</code>查看结果。</p>
+<h2 id="命名推荐"><a href="#命名推荐" class="headerlink" title="命名推荐"></a>命名推荐</h2><p>命名推荐，还是遵循，先翻译，然后根据翻译结果搜索并召回。</p>
+<p>其中翻译直接调用网易有道的，但是搜索如何搞定呢？</p>
+<p>最简单的方法，肯定是分词，然后建立索引，lucene是标配。但是上lucene就要上服务器，PASS!</p>
+<p>我们来找一个浏览器端的lucene，google 后选定<code>flexsearch</code>.</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/31/1598876259412.png" alt="flexsearch"></p>
+<p>flexsearch github上有6.5k star，因此优先选择。</p>
+<p>下面来看具体的实现。</p>
+<h3 id="建立索引"><a href="#建立索引" class="headerlink" title="建立索引"></a>建立索引</h3><p>初始化FlexSearch，然后将之前获取的代码命名建立索引。</p>
+<pre><code> var index = new FlexSearch(&#123;
+            encode: &quot;advanced&quot;,
+            tokenize: &quot;reverse&quot;,
+            suggest: true,
+            cache: true
+        &#125;)
+        var data = []
+        var i = 0
+        for (var name in names) &#123;
+            var indexName = name.replace(/([A-Z])/g, &quot; $1&quot;)
+            data[i] = &#123;
+                &quot;name&quot;: name,
+                &quot;count&quot;: names[name]
+            &#125;
+            index.add(i++, indexName)
+        &#125;
+</code></pre>
+<p>这里有个小技巧，<code>name.replace(/([A-Z])/g, &quot; $1&quot;)</code> 可以将驼峰命名拆分成单词。<br> 同时data数组会保存所有的命名和响应的出现次数。</p>
+<h3 id="搜索候选"><a href="#搜索候选" class="headerlink" title="搜索候选"></a>搜索候选</h3><p>先翻译，然后将翻译结果给FlexSearch搜索。</p>
+<pre><code>function searchFromIndex(value) &#123;
+        var results = index.search(value, 25)
+    
+        results = results.map(function (i) &#123;
+            return data[i]
+        &#125;)
+    
+        results = results.sort(function (a, b) &#123;
+            return b.count - a.count
+        &#125;)
+        return results
+    &#125;
+</code></pre>
+<p>先搜索，出来的结果是data中的index序号，转换为list对象，然后按照count倒排。</p>
+<p>tips： 理论上，翻译的结果可以去除一些停用词，搜索效果应该更好，这里先放着。</p>
+<h3 id="显示结果"><a href="#显示结果" class="headerlink" title="显示结果"></a>显示结果</h3><p>对结果进行格式化：</p>
+<pre><code>function formatSuggestion(item)&#123;
+    return `$&#123;item.name&#125; &lt;span class=&#39;tips&#39;&gt;代码库共出现$&#123;item.count&#125;次 (相关搜索： &lt;a target=&#39;_blank&#39; href=&#39;https://unbug.github.io/codelf/#$&#123;item.name&#125;&#39;&gt;codelf&lt;/a&gt; &amp;nbsp; &lt;a target=&#39;_blank&#39; href=&#39;https://searchcode.com/?q=$&#123;item.name&#125;&amp;lan=23&#39;&gt;searchcode&lt;/a&gt;)&lt;/span&gt;`;
+&#125;
+</code></pre>
+<p>增加到codelf 和 searchcode的链接，显示结果如下：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/31/1598877282579.png" alt="搜索结果"></p>
+<h2 id="开源地址"><a href="#开源地址" class="headerlink" title="开源地址"></a>开源地址</h2><ul>
+<li>github:  <a target="_blank" rel="noopener" href="https://github.com/jadepeng/code-naming-tool">https://github.com/jadepeng/code-naming-tool</a></li>
+<li>gitee:  <a target="_blank" rel="noopener" href="https://gitee.com/jadepeng/code-naming-tool">https://gitee.com/jadepeng/code-naming-tool</a></li>
+</ul>
+<p>命名工具地址： <a target="_blank" rel="noopener" href="https://jadepeng.gitee.io/code-naming-tool/">https://jadepeng.gitee.io/code-naming-tool/</a></p>
+<p>欢迎大家体验使用，欢迎fork并贡献代码。</p>
+<h2 id="后续展望"><a href="#后续展望" class="headerlink" title="后续展望"></a>后续展望</h2><p>当前仅仅用到了翻译+搜索，还有很多可以优化的地方：</p>
+<ul>
+<li>搜索去停用词</li>
+<li>从文本语义相似度层面去推荐</li>
+<li>专业术语支持</li>
+</ul>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/08/27/jqpeng-%E8%AE%B0%E4%B8%80%E6%AC%A1keepalived%E5%92%8CVIP%E5%AF%BC%E8%87%B4%E7%9A%84%E6%95%85%E9%9A%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/27/jqpeng-%E8%AE%B0%E4%B8%80%E6%AC%A1keepalived%E5%92%8CVIP%E5%AF%BC%E8%87%B4%E7%9A%84%E6%95%85%E9%9A%9C/" class="post-title-link" itemprop="url">记一次keepalived和VIP导致的故障</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-27 10:33:00" itemprop="dateCreated datePublished" datetime="2020-08-27T10:33:00+08:00">2020-08-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/keepalived.html">记一次keepalived和VIP导致的故障</a></p>
+<h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>nginx服务器采用的keepalived+vip实现的双活，最近由于一台服务器有问题，更换了一台nginx：</p>
+<p>操作：</p>
+<ul>
+<li>停止有问题服务器keepalived和nginx</li>
+<li>新服务器部署keepalived和nginx</li>
+</ul>
+<p>更换后一切正常，但是过了几个小时，出现大面积的不能访问。</p>
+<h2 id="keepalived-升级"><a href="#keepalived-升级" class="headerlink" title="keepalived 升级"></a>keepalived 升级</h2><p>检查nginx正常，重启keepalived后OK，怀疑可能是keepalived的问题，于是编译安装最新的keepalived：</p>
+<pre><code>curl --progress http://keepalived.org/software/keepalived-1.2.15.tar.gz | tar xz
+cd keepalived-1.2.15
+./configure --prefix=/usr/local/keepalived-1.2.15
+make
+sudo make install
+</code></pre>
+<p>升级后，一切正常,。</p>
+<h2 id="再出故障，最终定位"><a href="#再出故障，最终定位" class="headerlink" title="再出故障，最终定位"></a>再出故障，最终定位</h2><p>一晚过去无异常，第二天又出现部分域名不能访问，检查服务一切正常，因此怀疑是VIP导致的问题，检查之前有问题服务器的ip：</p>
+<pre><code>ip addr
+</code></pre>
+<p>果不其然：</p>
+<pre><code>2: eno1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 90:b1:1c:2a:92:e4 brd ff:ff:ff:ff:ff:ff
+    inet 172.31.161.42/32 scope global eno1
+       valid_lft forever preferred_lft forever
+    inet 172.31.161.41/32 scope global eno1
+       valid_lft forever preferred_lft forever
+    inet 172.31.161.38/24 brd 172.31.161.255 scope global eno1
+       valid_lft forever preferred_lft forever
+    inet 172.31.161.42/0 scope global eno1::1
+       valid_lft forever preferred_lft forever
+3: eno2: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu
+</code></pre>
+<p>41,42 是我们设置的VIP，竟然还在这个有问题服务器的网卡上，这就导致一个机房内，有2台服务器绑定相同的vip。</p>
+<p>解决方案, 通过<code>ip addr delete</code>删除绑定的vip</p>
+<pre><code>ip addr delete 172.31.161.42/32 dev eno1
+ip addr delete 172.31.161.41/32 dev eno1
+ip addr delete 172.31.161.41/0 dev eno1
+</code></pre>
+<p>顺道介绍如何给网卡绑定vip：</p>
+<pre><code>ip addr add 172.31.161.41/32 dev eno1
+</code></pre>
+<h2 id="溯源与问题总结"><a href="#溯源与问题总结" class="headerlink" title="溯源与问题总结"></a>溯源与问题总结</h2><p>问题的根源在于，keepalived为网卡停止后，keepalived为网卡绑定的VIP并没有移除，导致多台机器出现同样的ip。</p>
+<p>切记： <code>停止keepalived，vip不会自动删除，需要手动清理</code></p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/08/25/jqpeng-%E7%BD%91%E6%98%93%E4%BA%91%E9%9F%B3%E4%B9%90%E6%97%A0%E7%89%88%E6%9D%83%E9%9F%B3%E4%B9%90%E8%A1%A5%E5%85%A8%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/25/jqpeng-%E7%BD%91%E6%98%93%E4%BA%91%E9%9F%B3%E4%B9%90%E6%97%A0%E7%89%88%E6%9D%83%E9%9F%B3%E4%B9%90%E8%A1%A5%E5%85%A8%E5%B7%A5%E5%85%B7/" class="post-title-link" itemprop="url">网易云音乐无版权音乐补全工具</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-25 19:05:00" itemprop="dateCreated datePublished" datetime="2020-08-25T19:05:00+08:00">2020-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/music163tool.html">网易云音乐无版权音乐补全工具</a></p>
+<h2 id="缘起"><a href="#缘起" class="headerlink" title="缘起"></a>缘起</h2><p>网易云音乐的不少歌曲因为版权下架了，或者变成收费的，导致无法收听，因此需要一个小工具，希望可以从其他来源补全歌曲。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/25/1598352099450.png"></p>
+<p>如图所示，不能听的显示为灰色。</p>
+<p>之前写的小工具XMusicDownloader(<a target="_blank" rel="noopener" href="https://github.com/jadepeng/XMusicDownloader">https://github.com/jadepeng/XMusicDownloader</a>) 可以从多个来源搜索歌曲并下载，因此以这个为基础，可以很快实现需求。</p>
+<p>查看本文之前，建议查看<a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/xmusicdownloader.html#4277262913">开源工具软件XMusicDownloader——音乐下载神器</a>.</p>
+<h2 id="歌曲版权声明"><a href="#歌曲版权声明" class="headerlink" title="歌曲版权声明"></a>歌曲版权声明</h2><ul>
+<li>该工具本质是<strong>歌曲聚合搜索</strong>，API来自公开网络，<code>非破解版</code>，只能下载<strong>各家公开的音乐</strong>，<strong>付费歌曲不能下载</strong>，例如QQ、网易等的收费歌曲不能从QQ\网易源下载，工具的原理是基于聚合实现补全</li>
+<li><strong>工具和代码仅供技术研究使用</strong>，禁止将本工具用于商业用途，<strong>如产生法律纠纷与本人无关，如有侵权，请联系删除</strong>。</li>
+</ul>
+<h2 id="工具原理"><a href="#工具原理" class="headerlink" title="工具原理"></a>工具原理</h2><ol>
+<li>获取用户歌单，找出无版权和收费歌曲</li>
+<li>从QQ、咪咕、百度等源搜索这些歌曲，匹配成功的可以下载</li>
+<li>下载后可以手动上传到云盘</li>
+</ol>
+<h3 id="获取用户歌单"><a href="#获取用户歌单" class="headerlink" title="获取用户歌单"></a>获取用户歌单</h3><p>借助<a target="_blank" rel="noopener" href="https://github.com/wwh1004/NeteaseCloudMusicApi">NeteaseCloudMusicApi</a>，可以方便调用云音乐的api。</p>
+<p>分析获取到的json，可以发现，包含<code>noCopyrightRcmd</code>的是没有版权的，包含<code>fee</code>的是收费的，我们可以将这些歌曲提取出来，变为song对象。</p>
+<pre><code>private static List&lt;Song&gt; FetchNoCopyrightSongs(JObject json)
+        &#123;
+            List&lt;Song&gt; noCopyrightsSongs = new List&lt;Song&gt;();
+            foreach (JObject songObj in json[&quot;songs&quot;])
+            &#123;
+                int id = 0;
+               
+                if (songObj[&quot;noCopyrightRcmd&quot;].HasValues || songObj[&quot;fee&quot;].Value&lt;int&gt;() == 1)
+                &#123;
+                    noCopyrightsSongs.Add(NeteaseProvider.extractSong(ref id, songObj));
+                &#125;
+            &#125;
+
+            return noCopyrightsSongs;
+        &#125;        public static Song extractSong(ref int index, JToken songItem)
+        &#123;
+            var song = new Song
+            &#123;
+                id = (string)songItem[&quot;id&quot;],
+                name = (string)songItem[&quot;name&quot;],
+
+                album = (string)songItem[&quot;al&quot;][&quot;name&quot;],
+                //rate = 128,
+                index = index++,
+                //size = (double)songItem[&quot;FileSize&quot;],
+                source = &quot;网易&quot;,
+                duration = (double)songItem[&quot;dt&quot;] / 1000
+            &#125;;
+
+            song.singer = &quot;&quot;;
+            foreach (var ar in songItem[&quot;ar&quot;])
+            &#123;
+                song.singer += ar[&quot;name&quot;] + &quot; &quot;;
+            &#125;
+
+            if (songItem.Contains(&quot;privilege&quot;) &amp;&amp; songItem[&quot;privilege&quot;].HasValues)
+            &#123;
+                song.rate = ((int)songItem[&quot;privilege&quot;][&quot;fl&quot;]) / 1000;
+                var fl = (int)songItem[&quot;privilege&quot;][&quot;fl&quot;];
+                if (songItem[&quot;h&quot;] != null &amp;&amp; fl &gt;= 320000)
+                &#123;
+                    song.size = (double)songItem[&quot;h&quot;][&quot;size&quot;];
+                &#125;
+                else if (songItem[&quot;m&quot;] != null &amp;&amp; fl &gt;= 192000)
+                &#123;
+                    song.size = (double)songItem[&quot;m&quot;][&quot;size&quot;];
+                &#125;
+                else if (songItem[&quot;l&quot;] != null)
+                &#123;
+                    song.size = (double)songItem[&quot;l&quot;][&quot;size&quot;];
+                &#125;
+            &#125;
+            else
+            &#123;
+                song.rate = 128;
+                song.size = 0;
+            &#125;
+
+            return song;
+        &#125;
+</code></pre>
+<h3 id="从其他来源获取歌曲"><a href="#从其他来源获取歌曲" class="headerlink" title="从其他来源获取歌曲"></a>从其他来源获取歌曲</h3><p>在之前的博文<a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/xmusicdownloader.html#4277262913">开源工具软件XMusicDownloader——音乐下载神器</a>里，我们有一个聚合的搜索歌曲的方法：</p>
+<pre><code> public List&lt;MergedSong&gt; SearchSongs(string keyword, int page, int pageSize)
+        &#123;
+            var songs = new List&lt;Song&gt;();
+            Providers.AsParallel().ForAll(provider =&gt;
+            &#123;
+                var currentSongs = provider.SearchSongs(keyword, page, pageSize);
+                songs.AddRange(currentSongs);
+            &#125;);
+
+            // merge
+
+            return songs.GroupBy(s =&gt; s.getMergedKey()).Select(g =&gt; new MergedSong(g.ToList())).OrderByDescending(s =&gt; s.score).ToList();
+        &#125;
+</code></pre>
+<p>类似的，匹配也是先搜索，但是要排除网易源，然后根据搜索结果去匹配。搜索的时候，可以将 “歌曲名称 + 歌手名称” 组合用来搜索。</p>
+<pre><code>  public MergedSong SearchSong(string singer, string songName, string exceptProvider)
+        &#123;      // search
+            var songs = new List&lt;Song&gt;();
+            Providers.AsParallel().ForAll(provider =&gt;
+            &#123;
+                try
+                &#123;
+                    if (provider.Name != exceptProvider)
+                    &#123;
+                        var currentSongs = provider.SearchSongs(singer + &quot; &quot; + songName, 1, 10);
+                        songs.AddRange(currentSongs);
+                    &#125;
+                &#125;
+                catch (Exception e)
+                &#123;
+
+                &#125;
+            &#125;);
+
+            // merge
+
+            List&lt;MergedSong&gt; mergedSongs = songs.GroupBy(s =&gt; s.getMergedKey()).Select(g =&gt; new MergedSong(g.ToList())).OrderByDescending(s =&gt; s.score).ToList();         // match
+            foreach (MergedSong song in mergedSongs)
+            &#123;
+                if (song.singer == singer &amp;&amp; song.name == songName)
+                &#123;
+                    return song;
+                &#125;
+            &#125;
+
+            return null;
+        &#125;
+</code></pre>
+<h2 id="软件界面"><a href="#软件界面" class="headerlink" title="软件界面"></a>软件界面</h2><p>软件界面，增加用户、密码输入</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/25/1598352954630.png" alt="界面"></p>
+<p>搜索结果，设置为默认选中：</p>
+<pre><code> List&lt;ListViewItem&gt; listViewItems = new List&lt;ListViewItem&gt;();
+            mergedSongs.ForEach(item =&gt;
+            &#123;
+                ListViewItem lvi = new ListViewItem();
+                lvi.Text = item.name;
+                lvi.SubItems.Add(item.singer);
+                lvi.SubItems.Add(item.rate + &quot;kb&quot;);
+                lvi.SubItems.Add((item.size / (1024 * 1024)).ToString(&quot;F2&quot;) + &quot;MB&quot;);  //将文件大小装换成MB的单位
+                TimeSpan ts = new TimeSpan(0, 0, (int)item.duration); //把秒数换算成分钟数
+                lvi.SubItems.Add(ts.Minutes + &quot;:&quot; + ts.Seconds.ToString(&quot;00&quot;));
+                lvi.SubItems.Add(item.source);
+                lvi.Tag = item;
+                lvi.Checked = true; // 默认选中
+                listViewItems.Add(lvi);
+            &#125;);
+</code></pre>
+<p>搜索出来后，下载可以完全复用之前逻辑。</p>
+<h2 id="下载歌曲使用"><a href="#下载歌曲使用" class="headerlink" title="下载歌曲使用"></a>下载歌曲使用</h2><p>下载后的歌曲，可以通过网易云音乐客户端，上传到云盘，然后批量选中，添加到我喜欢的音乐</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/25/1598353051852.png" alt="上传"></p>
+<p>批量选中后收藏到歌单：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/25/1598353082913.png" alt="批量收藏"></p>
+<h2 id="工具下载地址"><a href="#工具下载地址" class="headerlink" title="工具下载地址"></a>工具下载地址</h2><ul>
+<li>可以从github下载<br><a target="_blank" rel="noopener" href="https://github.com/jadepeng/music163tool">https://github.com/jadepeng/music163tool</a></li>
+<li>国内gitee地址：<br><a target="_blank" rel="noopener" href="https://gitee.com/jadepeng/music163tool">https://gitee.com/jadepeng/music163tool</a></li>
+</ul>
+<p>欢迎关注作者微信公众号, 一起交流软件开发。</p>
+<p><img src="https://img2020.cnblogs.com/blog/38465/202101/38465-20210118185019928-1475690632.png" alt="欢迎关注作者微信公众号"></p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/08/22/jqpeng-Spring%20Boot%E5%BC%95%E5%85%A5swagger-ui%20%E5%90%8Eswagger-ui.html%E6%97%A0%E6%B3%95%E8%AE%BF%E9%97%AE404/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/22/jqpeng-Spring%20Boot%E5%BC%95%E5%85%A5swagger-ui%20%E5%90%8Eswagger-ui.html%E6%97%A0%E6%B3%95%E8%AE%BF%E9%97%AE404/" class="post-title-link" itemprop="url">Spring Boot引入swagger-ui 后swagger-ui.html无法访问404</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-22 22:05:00" itemprop="dateCreated datePublished" datetime="2020-08-22T22:05:00+08:00">2020-08-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/swagger-ui-404.html">Spring Boot引入swagger-ui 后swagger-ui.html无法访问404</a></p>
+<p>最近给graphserver增加swagger，记录下过程与问题解决。</p>
+<p>Swagger 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务，后端集成下Swagger，然后就可以提供一个在线文档地址给前端同学。</p>
+<h2 id="引入-Swagger"><a href="#引入-Swagger" class="headerlink" title="引入 Swagger"></a>引入 Swagger</h2><p>pom中加入相关配置：</p>
+<pre><code>        &lt;dependency&gt;
+            &lt;groupId&gt;io.springfox&lt;/groupId&gt;
+            &lt;artifactId&gt;springfox-swagger2&lt;/artifactId&gt;
+            &lt;version&gt;2.9.2&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.springfox&lt;/groupId&gt;
+            &lt;artifactId&gt;springfox-swagger-ui&lt;/artifactId&gt;
+            &lt;version&gt;2.9.2&lt;/version&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>增加<code>Swagger2Config</code>, 添加<code>@EnableSwagger2</code>,可以通过定义Docket bean实现自定义。</p>
+<pre><code>@Configuration
+@EnableSwagger2
+@Profile(&quot;swagger&quot;)
+@ComponentScan(&quot;xxx.controller&quot;)
+public class Swagger2Config &#123;
+
+    @Bean
+    public Docket createRestApi() &#123;
+        return new Docket(DocumentationType.SWAGGER_2)
+            .apiInfo(apiInfo())
+            .enable(true)
+            .select()
+            .apis(RequestHandlerSelectors.basePackage(&quot;xxx.controller&quot;))
+            .paths(PathSelectors.any())
+            .build();
+    &#125;
+
+    private ApiInfo apiInfo() &#123;
+        return new ApiInfoBuilder()
+            .title(&quot;XXX Rest Server&quot;)
+            .description(&quot;XXXRest接口&quot;)
+            .contact(new Contact(&quot;contract&quot;, &quot;url&quot;, &quot;email&quot;))
+            .version(&quot;1.0&quot;)
+            .build();
+    &#125;
+&#125;
+</code></pre>
+<h2 id="swagger-ui-html-404问题"><a href="#swagger-ui-html-404问题" class="headerlink" title="swagger-ui.html 404问题"></a>swagger-ui.html 404问题</h2><p>项目中有web配置，因此怀疑是这些配置影响了，搜索下发现这位仁兄有类似经历：<code>https://www.cnblogs.com/pangguoming/p/10551895.html</code></p>
+<p>于是在WebMvcConfig 配置中，override <code>addResourceHandlers</code></p>
+<pre><code>@Configuration
+public class WebMvcConfig implements WebMvcConfigurer &#123;
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) &#123;
+        registry.addResourceHandler(&quot;/**&quot;).addResourceLocations(&quot;classpath:/static/&quot;);
+        registry.addResourceHandler(&quot;swagger-ui.html&quot;)
+            .addResourceLocations(&quot;classpath:/META-INF/resources/&quot;);
+        registry.addResourceHandler(&quot;/webjars/**&quot;)
+            .addResourceLocations(&quot;classpath:/META-INF/resources/webjars/&quot;);
+    &#125;
+</code></pre>
+<p>搞定收工。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><p>server端有了swagger，前端如何更优先的调用？</p>
+<p>参见：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/generator-swagger-2-ts-2.html">Vue 使用typescript， 优雅的调用swagger API</a>,笔者提供了一个开源npm库，可以为前端生成调用axios调用代码。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/pangguoming/p/10551895.html">https://www.cnblogs.com/pangguoming/p/10551895.html</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/08/13/jqpeng-%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8BTinkerPop%20Provider/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/13/jqpeng-%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8BTinkerPop%20Provider/" class="post-title-link" itemprop="url">图数据库之TinkerPop Provider</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-13 16:57:00" itemprop="dateCreated datePublished" datetime="2020-08-13T16:57:00+08:00">2020-08-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/tinkerPop-Provider.html">图数据库之TinkerPop Provider</a></p>
+<p>Apache TinkerPop 提供了图数据库的抽象接口，方便第三方实现自己的图数据库以接入TinkerPop 技术栈，享受TinkerPop 的Gremlin、算法等福利。TinkerPop将这些第三方称为“Provider ”，知名的Provider包含janusGraph、neo4j、hugegraph等。</p>
+<p>Provider包含：</p>
+<ul>
+<li><p>Graph System Provider</p>
+<ul>
+<li>Graph Database Provider</li>
+<li>Graph Processor Provider</li>
+</ul>
+</li>
+<li><p>Graph Driver Provider</p>
+</li>
+<li><p>Graph Language Provider</p>
+</li>
+<li><p>Graph Plugin Provider</p>
+</li>
+</ul>
+<h2 id="Graph-Structure-API（图谱数据结构）"><a href="#Graph-Structure-API（图谱数据结构）" class="headerlink" title="Graph Structure API（图谱数据结构）"></a>Graph Structure API（图谱数据结构）</h2><p>Graph最高层的抽象数据结构包含 Graph（图）, Vertex（顶点）, Edge（边）, VertexProperty（属性） and Property.</p>
+<p>基于这些基础数据结构，就可以对进行基本的图谱操作。</p>
+<pre><code>Graph graph = TinkerGraph.open(); //1
+Vertex marko = graph.addVertex(T.label, &quot;person&quot;, T.id, 1, &quot;name&quot;, &quot;marko&quot;, &quot;age&quot;, 29); //2
+Vertex vadas = graph.addVertex(T.label, &quot;person&quot;, T.id, 2, &quot;name&quot;, &quot;vadas&quot;, &quot;age&quot;, 27);
+Vertex lop = graph.addVertex(T.label, &quot;software&quot;, T.id, 3, &quot;name&quot;, &quot;lop&quot;, &quot;lang&quot;, &quot;java&quot;);
+Vertex josh = graph.addVertex(T.label, &quot;person&quot;, T.id, 4, &quot;name&quot;, &quot;josh&quot;, &quot;age&quot;, 32);
+Vertex ripple = graph.addVertex(T.label, &quot;software&quot;, T.id, 5, &quot;name&quot;, &quot;ripple&quot;, &quot;lang&quot;, &quot;java&quot;);
+Vertex peter = graph.addVertex(T.label, &quot;person&quot;, T.id, 6, &quot;name&quot;, &quot;peter&quot;, &quot;age&quot;, 35);
+marko.addEdge(&quot;knows&quot;, vadas, T.id, 7, &quot;weight&quot;, 0.5f); //3
+marko.addEdge(&quot;knows&quot;, josh, T.id, 8, &quot;weight&quot;, 1.0f);
+marko.addEdge(&quot;created&quot;, lop, T.id, 9, &quot;weight&quot;, 0.4f);
+josh.addEdge(&quot;created&quot;, ripple, T.id, 10, &quot;weight&quot;, 1.0f);
+josh.addEdge(&quot;created&quot;, lop, T.id, 11, &quot;weight&quot;, 0.4f);
+peter.addEdge(&quot;created&quot;, lop, T.id, 12, &quot;weight&quot;, 0.2f);
+</code></pre>
+<ol>
+<li>创建一个基于内存存储的TinkerGraph 实例（TinkerGraph是官方实现的，基于内存的Graph）</li>
+</ol>
+<p>2 .创建一个顶点</p>
+<ol>
+<li>创建边</li>
+</ol>
+<p>上面的代码构建了一个基本的图，下面的代码演示如何进行图谱的操作。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/13/1597305698157.png" alt="图谱操作"></p>
+<h2 id="实现-Gremlin-Core"><a href="#实现-Gremlin-Core" class="headerlink" title="实现 Gremlin-Core"></a>实现 Gremlin-Core</h2><p>一个标准的Graph Provider需要实现OLTP 和OLAP两类接口，官方推荐学习TinkerGraph(in-memory OLTP and OLAP in tinkergraph-gremlin)，以及 Neo4jGraph (OLTP w/ transactions in neo4j-gremlin) ，还有<br> Neo4jGraph (OLTP w/ transactions in neo4j-gremlin) ，还有 HadoopGraph (OLAP in hadoop-gremlin) 。</p>
+<ol>
+<li>在线事务处理 Graph Systems (<strong>OLTP</strong>)</li>
+</ol>
+<pre><code>1.  数据结构 API: `Graph`, `Element`, `Vertex`, `Edge`, `Property` and `Transaction` (if transactions are supported).
+
+2.  处理API : `TraversalStrategy` instances for optimizing Gremlin traversals to the provider’s graph system (i.e. `TinkerGraphStepStrategy`).
+</code></pre>
+<ol>
+<li><p>在线分析 图系统 (<strong>OLAP</strong>)</p>
+<ol>
+<li>Everything required of OLTP is required of OLAP (but not vice versa).</li>
+<li>GraphComputer API: <code>GraphComputer</code>, <code>Messenger</code>, <code>Memory</code>.</li>
+</ol>
+</li>
+</ol>
+<h3 id="OLTP-实现"><a href="#OLTP-实现" class="headerlink" title="OLTP 实现"></a>OLTP 实现</h3><p>需要实现structure包下的interface，包含<code>Graph</code>, <code>Vertex</code>, <code>Edge</code>, <code>Property</code>, <code>Transaction</code>等等。</p>
+<ul>
+<li><code>Graph</code>实现时，需要命名为<code>XXXGraph</code> (举例： TinkerGraph, Neo4jGraph, HadoopGraph, etc.).<ul>
+<li>需要兼容<code>GraphFactory</code> ，也就是提供一个静态的 <code>Graph open(Configuration)</code> 方法。</li>
+</ul>
+</li>
+</ul>
+<h3 id="OLAP-实现"><a href="#OLAP-实现" class="headerlink" title="OLAP 实现"></a>OLAP 实现</h3><p>需要实现：</p>
+<ol>
+<li><code>GraphComputer</code>: 图计算器，提供隔离环境，执行VertexProgram,和MapReduce任务.</li>
+<li><code>Memory</code>: A global blackboard for ANDing, ORing, INCRing, and SETing values for specified keys.</li>
+<li><code>Messenger</code>: The system that collects and distributes messages being propagated by vertices executing the VertexProgram application.</li>
+<li><code>MapReduce.MapEmitter</code>: The system that collects key/value pairs being emitted by the MapReduce applications map-phase.</li>
+<li><code>MapReduce.ReduceEmitter</code>: The system that collects key/value pairs being emitted by the MapReduce applications combine- and reduce-phases.</li>
+</ol>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/08/10/jqpeng-%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93HugeGraph%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%20%EF%BC%881%EF%BC%89%20%E2%80%94%E2%80%94%20%20%E5%85%A5%E9%97%A8%E4%BB%8B%E7%BB%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/10/jqpeng-%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93HugeGraph%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%20%EF%BC%881%EF%BC%89%20%E2%80%94%E2%80%94%20%20%E5%85%A5%E9%97%A8%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">图数据库HugeGraph源码解读 （1） ——  入门介绍</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-10 19:32:00" itemprop="dateCreated datePublished" datetime="2020-08-10T19:32:00+08:00">2020-08-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>20k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>19 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/hugegraph-summary.html">图数据库HugeGraph源码解读 （1） ——  入门介绍</a></p>
+<h2 id="HugeGraph介绍"><a href="#HugeGraph介绍" class="headerlink" title="HugeGraph介绍"></a>HugeGraph介绍</h2><p>以下引自官方文档：</p>
+<pre><code>HugeGraph是一款易用、高效、通用的开源图数据库系统（Graph Database，GitHub项目地址）， 实现了Apache TinkerPop3框架及完全兼容Gremlin查询语言， 具备完善的工具链组件，助力用户轻松构建基于图数据库之上的应用和产品。HugeGraph支持百亿以上的顶点和边快速导入，并提供毫秒级的关联关系查询能力（OLTP）， 并可与Hadoop、Spark等大数据平台集成以进行离线分析（OLAP）。
+
+HugeGraph典型应用场景包括深度关系探索、关联分析、路径搜索、特征抽取、数据聚类、社区检测、 知识图谱等，适用业务领域有如网络安全、电信诈骗、金融风控、广告推荐、社交网络和智能机器人等。
+</code></pre>
+<p>划重点：  </p>
+<ul>
+<li>基于TinkerPop3框架，兼容Gremlin查询语言  </li>
+<li>OLTP（开源） 与 OLAP(商业版）  </li>
+<li>常用图应用支持—— 路径搜索、推荐等</li>
+</ul>
+<h2 id="架构介绍"><a href="#架构介绍" class="headerlink" title="架构介绍"></a>架构介绍</h2><h3 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h3><p>HugeGraph包括三个层次的功能，分别是存储层、计算层和用户接口层。 HugeGraph支持OLTP和OLAP两种图计算类型</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/10/1597055013416.png" alt="HugeGraph架构"></p>
+<h3 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h3><p>HugeGraph的主要功能分为HugeCore、ApiServer、HugeGraph-Client、HugeGraph-Loader和HugeGraph-Studio等组件构成，各组件之间的通信关系如下图所示。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/10/1597055066287.png" alt="组件"></p>
+<p>其中核心组件：</p>
+<ul>
+<li>HugeCore ：HugeGraph的核心模块，TinkerPop的接口主要在该模块中实现。</li>
+<li>ApiServer ：提供RESTFul Api接口，对外提供Graph Api、Schema Api和Gremlin Api等接口服务。</li>
+<li>HugeGraph-Client：基于Java客户端驱动程序</li>
+</ul>
+<p>生态组件：</p>
+<ul>
+<li>HugeGraph-Loader：数据导入模块。HugeGraph-Loader可以扫描并分析现有数据，自动生成Graph Schema创建语言，通过批量方式快速导入数据。</li>
+<li>HugeGraph-Studio：基于Web的可视化IDE环境。以Notebook方式记录Gremlin查询，可视化展示Graph的关联关系。HugeGraph-Studio也是本系统推荐的工具。</li>
+</ul>
+<p><code>HugeGraph-Studio</code>  看起来已经被抛弃了，研发团队正开发一个名为’hugegraph-hubble’ 的新项目：</p>
+<pre><code>hugegraph-hubble is a graph management and analysis platform that provides features: graph data load, schema management, graph relationship analysis and graphical display.
+</code></pre>
+<p>根据官方的说明，<code>hubble</code>定义为图谱管理和分析平台，提供图谱数据加载、schema管理、图分析和可视化展示，目前正在研发中，预计2020年9月份会发布首个版本。</p>
+<h3 id="设计理念"><a href="#设计理念" class="headerlink" title="设计理念"></a>设计理念</h3><p>常见的图数据表示模型有两种：</p>
+<ul>
+<li>RDF（Resource Description Framework）模型： 学术界的选择，通过sparql来进行查询，<code>jena</code>，<code>gStore</code>等等</li>
+<li>属性图（Property Graph）模型，工业界的选择，<code>neo4j</code>和<code>janusgraph</code>都是这种方案。</li>
+</ul>
+<p>RDF是W3C标准，而Property Graph是工业标准，受到广大图数据库厂商的广泛支持。HugeGraph采用Property Graph，遵循工业标准。</p>
+<p>HugeGraph存储概念模型详见下图：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/10/1597055603962.png" alt="HugeGraph概念模型"></p>
+<p>主要包含几个部分：</p>
+<ul>
+<li>Vertex（顶点），对应一个实体（Entity）</li>
+<li>Vertex Label(顶点的类型），对应一个概念（Concept）</li>
+<li>属性（图里的name、age），PropertyKey</li>
+<li>Edge边（图里的lives），对应RDF里的Relation</li>
+</ul>
+<h3 id="可扩展性"><a href="#可扩展性" class="headerlink" title="可扩展性"></a>可扩展性</h3><p>HugeGraph提供了丰富的插件扩展机制，包含几个维度的扩展项：</p>
+<ul>
+<li>后端存储</li>
+<li>序列化器</li>
+<li>自定义配置项</li>
+<li>分词器</li>
+</ul>
+<p>插件实现机制</p>
+<ol>
+<li>HugeGraph提供插件接口HugeGraphPlugin，通过Java SPI机制支持插件化</li>
+<li>HugeGraph提供了4个扩展项注册函数：<code>registerOptions()</code>、<code>registerBackend()</code>、<code>registerSerializer()</code>、<code>registerAnalyzer()</code></li>
+<li>插件实现者实现相应的Options、Backend、Serializer或Analyzer的接口</li>
+<li>插件实现者实现HugeGraphPlugin接口的<code>register()</code>方法，在该方法中注册上述第3点所列的具体实现类，并打成jar包</li>
+<li>插件使用者将jar包放在HugeGraph Server安装目录的<code>plugins</code>目录下，修改相关配置项为插件自定义值，重启即可生效</li>
+</ol>
+<h3 id="从案例深入源码"><a href="#从案例深入源码" class="headerlink" title="从案例深入源码"></a>从案例深入源码</h3><p>想要深入的理解一个系统的源码，先从具体的应用入手。先查看example代码：</p>
+<p><code>https://github.com/hugegraph/hugegraph/blob/master/hugegraph-example/src/main/java/com/baidu/hugegraph/example/Example1.java</code></p>
+<pre><code> public static void main(String[] args) throws Exception &#123;
+        LOG.info(&quot;Example1 start!&quot;);
+
+        HugeGraph graph = ExampleUtil.loadGraph();
+
+        Example1.showFeatures(graph);
+
+        Example1.loadSchema(graph);
+        Example1.loadData(graph);
+        Example1.testQuery(graph);
+        Example1.testRemove(graph);
+        Example1.testVariables(graph);
+        Example1.testLeftIndexProcess(graph);
+
+        Example1.thread(graph);
+
+        graph.close();
+
+        HugeFactory.shutdown(30L);
+    &#125;
+</code></pre>
+<h4 id="1-loadGraph"><a href="#1-loadGraph" class="headerlink" title="1. loadGraph"></a>1. loadGraph</h4><p>要使用hugegraph，需要先初始化一个<code>HugeGraph</code>对象，而<code>LoadGraph</code> 正是做这个的。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/10/1597056461542.png" alt="loadGraph"></p>
+<pre><code>public static HugeGraph loadGraph(boolean needClear, boolean needProfile) &#123;
+        if (needProfile) &#123;
+            profile();
+        &#125;
+
+        registerPlugins();
+
+        String conf = &quot;hugegraph.properties&quot;;
+        try &#123;
+            String path = ExampleUtil.class.getClassLoader()
+                                     .getResource(conf).getPath();
+            File file = new File(path);
+            if (file.exists() &amp;&amp; file.isFile()) &#123;
+                conf = path;
+            &#125;
+        &#125; catch (Exception ignored) &#123;
+        &#125;
+
+        HugeGraph graph = HugeFactory.open(conf);
+
+        if (needClear) &#123;
+            graph.clearBackend();
+        &#125;
+        graph.initBackend();
+
+        return graph;
+    &#125;
+</code></pre>
+<h5 id="1-1-registerPlugins"><a href="#1-1-registerPlugins" class="headerlink" title="1.1 registerPlugins"></a>1.1 registerPlugins</h5><p>其中 <code>registerPlugins</code> 注册插件，注意上面介绍的扩展机制。hugegraph所有的后端存储都需要通过插件注册。</p>
+<pre><code> public static void registerPlugins() &#123;
+        if (registered) &#123;
+            return;
+        &#125;
+        registered = true;
+
+        RegisterUtil.registerCassandra();
+        RegisterUtil.registerScyllaDB();
+        RegisterUtil.registerHBase();
+        RegisterUtil.registerRocksDB();
+        RegisterUtil.registerMysql();
+        RegisterUtil.registerPalo();
+    &#125;
+</code></pre>
+<p>注册主要是register配置、序列化器和backend，比如下面是mysql的。</p>
+<pre><code>public static void registerMysql() &#123;
+        // Register config
+        OptionSpace.register(&quot;mysql&quot;,
+                &quot;com.baidu.hugegraph.backend.store.mysql.MysqlOptions&quot;);
+        // Register serializer
+        SerializerFactory.register(&quot;mysql&quot;,
+                &quot;com.baidu.hugegraph.backend.store.mysql.MysqlSerializer&quot;);
+        // Register backend
+        BackendProviderFactory.register(&quot;mysql&quot;,
+                &quot;com.baidu.hugegraph.backend.store.mysql.MysqlStoreProvider&quot;);
+    &#125;
+</code></pre>
+<h5 id="1-2-HugeFactory-open"><a href="#1-2-HugeFactory-open" class="headerlink" title="1.2 HugeFactory.open"></a>1.2 HugeFactory.open</h5><p>HugeFactory 是Hugraph的工厂类，支持传入Configuraion配置信息，构建一个HugeGraph实例，注意这里为了线程安全，签名采用<code>synchronized</code></p>
+<pre><code> public static synchronized HugeGraph open(Configuration config) &#123;
+        HugeConfig conf = config instanceof HugeConfig ?
+                          (HugeConfig) config : new HugeConfig(config);
+        String name = conf.get(CoreOptions.STORE);
+        checkGraphName(name, &quot;graph config(like hugegraph.properties)&quot;);
+        name = name.toLowerCase();
+        HugeGraph graph = graphs.get(name);
+        if (graph == null || graph.closed()) &#123;
+            graph = new StandardHugeGraph(conf);
+            graphs.put(name, graph);
+        &#125; else &#123;
+            String backend = conf.get(CoreOptions.BACKEND);
+            E.checkState(backend.equalsIgnoreCase(graph.backend()),
+                         &quot;Graph name &#39;%s&#39; has been used by backend &#39;%s&#39;&quot;,
+                         name, graph.backend());
+        &#125;
+        return graph;
+    &#125;
+</code></pre>
+<p>这里顺带提下配置文件，通过代码看到，默认是读取<code>hugegraph.properties</code>.</p>
+<h5 id="1-3-HugeGraph-对象"><a href="#1-3-HugeGraph-对象" class="headerlink" title="1.3 HugeGraph 对象"></a>1.3 HugeGraph 对象</h5><p>HugeGraph是一个interface，继承gremlin的Graph接口，定义了图谱的Schema定义、数据存储、查询等API方法。从上面1.2可以看到，默认的实现是<code>StandardHugeGraph</code>。</p>
+<pre><code>public interface HugeGraph extends Graph &#123;
+
+    public HugeGraph hugegraph();
+
+    public SchemaManager schema();
+
+    public Id getNextId(HugeType type);
+
+    public void addPropertyKey(PropertyKey key);
+    public void removePropertyKey(Id key);
+    public Collection&lt;PropertyKey&gt; propertyKeys();
+    public PropertyKey propertyKey(String key);
+    public PropertyKey propertyKey(Id key);
+    public boolean existsPropertyKey(String key);
+
+...
+   
+</code></pre>
+<h5 id="1-4-graph-clearBackend-与initBackend"><a href="#1-4-graph-clearBackend-与initBackend" class="headerlink" title="1.4 graph.clearBackend 与initBackend"></a>1.4 graph.clearBackend 与initBackend</h5><p>clearBackend将后端数据清理，initBackend初始化基本的数据结构。</p>
+<h4 id="2-loadSchema"><a href="#2-loadSchema" class="headerlink" title="2. loadSchema"></a>2. loadSchema</h4><p>该方法，用来定义schema：</p>
+<pre><code>public static void loadSchema(final HugeGraph graph) &#123;
+
+        SchemaManager schema = graph.schema();
+
+        // Schema changes will be commit directly into the back-end
+        LOG.info(&quot;===============  propertyKey  ================&quot;);
+        schema.propertyKey(&quot;id&quot;).asInt().create();
+        schema.propertyKey(&quot;name&quot;).asText().create();
+        schema.propertyKey(&quot;gender&quot;).asText().create();
+        schema.propertyKey(&quot;instructions&quot;).asText().create();
+        schema.propertyKey(&quot;category&quot;).asText().create();
+        schema.propertyKey(&quot;year&quot;).asInt().create();
+        schema.propertyKey(&quot;time&quot;).asText().create();
+        schema.propertyKey(&quot;timestamp&quot;).asDate().create();
+        schema.propertyKey(&quot;ISBN&quot;).asText().create();
+        schema.propertyKey(&quot;calories&quot;).asInt().create();
+        schema.propertyKey(&quot;amount&quot;).asText().create();
+        schema.propertyKey(&quot;stars&quot;).asInt().create();
+        schema.propertyKey(&quot;age&quot;).asInt().valueSingle().create();
+        schema.propertyKey(&quot;comment&quot;).asText().valueSet().create();
+        schema.propertyKey(&quot;contribution&quot;).asText().valueSet().create();
+        schema.propertyKey(&quot;nickname&quot;).asText().valueList().create();
+        schema.propertyKey(&quot;lived&quot;).asText().create();
+        schema.propertyKey(&quot;country&quot;).asText().valueSet().create();
+        schema.propertyKey(&quot;city&quot;).asText().create();
+        schema.propertyKey(&quot;sensor_id&quot;).asUUID().create();
+        schema.propertyKey(&quot;versions&quot;).asInt().valueList().create();
+
+        LOG.info(&quot;===============  vertexLabel  ================&quot;);
+
+        schema.vertexLabel(&quot;person&quot;)
+              .properties(&quot;name&quot;, &quot;age&quot;, &quot;city&quot;)
+              .primaryKeys(&quot;name&quot;)
+              .create();
+        schema.vertexLabel(&quot;author&quot;)
+              .properties(&quot;id&quot;, &quot;name&quot;, &quot;age&quot;, &quot;lived&quot;)
+              .primaryKeys(&quot;id&quot;).create();
+        schema.vertexLabel(&quot;language&quot;).properties(&quot;name&quot;, &quot;versions&quot;)
+              .primaryKeys(&quot;name&quot;).create();
+        schema.vertexLabel(&quot;recipe&quot;).properties(&quot;name&quot;, &quot;instructions&quot;)
+              .primaryKeys(&quot;name&quot;).create();
+        schema.vertexLabel(&quot;book&quot;).properties(&quot;name&quot;)
+              .primaryKeys(&quot;name&quot;).create();
+        schema.vertexLabel(&quot;reviewer&quot;).properties(&quot;name&quot;, &quot;timestamp&quot;)
+              .primaryKeys(&quot;name&quot;).create();
+
+        // vertex label must have the properties that specified in primary key
+        schema.vertexLabel(&quot;FridgeSensor&quot;).properties(&quot;city&quot;)
+              .primaryKeys(&quot;city&quot;).create();
+
+        LOG.info(&quot;===============  vertexLabel &amp; index  ================&quot;);
+        schema.indexLabel(&quot;personByCity&quot;)
+              .onV(&quot;person&quot;).secondary().by(&quot;city&quot;).create();
+        schema.indexLabel(&quot;personByAge&quot;)
+              .onV(&quot;person&quot;).range().by(&quot;age&quot;).create();
+
+        schema.indexLabel(&quot;authorByLived&quot;)
+              .onV(&quot;author&quot;).search().by(&quot;lived&quot;).create();
+
+        // schemaManager.getVertexLabel(&quot;author&quot;).index(&quot;byName&quot;).secondary().by(&quot;name&quot;).add();
+        // schemaManager.getVertexLabel(&quot;recipe&quot;).index(&quot;byRecipe&quot;).materialized().by(&quot;name&quot;).add();
+        // schemaManager.getVertexLabel(&quot;meal&quot;).index(&quot;byMeal&quot;).materialized().by(&quot;name&quot;).add();
+        // schemaManager.getVertexLabel(&quot;ingredient&quot;).index(&quot;byIngredient&quot;).materialized().by(&quot;name&quot;).add();
+        // schemaManager.getVertexLabel(&quot;reviewer&quot;).index(&quot;byReviewer&quot;).materialized().by(&quot;name&quot;).add();
+
+        LOG.info(&quot;===============  edgeLabel  ================&quot;);
+
+        schema.edgeLabel(&quot;authored&quot;).singleTime()
+              .sourceLabel(&quot;author&quot;).targetLabel(&quot;book&quot;)
+              .properties(&quot;contribution&quot;, &quot;comment&quot;)
+              .nullableKeys(&quot;comment&quot;)
+              .create();
+
+        schema.edgeLabel(&quot;write&quot;).multiTimes().properties(&quot;time&quot;)
+              .sourceLabel(&quot;author&quot;).targetLabel(&quot;book&quot;)
+              .sortKeys(&quot;time&quot;)
+              .create();
+
+        schema.edgeLabel(&quot;look&quot;).multiTimes().properties(&quot;timestamp&quot;)
+              .sourceLabel(&quot;person&quot;).targetLabel(&quot;book&quot;)
+              .sortKeys(&quot;timestamp&quot;)
+              .create();
+
+        schema.edgeLabel(&quot;created&quot;).singleTime()
+              .sourceLabel(&quot;author&quot;).targetLabel(&quot;language&quot;)
+              .create();
+
+        schema.edgeLabel(&quot;rated&quot;)
+              .sourceLabel(&quot;reviewer&quot;).targetLabel(&quot;recipe&quot;)
+              .create();
+    &#125;
+</code></pre>
+<p>划重点：  </p>
+<ul>
+<li>SchemaManager schema = graph.schema() 获取SchemaManager  </li>
+<li>schema.propertyKey(NAME).asXXType().create() 创建属性  </li>
+<li>schema.vertexLabel(“person”) // 定义概念<br>.properties(“name”, “age”, “city”)  // 定义概念的属性<br>.primaryKeys(“name”)  // 定义primary Keys，primary Key组合后可以唯一确定一个实体<br>.create();  </li>
+<li> schema.indexLabel(“personByCity”).onV(“person”).secondary().by(“city”).create();  定义索引  </li>
+<li>schema.edgeLabel(“authored”).singleTime()<br>.sourceLabel(“author”).targetLabel(“book”)<br>.properties(“contribution”, “comment”)<br>.nullableKeys(“comment”)<br>.create();  // 定义关系</li>
+</ul>
+<h4 id="3-loadData"><a href="#3-loadData" class="headerlink" title="3. loadData"></a>3. loadData</h4><p>创建实体，注意格式，K-V成对出现：</p>
+<pre><code>graph.addVertex(T.label, &quot;book&quot;, &quot;name&quot;, &quot;java-3&quot;);
+</code></pre>
+<p>创建关系，Vertex的addEdge方法：</p>
+<pre><code>    Vertex james = tx.addVertex(T.label, &quot;author&quot;, &quot;id&quot;, 1,
+                                &quot;name&quot;, &quot;James Gosling&quot;,  &quot;age&quot;, 62,
+                                &quot;lived&quot;, &quot;San Francisco Bay Area&quot;);
+
+    Vertex java = tx.addVertex(T.label, &quot;language&quot;, &quot;name&quot;, &quot;java&quot;,
+                               &quot;versions&quot;, Arrays.asList(6, 7, 8));
+    Vertex book1 = tx.addVertex(T.label, &quot;book&quot;, &quot;name&quot;, &quot;java-1&quot;);
+    Vertex book2 = tx.addVertex(T.label, &quot;book&quot;, &quot;name&quot;, &quot;java-2&quot;);
+    Vertex book3 = tx.addVertex(T.label, &quot;book&quot;, &quot;name&quot;, &quot;java-3&quot;);
+
+    james.addEdge(&quot;created&quot;, java);
+    james.addEdge(&quot;authored&quot;, book1,
+                  &quot;contribution&quot;, &quot;1990-1-1&quot;,
+                  &quot;comment&quot;, &quot;it&#39;s a good book&quot;,
+                  &quot;comment&quot;, &quot;it&#39;s a good book&quot;,
+                  &quot;comment&quot;, &quot;it&#39;s a good book too&quot;);
+    james.addEdge(&quot;authored&quot;, book2, &quot;contribution&quot;, &quot;2017-4-28&quot;);
+
+    james.addEdge(&quot;write&quot;, book2, &quot;time&quot;, &quot;2017-4-28&quot;);
+    james.addEdge(&quot;write&quot;, book3, &quot;time&quot;, &quot;2016-1-1&quot;);
+    james.addEdge(&quot;write&quot;, book3, &quot;time&quot;, &quot;2017-4-28&quot;);    
+</code></pre>
+<p>添加后，需要commit</p>
+<h4 id="4-testQuery-测试查询"><a href="#4-testQuery-测试查询" class="headerlink" title="4. testQuery 测试查询"></a>4. testQuery 测试查询</h4><p>查询主要通过<code>GraphTraversal</code>, 可以通过<code>graph.traversal()</code>获得：</p>
+<pre><code>public static void testQuery(final HugeGraph graph) &#123;
+        // query all
+        GraphTraversal&lt;Vertex, Vertex&gt; vertices = graph.traversal().V();
+        int size = vertices.toList().size();
+        assert size == 12;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all vertices: size=&quot; + size);
+
+        // query by label
+        vertices = graph.traversal().V().hasLabel(&quot;person&quot;);
+        size = vertices.toList().size();
+        assert size == 5;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all persons: size=&quot; + size);
+
+        // query vertex by primary-values
+        vertices = graph.traversal().V().hasLabel(&quot;author&quot;).has(&quot;id&quot;, 1);
+        List&lt;Vertex&gt; vertexList = vertices.toList();
+        assert vertexList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query vertices by primary-values: &quot; +
+                           vertexList);
+
+        VertexLabel author = graph.schema().getVertexLabel(&quot;author&quot;);
+        String authorId = String.format(&quot;%s:%s&quot;, author.id().asString(), &quot;11&quot;);
+
+        // query vertex by id and query out edges
+        vertices = graph.traversal().V(authorId);
+        GraphTraversal&lt;Vertex, Edge&gt; edgesOfVertex = vertices.outE(&quot;created&quot;);
+        List&lt;Edge&gt; edgeList = edgesOfVertex.toList();
+        assert edgeList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query edges of vertex: &quot; + edgeList);
+
+        vertices = graph.traversal().V(authorId);
+        vertexList = vertices.out(&quot;created&quot;).toList();
+        assert vertexList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query vertices of vertex: &quot; + vertexList);
+
+        // query edge by sort-values
+        vertices = graph.traversal().V(authorId);
+        edgesOfVertex = vertices.outE(&quot;write&quot;).has(&quot;time&quot;, &quot;2017-4-28&quot;);
+        edgeList = edgesOfVertex.toList();
+        assert edgeList.size() == 2;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query edges of vertex by sort-values: &quot; +
+                           edgeList);
+
+        // query vertex by condition (filter by property name)
+        ConditionQuery q = new ConditionQuery(HugeType.VERTEX);
+        PropertyKey age = graph.propertyKey(&quot;age&quot;);
+        q.key(HugeKeys.PROPERTIES, age.id());
+        if (graph.backendStoreFeatures()
+                 .supportsQueryWithContainsKey()) &#123;
+            Iterator&lt;Vertex&gt; iter = graph.vertices(q);
+            assert iter.hasNext();
+            System.out.println(&quot;&gt;&gt;&gt;&gt; queryVertices(age): &quot; + iter.hasNext());
+            while (iter.hasNext()) &#123;
+                System.out.println(&quot;&gt;&gt;&gt;&gt; queryVertices(age): &quot; + iter.next());
+            &#125;
+        &#125;
+
+        // query all edges
+        GraphTraversal&lt;Edge, Edge&gt; edges = graph.traversal().E().limit(2);
+        size = edges.toList().size();
+        assert size == 2;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all edges with limit 2: size=&quot; + size);
+
+        // query edge by id
+        EdgeLabel authored = graph.edgeLabel(&quot;authored&quot;);
+        VertexLabel book = graph.schema().getVertexLabel(&quot;book&quot;);
+        String book1Id = String.format(&quot;%s:%s&quot;, book.id().asString(), &quot;java-1&quot;);
+        String book2Id = String.format(&quot;%s:%s&quot;, book.id().asString(), &quot;java-2&quot;);
+
+        String edgeId = String.format(&quot;S%s&gt;%s&gt;%s&gt;S%s&quot;,
+                                      authorId, authored.id(), &quot;&quot;, book2Id);
+        edges = graph.traversal().E(edgeId);
+        edgeList = edges.toList();
+        assert edgeList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query edge by id: &quot; + edgeList);
+
+        Edge edge = edgeList.get(0);
+        edges = graph.traversal().E(edge.id());
+        edgeList = edges.toList();
+        assert edgeList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query edge by id: &quot; + edgeList);
+
+        // query edge by condition
+        q = new ConditionQuery(HugeType.EDGE);
+        q.eq(HugeKeys.OWNER_VERTEX, IdGenerator.of(authorId));
+        q.eq(HugeKeys.DIRECTION, Directions.OUT);
+        q.eq(HugeKeys.LABEL, authored.id());
+        q.eq(HugeKeys.SORT_VALUES, &quot;&quot;);
+        q.eq(HugeKeys.OTHER_VERTEX, IdGenerator.of(book1Id));
+
+        Iterator&lt;Edge&gt; edges2 = graph.edges(q);
+        assert edges2.hasNext();
+        System.out.println(&quot;&gt;&gt;&gt;&gt; queryEdges(id-condition): &quot; +
+                           edges2.hasNext());
+        while (edges2.hasNext()) &#123;
+            System.out.println(&quot;&gt;&gt;&gt;&gt; queryEdges(id-condition): &quot; +
+                               edges2.next());
+        &#125;
+
+        // NOTE: query edge by has-key just supported by Cassandra
+        if (graph.backendStoreFeatures().supportsQueryWithContainsKey()) &#123;
+            PropertyKey contribution = graph.propertyKey(&quot;contribution&quot;);
+            q.key(HugeKeys.PROPERTIES, contribution.id());
+            Iterator&lt;Edge&gt; edges3 = graph.edges(q);
+            assert edges3.hasNext();
+            System.out.println(&quot;&gt;&gt;&gt;&gt; queryEdges(contribution): &quot; +
+                               edges3.hasNext());
+            while (edges3.hasNext()) &#123;
+                System.out.println(&quot;&gt;&gt;&gt;&gt; queryEdges(contribution): &quot; +
+                                   edges3.next());
+            &#125;
+        &#125;
+
+        // query by vertex label
+        vertices = graph.traversal().V().hasLabel(&quot;book&quot;);
+        size = vertices.toList().size();
+        assert size == 5;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all books: size=&quot; + size);
+
+        // query by vertex label and key-name
+        vertices = graph.traversal().V().hasLabel(&quot;person&quot;).has(&quot;age&quot;);
+        size = vertices.toList().size();
+        assert size == 5;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all persons with age: size=&quot; + size);
+
+        // query by vertex props
+        vertices = graph.traversal().V().hasLabel(&quot;person&quot;)
+                        .has(&quot;city&quot;, &quot;Taipei&quot;);
+        vertexList = vertices.toList();
+        assert vertexList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all persons in Taipei: &quot; + vertexList);
+
+        vertices = graph.traversal().V().hasLabel(&quot;person&quot;).has(&quot;age&quot;, 19);
+        vertexList = vertices.toList();
+        assert vertexList.size() == 1;
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all persons age==19: &quot; + vertexList);
+
+        vertices = graph.traversal().V().hasLabel(&quot;person&quot;)
+                        .has(&quot;age&quot;, P.lt(19));
+        vertexList = vertices.toList();
+        assert vertexList.size() == 1;
+        assert vertexList.get(0).property(&quot;age&quot;).value().equals(3);
+        System.out.println(&quot;&gt;&gt;&gt;&gt; query all persons age&lt;19: &quot; + vertexList);
+
+        String addr = &quot;Bay Area&quot;;
+        vertices = graph.traversal().V().hasLabel(&quot;author&quot;)
+                        .has(&quot;lived&quot;, Text.contains(addr));
+        vertexList = vertices.toList();
+        assert vertexList.size() == 1;
+        System.out.println(String.format(&quot;&gt;&gt;&gt;&gt; query all authors lived %s: %s&quot;,
+                           addr, vertexList));
+    &#125;
+</code></pre>
+<p>划重点</p>
+<h5 id="查询指定label的实体："><a href="#查询指定label的实体：" class="headerlink" title="查询指定label的实体："></a>查询指定label的实体：</h5><pre><code> vertices = graph.traversal().V().hasLabel(&quot;person&quot;);
+ size = vertices.toList().size();
+</code></pre>
+<h5 id="根据primary-values查询实体："><a href="#根据primary-values查询实体：" class="headerlink" title="根据primary-values查询实体："></a>根据primary-values查询实体：</h5><pre><code> vertices = graph.traversal().V().hasLabel(&quot;author&quot;).has(&quot;id&quot;, 1);
+        List&lt;Vertex&gt; vertexList = vertices.toList();
+</code></pre>
+<h5 id="查询edge："><a href="#查询edge：" class="headerlink" title="查询edge："></a>查询edge：</h5><p>查询所有edge：</p>
+<pre><code>GraphTraversal&lt;Edge, Edge&gt; edges = graph.traversal().E().limit(2);
+</code></pre>
+<p>根据ID查询edge：</p>
+<pre><code>    EdgeLabel authored = graph.edgeLabel(&quot;authored&quot;);
+    VertexLabel book = graph.schema().getVertexLabel(&quot;book&quot;);
+    String book1Id = String.format(&quot;%s:%s&quot;, book.id().asString(), &quot;java-1&quot;);
+    String book2Id = String.format(&quot;%s:%s&quot;, book.id().asString(), &quot;java-2&quot;);
+
+    String edgeId = String.format(&quot;S%s&gt;%s&gt;%s&gt;S%s&quot;,
+                                  authorId, authored.id(), &quot;&quot;, book2Id);
+    edges = graph.traversal().E(edgeId);
+</code></pre>
+<p>注意，edge的id由几个字段拼接起来的：  “S%s&gt;%s&gt;%s&gt;S%s”,authorId, authored.id(), “”, book2Id)</p>
+<p>根据条件查询edge：</p>
+<pre><code> q = new ConditionQuery(HugeType.EDGE);
+        q.eq(HugeKeys.OWNER_VERTEX, IdGenerator.of(authorId));
+        q.eq(HugeKeys.DIRECTION, Directions.OUT);
+        q.eq(HugeKeys.LABEL, authored.id());
+        q.eq(HugeKeys.SORT_VALUES, &quot;&quot;);
+        q.eq(HugeKeys.OTHER_VERTEX, IdGenerator.of(book1Id));
+
+        Iterator&lt;Edge&gt; edges2 = graph.edges(q);
+        assert edges2.hasNext();
+        System.out.println(&quot;&gt;&gt;&gt;&gt; queryEdges(id-condition): &quot; +
+                           edges2.hasNext());
+        while (edges2.hasNext()) &#123;
+            System.out.println(&quot;&gt;&gt;&gt;&gt; queryEdges(id-condition): &quot; +
+                               edges2.next());
+        &#125;
+</code></pre>
+<p>可以指定DIRECTION，</p>
+<h4 id="5-删除"><a href="#5-删除" class="headerlink" title="5. 删除"></a>5. 删除</h4><p>删除Vetex，调用vetex自带的remove方法</p>
+<pre><code>       // remove vertex (and its edges)
+        List&lt;Vertex&gt; vertices = graph.traversal().V().hasLabel(&quot;person&quot;)
+                                     .has(&quot;age&quot;, 19).toList();
+        assert vertices.size() == 1;
+        Vertex james = vertices.get(0);
+        Vertex book6 = graph.addVertex(T.label, &quot;book&quot;, &quot;name&quot;, &quot;java-6&quot;);
+        james.addEdge(&quot;look&quot;, book6, &quot;timestamp&quot;, &quot;2017-5-2 12:00:08.0&quot;);
+        james.addEdge(&quot;look&quot;, book6, &quot;timestamp&quot;, &quot;2017-5-3 12:00:08.0&quot;);
+        graph.tx().commit();
+        assert graph.traversal().V(book6.id()).bothE().hasNext();
+        System.out.println(&quot;&gt;&gt;&gt;&gt; removing vertex: &quot; + james);
+        james.remove();
+        graph.tx().commit();
+        assert !graph.traversal().V(james.id()).hasNext();
+        assert !graph.traversal().V(book6.id()).bothE().hasNext();
+
+    
+</code></pre>
+<p>删除关系，也类似：</p>
+<pre><code>    // remove edge
+        VertexLabel author = graph.schema().getVertexLabel(&quot;author&quot;);
+        String authorId = String.format(&quot;%s:%s&quot;, author.id().asString(), &quot;11&quot;);
+        EdgeLabel authored = graph.edgeLabel(&quot;authored&quot;);
+        VertexLabel book = graph.schema().getVertexLabel(&quot;book&quot;);
+        String book2Id = String.format(&quot;%s:%s&quot;, book.id().asString(), &quot;java-2&quot;);
+
+        String edgeId = String.format(&quot;S%s&gt;%s&gt;%s&gt;S%s&quot;,
+                                      authorId, authored.id(), &quot;&quot;, book2Id);
+
+        List &lt;Edge&gt; edges = graph.traversal().E(edgeId).toList();
+        assert edges.size() == 1;
+        Edge edge = edges.get(0);
+        System.out.println(&quot;&gt;&gt;&gt;&gt; removing edge: &quot; + edge);
+        edge.remove();
+        graph.tx().commit();
+        assert !graph.traversal().E(edgeId).hasNext();
+</code></pre>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文初步介绍了hugegraph设计理念、基本使用等。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/06/29/jqpeng-%E4%BD%BF%E7%94%A8%E7%A7%91%E5%A4%A7%E8%AE%AF%E9%A3%9ETTS%E8%87%AA%E5%AE%9A%E4%B9%89%E5%BD%A9%E8%99%B9%E5%B1%81%E8%AF%AD%E9%9F%B3%E5%8C%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/29/jqpeng-%E4%BD%BF%E7%94%A8%E7%A7%91%E5%A4%A7%E8%AE%AF%E9%A3%9ETTS%E8%87%AA%E5%AE%9A%E4%B9%89%E5%BD%A9%E8%99%B9%E5%B1%81%E8%AF%AD%E9%9F%B3%E5%8C%85/" class="post-title-link" itemprop="url">使用科大讯飞TTS自定义彩虹屁语音包</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-29 13:16:00" itemprop="dateCreated datePublished" datetime="2020-06-29T13:16:00+08:00">2020-06-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/rainbow-fart-tts.html">使用科大讯飞TTS自定义彩虹屁语音包</a></p>
+<h1 id="rainbow-fart-tts"><a href="#rainbow-fart-tts" class="headerlink" title="rainbow-fart-tts"></a>rainbow-fart-tts</h1><p>彩虹屁插件红了后，你是否想生成定义语音包呢？本文给出一个解决方案，使用科大讯飞的TTS生成彩虹屁语音包，你可以完全自定义文本，自定义发音人哦！</p>
+<p>开源地址： <a target="_blank" rel="noopener" href="https://github.com/jadepeng/rainbow-fart-tts">https://github.com/jadepeng/rainbow-fart-tts</a></p>
+<h2 id="修改文本"><a href="#修改文本" class="headerlink" title="修改文本"></a>修改文本</h2><p>打开<code>manifest.json</code>, 修改text，可以按需增加keyword和对应text</p>
+<pre><code> &#123;
+      &quot;keywords&quot;: [
+        &quot;if&quot;,
+        &quot;else&quot;
+      ],
+      &quot;text&quot;: [
+        &quot;你就是因为想太多如果，所以才交不到女朋友吧？&quot;,
+        &quot; 别试了，我的可爱不需要用 if 来判断！&quot;,
+        &quot; 人生没有那么多如果，有没有比编程更容易呢？&quot;
+      ]
+ &#125;
+</code></pre>
+<h2 id="获取开发者账号"><a href="#获取开发者账号" class="headerlink" title="获取开发者账号"></a>获取开发者账号</h2><p>到<code>https://www.xfyun.cn/</code> 注册账号，创建应用，然后开通语音合成,可以开通免费包,好使的话可以购买套餐哦。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/6/29/1593406803680.png" alt="讯飞tts免费包"></p>
+<p>然后到控制面板，查看appid等信息：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/6/29/1593406879615.png" alt="appid"></p>
+<p>然后打开VoicePackageMakerApp，将对应的信息填入:</p>
+<pre><code>public class VoicePackageMakerApp &#123;
+    private static final String hostUrl = &quot;https://tts-api.xfyun.cn/v2/tts&quot;;
+
+    // 到控制台-语音合成页面获取
+    private static final String APPID = &quot;&quot;;
+
+    // 到控制台-语音合成页面获取
+    private static final String API_SECRET = &quot;&quot;;
+
+    //到控制台-语音合成页面获取
+    private static final String API_KEY = &quot;&quot;;
+</code></pre>
+<h2 id="选取发音人"><a href="#选取发音人" class="headerlink" title="选取发音人"></a>选取发音人</h2><p>讯飞开放平台的在线语音合成有很多发音人，可以到<a target="_blank" rel="noopener" href="https://www.xfyun.cn/services/online_tts">https://www.xfyun.cn/services/online_tts</a> 查看：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/6/29/1593407032570.png" alt="发音人"></p>
+<p>选择自己心仪的，然后到控制面板开通权限：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/6/29/1593407082655.png" alt="开通发音人"></p>
+<p>比如我选择的讯飞玲姐姐（志林姐姐），发音人是<code>x_xiaoling</code>，修改代码：</p>
+<pre><code>public class VoicePackageMakerApp &#123;
+
+
+    // 默认发音人
+    private static final String DEFAULT_VCN = &quot;x_xiaoling&quot;;
+</code></pre>
+<h2 id="生成和使用语音包"><a href="#生成和使用语音包" class="headerlink" title="生成和使用语音包"></a>生成和使用语音包</h2><p>上面步骤做完后，直接运行<code>VoicePackageMakerApp</code>即可，然后在<code>voicePackages</code>目录下会生成<code>x_xiaoling</code>文件夹，里面是合成的语音包，可以给各个版本的彩虹屁插件使用。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/6/29/1593407303218.png" alt="使用语音包"></p>
+<p>本文开源地址： <a target="_blank" rel="noopener" href="https://github.com/jadepeng/rainbow-fart-tts">https://github.com/jadepeng/rainbow-fart-tts</a></p>
+<p>IDE版本的语音包请参见：<a target="_blank" rel="noopener" href="https://github.com/jadepeng/idea-rainbow-fart">https://github.com/jadepeng/idea-rainbow-fart</a></p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/06/08/jqpeng-webpack%E5%8D%87%E7%BA%A7%E5%88%B04.x%20%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/08/jqpeng-webpack%E5%8D%87%E7%BA%A7%E5%88%B04.x%20%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97/" class="post-title-link" itemprop="url">webpack升级到4.x 不完全指南</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-08 12:40:00" itemprop="dateCreated datePublished" datetime="2020-06-08T12:40:00+08:00">2020-06-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/webpack-upgrade-to-4.html">webpack升级到4.x 不完全指南</a></p>
+<p>最近在团队推行ts，顺便将webpack做了升级，升级到最新的4.X版本，下面记录一些迁移指南。</p>
+<h2 id="VueLoader"><a href="#VueLoader" class="headerlink" title="VueLoader"></a>VueLoader</h2><h3 id="VueLoaderPlugin，显示的引用："><a href="#VueLoaderPlugin，显示的引用：" class="headerlink" title="VueLoaderPlugin，显示的引用："></a>VueLoaderPlugin，显示的引用：</h3><pre><code>const VueLoaderPlugin = require(&#39;vue-loader/lib/plugin&#39;)
+
+module.exports = &#123;
+  module: &#123;
+    rules: [
+      // ... other rules
+      &#123;
+        test: /\.vue$/,
+        loader: &#39;vue-loader&#39;
+      &#125;
+    ]
+  &#125;,
+  plugins: [
+    // make sure to include the plugin!
+    new VueLoaderPlugin()
+  ]
+&#125;
+</code></pre>
+<h3 id="less问题"><a href="#less问题" class="headerlink" title="less问题"></a>less问题</h3><p>less需要单独的配置规则,注意一定要加上vue-style-loader，否则样式不生效</p>
+<pre><code>&#123;
+  module: &#123;
+    rules: [
+      // ... other rules
+      &#123;
+        test: /\.less$/,
+        use: [
+          &#39;vue-style-loader&#39;,
+          &#39;css-loader&#39;,
+          &#39;less-loader&#39;
+        ]
+      &#125;
+    ]
+  &#125;
+&#125;
+</code></pre>
+<h2 id="ts-支持"><a href="#ts-支持" class="headerlink" title="ts 支持"></a>ts 支持</h2><p>加上ts-loader</p>
+<pre><code> &#123;
+            test: /\.tsx?$/,
+            loader: &#39;ts-loader&#39;,
+            exclude: /node_modules/,
+            options: &#123;
+                appendTsSuffixTo: [/\.vue$/],
+            &#125;
+        &#125;,
+</code></pre>
+<h2 id="UglifyJsPlugin"><a href="#UglifyJsPlugin" class="headerlink" title="UglifyJsPlugin"></a>UglifyJsPlugin</h2><p>UglifyJsPlugin 配置位置发生了变化，放到<code>optimization</code>里，如果不想开启<code>minimize</code>，可以配置<code>minimize：false</code>,开启优化的话，可以配置minimizer：</p>
+<pre><code>// webpack.optimize.UglifyJsPlugin
+    optimization: &#123;
+        // minimize: false,
+        minimizer: [
+            new UglifyJsPlugin(&#123;
+                cache: true,
+                parallel: true,
+                uglifyOptions: &#123;
+                    compress: false
+                &#125;,
+                sourceMap: false
+            &#125;)
+        ]
+    &#125;
+</code></pre>
+<h2 id="CopyWebpackPlugin"><a href="#CopyWebpackPlugin" class="headerlink" title="CopyWebpackPlugin"></a>CopyWebpackPlugin</h2><p>配置发生了变化：</p>
+<pre><code>        // copy custom static assets
+        new CopyWebpackPlugin(&#123;
+            patterns: [&#123;
+                from: path.resolve(__dirname, &#39;../static&#39;),
+                to: config.dev.assetsSubDirectory
+            &#125;]
+        &#125;)
+</code></pre>
+<h2 id="ExtractTextPlugin"><a href="#ExtractTextPlugin" class="headerlink" title="ExtractTextPlugin"></a>ExtractTextPlugin</h2><p>之前：</p>
+<pre><code> new ExtractTextPlugin(&#123;
+      filename: utils.assetsPath(&#39;css/[name].[contenthash].css&#39;),
+      allChunks: true,
+    &#125;),
+</code></pre>
+<p>contenthash已不能使用，换成hash即可</p>
+<pre><code>    new ExtractTextPlugin(&#123;
+      filename: utils.assetsPath(&#39;css/[name].[hash].css&#39;),
+      allChunks: true,
+    &#125;),
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/05/28/jqpeng-npm%20%E6%9B%B4%E6%96%B0package.json%E4%B8%AD%E4%BE%9D%E8%B5%96%E5%8C%85%E7%89%88%E6%9C%AC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/28/jqpeng-npm%20%E6%9B%B4%E6%96%B0package.json%E4%B8%AD%E4%BE%9D%E8%B5%96%E5%8C%85%E7%89%88%E6%9C%AC/" class="post-title-link" itemprop="url">npm 更新package.json中依赖包版本</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-28 14:21:00" itemprop="dateCreated datePublished" datetime="2020-05-28T14:21:00+08:00">2020-05-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>195</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/npm-package-update.html">npm 更新package.json中依赖包版本</a></p>
+<p>NPM可以使用npm-check-updates库更新版本</p>
+<p>1、安装：<br> cnpm install -g npm-check-updates</p>
+<p>2、使用：</p>
+<pre><code>  ncu --timeout=10000000 -u
+</code></pre>
+<p>指定–timeout参数防止超时</p>
+<ol>
+<li>更新全部到最新版本：<br> cnpm install</li>
+</ol>
+<p>为了防止版本冲突，可以先讲node_modules删掉</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

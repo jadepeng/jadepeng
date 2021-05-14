@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: 一起读源码之zookeeper(1) – 启动分析 从本文开始，不定期分析一个开源项目源代码，起篇从大名鼎鼎的zookeeper开始。 为什么是zk，因为用到zk的场景实在太多了，大部分耳熟能详的分布式系统都有zookeeper的影子，比如hbase，storm，dubbo，kafka等等，另外前面提到的RPC框架原理与实现也用到了zookeeper。 目录  1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一起读源码之zookeeper(1) -- 启动分析">
+<meta property="og:url" content="http://blog.iflyresearch.com/2017/12/01/jqpeng-%E4%B8%80%E8%B5%B7%E8%AF%BB%E6%BA%90%E7%A0%81%E4%B9%8Bzookeeper(1)%20--%20%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: 一起读源码之zookeeper(1) – 启动分析 从本文开始，不定期分析一个开源项目源代码，起篇从大名鼎鼎的zookeeper开始。 为什么是zk，因为用到zk的场景实在太多了，大部分耳熟能详的分布式系统都有zookeeper的影子，比如hbase，storm，dubbo，kafka等等，另外前面提到的RPC框架原理与实现也用到了zookeeper。 目录  1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/27/590166a796fb3.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/27/5901674b5600d.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/27/5901838aed112.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/27/59018f04f17b9.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/27/59018cc60446f.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/27/5901abdf8ffaa.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/27/5901af5b683c8.jpg">
+<meta property="article:published_time" content="2017-12-01T06:43:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="zookeeper">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ooo.0o0.ooo/2017/04/27/590166a796fb3.jpg">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2017/12/01/jqpeng-%E4%B8%80%E8%B5%B7%E8%AF%BB%E6%BA%90%E7%A0%81%E4%B9%8Bzookeeper(1)%20--%20%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>一起读源码之zookeeper(1) -- 启动分析 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/12/01/jqpeng-%E4%B8%80%E8%B5%B7%E8%AF%BB%E6%BA%90%E7%A0%81%E4%B9%8Bzookeeper(1)%20--%20%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一起读源码之zookeeper(1) -- 启动分析
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-12-01 14:43:00" itemprop="dateCreated datePublished" datetime="2017-12-01T14:43:00+08:00">2017-12-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>22k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>20 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/7942234.html">一起读源码之zookeeper(1) – 启动分析</a></p>
+<p>从本文开始，不定期分析一个开源项目源代码，起篇从大名鼎鼎的zookeeper开始。<br> 为什么是zk，因为用到zk的场景实在太多了，大部分耳熟能详的分布式系统都有zookeeper的影子，比如hbase，storm，dubbo，kafka等等，另外前面提到的<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi/p/java-rpc.html">RPC框架原理与实现</a>也用到了zookeeper。</p>
+<p>目录</p>
+<ul>
+<li>1 环境准备<ul>
+<li>1.1 导入代码</li>
+<li>1.2 设置配置文件</li>
+<li>1.3 调试配置</li>
+</ul>
+</li>
+<li>2 启动分析<ul>
+<li>2.1 QuorumPeerMain</li>
+<li>2.2 ZooKeeperServerMain</li>
+<li>2.3 ServerCnxnFactory</li>
+<li>2.4 ZooKeeperServer</li>
+<li>2.5 服务启动<ul>
+<li>2.5.1 配置cnxnFactory</li>
+<li>2.5.2 启动cnxnFactory<ul>
+<li>socket处理线程</li>
+<li>socket网络请求处理</li>
+<li>读取连接请求</li>
+<li>创建session</li>
+</ul>
+</li>
+<li>2.5.3 zk服务器启动<ul>
+<li>SessionTracker</li>
+</ul>
+</li>
+<li>2.5.4  ZooKeeperServer请求处理器链介绍<ul>
+<li>RequestProcessor</li>
+<li>PrepRequestProcessor</li>
+<li>SyncRequestProcessor</li>
+<li>FinalRequestProcessor</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-环境准备"><a href="#1-环境准备" class="headerlink" title="1 环境准备"></a>1 环境准备</h2><p>首先，下载zk的新版本，最新的稳定版是3.4.10，由于已下载3.4.9.先直接使用。</p>
+<h3 id="1-1-导入代码"><a href="#1-1-导入代码" class="headerlink" title="1.1 导入代码"></a>1.1 导入代码</h3><p>IDEA直接打开zk目录：<br><img src="https://ooo.0o0.ooo/2017/04/27/590166a796fb3.jpg" alt="enter description here" title="1493264040459"></p>
+<p>项目设置为jdk1.7<br> 然后，将src/java下面的main和generated设置为源码目录，同时将lib目录添加为liabary。</p>
+<h3 id="1-2-设置配置文件"><a href="#1-2-设置配置文件" class="headerlink" title="1.2 设置配置文件"></a>1.2 设置配置文件</h3><p>在conf目录，新建zoo.cfg，拷贝sample.cfg即可</p>
+<p><img src="https://ooo.0o0.ooo/2017/04/27/5901674b5600d.jpg" alt="enter description here" title="1493264204261"></p>
+<h3 id="1-3-调试配置"><a href="#1-3-调试配置" class="headerlink" title="1.3 调试配置"></a>1.3 调试配置</h3><p>查看bin/zkServer</p>
+<pre><code>set ZOOMAIN=org.apache.zookeeper.server.quorum.QuorumPeerMain
+....
+endlocal
+</code></pre>
+<p>调用的是org.apache.zookeeper.server.quorum.QuorumPeerMain，因此QuorumPeerMain，配置调试程序，arguments设置conf/zoo.cfg</p>
+<p><img src="https://ooo.0o0.ooo/2017/04/27/5901838aed112.jpg" alt="enter description here" title="1493271435981"></p>
+<p>这样，就可以愉快的Debug代码了-😃</p>
+<h2 id="2-启动分析"><a href="#2-启动分析" class="headerlink" title="2 启动分析"></a>2 启动分析</h2><h3 id="2-1-QuorumPeerMain"><a href="#2-1-QuorumPeerMain" class="headerlink" title="2.1 QuorumPeerMain"></a>2.1 QuorumPeerMain</h3><p>QuorumPeerMain的main里，调用initializeAndRun</p>
+<pre><code>    protected void initializeAndRun(String[] args)
+        throws ConfigException, IOException
+    &#123;
+        QuorumPeerConfig config = new QuorumPeerConfig();
+        if (args.length == 1) &#123;
+            config.parse(args[0]);
+        &#125;
+
+        // Start and schedule the the purge task 清理任务
+        DatadirCleanupManager purgeMgr = new DatadirCleanupManager(config
+                .getDataDir(), config.getDataLogDir(), config
+                .getSnapRetainCount(), config.getPurgeInterval());
+        purgeMgr.start();
+
+        // 集群模式
+        if (args.length == 1 &amp;&amp; config.servers.size() &gt; 0) &#123;
+            runFromConfig(config);
+        &#125; else &#123;
+            LOG.warn(&quot;Either no config or no quorum defined in config, running &quot;
+                    + &quot; in standalone mode&quot;);
+            // there is only server in the quorum -- run as standalone
+            // 单机模式
+            ZooKeeperServerMain.main(args);
+        &#125;
+    &#125;
+</code></pre>
+<p>主要执行了：</p>
+<ul>
+<li>加载解析配置文件到QuorumPeerConfig</li>
+<li>执行清理任务</li>
+<li>判断是集群模式还是单机模式，我们的配置文件未配置server，所以是单机模式，执行 ZooKeeperServerMain.main</li>
+</ul>
+<blockquote>
+<p>本文重点分析单机模式下的zk，集群模式暂时不解读</p>
+</blockquote>
+<h3 id="2-2-ZooKeeperServerMain"><a href="#2-2-ZooKeeperServerMain" class="headerlink" title="2.2 ZooKeeperServerMain"></a>2.2 ZooKeeperServerMain</h3><p>ZooKeeperServerMain.main调用initializeAndRun</p>
+<pre><code> protected void initializeAndRun(String[] args)
+        throws ConfigException, IOException
+    &#123;
+        try &#123;
+            ManagedUtil.registerLog4jMBeans();
+        &#125; catch (JMException e) &#123;
+            LOG.warn(&quot;Unable to register log4j JMX control&quot;, e);
+        &#125;
+
+        ServerConfig config = new ServerConfig();
+        if (args.length == 1) &#123;
+            config.parse(args[0]);
+        &#125; else &#123;
+            config.parse(args);
+        &#125;
+
+        runFromConfig(config);
+    &#125;```
+
+读取配置，然后runFromConfig：
+
+``` java
+ public void runFromConfig(ServerConfig config) throws IOException &#123;
+        LOG.info(&quot;Starting server&quot;);
+        FileTxnSnapLog txnLog = null;
+        try &#123;
+            // Note that this thread isn&#39;t going to be doing anything else,
+            // so rather than spawning another thread, we will just call
+            // run() in this thread.
+            // create a file logger url from the command line args
+            final ZooKeeperServer zkServer = new ZooKeeperServer();
+            // Registers shutdown handler which will be used to know the
+            // server error or shutdown state changes.
+            final CountDownLatch shutdownLatch = new CountDownLatch(1);
+            zkServer.registerServerShutdownHandler(
+                    new ZooKeeperServerShutdownHandler(shutdownLatch));
+
+            // 快照
+            txnLog = new FileTxnSnapLog(new File(config.dataLogDir), new File(
+                    config.dataDir));
+            zkServer.setTxnLogFactory(txnLog);
+            zkServer.setTickTime(config.tickTime);
+            zkServer.setMinSessionTimeout(config.minSessionTimeout);
+            zkServer.setMaxSessionTimeout(config.maxSessionTimeout);
+            // socket工厂
+            cnxnFactory = ServerCnxnFactory.createFactory();
+            cnxnFactory.configure(config.getClientPortAddress(),
+                    config.getMaxClientCnxns());
+            cnxnFactory.startup(zkServer);
+
+            // Watch status of ZooKeeper server. It will do a graceful shutdown
+            // if the server is not running or hits an internal error.
+            shutdownLatch.await();
+            shutdown();
+
+            cnxnFactory.join();
+            if (zkServer.canShutdown()) &#123;
+                zkServer.shutdown();
+            &#125;
+        &#125; catch (InterruptedException e) &#123;
+            // warn, but generally this is ok
+            LOG.warn(&quot;Server interrupted&quot;, e);
+        &#125; finally &#123;
+            if (txnLog != null) &#123;
+                txnLog.close();
+            &#125;
+        &#125;
+    &#125;
+</code></pre>
+<p>几件事情：</p>
+<ul>
+<li>创建zkServer，对ZooKeeperServer设置一些配置参数，如tickTime、minSessionTimeout、maxSessionTimeout</li>
+<li>创建CountDownLatch，注释里写了，用来watch zk的状态，当zk关闭或者出现内部错误的时候<strong>优雅</strong>的关闭服务</li>
+<li>根据配置参数dataLogDir和dataDir创建FileTxnSnapLog，用来存储zk数据和日志快照</li>
+<li>创建cnxnFactory，zk的 socket工厂，负责处理网络请求，zk里有netty和NIO两种实现</li>
+<li>cnxnFactory.startup(zkServer)，启动zk服务器</li>
+</ul>
+<h3 id="2-3-ServerCnxnFactory"><a href="#2-3-ServerCnxnFactory" class="headerlink" title="2.3 ServerCnxnFactory"></a>2.3 ServerCnxnFactory</h3><p>cnxnFactory负责zk的网络请求，createFactory中，从系统配置中读取ZOOKEEPER_SERVER_CNXN_FACTORY，默认是没有这个配置的，因此默认是使用NIOServerCnxnFactory，基于java的NIO实现，</p>
+<pre><code>    static public ServerCnxnFactory createFactory() throws IOException &#123;
+        String serverCnxnFactoryName =
+            System.getProperty(ZOOKEEPER_SERVER_CNXN_FACTORY);
+        if (serverCnxnFactoryName == null) &#123;
+            serverCnxnFactoryName = NIOServerCnxnFactory.class.getName();
+        &#125;
+        try &#123;
+            return (ServerCnxnFactory) Class.forName(serverCnxnFactoryName)
+                                                .newInstance();
+        &#125; catch (Exception e) &#123;
+            IOException ioe = new IOException(&quot;Couldn&#39;t instantiate &quot;
+                    + serverCnxnFactoryName);
+            ioe.initCause(e);
+            throw ioe;
+        &#125;
+    &#125;
+</code></pre>
+<p>当然，我们可以很容易发现：<br><img src="https://ooo.0o0.ooo/2017/04/27/59018f04f17b9.jpg" alt="enter description here" title="1493274374075"></p>
+<p>ServerCnxnFactory还有个NettyServerCnxnFactory实现，基于Netty实现NIO。ServerCnxnFactory里具体负责什么，后面再来看。</p>
+<h3 id="2-4-ZooKeeperServer"><a href="#2-4-ZooKeeperServer" class="headerlink" title="2.4 ZooKeeperServer"></a>2.4 ZooKeeperServer</h3><p>现在，主角登场，我们来看ZooKeeperServer内部有什么玄妙。<br><img src="https://ooo.0o0.ooo/2017/04/27/59018cc60446f.jpg" alt="enter description here" title="1493273799033"></p>
+<p>ZooKeeperServer是单机模式使用的类，在集群模式下使用的是它的子类。<br> 我们先来看ZooKeeperServer包含哪些内容：</p>
+<pre><code>    public static final int DEFAULT_TICK_TIME = 3000;
+    protected int tickTime = DEFAULT_TICK_TIME;
+    /** value of -1 indicates unset, use default */
+    protected int minSessionTimeout = -1;
+    /** value of -1 indicates unset, use default */
+    protected int maxSessionTimeout = -1;
+    protected SessionTracker sessionTracker; //创建和管理session
+    private FileTxnSnapLog txnLogFactory = null; //文件快照
+    private ZKDatabase zkDb; // ZooKeeper树形数据的模型
+    private final AtomicLong hzxid = new AtomicLong(0); //原子增长Long，用于分配事务编号
+    public final static Exception ok = new Exception(&quot;No prob&quot;);
+    protected RequestProcessor firstProcessor; // ZooKeeperServer请求处理器链中的第一个处理器
+    protected volatile State state = State.INITIAL;
+
+    protected enum State &#123;
+        INITIAL, RUNNING, SHUTDOWN, ERROR;
+    &#125;
+
+    /**
+     * This is the secret that we use to generate passwords, for the moment it
+     * is more of a sanity check.
+     */
+    static final private long superSecret = 0XB3415C00L;
+
+    private final AtomicInteger requestsInProcess = new AtomicInteger(0);
+    final List&lt;ChangeRecord&gt; outstandingChanges = new ArrayList&lt;ChangeRecord&gt;();
+    // this data structure must be accessed under the outstandingChanges lock
+    final HashMap&lt;String, ChangeRecord&gt; outstandingChangesForPath =
+        new HashMap&lt;String, ChangeRecord&gt;();
+    
+    private ServerCnxnFactory serverCnxnFactory; //ServerSocket工厂，接受客户端的socket连接
+
+    private final ServerStats serverStats; //server的运行状态统计
+    private final ZooKeeperServerListener listener; // ZK运行状态监听
+    private ZooKeeperServerShutdownHandler zkShutdownHandler;
+</code></pre>
+<h3 id="2-5-服务启动"><a href="#2-5-服务启动" class="headerlink" title="2.5 服务启动"></a>2.5 服务启动</h3><p>前面有点跑偏，继续回归启动过程:</p>
+<pre><code>            cnxnFactory = ServerCnxnFactory.createFactory();
+            cnxnFactory.configure(config.getClientPortAddress(),
+                    config.getMaxClientCnxns());
+            cnxnFactory.startup(zkServer);
+</code></pre>
+<h4 id="2-5-1-配置cnxnFactory"><a href="#2-5-1-配置cnxnFactory" class="headerlink" title="2.5.1 配置cnxnFactory"></a>2.5.1 配置cnxnFactory</h4><p>进入configure：</p>
+<pre><code>    @Override
+    public void configure(InetSocketAddress addr, int maxcc) throws IOException &#123;
+        configureSaslLogin();
+
+        // ZK网络请求主线程
+        thread = new ZooKeeperThread(this, &quot;NIOServerCxn.Factory:&quot; + addr);
+        thread.setDaemon(true);
+
+        maxClientCnxns = maxcc;
+        this.ss = ServerSocketChannel.open();
+        ss.socket().setReuseAddress(true);
+        LOG.info(&quot;binding to port &quot; + addr);
+        ss.socket().bind(addr);
+        ss.configureBlocking(false);
+        ss.register(selector, SelectionKey.OP_ACCEPT);
+    &#125;
+</code></pre>
+<p>几件事情：</p>
+<ul>
+<li>configureSaslLogin，具体不细看，应该是处理鉴权</li>
+<li>初始化ZooKeeperThread，这个ZooKeeperThread的作用是负责处理未处理异常：</li>
+</ul>
+<pre><code>public class ZooKeeperThread extends Thread &#123;
+
+    private static final Logger LOG = LoggerFactory
+            .getLogger(ZooKeeperThread.class);
+
+    private UncaughtExceptionHandler uncaughtExceptionalHandler = new UncaughtExceptionHandler() &#123;
+
+        @Override
+        public void uncaughtException(Thread t, Throwable e) &#123;
+            handleException(t.getName(), e);
+        &#125;
+    &#125;;
+
+    public ZooKeeperThread(Runnable thread, String threadName) &#123;
+        super(thread, threadName);
+        setUncaughtExceptionHandler(uncaughtExceptionalHandler);
+    &#125;
+
+    protected void handleException(String thName, Throwable e) &#123;
+        LOG.warn(&quot;Exception occured from thread &#123;&#125;&quot;, thName, e);
+    &#125;
+&#125;
+</code></pre>
+<ul>
+<li>启动ServerSocketChannel，并绑定配置的addr，并且注册selector（可以搜索NIO了解细节）</li>
+</ul>
+<h4 id="2-5-2-启动cnxnFactory"><a href="#2-5-2-启动cnxnFactory" class="headerlink" title="2.5.2 启动cnxnFactory"></a>2.5.2 启动cnxnFactory</h4><p>继续分析，进入cnxnFactory.startup(zkServer)</p>
+<pre><code>    @Override
+    public void startup(ZooKeeperServer zks) throws IOException,
+            InterruptedException &#123;
+        start();
+        setZooKeeperServer(zks);
+        zks.startdata();
+        zks.startup();
+    &#125;
+</code></pre>
+<p>首先，start，判断线程状态，如果未启动则启动线程，注意只会启动一次。</p>
+<pre><code>    @Override
+    public void start() &#123;
+        // ensure thread is started once and only once
+        if (thread.getState() == Thread.State.NEW) &#123;
+            thread.start();
+        &#125;
+    &#125;
+</code></pre>
+<h5 id="socket处理线程"><a href="#socket处理线程" class="headerlink" title="socket处理线程"></a>socket处理线程</h5><p>启动后，就会执行cnxnFactory.run</p>
+<pre><code>    public void run() &#123;
+        while (!ss.socket().isClosed()) &#123;
+            try &#123;
+                selector.select(1000);
+                Set&lt;SelectionKey&gt; selected;
+                synchronized (this) &#123;
+                    selected = selector.selectedKeys();
+                &#125;
+                ArrayList&lt;SelectionKey&gt; selectedList = new ArrayList&lt;SelectionKey&gt;(
+                        selected);
+                Collections.shuffle(selectedList);
+                for (SelectionKey k : selectedList) &#123;
+                    if ((k.readyOps() &amp; SelectionKey.OP_ACCEPT) != 0) &#123;
+                        SocketChannel sc = ((ServerSocketChannel) k
+                                .channel()).accept();
+                        InetAddress ia = sc.socket().getInetAddress();
+                        int cnxncount = getClientCnxnCount(ia);
+                        if (maxClientCnxns &gt; 0 &amp;&amp; cnxncount &gt;= maxClientCnxns)&#123;
+                            LOG.warn(&quot;Too many connections from &quot; + ia
+                                     + &quot; - max is &quot; + maxClientCnxns );
+                            sc.close();
+                        &#125; else &#123;
+                            LOG.info(&quot;Accepted socket connection from &quot;
+                                     + sc.socket().getRemoteSocketAddress());
+                            sc.configureBlocking(false);
+                            SelectionKey sk = sc.register(selector,
+                                    SelectionKey.OP_READ);
+                            NIOServerCnxn cnxn = createConnection(sc, sk);
+                            sk.attach(cnxn);
+                            addCnxn(cnxn);
+                        &#125;
+                    &#125; else if ((k.readyOps() &amp; (SelectionKey.OP_READ | SelectionKey.OP_WRITE)) != 0) &#123;
+                        NIOServerCnxn c = (NIOServerCnxn) k.attachment();
+                        c.doIO(k);
+                    &#125; else &#123;
+                        if (LOG.isDebugEnabled()) &#123;
+                            LOG.debug(&quot;Unexpected ops in select &quot;
+                                      + k.readyOps());
+                        &#125;
+                    &#125;
+                &#125;
+                selected.clear();
+            &#125; catch (RuntimeException e) &#123;
+                LOG.warn(&quot;Ignoring unexpected runtime exception&quot;, e);
+            &#125; catch (Exception e) &#123;
+                LOG.warn(&quot;Ignoring exception&quot;, e);
+            &#125;
+        &#125;
+        closeAll();
+        LOG.info(&quot;NIOServerCnxn factory exited run method&quot;);
+    &#125;
+</code></pre>
+<p>这里相当于一个独立线程来处理网络连接，通过selector.select(1000)来获取网络请求，一旦有连接就绪，则开始处理：</p>
+<ul>
+<li>首先打乱 Collections.shuffle(selectedList);</li>
+<li>for循环处理<ul>
+<li>如果SelectionKey.OP_ACCEPT，代表一个新连接请求，创建SocketChannel，创建NIOServerCnxn，然后addCnxn</li>
+<li>如果可读写，则 NIOServerCnxn.doIO(k)，执行IO操作</li>
+</ul>
+</li>
+</ul>
+<h5 id="socket网络请求处理"><a href="#socket网络请求处理" class="headerlink" title="socket网络请求处理"></a>socket网络请求处理</h5><p>这里简单分析下doIO,摘录部分代码：</p>
+<pre><code>void doIO(SelectionKey k) throws InterruptedException &#123;
+        try &#123;
+            if (isSocketOpen() == false) &#123;
+                LOG.warn(&quot;trying to do i/o on a null socket for session:0x&quot;
+                         + Long.toHexString(sessionId));
+
+                return;
+            &#125;
+            if (k.isReadable()) &#123;
+                // 读取4个字节
+                int rc = sock.read(incomingBuffer);
+                if (rc &lt; 0) &#123;
+                    throw new EndOfStreamException(
+                            &quot;Unable to read additional data from client sessionid 0x&quot;
+                            + Long.toHexString(sessionId)
+                            + &quot;, likely client has closed socket&quot;);
+                &#125;
+                // 读满了
+                if (incomingBuffer.remaining() == 0) &#123;
+                    boolean isPayload;
+                    if (incomingBuffer == lenBuffer) &#123; // start of next request
+                        incomingBuffer.flip(); // 复位
+                        isPayload = readLength(k); // 读取载荷长度
+                        incomingBuffer.clear();
+                    &#125; else &#123;
+                        // continuation
+                        isPayload = true;
+                    &#125;
+                    if (isPayload) &#123; // not the case for 4letterword
+                        readPayload();
+                    &#125;
+                    else &#123;
+                        // four letter words take care
+                        // need not do anything else
+                        return;
+                    &#125;
+                &#125;
+            &#125;
+</code></pre>
+<p>读取4个字节，获取到数据长度，然后读取载荷，也就是请求</p>
+<pre><code>    private void readPayload() throws IOException, InterruptedException &#123;
+        if (incomingBuffer.remaining() != 0) &#123; // have we read length bytes?
+            int rc = sock.read(incomingBuffer); // sock is non-blocking, so ok
+            if (rc &lt; 0) &#123;
+                throw new EndOfStreamException(
+                        &quot;Unable to read additional data from client sessionid 0x&quot;
+                        + Long.toHexString(sessionId)
+                        + &quot;, likely client has closed socket&quot;);
+            &#125;
+        &#125;
+
+        if (incomingBuffer.remaining() == 0) &#123; // have we read length bytes?
+            packetReceived();
+            incomingBuffer.flip(); // 复位
+            if (!initialized) &#123;
+                readConnectRequest(); // 读取连接请求
+            &#125; else &#123;
+                readRequest();
+            &#125;
+            lenBuffer.clear();
+            incomingBuffer = lenBuffer;
+        &#125;
+    &#125;
+</code></pre>
+<p>先是读取数据，然后再读取请求，这里关注readConnectRequest</p>
+<h5 id="读取连接请求"><a href="#读取连接请求" class="headerlink" title="读取连接请求"></a>读取连接请求</h5><pre><code>    private void readConnectRequest() throws IOException, InterruptedException &#123;
+        if (zkServer == null) &#123;
+            throw new IOException(&quot;ZooKeeperServer not running&quot;);
+        &#125;
+        zkServer.processConnectRequest(this, incomingBuffer);
+        initialized = true;
+    &#125;
+</code></pre>
+<p>继续，下面是处理连接请求：</p>
+<pre><code>     public void processConnectRequest(ServerCnxn cnxn, ByteBuffer incomingBuffer) throws IOException &#123;
+        BinaryInputArchive bia = BinaryInputArchive.getArchive(new ByteBufferInputStream(incomingBuffer));
+        ConnectRequest connReq = new ConnectRequest();
+        connReq.deserialize(bia, &quot;connect&quot;); // 反序列化请求
+        ....
+        // 客户端设置的超时时间
+        int sessionTimeout = connReq.getTimeOut();
+        byte passwd[] = connReq.getPasswd();
+        int minSessionTimeout = getMinSessionTimeout();
+        if (sessionTimeout &lt; minSessionTimeout) &#123;
+            sessionTimeout = minSessionTimeout;
+        &#125;
+        // 服务端设置的最大超时时间
+        int maxSessionTimeout = getMaxSessionTimeout();
+        if (sessionTimeout &gt; maxSessionTimeout) &#123;
+            sessionTimeout = maxSessionTimeout;
+        &#125;
+        cnxn.setSessionTimeout(sessionTimeout);
+        // We don&#39;t want to receive any packets until we are sure that the
+        // session is setup
+        cnxn.disableRecv();
+        // 请求是否带上sessionid
+        long sessionId = connReq.getSessionId();
+        if (sessionId != 0) &#123;
+            // 请求带了sessionid
+            long clientSessionId = connReq.getSessionId();
+            LOG.info(&quot;Client attempting to renew session 0x&quot;
+                    + Long.toHexString(clientSessionId)
+                    + &quot; at &quot; + cnxn.getRemoteSocketAddress());
+            // 关闭请求
+            serverCnxnFactory.closeSession(sessionId);
+            cnxn.setSessionId(sessionId);
+            // 重新打开请求
+            reopenSession(cnxn, sessionId, passwd, sessionTimeout);
+        &#125; else &#123;
+            LOG.info(&quot;Client attempting to establish new session at &quot;
+                    + cnxn.getRemoteSocketAddress());
+            // 创建新sesssion
+            createSession(cnxn, passwd, sessionTimeout);
+        &#125;
+    &#125;
+</code></pre>
+<p>以上完成：</p>
+<ul>
+<li>将读取出来的incomingBuffer反序列化为ConnectRequest对象</li>
+<li>然后设置超时时间，ServerCnxn接收到该申请后，根据客户端传递过来的sessionTimeout时间以及ZooKeeperServer本身的minSessionTimeout、maxSessionTimeout参数，确定最终的sessionTimeout时间</li>
+<li>判断客户端的请求是否已经含有sessionId<ul>
+<li>如果含有，则执行sessionId的是否过期、密码是否正确等检查</li>
+<li>如果没有sessionId，则创建一个session</li>
+</ul>
+</li>
+</ul>
+<h5 id="创建session"><a href="#创建session" class="headerlink" title="创建session"></a>创建session</h5><p>所以，我们需要再看一下如何创建session：</p>
+<pre><code>    long createSession(ServerCnxn cnxn, byte passwd[], int timeout) &#123;
+        long sessionId = sessionTracker.createSession(timeout);
+        Random r = new Random(sessionId ^ superSecret);
+        r.nextBytes(passwd);
+        ByteBuffer to = ByteBuffer.allocate(4);
+        to.putInt(timeout);
+        cnxn.setSessionId(sessionId);
+        submitRequest(cnxn, sessionId, OpCode.createSession, 0, to, null);
+        return sessionId;
+    &#125;
+</code></pre>
+<ul>
+<li>使用sessionTracker生成一个sessionId</li>
+<li>submitRequest构建一个Request请求，请求的类型为OpCode.createSession</li>
+</ul>
+<pre><code>    private void submitRequest(ServerCnxn cnxn, long sessionId, int type,
+            int xid, ByteBuffer bb, List&lt;Id&gt; authInfo) &#123;
+        Request si = new Request(cnxn, sessionId, xid, type, bb, authInfo);
+        submitRequest(si);
+    &#125;
+    
+    public void submitRequest(Request si) &#123;
+        if (firstProcessor == null) &#123;
+            synchronized (this) &#123;
+                try &#123;
+                    // Since all requests are passed to the request
+                    // processor it should wait for setting up the request
+                    // processor chain. The state will be updated to RUNNING
+                    // after the setup.
+                    while (state == State.INITIAL) &#123;
+                        wait(1000);
+                    &#125;
+                &#125; catch (InterruptedException e) &#123;
+                    LOG.warn(&quot;Unexpected interruption&quot;, e);
+                &#125;
+                if (firstProcessor == null || state != State.RUNNING) &#123;
+                    throw new RuntimeException(&quot;Not started&quot;);
+                &#125;
+            &#125;
+        &#125;
+        try &#123;
+            touch(si.cnxn);
+            boolean validpacket = Request.isValid(si.type);
+            if (validpacket) &#123;
+                firstProcessor.processRequest(si);
+                if (si.cnxn != null) &#123;
+                    incInProcess();
+                &#125;
+            &#125; else &#123;
+                LOG.warn(&quot;Received packet at server of unknown type &quot; + si.type);
+                new UnimplementedRequestProcessor().processRequest(si);
+            &#125;
+        &#125; catch (MissingSessionException e) &#123;
+            if (LOG.isDebugEnabled()) &#123;
+                LOG.debug(&quot;Dropping request: &quot; + e.getMessage());
+            &#125;
+        &#125; catch (RequestProcessorException e) &#123;
+            LOG.error(&quot;Unable to process request:&quot; + e.getMessage(), e);
+        &#125;
+    &#125;
+</code></pre>
+<p>上面的代码：</p>
+<ul>
+<li>创建一个Request</li>
+<li>等待firstProcessor创建完成，然后调用firstProcessor.processRequest</li>
+</ul>
+<blockquote>
+<p>firstProcessor是什么东东，下面再揭晓</p>
+</blockquote>
+<h4 id="2-5-3-zk服务器启动"><a href="#2-5-3-zk服务器启动" class="headerlink" title="2.5.3 zk服务器启动"></a>2.5.3 zk服务器启动</h4><p>再次回到startup，  setZooKeeperServer(zks)，代码很简单</p>
+<pre><code> final public void setZooKeeperServer(ZooKeeperServer zk) &#123;
+        this.zkServer = zk;
+        if (zk != null) &#123;
+            zk.setServerCnxnFactory(this);
+        &#125;
+    &#125;
+</code></pre>
+<p>然后是zk服务器的startdata:</p>
+<pre><code>    public void startdata() 
+    throws IOException, InterruptedException &#123;
+        //check to see if zkDb is not null
+        if (zkDb == null) &#123;
+            zkDb = new ZKDatabase(this.txnLogFactory);
+        &#125;  
+        if (!zkDb.isInitialized()) &#123;
+            loadData();
+        &#125;
+    &#125;
+</code></pre>
+<p>初始化ZKDatabase，从txnLogFactory里读取快照数据。</p>
+<p>最后是zk服务器的startup：</p>
+<pre><code>    public synchronized void startup() &#123;
+        if (sessionTracker == null) &#123;
+            createSessionTracker();
+        &#125;
+        startSessionTracker();
+        setupRequestProcessors();
+
+        registerJMX();
+
+        setState(State.RUNNING);
+        notifyAll();
+    &#125;
+</code></pre>
+<p>几件事情：</p>
+<ul>
+<li>createSessionTracker创建sessionTracker</li>
+<li>startSessionTracker启动SessionTracker</li>
+<li>setupRequestProcessors 创建请求处理器链</li>
+<li>registerJMX 注册JMX</li>
+<li>setState(State.RUNNING) 设置状态为运行中</li>
+</ul>
+<h5 id="SessionTracker"><a href="#SessionTracker" class="headerlink" title="SessionTracker"></a>SessionTracker</h5><p>看SessionTracker的注释：</p>
+<blockquote>
+<p>This is the basic interface that ZooKeeperServer uses to track sessions.<br> 负责追踪Session的</p>
+</blockquote>
+<p>在zk里的实现是SessionTrackerImpl：</p>
+<pre><code>    protected void createSessionTracker() &#123;
+        sessionTracker = new SessionTrackerImpl(this, zkDb.getSessionWithTimeOuts(),
+                tickTime, 1, getZooKeeperServerListener());
+    &#125;
+    
+    protected void startSessionTracker() &#123;
+        ((SessionTrackerImpl)sessionTracker).start();
+    &#125;
+</code></pre>
+<p>SessionTrackerImpl后面再详细分析。</p>
+<h4 id="2-5-4-ZooKeeperServer请求处理器链介绍"><a href="#2-5-4-ZooKeeperServer请求处理器链介绍" class="headerlink" title="2.5.4  ZooKeeperServer请求处理器链介绍"></a>2.5.4  ZooKeeperServer请求处理器链介绍</h4><p>这里是zk的核心部分之一，zk接收到的请求最终在这里进行处理。</p>
+<pre><code> protected void setupRequestProcessors() &#123;
+        RequestProcessor finalProcessor = new FinalRequestProcessor(this);
+        RequestProcessor syncProcessor = new SyncRequestProcessor(this,
+                finalProcessor);
+        ((SyncRequestProcessor)syncProcessor).start();
+        firstProcessor = new PrepRequestProcessor(this, syncProcessor);
+        ((PrepRequestProcessor)firstProcessor).start();
+    &#125;
+</code></pre>
+<p>请求处理链介绍</p>
+<ul>
+<li>首先是PrepRequestProcessor</li>
+<li>然后是SyncRequestProcessor</li>
+<li>最后是finalProcessor</li>
+</ul>
+<p>下面依次解读：</p>
+<h5 id="RequestProcessor"><a href="#RequestProcessor" class="headerlink" title="RequestProcessor"></a>RequestProcessor</h5><blockquote>
+<p>RequestProcessors are chained together to process transactions.<br> RequestProcessors都是链在一起的事务处理链</p>
+</blockquote>
+<pre><code>public interface RequestProcessor &#123;
+    @SuppressWarnings(&quot;serial&quot;)
+    public static class RequestProcessorException extends Exception &#123;
+        public RequestProcessorException(String msg, Throwable t) &#123;
+            super(msg, t);
+        &#125;
+    &#125;
+
+    void processRequest(Request request) throws RequestProcessorException;
+
+    void shutdown();
+&#125;
+</code></pre>
+<p>包含下面这些实现：<br><img src="https://ooo.0o0.ooo/2017/04/27/5901abdf8ffaa.jpg" alt="enter description here" title="1493281760211"><br> 我们重点来看下面几个：</p>
+<h5 id="PrepRequestProcessor"><a href="#PrepRequestProcessor" class="headerlink" title="PrepRequestProcessor"></a>PrepRequestProcessor</h5><p>为什么成为请求处理链，看下PrepRequestProcessor代码就知道了：</p>
+<pre><code>    RequestProcessor nextProcessor;
+
+    ZooKeeperServer zks;
+
+    public PrepRequestProcessor(ZooKeeperServer zks,
+            RequestProcessor nextProcessor) &#123;
+        super(&quot;ProcessThread(sid:&quot; + zks.getServerId() + &quot; cport:&quot;
+                + zks.getClientPort() + &quot;):&quot;, zks.getZooKeeperServerListener());
+        this.nextProcessor = nextProcessor;
+        this.zks = zks;
+    &#125;protected void pRequest(Request request) throws RequestProcessorException &#123;
+        ……
+        nextProcessor.processRequest(request);
+    &#125;
+</code></pre>
+<p>构造函数里包含nextProcessor，在pRequest完成后，执行nextProcessor.processRequest，相当于链式执行。</p>
+<p>接着分析，再来看类的定义：</p>
+<pre><code>public class PrepRequestProcessor extends ZooKeeperCriticalThread implements
+            RequestProcessor &#123;
+
+        LinkedBlockingQueue&lt;Request&gt; submittedRequests = new LinkedBlockingQueue&lt;Request&gt;();
+
+        RequestProcessor nextProcessor;    
+&#125;
+</code></pre>
+<p>几个要点</p>
+<ul>
+<li>继承自ZooKeeperCriticalThread，是一个Thread</li>
+<li>重要属性submittedRequests 是一个LinkedBlockingQueue，LinkedBlockingQueue实现是线程安全的，实现了先进先出特性，是作为生产者消费者的首选。</li>
+</ul>
+<p>PrepRequestProcessor作为处理链的源头，对外提供processRequest方法收集请求，由于是单线程，所以需要将请求放入submittedRequests队列。</p>
+<pre><code>    public void processRequest(Request request) &#123;
+        // request.addRQRec(&quot;&gt;prep=&quot;+zks.outstandingChanges.size());
+        submittedRequests.add(request);
+    &#125;
+</code></pre>
+<p>放入队列后，PrepRequestProcessor本身就是一个Thread，所以start后执行run，在run方法中又会将用户提交的请求取出来进行处理：</p>
+<pre><code>    public void run() &#123;
+            while (true) &#123;
+                // 取出一个请求
+                Request request = submittedRequests.take();
+                if (Request.requestOfDeath == request) &#123;
+                    break;
+                &#125;
+                // 处理请求
+                pRequest(request);
+            &#125;
+        &#125;
+</code></pre>
+<p>再来看pRequest：<br><img src="https://ooo.0o0.ooo/2017/04/27/5901af5b683c8.jpg" alt="enter description here" title="1493282652397"></p>
+<p>根据request的type，构造对应的请求，对于增删改等影响数据状态的操作都被认为是事务（txn:transaction) ，需要创建出事务请求头(hdr)，调用pRequest2Txn，其他操作则不属于事务操作，需要验证下sessionId是否合法。</p>
+<pre><code> //create/close session don&#39;t require request record
+            case OpCode.createSession:
+            case OpCode.closeSession:
+                pRequest2Txn(request.type, zks.getNextZxid(), request, null, true);
+                break;
+ 
+            //All the rest don&#39;t need to create a Txn - just verify session
+            case OpCode.sync:
+            case OpCode.exists:
+            case OpCode.getData:
+            case OpCode.getACL:
+            case OpCode.getChildren:
+            case OpCode.getChildren2:
+            case OpCode.ping:
+            case OpCode.setWatches:
+                zks.sessionTracker.checkSession(request.sessionId,
+                        request.getOwner());
+                break;
+</code></pre>
+<p>来看pRequest2Txn，以create为例</p>
+<pre><code>  pRequest2Txn(request.type, zks.getNextZxid(), request, createRequest, true);
+ 
+   protected void pRequest2Txn(int type, long zxid, Request request, Record record, boolean deserialize)
+        throws KeeperException, IOException, RequestProcessorException
+    &#123;
+        request.hdr = new TxnHeader(request.sessionId, request.cxid, zxid,
+                                    zks.getTime(), type);
+
+        switch (type) &#123;
+            case OpCode.create:                
+                zks.sessionTracker.checkSession(request.sessionId, request.getOwner());
+                CreateRequest createRequest = (CreateRequest)record;   
+                if(deserialize)
+                    ByteBufferInputStream.byteBuffer2Record(request.request, createRequest);
+                String path = createRequest.getPath();
+                int lastSlash = path.lastIndexOf(&#39;/&#39;);
+                if (lastSlash == -1 || path.indexOf(&#39;\0&#39;) != -1 || failCreate) &#123;
+                    LOG.info(&quot;Invalid path &quot; + path + &quot; with session 0x&quot; +
+                            Long.toHexString(request.sessionId));
+                    throw new KeeperException.BadArgumentsException(path);
+                &#125;
+                List&lt;ACL&gt; listACL = removeDuplicates(createRequest.getAcl());
+                if (!fixupACL(request.authInfo, listACL)) &#123;
+                    throw new KeeperException.InvalidACLException(path);
+                &#125;
+                String parentPath = path.substring(0, lastSlash);
+                ChangeRecord parentRecord = getRecordForPath(parentPath);
+
+                checkACL(zks, parentRecord.acl, ZooDefs.Perms.CREATE,
+                        request.authInfo);
+                int parentCVersion = parentRecord.stat.getCversion();
+                CreateMode createMode =
+                    CreateMode.fromFlag(createRequest.getFlags());
+                if (createMode.isSequential()) &#123;
+                    path = path + String.format(Locale.ENGLISH, &quot;%010d&quot;, parentCVersion);
+                &#125;
+                validatePath(path, request.sessionId);
+                try &#123;
+                    if (getRecordForPath(path) != null) &#123;
+                        throw new KeeperException.NodeExistsException(path);
+                    &#125;
+                &#125; catch (KeeperException.NoNodeException e) &#123;
+                    // ignore this one
+                &#125;
+                boolean ephemeralParent = parentRecord.stat.getEphemeralOwner() != 0;
+                if (ephemeralParent) &#123;
+                    throw new KeeperException.NoChildrenForEphemeralsException(path);
+                &#125;
+                int newCversion = parentRecord.stat.getCversion()+1;
+                request.txn = new CreateTxn(path, createRequest.getData(),
+                        listACL,
+                        createMode.isEphemeral(), newCversion);
+                StatPersisted s = new StatPersisted();
+                if (createMode.isEphemeral()) &#123;
+                    s.setEphemeralOwner(request.sessionId);
+                &#125;
+                parentRecord = parentRecord.duplicate(request.hdr.getZxid());
+                parentRecord.childCount++;
+                parentRecord.stat.setCversion(newCversion);
+                addChangeRecord(parentRecord);
+                addChangeRecord(new ChangeRecord(request.hdr.getZxid(), path, s,
+                        0, listACL));
+                break;
+</code></pre>
+<ul>
+<li>首先是 zks.getNextZxid()创建一个事务id，AtomicLong hzxid是自增长id，初始化为0，每次加一</li>
+<li>在pRequest2Txn内部，先给request创建一个TxnHeader，这个header包含事务id</li>
+<li>然后判断请求类型</li>
+<li>zks.sessionTracker.checkSession(request.sessionId, request.getOwner()) 检查session</li>
+<li>反序列化为CreateRequest</li>
+</ul>
+<h5 id="SyncRequestProcessor"><a href="#SyncRequestProcessor" class="headerlink" title="SyncRequestProcessor"></a>SyncRequestProcessor</h5><h5 id="FinalRequestProcessor"><a href="#FinalRequestProcessor" class="headerlink" title="FinalRequestProcessor"></a>FinalRequestProcessor</h5><p>未完待续</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/zookeeper/" rel="tag"># zookeeper</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/11/21/jqpeng-%E4%BB%8E%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB%E3%80%81BK%E6%A0%91%E5%88%B0%E6%96%87%E6%9C%AC%E7%BA%A0%E9%94%99/" rel="prev" title="从编辑距离、BK树到文本纠错">
+      <i class="fa fa-chevron-left"></i> 从编辑距离、BK树到文本纠错
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/12/08/jqpeng-%E4%BD%BF%E7%94%A8SpringBoot%E5%BC%80%E5%8F%91REST%E6%9C%8D%E5%8A%A1/" rel="next" title="使用SpringBoot开发REST服务">
+      使用SpringBoot开发REST服务 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-number">1.</span> <span class="nav-text">1 环境准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%AF%BC%E5%85%A5%E4%BB%A3%E7%A0%81"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 导入代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E8%AE%BE%E7%BD%AE%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 设置配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E8%B0%83%E8%AF%95%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 调试配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">2 启动分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-QuorumPeerMain"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 QuorumPeerMain</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-ZooKeeperServerMain"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 ZooKeeperServerMain</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-ServerCnxnFactory"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 ServerCnxnFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-ZooKeeperServer"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 ZooKeeperServer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 服务启动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-1-%E9%85%8D%E7%BD%AEcnxnFactory"><span class="nav-number">2.5.1.</span> <span class="nav-text">2.5.1 配置cnxnFactory</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-2-%E5%90%AF%E5%8A%A8cnxnFactory"><span class="nav-number">2.5.2.</span> <span class="nav-text">2.5.2 启动cnxnFactory</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#socket%E5%A4%84%E7%90%86%E7%BA%BF%E7%A8%8B"><span class="nav-number">2.5.2.1.</span> <span class="nav-text">socket处理线程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#socket%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86"><span class="nav-number">2.5.2.2.</span> <span class="nav-text">socket网络请求处理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E8%BF%9E%E6%8E%A5%E8%AF%B7%E6%B1%82"><span class="nav-number">2.5.2.3.</span> <span class="nav-text">读取连接请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAsession"><span class="nav-number">2.5.2.4.</span> <span class="nav-text">创建session</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-3-zk%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8"><span class="nav-number">2.5.3.</span> <span class="nav-text">2.5.3 zk服务器启动</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#SessionTracker"><span class="nav-number">2.5.3.1.</span> <span class="nav-text">SessionTracker</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-4-ZooKeeperServer%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E9%93%BE%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.5.4.</span> <span class="nav-text">2.5.4  ZooKeeperServer请求处理器链介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#RequestProcessor"><span class="nav-number">2.5.4.1.</span> <span class="nav-text">RequestProcessor</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#PrepRequestProcessor"><span class="nav-number">2.5.4.2.</span> <span class="nav-text">PrepRequestProcessor</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SyncRequestProcessor"><span class="nav-number">2.5.4.3.</span> <span class="nav-text">SyncRequestProcessor</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#FinalRequestProcessor"><span class="nav-number">2.5.4.4.</span> <span class="nav-text">FinalRequestProcessor</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

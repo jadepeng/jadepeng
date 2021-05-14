@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: 高效团队的gitlab flow最佳实践 当前git是大部分开发团队的首选版本管理工具，一个好的流程规范可以让大家有效地合作，像流水线一样有条不紊地进行团队协作。 业界包含三种flow：  Git flow Github flow Gitlab flow  下面我们先来分析，然后再基于gitlab flow来设计一个适合我们团队的git规范。 从git flow到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高效团队的gitlab flow最佳实践">
+<meta property="og:url" content="http://blog.iflyresearch.com/2021/02/02/jqpeng-%E9%AB%98%E6%95%88%E5%9B%A2%E9%98%9F%E7%9A%84gitlab%20flow%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: 高效团队的gitlab flow最佳实践 当前git是大部分开发团队的首选版本管理工具，一个好的流程规范可以让大家有效地合作，像流水线一样有条不紊地进行团队协作。 业界包含三种flow：  Git flow Github flow Gitlab flow  下面我们先来分析，然后再基于gitlab flow来设计一个适合我们团队的git规范。 从git flow到">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612267487337.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612267545738.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612267831741.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612267888369.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612268052916.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612268111739.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612263756008.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612264109605.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612264544465.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612264598028.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612264745987.png">
+<meta property="article:published_time" content="2021-02-02T12:38:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.585Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612267487337.png">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2021/02/02/jqpeng-%E9%AB%98%E6%95%88%E5%9B%A2%E9%98%9F%E7%9A%84gitlab%20flow%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>高效团队的gitlab flow最佳实践 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/02/02/jqpeng-%E9%AB%98%E6%95%88%E5%9B%A2%E9%98%9F%E7%9A%84gitlab%20flow%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          高效团队的gitlab flow最佳实践
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-02 20:38:00" itemprop="dateCreated datePublished" datetime="2021-02-02T20:38:00+08:00">2021-02-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/gitlab-flow.html">高效团队的gitlab flow最佳实践</a></p>
+<p>当前git是大部分开发团队的首选版本管理工具，一个好的流程规范可以让大家有效地合作，像流水线一样有条不紊地进行团队协作。</p>
+<p>业界包含三种flow：</p>
+<ul>
+<li>Git flow</li>
+<li>Github flow</li>
+<li>Gitlab flow</li>
+</ul>
+<p>下面我们先来分析，然后再基于gitlab flow来设计一个适合我们团队的git规范。</p>
+<h2 id="从git-flow到gitlab-flow"><a href="#从git-flow到gitlab-flow" class="headerlink" title="从git flow到gitlab flow"></a>从git flow到gitlab flow</h2><h3 id="git-flow"><a href="#git-flow" class="headerlink" title="git flow"></a>git flow</h3><p>先说git flow，大概是这样的。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612267487337.png" alt="gitflow"></p>
+<p>然后，我们老的git规范是参考git flow实现的。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612267545738.png" alt="当前git流程"></p>
+<p>综合考虑了开发、测试、新功能开发、临时需求、热修复，理想很丰满，现实很骨干，这一套运行起来实在是太复杂了。那么如何精简流程呢？</p>
+<p>我们来看业界的做法，首先是github flow。</p>
+<h3 id="github-flow"><a href="#github-flow" class="headerlink" title="github flow"></a>github flow</h3><p>Github flow 是Git flow的简化版，专门配合”持续发布”。它是 Github.com 使用的工作流程。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612267831741.png" alt="github flow"></p>
+<p>整个流程：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612267888369.png" alt="流程"></p>
+<ul>
+<li>第一步：根据需求，从master拉出新分支，不区分功能分支或补丁分支。</li>
+<li>第二步：新分支开发完成后，或者需要讨论的时候，就向master发起一个pull request（简称PR）。</li>
+<li>第三步：Pull Request既是一个通知，让别人注意到你的请求，又是一种对话机制，大家一起评审和讨论你的代码。对话过程中，你还可以不断提交代码。</li>
+<li>第四步：你的Pull Request被接受，合并进master，重新部署后，原来你拉出来的那个分支就被删除。（先部署再合并也可。）</li>
+</ul>
+<p>github flow这种方式，要保证高质量，对于贡献者的素质要求很高，换句话说，如果代码贡献者素质不那么高，质量就无法得到保证。</p>
+<blockquote>
+<p>github flow这一套对于库、框架、工具这样并非最终应用的产品来说，没问题，但是，如果如果一个产品是“最终应用”，github flow可能就不合适了。</p>
+</blockquote>
+<h3 id="gitlab-flow"><a href="#gitlab-flow" class="headerlink" title="gitlab flow"></a>gitlab flow</h3><p>Gitlab flow 是 Git flow 与 Github flow 的综合。它吸取了两者的优点，既有适应不同开发环境的弹性，又有单一主分支的简单和便利。它是 Gitlab.com 推荐的做法。</p>
+<p>Gitlab flow 的最大原则叫做”上游优先”（upsteam first），即只存在一个主分支master，它是所有其他分支的”上游”。只有上游分支采纳的代码变化，才能应用到其他分支。</p>
+<p>对于”持续发布”的项目，它建议在master分支以外，再建立不同的环境分支。比如，”开发环境”的分支是master，”预发环境”的分支是pre-production，”生产环境”的分支是production。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612268052916.png" alt="gitlab flow"></p>
+<p>只有紧急情况，才允许跳过上游，直接合并到下游分支。</p>
+<p>对于”版本发布”的项目，建议的做法是每一个稳定版本，都要从master分支拉出一个分支，比如2-3-stable、2-4-stable等等。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612268111739.png" alt="版本发布"></p>
+<p>gitlab flow 如何处理hotfix？ git flow之所以这么复杂，一大半原因就是把hotfix考虑得太周全了。hotfix的意思是，当代码部署到产品环境之后发现的问题，需要火速fix。gitlab flow 可以基于后续分支，修改后上线。</p>
+<h2 id="团队git规范"><a href="#团队git规范" class="headerlink" title="团队git规范"></a>团队git规范</h2><p>综合上面的介绍，我们决定采用gitlab flow，按照版本发布的模式实施，具体来说：</p>
+<ol>
+<li>新的迭代开始，所有开发人员从主干master拉个人分支开发特性, 分支命名规范 feature-name</li>
+<li>开发完成后，在迭代结束前，合入master分支</li>
+<li>master分支合并后，自动cicd到dev环境</li>
+<li>开发自测通过后，从master拉取要发布的分支，release-$version，将这个分支部署到测试环境进行测试</li>
+<li>测出的bug，通过从release-$versio拉出分支进行修复，修复完成后，再合入release-$versio</li>
+<li>正式发布版本，如果上线后，又有bug，根据5的方式处理</li>
+<li>等发布版本稳定后，将release-$versio反合入主干</li>
+</ol>
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><h3 id="开发feature功能"><a href="#开发feature功能" class="headerlink" title="开发feature功能"></a>开发feature功能</h3><p>新建分支，比如<code>feat-test</code></p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612263756008.png" alt="新分支"></p>
+<p>开发代码，增加新功能，提交：</p>
+<pre><code>@GetMapping(path = &quot;/test&quot;, produces = &quot;application/json&quot;)@ResponseBodypublic Map&lt;String, Object&gt; test() &#123;    return singletonMap(&quot;test&quot;, &quot;test&quot;);&#125;
+
+
+
+git commit -m &quot;feat: add test code&quot;
+git push origin feat-test
+</code></pre>
+<h3 id="提交MR"><a href="#提交MR" class="headerlink" title="提交MR"></a>提交MR</h3><p>提交代码后，可以提交<code>mr</code>到<code>master</code>，申请合并代码</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612264109605.png" alt="mr"></p>
+<p><strong>Note</strong>：</p>
+<ul>
+<li>这里可以增加自动代码审查,</li>
+</ul>
+<h3 id="合并代码"><a href="#合并代码" class="headerlink" title="合并代码"></a>合并代码</h3><p>研发组长，打开mr，review代码，可以添加建议：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612264544465.png" alt="添加评论"></p>
+<p>开发同学根据建议修复代码，或者线下修改后commit代码。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612264598028.png" alt="应用建议"></p>
+<p>研发组长确认没有问题后，可以合并到master。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2021/2/2/1612264745987.png" alt="合并"></p>
+<p>合并完成，可以删除feat分支。</p>
+<p>新功能开发好，可以进行提测。</p>
+<h3 id="发布版本"><a href="#发布版本" class="headerlink" title="发布版本"></a>发布版本</h3><h4 id="语义化版本号"><a href="#语义化版本号" class="headerlink" title="语义化版本号"></a>语义化版本号</h4><p>版本格式：主版本号.次版本号.修订号，版本号递增规则如下：</p>
+<p>主版本号：当你做了不兼容的 API 修改，<br> 次版本号：当你做了向下兼容的功能性新增，<br> 修订号：当你做了向下兼容的问题修正。<br> 先行版本号及版本编译元数据可以加到“主版本号.次版本号.修订号”的后面，作为延伸。</p>
+<p>主版本号为0，代表还未发布正式版本。</p>
+<h4 id="测试发布"><a href="#测试发布" class="headerlink" title="测试发布"></a>测试发布</h4><p>master分支，自动部署到开发环境（dev）</p>
+<p>功能开发完成，并自测通过后，代码合并到待发布版本，</p>
+<p>分支规则：</p>
+<pre><code>release-version
+</code></pre>
+<p>版本规则</p>
+<pre><code>主版本号.次版本号
+</code></pre>
+<p>构建时，自动增加修订号：</p>
+<pre><code>主版本号.次版本号.修订号
+</code></pre>
+<p>从最新的master新拉一个分支<code>release-$version</code>，比如<code>release-0.1</code></p>
+<pre><code>git checkout -b release-0.1
+</code></pre>
+<p><code>release-$version</code>会自动构建，版本号为<code>$version.$buildNumber</code></p>
+<p>设定<code>release-$version</code> 分支为保护分支，不允许直接推送，只能通过merge不允许直接提交代码，接受<code>MR</code>。</p>
+<h4 id="bug修复"><a href="#bug修复" class="headerlink" title="bug修复"></a>bug修复</h4><p>需要修改bug时，从<code>release-$version</code>新拉分支，修改完成后再合并到<code>release-$version</code>分支.</p>
+<ul>
+<li>Q: 从<code>release-$version</code>拉的分支，如何测试？</li>
+<li>A:  这个节点定义为bug修复节点，建议开发同学优先本地测试验证，严重通过再合并到release分支。</li>
+<li>Q: <code>release-$version</code>太多怎么办？</li>
+<li>A:  可以保留最近的10个版本。历史的打tag后，删除分支。</li>
+</ul>
+<hr>
+<p>感谢您的认真阅读。</p>
+<p>如果你觉得有帮助，欢迎点赞支持！</p>
+<p>不定期分享软件开发经验，欢迎关注作者, 一起交流软件开发：</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/git/" rel="tag"># git</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/14/jqpeng-Spring%E4%B8%AD%E7%9A%84@Valid%20%E5%92%8C%20@Validated%E6%B3%A8%E8%A7%A3%E4%BD%A0%E7%94%A8%E5%AF%B9%E4%BA%86%E5%90%97/" rel="prev" title="Spring中的@Valid 和 @Validated注解你用对了吗">
+      <i class="fa fa-chevron-left"></i> Spring中的@Valid 和 @Validated注解你用对了吗
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/04/jqpeng-%E6%8F%90%E5%8D%87NginxTLSSSL%20HTTPS%20%E6%80%A7%E8%83%BD%E7%9A%847%E6%9D%A1%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/" rel="next" title="提升NginxTLSSSL HTTPS 性能的7条优化建议">
+      提升NginxTLSSSL HTTPS 性能的7条优化建议 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8Egit-flow%E5%88%B0gitlab-flow"><span class="nav-number">1.</span> <span class="nav-text">从git flow到gitlab flow</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#git-flow"><span class="nav-number">1.1.</span> <span class="nav-text">git flow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#github-flow"><span class="nav-number">1.2.</span> <span class="nav-text">github flow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gitlab-flow"><span class="nav-number">1.3.</span> <span class="nav-text">gitlab flow</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%A2%E9%98%9Fgit%E8%A7%84%E8%8C%83"><span class="nav-number">2.</span> <span class="nav-text">团队git规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">3.</span> <span class="nav-text">最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91feature%E5%8A%9F%E8%83%BD"><span class="nav-number">3.1.</span> <span class="nav-text">开发feature功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4MR"><span class="nav-number">3.2.</span> <span class="nav-text">提交MR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E4%BB%A3%E7%A0%81"><span class="nav-number">3.3.</span> <span class="nav-text">合并代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E5%B8%83%E7%89%88%E6%9C%AC"><span class="nav-number">3.4.</span> <span class="nav-text">发布版本</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%AD%E4%B9%89%E5%8C%96%E7%89%88%E6%9C%AC%E5%8F%B7"><span class="nav-number">3.4.1.</span> <span class="nav-text">语义化版本号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%8F%91%E5%B8%83"><span class="nav-number">3.4.2.</span> <span class="nav-text">测试发布</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bug%E4%BF%AE%E5%A4%8D"><span class="nav-number">3.4.3.</span> <span class="nav-text">bug修复</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

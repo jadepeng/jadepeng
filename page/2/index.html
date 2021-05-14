@@ -1,0 +1,2789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JadePeng的技术笔记本">
+<meta property="og:type" content="website">
+<meta property="og:title" content="JadePeng的技术笔记本">
+<meta property="og:url" content="http://blog.iflyresearch.com/page/2/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="JadePeng的技术笔记本">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="JadePeng">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/page/2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/01/14/jqpeng-Spring%E4%B8%AD%E7%9A%84@Valid%20%E5%92%8C%20@Validated%E6%B3%A8%E8%A7%A3%E4%BD%A0%E7%94%A8%E5%AF%B9%E4%BA%86%E5%90%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/01/14/jqpeng-Spring%E4%B8%AD%E7%9A%84@Valid%20%E5%92%8C%20@Validated%E6%B3%A8%E8%A7%A3%E4%BD%A0%E7%94%A8%E5%AF%B9%E4%BA%86%E5%90%97/" class="post-title-link" itemprop="url">Spring中的@Valid 和 @Validated注解你用对了吗</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-14 18:24:00" itemprop="dateCreated datePublished" datetime="2021-01-14T18:24:00+08:00">2021-01-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/spring-valid.html">Spring中的@Valid 和 @Validated注解你用对了吗</a></p>
+<h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1.概述"></a>1.概述</h2><p>本文我们将重点介绍Spring中 <a target="_blank" rel="noopener" href="https://docs.oracle.com/javaee/7/api/javax/validation/Valid.html">@Valid</a>和<a target="_blank" rel="noopener" href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/validation/annotation/Validated.html">@Validated</a>注解的区别 。</p>
+<p>验证用户输入是否正确是我们应用程序中的常见功能。Spring提供了<code>@Valid</code>和@<code>Validated</code>两个注解来实现验证功能，下面我们来详细介绍它们。</p>
+<h2 id="2-Valid和-Validate注解"><a href="#2-Valid和-Validate注解" class="headerlink" title="2. @Valid和@Validate注解"></a>2. @Valid和@Validate注解</h2><p>在Spring中，我们使用<code>@Valid</code> 注解进行方法级别验证，同时还能用它来标记成员属性以进行验证。</p>
+<p>但是，此注释不支持分组验证。<code>@Validated</code>则支持分组验证。</p>
+<h2 id="3-例子"><a href="#3-例子" class="headerlink" title="3.例子"></a>3.例子</h2><p>让我们考虑一个使用Spring Boot开发的简单用户注册表单。首先，我们只有<code>名称</code>和<code>密码</code>属性：</p>
+<pre><code>public class UserAccount &#123;
+
+    @NotNull
+    @Size(min = 4, max = 15)
+    private String password;
+
+    @NotBlank
+    private String name;
+
+    // standard constructors / setters / getters / toString
+
+&#125;
+</code></pre>
+<p>接下来，让我们看一下控制器。在这里，我们将使用带有<code>@Valid</code>批注的<code>saveBasicInfo</code>方法来验证用户输入：</p>
+<pre><code>@RequestMapping(value = &quot;/saveBasicInfo&quot;, method = RequestMethod.POST)
+public String saveBasicInfo(
+  @Valid @ModelAttribute(&quot;useraccount&quot;) UserAccount useraccount, 
+  BindingResult result, 
+  ModelMap model) &#123;
+    if (result.hasErrors()) &#123;
+        return &quot;error&quot;;
+    &#125;
+    return &quot;success&quot;;
+&#125;
+</code></pre>
+<p>现在让我们测试一下这个方法：</p>
+<pre><code>@Test
+public void givenSaveBasicInfo_whenCorrectInput`thenSuccess() throws Exception &#123;
+    this.mockMvc.perform(MockMvcRequestBuilders.post(&quot;/saveBasicInfo&quot;)
+      .accept(MediaType.TEXT_HTML)
+      .param(&quot;name&quot;, &quot;test123&quot;)
+      .param(&quot;password&quot;, &quot;pass&quot;))
+      .andExpect(view().name(&quot;success&quot;))
+      .andExpect(status().isOk())
+      .andDo(print());
+&#125;
+</code></pre>
+<p>在确认测试成功运行之后，现在让我们扩展功能。下一步的逻辑步骤是将其转换为多步骤注册表格，就像大多数向导一样。第一步，<code>名称</code>和<code>密码</code>保持不变。在第二步中，我们将获取其他信息，例如<code>age</code> 和 <code>phone</code>。因此，我们将使用以下其他字段更新域对象：</p>
+<pre><code>public class UserAccount &#123;
+
+    @NotNull
+    @Size(min = 4, max = 15)
+    private String password;
+
+    @NotBlank
+    private String name;
+
+    @Min(value = 18, message = &quot;Age should not be less than 18&quot;)
+    private int age;
+
+    @NotBlank
+    private String phone;
+
+    // standard constructors / setters / getters / toString   
+
+&#125;
+</code></pre>
+<p>但是，这一次，我们将注意到先前的测试失败。这是因为我们没有传递<code>年龄</code>和<code>电话</code>字段。</p>
+<p>为了支持此行为，我们引入支持分组验证的<code>@Validated</code>批注。</p>
+<p><code>分组验证</code>,就是将字段分组，分别验证，比如我们将用户信息分为两组：<code>BasicInfo</code>和<code>AdvanceInfo</code></p>
+<p>可以建立两个空接口：</p>
+<pre><code>public interface BasicInfo &#123;
+&#125;
+
+
+
+public interface AdvanceInfo &#123;
+&#125;
+</code></pre>
+<p>第一步将具有<code>BasicInfo</code>接口，第二步 将具有<code>AdvanceInfo</code>  。此外，我们将更新<code>UserAccount</code>类以使用这些标记接口，如下所示：</p>
+<pre><code>public class UserAccount &#123;
+
+    @NotNull(groups = BasicInfo.class)
+    @Size(min = 4, max = 15, groups = BasicInfo.class)
+    private String password;
+
+    @NotBlank(groups = BasicInfo.class)
+    private String name;
+
+    @Min(value = 18, message = &quot;Age should not be less than 18&quot;, groups = AdvanceInfo.class)
+    private int age;
+
+    @NotBlank(groups = AdvanceInfo.class)
+    private String phone;
+
+    // standard constructors / setters / getters / toString   
+
+&#125;
+</code></pre>
+<p>另外，我们现在将更新控制器以使用<code>@Validated</code>注释而不是<code>@Valid</code>：</p>
+<pre><code>@RequestMapping(value = &quot;/saveBasicInfoStep1&quot;, method = RequestMethod.POST)
+public String saveBasicInfoStep1(
+  @Validated(BasicInfo.class) 
+  @ModelAttribute(&quot;useraccount&quot;) UserAccount useraccount, 
+  BindingResult result, ModelMap model) &#123;
+    if (result.hasErrors()) &#123;
+        return &quot;error&quot;;
+    &#125;
+    return &quot;success&quot;;
+&#125;
+</code></pre>
+<p>更新后，再次执行测试，现在可以成功运行。现在，我们还要测试这个新方法：</p>
+<pre><code>@Test
+public void givenSaveBasicInfoStep1`whenCorrectInput`thenSuccess() throws Exception &#123;
+    this.mockMvc.perform(MockMvcRequestBuilders.post(&quot;/saveBasicInfoStep1&quot;)
+      .accept(MediaType.TEXT_HTML)
+      .param(&quot;name&quot;, &quot;test123&quot;)
+      .param(&quot;password&quot;, &quot;pass&quot;))
+      .andExpect(view().name(&quot;success&quot;))
+      .andExpect(status().isOk())
+      .andDo(print());
+&#125;
+</code></pre>
+<p>也成功运行！</p>
+<p>接下来，让我们看看<code>@Valid</code>对于触发嵌套属性验证是必不可少的。</p>
+<h2 id="4-使用-Valid批注标记嵌套对象"><a href="#4-使用-Valid批注标记嵌套对象" class="headerlink" title="4.使用@Valid批注标记嵌套对象"></a>4.使用<code>@Valid</code>批注标记嵌套对象</h2><p>@Valid 可以用于嵌套对象。例如，在我们当前的场景中，让我们创建一个 <code>UserAddress </code>对象：</p>
+<pre><code>public class UserAddress &#123;
+
+    @NotBlank
+    private String countryCode;
+
+    // standard constructors / setters / getters / toString
+&#125;
+</code></pre>
+<p>为了确保验证此嵌套对象，我们将使用<code>@Valid</code>批注装饰属性：</p>
+<pre><code>public class UserAccount &#123;
+
+    //...
+
+    @Valid
+    @NotNull(groups = AdvanceInfo.class)
+    private UserAddress useraddress;
+
+    // standard constructors / setters / getters / toString 
+&#125;
+</code></pre>
+<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5. 总结"></a>5. 总结</h2><p><code>@Valid</code>保证了整个对象的验证, 但是它是对整个对象进行验证，当仅需要部分验证的时候就会出现问题。 这时候，可以使用<code>@Validated</code> 进行分组验证。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.baeldung.com/spring-valid-vs-validated">https://www.baeldung.com/spring-valid-vs-validated</a></li>
+</ul>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/12/09/jqpeng-hugegraph%20%E5%AD%98%E5%8F%96%E6%95%B0%E6%8D%AE%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/09/jqpeng-hugegraph%20%E5%AD%98%E5%8F%96%E6%95%B0%E6%8D%AE%E8%A7%A3%E6%9E%90/" class="post-title-link" itemprop="url">hugegraph 存取数据解析</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-09 11:58:00" itemprop="dateCreated datePublished" datetime="2020-12-09T11:58:00+08:00">2020-12-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/hugegraph-storage.html">hugegraph 存取数据解析</a></p>
+<p>hugegraph 是百度开源的图数据库，支持hbase，mysql，rocksdb等作为存储后端。本文以EDGE 存储，hbase为存储后端，来探索hugegraph是如何存取数据的。</p>
+<h2 id="存数据"><a href="#存数据" class="headerlink" title="存数据"></a>存数据</h2><h3 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h3><p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/12/9/1607480289186.png" alt="Edge"></p>
+<p>首先需要序列化，<code>hbase</code> 使用BinarySerializer:</p>
+<ul>
+<li>keyWithIdPrefix 和indexWithIdPrefix都是false</li>
+</ul>
+<p>这个后面会用到。</p>
+<pre><code>public class HbaseSerializer extends BinarySerializer &#123;
+
+    public HbaseSerializer() &#123;
+        super(false, true);
+    &#125;
+&#125;
+</code></pre>
+<p>要存到db，首先需要序列化为BackendEntry，<code>BackendEntry</code> 是图数据库和后端存储的传输对象，Hbase对应的是<code>BinaryBackendEntry</code>:</p>
+<pre><code>public class BinaryBackendEntry implements BackendEntry &#123;
+
+    private static final byte[] EMPTY_BYTES = new byte[]&#123;&#125;;
+
+    private final HugeType type;
+    private final BinaryId id;
+    private Id subId;
+    private final List&lt;BackendColumn&gt; columns;
+    private long ttl;
+
+    public BinaryBackendEntry(HugeType type, byte[] bytes) &#123;
+        this(type, BytesBuffer.wrap(bytes).parseId(type));
+    &#125;
+
+    public BinaryBackendEntry(HugeType type, BinaryId id) &#123;
+        this.type = type;
+        this.id = id;
+        this.subId = null;
+        this.columns = new ArrayList&lt;&gt;();
+        this.ttl = 0L;
+    &#125;
+</code></pre>
+<p>我们来看序列化，序列化，其实就是要将数据放到entry的column列里。</p>
+<ul>
+<li><code>hbase</code> 的<code>keyWithIdPrefix</code>是false，因此<code>name</code>不包含ownerVertexId（参考下面的EdgeId，去掉ownerVertexId）</li>
+</ul>
+<pre><code> public BackendEntry writeEdge(HugeEdge edge) &#123;
+        BinaryBackendEntry entry = newBackendEntry(edge);
+        byte[] name = this.keyWithIdPrefix ?
+                      this.formatEdgeName(edge) : EMPTY_BYTES;
+        byte[] value = this.formatEdgeValue(edge);
+        entry.column(name, value);
+
+        if (edge.hasTtl()) &#123;
+            entry.ttl(edge.ttl());
+        &#125;
+
+        return entry;
+    &#125;
+</code></pre>
+<p>EdgeId：</p>
+<pre><code>    private final Id ownerVertexId;
+    private final Directions direction;
+    private final Id edgeLabelId;
+    private final String sortValues;
+    private final Id otherVertexId;
+
+    private final boolean directed;
+    private String cache;
+</code></pre>
+<h3 id="backend-存储"><a href="#backend-存储" class="headerlink" title="backend 存储"></a>backend 存储</h3><p>生成BackendEntry后，通过store机制，交给后端的backend存储。</p>
+<p>EDGE的保存，对应HbaseTables.Edge:</p>
+<pre><code>public static class Edge extends HbaseTable &#123;
+
+        @Override
+        public void insert(Session session, BackendEntry entry) &#123;
+            long ttl = entry.ttl();
+            if (ttl == 0L) &#123;
+                session.put(this.table(), CF, entry.id().asBytes(),
+                            entry.columns());
+            &#125; else &#123;
+                session.put(this.table(), CF, entry.id().asBytes(),
+                            entry.columns(), ttl);
+            &#125;
+        &#125;
+&#125;
+</code></pre>
+<p>CF 是固定的f：</p>
+<pre><code>    protected static final byte[] CF = &quot;f&quot;.getBytes();
+</code></pre>
+<p><code>session.put</code> 对应：</p>
+<pre><code> @Override
+        public void put(String table, byte[] family, byte[] rowkey,
+                        Collection&lt;BackendColumn&gt; columns) &#123;
+            Put put = new Put(rowkey);
+            for (BackendColumn column : columns) &#123;
+                put.addColumn(family, column.name, column.value);
+            &#125;
+            this.batch(table, put);
+        &#125;
+</code></pre>
+<p>可以看出，存储时，edgeid作为<code>rowkey</code>，然后把去除<code>ownerVertexId</code>后的<code>edgeid</code>作为<code>column.name</code></p>
+<h2 id="EDGE-读取"><a href="#EDGE-读取" class="headerlink" title="EDGE 读取"></a>EDGE 读取</h2><h3 id="从backend读取BackendEntry"><a href="#从backend读取BackendEntry" class="headerlink" title="从backend读取BackendEntry"></a>从backend读取BackendEntry</h3><p>读取就是从hbase读取result，转换为BinaryBackendEntry，再转成Edge。</p>
+<p>读取，是scan的过程：</p>
+<pre><code> /**
+         * Inner scan: send scan request to HBase and get iterator
+         */
+        @Override
+        public RowIterator scan(String table, Scan scan) &#123;
+            assert !this.hasChanges();
+
+            try (Table htable = table(table)) &#123;
+                return new RowIterator(htable.getScanner(scan));
+            &#125; catch (IOException e) &#123;
+                throw new BackendException(e);
+            &#125;
+        &#125;
+</code></pre>
+<p>scan后，返回<code>BackendEntryIterator</code></p>
+<pre><code>protected BackendEntryIterator newEntryIterator(Query query,
+                                                    RowIterator rows) &#123;
+        return new BinaryEntryIterator&lt;&gt;(rows, query, (entry, row) -&gt; &#123;
+            E.checkState(!row.isEmpty(), &quot;Can&#39;t parse empty HBase result&quot;);
+            byte[] id = row.getRow();
+            if (entry == null || !Bytes.prefixWith(id, entry.id().asBytes())) &#123;
+                HugeType type = query.resultType();
+                // NOTE: only support BinaryBackendEntry currently
+                entry = new BinaryBackendEntry(type, id);
+            &#125;
+            try &#123;
+                this.parseRowColumns(row, entry, query);
+            &#125; catch (IOException e) &#123;
+                throw new BackendException(&quot;Failed to read HBase columns&quot;, e);
+            &#125;
+            return entry;
+        &#125;);
+    &#125;
+</code></pre>
+<p>注意，<code>new BinaryBackendEntry(type, id)</code> 时，BinaryBackendEntry的id并不是<code>rowkey</code>，而是对rowkey做了处理：</p>
+<pre><code>public BinaryId parseId(HugeType type) &#123;
+        if (type.isIndex()) &#123;
+            return this.readIndexId(type);
+        &#125;
+        // Parse id from bytes
+        int start = this.buffer.position();
+        /*
+         * Since edge id in edges table doesn&#39;t prefix with leading 0x7e,
+         * so readId() will return the source vertex id instead of edge id,
+         * can&#39;t call: type.isEdge() ? this.readEdgeId() : this.readId();
+         */
+        Id id = this.readId();
+        int end = this.buffer.position();
+        int len = end - start;
+        byte[] bytes = new byte[len];
+        System.arraycopy(this.array(), start, bytes, 0, len);
+        return new BinaryId(bytes, id);
+    &#125;
+</code></pre>
+<p>这里是先读取ownervertexId作为Id部分, 然后将剩余的直接放入bytes，组合成BinaryId，和序列化的时候有差别，为什么这么设计呢？原来不管是vertex还是edge，都是当成Vertex来读取的。</p>
+<pre><code>protected final BinaryBackendEntry newBackendEntry(HugeEdge edge) &#123;
+        BinaryId id = new BinaryId(formatEdgeName(edge),
+                                   edge.idWithDirection());
+        return newBackendEntry(edge.type(), id);
+    &#125;
+
+public EdgeId directed(boolean directed) &#123;
+    return new EdgeId(this.ownerVertexId, this.direction, this.edgeLabelId,
+                      this.sortValues, this.otherVertexId, directed);
+&#125;
+</code></pre>
+<p>序列化的时候是<code>EdgeId</code>。</p>
+<p><code>BackendEntryIterator</code>迭代器支持对结果进行merge, 上面代码里的<code>!Bytes.prefixWith(id, entry.id().asBytes()))</code> 就是对比是否是同一个ownervertex，如果是同一个，则放到同一个BackendEntry的Columns里。</p>
+<pre><code>     public BinaryEntryIterator(BackendIterator&lt;Elem&gt; results, Query query,
+                               BiFunction&lt;BackendEntry, Elem, BackendEntry&gt; m)
+
+    @Override
+    protected final boolean fetch() &#123;
+        assert this.current == null;
+        if (this.next != null) &#123;
+            this.current = this.next;
+            this.next = null;
+        &#125;
+
+        while (this.results.hasNext()) &#123;
+            Elem elem = this.results.next();
+            BackendEntry merged = this.merger.apply(this.current, elem);
+            E.checkState(merged != null, &quot;Error when merging entry&quot;);
+            if (this.current == null) &#123;
+                // The first time to read
+                this.current = merged;
+            &#125; else if (merged == this.current) &#123;
+                // The next entry belongs to the current entry
+                assert this.current != null;
+                if (this.sizeOf(this.current) &gt;= INLINE_BATCH_SIZE) &#123;
+                    break;
+                &#125;
+            &#125; else &#123;
+                // New entry
+                assert this.next == null;
+                this.next = merged;
+                break;
+            &#125;
+
+            // When limit exceed, stop fetching
+            if (this.reachLimit(this.fetched() - 1)) &#123;
+                // Need remove last one because fetched limit + 1 records
+                this.removeLastRecord();
+                this.results.close();
+                break;
+            &#125;
+        &#125;
+
+        return this.current != null;
+    &#125;
+</code></pre>
+<h3 id="从BackendEntry转换为edge"><a href="#从BackendEntry转换为edge" class="headerlink" title="从BackendEntry转换为edge"></a>从BackendEntry转换为edge</h3><p>然后再来看读取数据<code>readVertex</code>，前面说了，就算是edge，其实也是当vertex来读取的：</p>
+<pre><code> @Override
+    public HugeVertex readVertex(HugeGraph graph, BackendEntry bytesEntry) &#123;
+        if (bytesEntry == null) &#123;
+            return null;
+        &#125;
+        BinaryBackendEntry entry = this.convertEntry(bytesEntry);
+
+        // Parse id
+        Id id = entry.id().origin();
+        Id vid = id.edge() ? ((EdgeId) id).ownerVertexId() : id;
+        HugeVertex vertex = new HugeVertex(graph, vid, VertexLabel.NONE);
+
+        // Parse all properties and edges of a Vertex
+        for (BackendColumn col : entry.columns()) &#123;
+            if (entry.type().isEdge()) &#123;
+                // NOTE: the entry id type is vertex even if entry type is edge
+                // Parse vertex edges
+                this.parseColumn(col, vertex);
+            &#125; else &#123;
+                assert entry.type().isVertex();
+                // Parse vertex properties
+                assert entry.columnsSize() == 1 : entry.columnsSize();
+                this.parseVertex(col.value, vertex);
+            &#125;
+        &#125;
+
+        return vertex;
+    &#125;
+</code></pre>
+<p>逻辑：</p>
+<ul>
+<li>先读取ownervertexid，生成HugeVertex，这个时候只知道id，不知道vertexlabel，所以设置为VertexLabel.NONE</li>
+<li>然后，读取BackendColumn，一个edge，一个Column（name是edgeid去除ownervertexid后的部分，value是边数据）</li>
+</ul>
+<p>读取是在<code>parseColumn</code>:</p>
+<pre><code>protected void parseColumn(BackendColumn col, HugeVertex vertex) &#123;
+        BytesBuffer buffer = BytesBuffer.wrap(col.name);
+        Id id = this.keyWithIdPrefix ? buffer.readId() : vertex.id();
+        E.checkState(buffer.remaining() &gt; 0, &quot;Missing column type&quot;);
+        byte type = buffer.read();
+        // Parse property
+        if (type == HugeType.PROPERTY.code()) &#123;
+            Id pkeyId = buffer.readId();
+            this.parseProperty(pkeyId, BytesBuffer.wrap(col.value), vertex);
+        &#125;
+        // Parse edge
+        else if (type == HugeType.EDGE_IN.code() ||
+                 type == HugeType.EDGE_OUT.code()) &#123;
+            this.parseEdge(col, vertex, vertex.graph());
+        &#125;
+        // Parse system property
+        else if (type == HugeType.SYS_PROPERTY.code()) &#123;
+            // pass
+        &#125;
+        // Invalid entry
+        else &#123;
+            E.checkState(false, &quot;Invalid entry(%s) with unknown type(%s): 0x%s&quot;,
+                         id, type &amp; 0xff, Bytes.toHex(col.name));
+        &#125;
+    &#125;
+</code></pre>
+<p>从``col.name`读取type，如果是edge，则parseEdge:</p>
+<pre><code>protected void parseEdge(BackendColumn col, HugeVertex vertex,
+                             HugeGraph graph) &#123;
+        // owner-vertex + dir + edge-label + sort-values + other-vertex
+
+        BytesBuffer buffer = BytesBuffer.wrap(col.name);
+        if (this.keyWithIdPrefix) &#123;
+            // Consume owner-vertex id
+            buffer.readId();
+        &#125;
+        byte type = buffer.read();
+        Id labelId = buffer.readId();
+        String sortValues = buffer.readStringWithEnding();
+        Id otherVertexId = buffer.readId();
+
+        boolean direction = EdgeId.isOutDirectionFromCode(type);
+        EdgeLabel edgeLabel = graph.edgeLabelOrNone(labelId);
+
+        // Construct edge
+        HugeEdge edge = HugeEdge.constructEdge(vertex, direction, edgeLabel,
+                                               sortValues, otherVertexId);
+
+        // Parse edge-id + edge-properties
+        buffer = BytesBuffer.wrap(col.value);
+
+        //Id id = buffer.readId();
+
+        // Parse edge properties
+        this.parseProperties(buffer, edge);
+
+        // Parse edge expired time if needed
+        if (edge.hasTtl()) &#123;
+            this.parseExpiredTime(buffer, edge);
+        &#125;
+    &#125;
+</code></pre>
+<p>从col.name依次读取出type,labelId,sortValues和otherVertexId：</p>
+<pre><code>        byte type = buffer.read();
+        Id labelId = buffer.readId();
+        String sortValues = buffer.readStringWithEnding();
+        Id otherVertexId = buffer.readId();
+</code></pre>
+<p>然后根据labelid找到  <code>EdgeLabel edgeLabel = graph.edgeLabelOrNone(labelId);</code></p>
+<p>创建<code>edge</code>, 解析边属性<code>parseProperties</code></p>
+<p>最后读取<code>Ttl</code>, 处理结果的时候，会过滤过期数据。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/11/18/jqpeng-spring%20boot%E5%AE%9E%E7%8E%B0%E8%B6%85%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%BD%91%E5%85%B3%EF%BC%88%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E3%80%81%E8%BD%AC%E5%8F%91%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/18/jqpeng-spring%20boot%E5%AE%9E%E7%8E%B0%E8%B6%85%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%BD%91%E5%85%B3%EF%BC%88%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E3%80%81%E8%BD%AC%E5%8F%91%EF%BC%89/" class="post-title-link" itemprop="url">spring boot实现超轻量级网关（反向代理、转发）</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-18 10:11:00" itemprop="dateCreated datePublished" datetime="2020-11-18T10:11:00+08:00">2020-11-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/spring-boot-route.html">spring boot实现超轻量级网关（反向代理、转发）</a></p>
+<p>在我们的rest服务中，需要暴露一个中间件的接口给用户，但是需要经过rest服务的认证，这是典型的网关使用场景。可以引入网关组件来搞定，但是引入zuul等中间件会增加系统复杂性，这里实现一个超轻量级的网关，只实现请求转发，认证等由rest服务的spring security来搞定。</p>
+<p>如何进行请求转发呢？ 熟悉网络请求的同学应该很清楚，请求无非就是请求方式、HTTP header，以及请求body，我们将这些信息取出来，透传给转发的url即可。</p>
+<p>举例：</p>
+<p>/graphdb/**   转发到 Graph_Server/**</p>
+<h2 id="获取转发目的地址："><a href="#获取转发目的地址：" class="headerlink" title="获取转发目的地址："></a>获取转发目的地址：</h2><pre><code>private String createRedictUrl(HttpServletRequest request, String routeUrl, String prefix) &#123;
+        String queryString = request.getQueryString();
+        return routeUrl + request.getRequestURI().replace(prefix, &quot;&quot;) +
+                (queryString != null ? &quot;?&quot; + queryString : &quot;&quot;);
+    &#125;
+</code></pre>
+<h2 id="解析请求头和内容"><a href="#解析请求头和内容" class="headerlink" title="解析请求头和内容"></a>解析请求头和内容</h2><p>然后从request中提取出header、body等内容，构造一个<code>RequestEntity</code>，后续可以用<code>RestTemplate</code>来请求。</p>
+<pre><code>private RequestEntity createRequestEntity(HttpServletRequest request, String url) throws URISyntaxException, IOException &#123;
+        String method = request.getMethod();
+        HttpMethod httpMethod = HttpMethod.resolve(method);
+        MultiValueMap&lt;String, String&gt; headers = parseRequestHeader(request);
+        byte[] body = parseRequestBody(request);
+        return new RequestEntity&lt;&gt;(body, headers, httpMethod, new URI(url));
+    &#125;
+
+
+    private byte[] parseRequestBody(HttpServletRequest request) throws IOException &#123;
+        InputStream inputStream = request.getInputStream();
+        return StreamUtils.copyToByteArray(inputStream);
+    &#125;
+
+    private MultiValueMap&lt;String, String&gt; parseRequestHeader(HttpServletRequest request) &#123;
+        HttpHeaders headers = new HttpHeaders();
+        List&lt;String&gt; headerNames = Collections.list(request.getHeaderNames());
+        for (String headerName : headerNames) &#123;
+            List&lt;String&gt; headerValues = Collections.list(request.getHeaders(headerName));
+            for (String headerValue : headerValues) &#123;
+                headers.add(headerName, headerValue);
+            &#125;
+        &#125;
+        return headers;
+    &#125;
+</code></pre>
+<h2 id="透明转发"><a href="#透明转发" class="headerlink" title="透明转发"></a>透明转发</h2><p>最后用<code>RestTemplate</code>来实现请求：</p>
+<pre><code> private ResponseEntity&lt;String&gt; route(RequestEntity requestEntity) &#123;
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.exchange(requestEntity, String.class);
+    &#125;
+</code></pre>
+<h2 id="全部代码"><a href="#全部代码" class="headerlink" title="全部代码"></a>全部代码</h2><p>以下是轻量级转发全部代码：</p>
+<pre><code>import org.springframework.http.*;
+import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.client.RestTemplate;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.List;
+
+@Service
+public class RoutingDelegate &#123;
+
+
+    public ResponseEntity&lt;String&gt; redirect(HttpServletRequest request, HttpServletResponse response,String routeUrl, String prefix) &#123;
+        try &#123;
+            // build up the redirect URL
+            String redirectUrl = createRedictUrl(request,routeUrl, prefix);
+            RequestEntity requestEntity = createRequestEntity(request, redirectUrl);
+            return route(requestEntity);
+        &#125; catch (Exception e) &#123;
+            return new ResponseEntity(&quot;REDIRECT ERROR&quot;, HttpStatus.INTERNAL_SERVER_ERROR);
+        &#125;
+    &#125;
+
+    private String createRedictUrl(HttpServletRequest request, String routeUrl, String prefix) &#123;
+        String queryString = request.getQueryString();
+        return routeUrl + request.getRequestURI().replace(prefix, &quot;&quot;) +
+                (queryString != null ? &quot;?&quot; + queryString : &quot;&quot;);
+    &#125;
+
+
+    private RequestEntity createRequestEntity(HttpServletRequest request, String url) throws URISyntaxException, IOException &#123;
+        String method = request.getMethod();
+        HttpMethod httpMethod = HttpMethod.resolve(method);
+        MultiValueMap&lt;String, String&gt; headers = parseRequestHeader(request);
+        byte[] body = parseRequestBody(request);
+        return new RequestEntity&lt;&gt;(body, headers, httpMethod, new URI(url));
+    &#125;
+    private ResponseEntity&lt;String&gt; route(RequestEntity requestEntity) &#123;
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.exchange(requestEntity, String.class);
+    &#125;
+
+
+    private byte[] parseRequestBody(HttpServletRequest request) throws IOException &#123;
+        InputStream inputStream = request.getInputStream();
+        return StreamUtils.copyToByteArray(inputStream);
+    &#125;
+
+    private MultiValueMap&lt;String, String&gt; parseRequestHeader(HttpServletRequest request) &#123;
+        HttpHeaders headers = new HttpHeaders();
+        List&lt;String&gt; headerNames = Collections.list(request.getHeaderNames());
+        for (String headerName : headerNames) &#123;
+            List&lt;String&gt; headerValues = Collections.list(request.getHeaders(headerName));
+            for (String headerValue : headerValues) &#123;
+                headers.add(headerName, headerValue);
+            &#125;
+        &#125;
+        return headers;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="Spring-集成"><a href="#Spring-集成" class="headerlink" title="Spring 集成"></a>Spring 集成</h2><p>Spring Controller,RequestMapping里把GET \ POST\PUT\DELETE 支持的请求带上，就能实现转发了。</p>
+<pre><code>@RestController
+@RequestMapping(GraphDBController.DELEGATE_PREFIX)
+@Api(value = &quot;GraphDB&quot;, tags = &#123;
+        &quot;graphdb-Api&quot;
+&#125;)
+public class GraphDBController &#123;
+
+    @Autowired
+    GraphProperties graphProperties;
+
+    public final static String DELEGATE_PREFIX = &quot;/graphdb&quot;;
+
+    @Autowired
+    private RoutingDelegate routingDelegate;
+
+    @RequestMapping(value = &quot;/**&quot;, method = &#123;RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE&#125;, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity catchAll(HttpServletRequest request, HttpServletResponse response) &#123;
+        return routingDelegate.redirect(request, response, graphProperties.getGraphServer(), DELEGATE_PREFIX);
+    &#125;
+&#125;
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/11/17/jqpeng-hugegraph%20%E6%94%AF%E6%8C%81sparql%20%E4%B8%8Ecypher/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/17/jqpeng-hugegraph%20%E6%94%AF%E6%8C%81sparql%20%E4%B8%8Ecypher/" class="post-title-link" itemprop="url">hugegraph 支持sparql 与cypher</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-17 15:10:00" itemprop="dateCreated datePublished" datetime="2020-11-17T15:10:00+08:00">2020-11-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/hugegraph-cypher.html">hugegraph 支持sparql 与cypher</a></p>
+<p>hugegraph 是百度开源的基于tinkerpop的图数据库，支持通过gremlin进行查询。</p>
+<p>这里，我们来扩展支持sparql 与cypher。</p>
+<h2 id="sparql支持"><a href="#sparql支持" class="headerlink" title="sparql支持"></a>sparql支持</h2><p>github上有<code>SparqlToGremlinCompiler</code>，可以支持将sparql转GraphTraversal，集成该工具库即可：</p>
+<pre><code>@Path(&quot;graphs/&#123;graph&#125;/sparql&quot;)
+@Singleton
+public class SparqlAPI extends API &#123;
+
+    private static final Logger LOG = Log.logger(SparqlAPI.class);
+
+    @GET
+    @Timed
+    @CompressInterceptor.Compress
+    @Produces(APPLICATION_JSON_WITH_CHARSET)
+    public String query(@Context GraphManager manager,
+                        @PathParam(&quot;graph&quot;) String graph,
+                        @QueryParam(&quot;sparql&quot;) String sparql) &#123;
+        LOG.debug(&quot;Graph [&#123;&#125;] query by sparql: &#123;&#125;&quot;, graph, sparql);
+
+        E.checkArgument(sparql != null &amp;&amp; !sparql.isEmpty(),
+                &quot;The sparql parameter can&#39;t be null or empty&quot;);
+
+        HugeGraph g = graph(manager, graph);
+        GraphTraversal&lt;Vertex, ?&gt; traversal = SparqlToGremlinCompiler.convertToGremlinTraversal(g, sparql);
+        List&lt;?&gt; result = traversal.toList();
+        if (result.size() &gt; 0) &#123;
+            Object item = result.get(0);
+            if (item instanceof Vertex) &#123;
+                return manager.serializer(g).writeVertices((Iterator&lt;Vertex&gt;) result.iterator(), false);
+            &#125;
+            if (item instanceof Map) &#123;
+                return manager.serializer(g).writeMap((Map) item);
+            &#125;
+        &#125;
+
+        return result.toString();
+    &#125;
+&#125;
+</code></pre>
+<h2 id="cypher-支持"><a href="#cypher-支持" class="headerlink" title="cypher 支持"></a>cypher 支持</h2><p>opencypher 提供了<code>translation</code>包，支持将cypher转为gremlin：</p>
+<pre><code>        &lt;dependency&gt;
+            &lt;groupId&gt;org.opencypher.gremlin&lt;/groupId&gt;
+            &lt;artifactId&gt;translation&lt;/artifactId&gt;
+            &lt;version&gt;1.0.4&lt;/version&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>转换代码：</p>
+<pre><code> TranslationFacade cfog = new TranslationFacade();
+ String gremlin = cfog.toGremlinGroovy(cypher);
+</code></pre>
+<p>增加api代码</p>
+<pre><code>     @GET
+    @Timed
+    @CompressInterceptor.Compress
+    @Produces(APPLICATION_JSON_WITH_CHARSET)
+    public Response query(@Context GraphManager manager,
+                          @PathParam(&quot;graph&quot;) String graph,
+                          @Context HugeConfig conf,
+                          @Context HttpHeaders headers,
+                          @QueryParam(&quot;cypher&quot;) String cypher) &#123;
+        LOG.debug(&quot;Graph [&#123;&#125;] query by cypher: &#123;&#125;&quot;, graph, cypher);
+
+        return getResponse(graph, headers, cypher);
+    &#125;
+
+    private Response getResponse(@PathParam(&quot;graph&quot;) String graph, @Context HttpHeaders headers, @QueryParam(&quot;cypher&quot;) String cypher) &#123;
+        E.checkArgument(cypher != null &amp;&amp; !cypher.isEmpty(),
+                &quot;The cypher parameter can&#39;t be null or empty&quot;);
+
+        TranslationFacade cfog = new TranslationFacade();
+        String gremlin = cfog.toGremlinGroovy(cypher);
+        gremlin = &quot;g = &quot; + graph + &quot;.traversal()\n&quot; + gremlin;
+        String auth = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
+        MultivaluedMap&lt;String, String&gt; params = new MultivaluedHashMap&lt;&gt;();
+        params.put(&quot;gremlin&quot;, Arrays.asList(gremlin));
+        Response response = this.client().doGetRequest(auth, params);
+        return transformResponseIfNeeded(response);
+    &#125;
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/11/17/jqpeng-%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/17/jqpeng-%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80/" class="post-title-link" itemprop="url">图数据库查询语言</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-17 14:48:00" itemprop="dateCreated datePublished" datetime="2020-11-17T14:48:00+08:00">2020-11-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/graph-query-lang.html">图数据库查询语言</a></p>
+<p>本文介绍图数据库支持的gremlin和Cypher查询语言。</p>
+<h2 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h2><p>可使用gremlin api执行</p>
+<h2 id="gremlin-api"><a href="#gremlin-api" class="headerlink" title="gremlin api"></a>gremlin api</h2><p>POST <a target="_blank" rel="noopener" href="http://localhost:8080/gremlin">http://localhost:8080/gremlin</a></p>
+<pre><code>&#123;&quot;gremlin&quot;:&quot;这里是语句&quot;,
+ &quot;bindings&quot;: &#123;&#125;,
+&quot;language&quot;: &quot;gremlin-groovy&quot;,
+&quot;aliases&quot;: &#123;    &quot;graph&quot;: &quot;graphname&quot;,     &quot;g&quot;: &quot;__g_graphname&quot;&#125;
+&#125;
+</code></pre>
+<h3 id="schema"><a href="#schema" class="headerlink" title="schema"></a>schema</h3><pre><code>schema = hugegraph.schema()
+
+schema.propertyKey(&quot;name&quot;).asText().ifNotExist().create()
+schema.propertyKey(&quot;age&quot;).asInt().ifNotExist().create()
+schema.propertyKey(&quot;time&quot;).asInt().ifNotExist().create()
+schema.propertyKey(&quot;reason&quot;).asText().ifNotExist().create()
+schema.propertyKey(&quot;type&quot;).asText().ifNotExist().create()
+
+schema.vertexLabel(&quot;character&quot;).properties(&quot;name&quot;, &quot;age&quot;, &quot;type&quot;).primaryKeys(&quot;name&quot;).nullableKeys(&quot;age&quot;).ifNotExist().create()
+schema.vertexLabel(&quot;location&quot;).properties(&quot;name&quot;).primaryKeys(&quot;name&quot;).ifNotExist().create()
+
+schema.edgeLabel(&quot;father&quot;).link(&quot;character&quot;, &quot;character&quot;).ifNotExist().create()
+schema.edgeLabel(&quot;mother&quot;).link(&quot;character&quot;, &quot;character&quot;).ifNotExist().create()
+schema.edgeLabel(&quot;battled&quot;).link(&quot;character&quot;, &quot;character&quot;).properties(&quot;time&quot;).ifNotExist().create()
+schema.edgeLabel(&quot;lives&quot;).link(&quot;character&quot;, &quot;location&quot;).properties(&quot;reason&quot;).nullableKeys(&quot;reason&quot;).ifNotExist().create()
+schema.edgeLabel(&quot;pet&quot;).link(&quot;character&quot;, &quot;character&quot;).ifNotExist().create()
+schema.edgeLabel(&quot;brother&quot;).link(&quot;character&quot;, &quot;character&quot;).ifNotExist().create()
+</code></pre>
+<h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><pre><code>// add vertices
+Vertex saturn = graph.addVertex(T.label, &quot;character&quot;, &quot;name&quot;, &quot;saturn&quot;, &quot;age&quot;, 10000, &quot;type&quot;, &quot;titan&quot;)
+Vertex sky = graph.addVertex(T.label, &quot;location&quot;, &quot;name&quot;, &quot;sky&quot;)
+Vertex sea = graph.addVertex(T.label, &quot;location&quot;, &quot;name&quot;, &quot;sea&quot;)
+Vertex jupiter = graph.addVertex(T.label, &quot;character&quot;, &quot;name&quot;, &quot;jupiter&quot;, &quot;age&quot;, 5000, &quot;type&quot;, &quot;god&quot;)
+Vertex neptune = graph.addVertex(T.label, &quot;character&quot;, &quot;name&quot;, &quot;neptune&quot;, &quot;age&quot;, 4500, &quot;type&quot;, &quot;god&quot;)
+Vertex hercules = graph.addVertex(T.label, &quot;character&quot;, &quot;name&quot;, &quot;hercules&quot;, &quot;age&quot;, 30, &quot;type&quot;, &quot;demigod&quot;)
+Vertex alcmene = graph.addVertex(T.label, &quot;character&quot;, &quot;name&quot;, &quot;alcmene&quot;, &quot;age&quot;, 45, &quot;type&quot;, &quot;human&quot;)
+Vertex pluto = graph.addVertex(T.label, &quot;character&quot;, &quot;name&quot;, &quot;pluto&quot;, &quot;age&quot;, 4000, &quot;type&quot;, &quot;god&quot;)
+Vertex nemean = graph.addVertex(T.label, &quot;character&quot;, &quot;name&quot;, &quot;nemean&quot;, &quot;type&quot;, &quot;monster&quot;)
+Vertex hydra = graph.addVertex(T.label, &quot;character&quot;, &quot;name&quot;, &quot;hydra&quot;, &quot;type&quot;, &quot;monster&quot;)
+Vertex cerberus = graph.addVertex(T.label, &quot;character&quot;, &quot;name&quot;, &quot;cerberus&quot;, &quot;type&quot;, &quot;monster&quot;)
+Vertex tartarus = graph.addVertex(T.label, &quot;location&quot;, &quot;name&quot;, &quot;tartarus&quot;)
+
+// add edges
+jupiter.addEdge(&quot;father&quot;, saturn)
+jupiter.addEdge(&quot;lives&quot;, sky, &quot;reason&quot;, &quot;loves fresh breezes&quot;)
+jupiter.addEdge(&quot;brother&quot;, neptune)
+jupiter.addEdge(&quot;brother&quot;, pluto)
+neptune.addEdge(&quot;lives&quot;, sea, &quot;reason&quot;, &quot;loves waves&quot;)
+neptune.addEdge(&quot;brother&quot;, jupiter)
+neptune.addEdge(&quot;brother&quot;, pluto)
+hercules.addEdge(&quot;father&quot;, jupiter)
+hercules.addEdge(&quot;mother&quot;, alcmene)
+hercules.addEdge(&quot;battled&quot;, nemean, &quot;time&quot;, 1)
+hercules.addEdge(&quot;battled&quot;, hydra, &quot;time&quot;, 2)
+hercules.addEdge(&quot;battled&quot;, cerberus, &quot;time&quot;, 12)
+pluto.addEdge(&quot;brother&quot;, jupiter)
+pluto.addEdge(&quot;brother&quot;, neptune)
+pluto.addEdge(&quot;lives&quot;, tartarus, &quot;reason&quot;, &quot;no fear of death&quot;)
+pluto.addEdge(&quot;pet&quot;, cerberus)
+cerberus.addEdge(&quot;lives&quot;, tartarus)
+</code></pre>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/11/17/1605595541783.png" alt="可视化"></p>
+<h2 id="创建索引"><a href="#创建索引" class="headerlink" title="创建索引"></a>创建索引</h2><p>创建索引，使用REST API：</p>
+<p>POST <a target="_blank" rel="noopener" href="http://localhost:8080/graphs/hugegraph/schema/indexlabels">http://localhost:8080/graphs/hugegraph/schema/indexlabels</a></p>
+<pre><code>&#123;&quot;name&quot;: &quot;characterAge&quot;,&quot;base_type&quot;: &quot;VERTEX_LABEL&quot;,&quot;base_value&quot;: &quot;character&quot;,&quot;index_type&quot;: &quot;RANGE&quot;,&quot;fields&quot;: [    &quot;age&quot;]
+&#125;
+</code></pre>
+<h2 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h2><h3 id="API-说明"><a href="#API-说明" class="headerlink" title="API 说明"></a>API 说明</h3><p>支持<code>gremlin</code>、<code>sparql</code>和<code>Cypher</code> api，推荐gremlin和Cypher</p>
+<h4 id="cypher-api"><a href="#cypher-api" class="headerlink" title="cypher api"></a>cypher api</h4><pre><code>http://127.0.0.1:8080/graphs/hugegraph/cypher?cypher=
+</code></pre>
+<p>eg:</p>
+<pre><code>curl http://127.0.0.1:8080/graphs/hugegraph/cypher?cypher=MATCH%20(n:character)-[:lives]-%3E(location)-[:lives]-(cohabitants)%20where%20n.name=%27pluto%27%20return%20cohabitants.name
+</code></pre>
+<h4 id="gremlin-api-1"><a href="#gremlin-api-1" class="headerlink" title="gremlin api"></a>gremlin api</h4><p>POST <a target="_blank" rel="noopener" href="http://localhost:8080/gremlin">http://localhost:8080/gremlin</a></p>
+<pre><code>&#123;&quot;gremlin&quot;:&quot;这里是语句&quot;,
+ &quot;bindings&quot;: &#123;&#125;,
+&quot;language&quot;: &quot;gremlin-groovy&quot;,
+&quot;aliases&quot;: &#123;    &quot;graph&quot;: &quot;graphname&quot;,     &quot;g&quot;: &quot;__g_graphname&quot;&#125;
+&#125;
+</code></pre>
+<h4 id="sparql-api"><a href="#sparql-api" class="headerlink" title="sparql api"></a>sparql api</h4><pre><code>GET http://127.0.0.1:8080/graphs/hugegraph/sparql?sparql=SELECT%20*%20WHERE%20&#123;%20&#125;
+</code></pre>
+<p><strong>1. 查询hercules的祖父</strong></p>
+<pre><code>g.V().hasLabel(&#39;character&#39;).has(&#39;name&#39;,&#39;hercules&#39;).out(&#39;father&#39;).out(&#39;father&#39;)
+</code></pre>
+<p>也可以通过<code>repeat</code>方式：</p>
+<pre><code>g.V().hasLabel(&#39;character&#39;).has(&#39;name&#39;,&#39;hercules&#39;).repeat(__.out(&#39;father&#39;)).times(2)
+</code></pre>
+<p><strong>cypher</strong></p>
+<pre><code>MATCH (n:character)-[:father]-&gt;()-[:father]-&gt;(grandfather) where n.name=&#39;hercules&#39; return grandfather
+</code></pre>
+<p><strong>2. Find the name of hercules’s father</strong></p>
+<pre><code>g.V().hasLabel(&#39;character&#39;).has(&#39;name&#39;,&#39;hercules&#39;).out(&#39;father&#39;).value(&#39;name&#39;)
+</code></pre>
+<p><strong>cypher</strong></p>
+<pre><code>MATCH (n:character)-[:father]-&gt;(father) where n.name=&#39;hercules&#39; return father.name
+</code></pre>
+<p><strong>3. Find the characters with age &gt; 100</strong></p>
+<pre><code>g.V().hasLabel(&#39;character&#39;).has(&#39;age&#39;,gt(100))
+</code></pre>
+<p><strong>cypher</strong></p>
+<pre><code>MATCH (n:character) where n.age &gt; 10 return n
+</code></pre>
+<p><strong>4. Find who are pluto’s cohabitants</strong></p>
+<pre><code>g.V().hasLabel(&#39;character&#39;).has(&#39;name&#39;,&#39;pluto&#39;).out(&#39;lives&#39;).in(&#39;lives&#39;).values(&#39;name&#39;)
+</code></pre>
+<p><strong>cypher</strong></p>
+<pre><code>MATCH (n:character)-[:lives]-&gt;(location)-[:lives]-(cohabitants) where n.name=&#39;pluto&#39; return cohabitants.name
+</code></pre>
+<p><strong>5. Find pluto can’t be his own cohabitant</strong></p>
+<pre><code>pluto = g.V().hasLabel(&#39;character&#39;).has(&#39;name&#39;, &#39;pluto&#39;)
+g.V(pluto).out(&#39;lives&#39;).in(&#39;lives&#39;).where(is(neq(pluto)).values(&#39;name&#39;)
+
+// use &#39;as&#39;
+g.V().hasLabel(&#39;character&#39;).has(&#39;name&#39;, &#39;pluto&#39;).as(&#39;x&#39;).out(&#39;lives&#39;).in(&#39;lives&#39;).where(neq(&#39;x&#39;)).values(&#39;name&#39;)
+
+
+
+
+cypher&gt; MATCH (src:character&#123;name:&quot;pluto&quot;&#125;)-[:lives]-&gt;()&lt;-[:lives]-(dst:character) RETURN dst.name
+</code></pre>
+<p><strong>6. Pluto’s Brothers</strong></p>
+<pre><code>pluto = g.V().hasLabel(&#39;character&#39;).has(&#39;name&#39;, &#39;pluto&#39;).next()
+// where do pluto&#39;s brothers live?
+g.V(pluto).out(&#39;brother&#39;).out(&#39;lives&#39;).values(&#39;name&#39;)
+
+// which brother lives in which place?
+g.V(pluto).out(&#39;brother&#39;).as(&#39;god&#39;).out(&#39;lives&#39;).as(&#39;place&#39;).select(&#39;god&#39;,&#39;place&#39;)
+
+// what is the name of the brother and the name of the place?
+g.V(pluto).out(&#39;brother&#39;).as(&#39;god&#39;).out(&#39;lives&#39;).as(&#39;place&#39;).select(&#39;god&#39;,&#39;place&#39;).by(&#39;name&#39;)
+
+
+
+MATCH (src:Character&#123;name:&quot;pluto&quot;&#125;)-[:brother]-&gt;(bro:Character)-[:lives]-&gt;(dst)
+RETURN bro.name, dst.name
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/11/04/jqpeng-axios%20%E6%B5%8F%E8%A7%88%E5%99%A8%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/04/jqpeng-axios%20%E6%B5%8F%E8%A7%88%E5%99%A8%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" class="post-title-link" itemprop="url">axios 浏览器内存泄露问题解决</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-04 11:53:00" itemprop="dateCreated datePublished" datetime="2020-11-04T11:53:00+08:00">2020-11-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>868</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/axios-memory-leaks.html">axios 浏览器内存泄露问题解决</a></p>
+<h2 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h2><p>业务页面，频繁切换下一条，内存飙涨，导致卡顿，之前怀疑是音频播放器的锅，修改后问题依旧，于是排查网络请求。</p>
+<p>到axios issues搜索，发现<code>memory leaks</code>帖子不少，典型的在这里<a target="_blank" rel="noopener" href="https://github.com/axios/axios/issues/3217">Axios doesn’t address memory leaks?</a>:</p>
+<p>这里提到<code>0.19.2 </code>版本没有问题，但是升级到<code>0.20.0</code>后，出现问题。</p>
+<h2 id="两种解决方案："><a href="#两种解决方案：" class="headerlink" title="两种解决方案："></a>两种解决方案：</h2><ul>
+<li>降级到<code>0.19.2 </code></li>
+<li>在新版本里，不要直接使用axios，而是先创建一个instance</li>
+</ul>
+<pre><code>const axios = axios.create(&#123;...&#125;) // instead of axios.get(), post(), put() etc.
+</code></pre>
+<p>排查业务代码，发现每次请求都是创建一个 instance，抛开版本问题，每次创建实例肯定会存在内存问题，最好还是先创建个single instance，后面复用：</p>
+<pre><code>import axios, &#123; AxiosRequestConfig, AxiosResponse &#125; from &#39;axios&#39;
+
+// 创建一个实例
+const axiosInstance = axios.create() 
+
+  save(parameters: &#123;
+    &#39;data&#39;: ResultSaveParam,
+    $queryParameters?: any,
+    $domain?: string
+  &#125;): Promise&lt;AxiosResponse&lt;ApiResult&gt;&gt; &#123;
+     .... // 使用axiosInstance
+    return axiosInstance.request(config)
+  &#125;
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/11/02/jqpeng-%E7%BB%99Swagger%E6%8D%A2%E4%B8%80%E5%A5%97%E7%9A%AE%E8%82%A4%20Knife4j%E9%9B%86%E6%88%90%E8%AE%B0%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/02/jqpeng-%E7%BB%99Swagger%E6%8D%A2%E4%B8%80%E5%A5%97%E7%9A%AE%E8%82%A4%20Knife4j%E9%9B%86%E6%88%90%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">给Swagger换一套皮肤 Knife4j集成记录</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-02 11:19:00" itemprop="dateCreated datePublished" datetime="2020-11-02T11:19:00+08:00">2020-11-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/Knife4j.html">给Swagger换一套皮肤 Knife4j集成记录</a></p>
+<p>Swagger有一套经典的UI，但是并不是很好用，之前有看到Knife4j，界面美观、功能完善，因此尝试集成。</p>
+<p>demo参考示例地址：<a target="_blank" rel="noopener" href="https://gitee.com/xiaoym/swagger-bootstrap-ui-demo/tree/master/knife4j-spring-boot-demo">knife4j-spring-boot-demo</a></p>
+<p>Knife4j前身是swagger-bootstrap-ui,是一个为Swagger接口文档赋能的工具</p>
+<p>根据官方文档，集成非常方便。</p>
+<h2 id="maven引用"><a href="#maven引用" class="headerlink" title="maven引用"></a>maven引用</h2><p>第一步,是在项目的<code>pom.xml</code>文件中引入<code>knife4j</code>的依赖,如下：</p>
+<pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.github.xiaoymin&lt;/groupId&gt;
+        &lt;artifactId&gt;knife4j-spring-boot-starter&lt;/artifactId&gt;
+        &lt;version&gt;2.0.6&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<p>当前最新版是2.0.6</p>
+<p>如果你想使用bom的方式引入,请参考<a target="_blank" rel="noopener" href="https://doc.xiaominfo.com/knife4j/mavenbom.html">Maven Bom方式引用</a></p>
+<h2 id="创建Swagger配置文件"><a href="#创建Swagger配置文件" class="headerlink" title="创建Swagger配置文件"></a>创建Swagger配置文件</h2><p>新建Swagger的配置文件<code>SwaggerConfiguration.java</code>文件,创建springfox提供的Docket分组对象,代码如下：</p>
+<pre><code>@Configuration
+@EnableSwagger2
+@EnableKnife4j
+@Import(BeanValidatorPluginsConfiguration.class)
+public class SwaggerConfiguration &#123;
+
+    @Bean(value = &quot;defaultApi2&quot;)
+    public Docket defaultApi2() &#123;
+        Docket docket=new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                //分组名称
+                .groupName(&quot;2.X版本&quot;)
+                .select()
+                //这里指定Controller扫描包路径
+                .apis(RequestHandlerSelectors.basePackage(&quot;com.swagger.bootstrap.ui.demo.new2&quot;))
+                .paths(PathSelectors.any())
+                .build();
+        return docket;
+    &#125;
+
+&#125;
+</code></pre>
+<p>以上有两个注解需要特别说明，如下表：</p>
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@EnableSwagger2</code></td>
+<td>该注解是Springfox-swagger框架提供的使用Swagger注解，该注解必须加</td>
+</tr>
+<tr>
+<td><code>@EnableKnife4j</code></td>
+<td>该注解是<code>knife4j</code>提供的增强注解,Ui提供了例如动态参数、参数过滤、接口排序等增强功能,如果你想使用这些增强功能就必须加该注解，否则可以不用加</td>
+</tr>
+</tbody></table>
+<h2 id="spring-security-免认证"><a href="#spring-security-免认证" class="headerlink" title="spring-security 免认证"></a>spring-security 免认证</h2><p>将<code>/**/doc.html/**</code> 加入：</p>
+<pre><code>    private String[] getSwaggerUrl() &#123;
+        List&lt;String&gt; urls = new ArrayList&lt;String&gt;();
+        urls.add(&quot;/**/swagger-resources/**&quot;);
+        urls.add(&quot;/**/webjars/**&quot;);
+        urls.add(&quot;/**/doc.html/**&quot;);
+        urls.add(&quot;/**/v2/**&quot;);
+        urls.add(&quot;/**/swagger-ui.html/**&quot;);
+        return urls.toArray(new String[urls.size()]);
+    &#125;http.authorizeRequests() .antMatchers(getSwaggerUrl()).permitAll()
+</code></pre>
+<h2 id="测试访问"><a href="#测试访问" class="headerlink" title="测试访问"></a>测试访问</h2><p>在浏览器输入地址：<code>http://host:port/doc.html</code></p>
+<p>可以设置全局参数：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/11/2/1604286718931.png" alt="全局参数"></p>
+<p>支持在线调试</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/11/2/1604286643402.png" alt="在线调试"></p>
+<p>离线文档支持导出md、pdf等</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/11/2/1604286760474.png" alt="导出文档"></p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>前端如何更优雅的调用api呢？参考：</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/generator-swagger-2-ts-2.html">Vue 使用typescript， 优雅的调用swagger API</a></p>
+<p>后面有空，可以将这个集成到knife4j</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/10/16/jqpeng-%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95%E4%B9%8B%EF%BC%9A%20DeepFM%E5%8F%8A%E4%BD%BF%E7%94%A8DeepCTR%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/16/jqpeng-%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95%E4%B9%8B%EF%BC%9A%20DeepFM%E5%8F%8A%E4%BD%BF%E7%94%A8DeepCTR%E6%B5%8B%E8%AF%95/" class="post-title-link" itemprop="url">推荐算法之： DeepFM及使用DeepCTR测试</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-16 14:21:00" itemprop="dateCreated datePublished" datetime="2020-10-16T14:21:00+08:00">2020-10-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/deepfm.html">推荐算法之： DeepFM及使用DeepCTR测试</a></p>
+<h2 id="算法介绍"><a href="#算法介绍" class="headerlink" title="算法介绍"></a>算法介绍</h2><p>左边deep network，右边FM，所以叫deepFM</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764397990.png" alt="DeepFm"></p>
+<p>包含两个部分：</p>
+<ul>
+<li>Part1： FM(Factorization machines)，因子分解机部分</li>
+</ul>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764448337.png" alt="FM"></p>
+<p>在传统的一阶线性回归之上，加了一个二次项，可以表达两两特征的相互关系。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764632765.png" alt="特征相互关系"></p>
+<p>这里的公式可以简化，减少计算量，下图来至于网络。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602765047458.png" alt="FM"></p>
+<ul>
+<li>Part2： Deep部分</li>
+</ul>
+<p>deep部分是多层dnn网络。</p>
+<h2 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h2><p>实现部分，<a target="_blank" rel="noopener" href="https://blog.csdn.net/songbinxu/article/details/80151814">用Keras实现一个DeepFM</a> 和<a target="_blank" rel="noopener" href="https://blog.csdn.net/u012969412/article/details/88684723">·清尘·《FM、FMM、DeepFM整理（pytorch）》</a></p>
+<p>讲的比较清楚，这里引用keras实现来说明。</p>
+<p>整体的网络结构：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764969628.png" alt="网络结构"></p>
+<h3 id="特征编码"><a href="#特征编码" class="headerlink" title="特征编码"></a>特征编码</h3><p>特征可以分为3类：</p>
+<ul>
+<li>连续型field，比如数字类型特征</li>
+<li>单值离散型特征，比如gender，可选为male、female</li>
+<li>多值离散型，比如tag，可以有多个</li>
+</ul>
+<p>连续型field，可以拼接到一起，dense数据。</p>
+<p>单值，多值field进行Onehot后，可见单值离散field对应的独热向量只有一位取1，而多值离散field对应的独热向量有多于一位取1，表示该field可以同时取多个特征值。</p>
+<table>
+<thead>
+<tr>
+<th>label</th>
+<th>shop_score</th>
+<th>gender=m</th>
+<th>gender=f</th>
+<th>interest=f</th>
+<th>interest=c</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>0.2</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0.8</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<h3 id="FM-部分"><a href="#FM-部分" class="headerlink" title="FM 部分"></a>FM 部分</h3><p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602765456508.png" alt="FM"></p>
+<p>看公式：<br><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602764448337.png" alt="FM"></p>
+<p>先算 FM一次项：</p>
+<ul>
+<li>连续型field 可以用Dense(1)层实现</li>
+<li>单值离散型field 用Embedding(n,1), n是分类中值的个数</li>
+<li>多值离散型field可以同时取多个特征值，为了batch training，必须对样本进行补零padding。同样可以用Embedding实现，因为有多个Embedding，可以取下平均值。</li>
+</ul>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/15/1602765746903.png" alt="1次项"></p>
+<p>然后计算FM二次项，这里理解比较费劲一点。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012969412/article/details/88684723">·清尘·《FM、FMM、DeepFM整理（pytorch）》</a> 深入浅出的讲明白了这个过程，大家可以参见。</p>
+<p>我们来看具体实现方面，这里的<a target="_blank" rel="noopener" href="http://fancyerii.github.io/2019/12/19/deepfm/#fm-layer">DeepFM模型CTR预估理论与实战</a> 讲解更容易理解。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/16/1602819038585.png" alt="FM公式"></p>
+<p>假设只有前面的C1和C2两个Category的特征，词典大小还是3和2。假设输入还是C1=2，C2=2(下标从1开始)，则Embedding之后为V2=[e21,e22,e23,e24]和V5=[e51,e52,e53,e54]。</p>
+<p>因为xi和xj同时不为零才需要计算，所以上面的公式里需要计算的只有i=2和j=5的情况。因此：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/16/1602819112460.png" alt="FM"></p>
+<p>扩展到多个，比如C1,C2,C3，需要算内积</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/16/1602819135487.png"></p>
+<p>怎么用用矩阵乘法一次计算出来呢？我们可以看看这个</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/16/1602819176970.png"></p>
+<p>对应的代码就是</p>
+<pre><code>       square_of_sum = tf.square(reduce_sum(        concated_embeds_value, axis=1, keep_dims=True))    sum_of_square = reduce_sum(        concated_embeds_value * concated_embeds_value, axis=1, keep_dims=True)    cross_term = square_of_sum - sum_of_square    cross_term = 0.5 * reduce_sum(cross_term, axis=2, keep_dims=False)
+</code></pre>
+<p>其中concated_embeds_value是拼接起来的embeds_value。</p>
+<h3 id="Deep部分"><a href="#Deep部分" class="headerlink" title="Deep部分"></a>Deep部分</h3><p>DNN比较简单，FM的输入和DNN的输入都是同一个group_embedding_dict。</p>
+<h2 id="使用movielens-来测试"><a href="#使用movielens-来测试" class="headerlink" title="使用movielens 来测试"></a>使用movielens 来测试</h2><p>下载<code>ml-100k</code> 数据集</p>
+<pre><code>wget http://files.grouplens.org/datasets/movielens/ml-100k.zip
+unzip ml-100k.zip
+</code></pre>
+<p>安装相关软件包，sklearn，deepctr</p>
+<p>导入包：</p>
+<pre><code>import pandas
+import pandas as pd
+import sklearn
+from sklearn.metrics import log_loss, roc_auc_score
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from tensorflow.python.keras.preprocessing.sequence import pad_sequences
+import tensorflow as tf
+from tqdm import tqdm
+
+from deepctr.models import DeepFM
+from deepctr.feature_column import SparseFeat, VarLenSparseFeat, get_feature_names
+import numpy as np
+</code></pre>
+<p>读取评分数据：</p>
+<pre><code>u_data = pd.read_csv(&quot;ml-100k/u.data&quot;, sep=&#39;\t&#39;, header=None)
+u_data.columns = [&#39;user_id&#39;, &#39;movie_id&#39;, &#39;rating&#39;, &#39;timestamp&#39;]
+</code></pre>
+<p>有评分的设置为1，随机采用未评分的</p>
+<pre><code>def neg_sample(u_data, neg_rate=1):
+    # 全局随机采样
+    item_ids = u_data[&#39;movie_id&#39;].unique()
+    print(&#39;start neg sample&#39;)
+    neg_data = []
+    # 负采样
+    for user_id, hist in tqdm(u_data.groupby(&#39;user_id&#39;)):
+        # 当前用户movie
+        rated_movie_list = hist[&#39;movie_id&#39;].tolist()
+        candidate_set = list(set(item_ids) - set(rated_movie_list))
+        neg_list_id = np.random.choice(candidate_set, size=len(rated_movie_list) * neg_rate, replace=True)
+        for id in neg_list_id:
+            neg_data.append([user_id, id, -1, 0])
+    u_data_neg = pd.DataFrame(neg_data)
+    u_data_neg.columns = [&#39;user_id&#39;, &#39;movie_id&#39;, &#39;rating&#39;, &#39;timestamp&#39;]
+    u_data = pandas.concat([u_data, u_data_neg])
+    print(&#39;end neg sample&#39;)
+    return u_data
+</code></pre>
+<p>读取item数据</p>
+<pre><code>u_item = pd.read_csv(&quot;ml-100k/u.item&quot;, sep=&#39;|&#39;, header=None, error_bad_lines=False)
+    genres_columns = [&#39;Action&#39;, &#39;Adventure&#39;,
+                      &#39;Animation&#39;,
+                      &#39;Children&#39;, &#39;Comedy&#39;, &#39;Crime&#39;, &#39;Documentary&#39;, &#39;Drama&#39;, &#39;Fantasy&#39;,
+                      &#39;Film_Noir&#39;, &#39;Horror&#39;, &#39;Musical&#39;, &#39;Mystery&#39;, &#39;Romance&#39;, &#39;Sci-Fi&#39;,
+                      &#39;Thriller&#39;, &#39;War&#39;, &#39;Western&#39;]
+
+    u_item.columns = [&#39;movie_id&#39;, &#39;title&#39;, &#39;release_date&#39;, &#39;video_date&#39;, &#39;url&#39;, &#39;unknown&#39;] + genres_columns
+</code></pre>
+<p>处理genres并删除单独的genres列</p>
+<pre><code>     genres_list = []
+    for index, row in u_item.iterrows():
+        genres = []
+        for item in genres_columns:
+            if row[item]:
+                genres.append(item)
+        genres_list.append(&#39;|&#39;.join(genres))
+
+    u_item[&#39;genres&#39;] = genres_list
+    for item in genres_columns:
+        del u_item[item]
+</code></pre>
+<p>读取用户信息：</p>
+<pre><code>  # user id | age | gender | occupation(职业) | zip code（邮编，地区)
+    u_user = pd.read_csv(&quot;ml-100k/u.user&quot;, sep=&#39;|&#39;, header=None)
+    u_user.columns = [&#39;user_id&#39;, &#39;age&#39;, &#39;gender&#39;, &#39;occupation&#39;, &#39;zip&#39;]
+</code></pre>
+<p>join到一起：</p>
+<pre><code> data = pandas.merge(u_data, u_item, on=&quot;movie_id&quot;, how=&#39;left&#39;)
+ data = pandas.merge(data, u_user, on=&quot;user_id&quot;, how=&#39;left&#39;)
+ data.to_csv(&#39;ml-100k/data.csv&#39;, index=False)
+</code></pre>
+<p>处理特征：</p>
+<pre><code>sparse_features = [&quot;movie_id&quot;, &quot;user_id&quot;,
+                   &quot;gender&quot;, &quot;age&quot;, &quot;occupation&quot;, &quot;zip&quot;, ]
+
+data[sparse_features] = data[sparse_features].astype(str)
+target = [&#39;rating&#39;]
+
+# 评分
+data[&#39;rating&#39;] = [1 if int(x) &gt;= 0 else 0 for x in data[&#39;rating&#39;]]
+</code></pre>
+<p>先特征编码：</p>
+<pre><code>for feat in sparse_features:    lbe = LabelEncoder()    data[feat] = lbe.fit_transform(data[feat])
+</code></pre>
+<p>处理genres特征，一个movie有多个genres，先拆分，然后编码为数字，注意是从1开始；由于每个movie的genres长度不一样，可以计算最大长度，位数不足的后面补零（pad_sequences，在post补0）</p>
+<pre><code>     def split(x):        key_ans = x.split(&#39;|&#39;)        for key in key_ans:            if key not in key2index:                # Notice : input value 0 is a special &quot;padding&quot;,so we do not use 0 to encode valid feature for sequence input                key2index[key] = len(key2index) + 1        return list(map(lambda x: key2index[x], key_ans))
+
+    key2index = &#123;&#125;    genres_list = list(map(split, data[&#39;genres&#39;].values))    genres_length = np.array(list(map(len, genres_list)))    max_len = max(genres_length)    # Notice : padding=`post`    genres_list = pad_sequences(genres_list, maxlen=max_len, padding=&#39;post&#39;, )
+</code></pre>
+<p>构建deepctr的特征列，主要分为两类特征，一是定长的SparseFeat，稀疏的类别特征，二是可变长度的VarLenSparseFeat，像genres这样的包含多个的。</p>
+<pre><code>       fixlen_feature_columns = [SparseFeat(feat, data[feat].nunique(), embedding_dim=4)                              for feat in sparse_features]
+    use_weighted_sequence = False    if use_weighted_sequence:        varlen_feature_columns = [VarLenSparseFeat(SparseFeat(&#39;genres&#39;, vocabulary_size=len(            key2index) + 1, embedding_dim=4), maxlen=max_len, combiner=&#39;mean&#39;,                                                   weight_name=&#39;genres_weight&#39;)]  # Notice : value 0 is for padding for sequence input feature    else:        varlen_feature_columns = [VarLenSparseFeat(SparseFeat(&#39;genres&#39;, vocabulary_size=len(            key2index) + 1, embedding_dim=4), maxlen=max_len, combiner=&#39;mean&#39;,                                                   weight_name=None)]  # Notice : value 0 is for padding for sequence input feature
+    linear_feature_columns = fixlen_feature_columns + varlen_feature_columns    dnn_feature_columns = fixlen_feature_columns + varlen_feature_columns
+    feature_names = get_feature_names(linear_feature_columns + dnn_feature_columns)
+</code></pre>
+<p>封装训练数据，先shuffle（乱排）数据，然后生成dict input数据。</p>
+<pre><code>data = sklearn.utils.shuffle(data)
+train_model_input = &#123;name: data[name] for name in sparse_features&#125;  #
+train_model_input[&quot;genres&quot;] = genres_list
+</code></pre>
+<p>构建DeepFM模型，由于目标值是0,1，因此采用binary，损失函数用binary_crossentropy</p>
+<pre><code>model = DeepFM(linear_feature_columns, dnn_feature_columns, task=&#39;binary&#39;)
+
+model.compile(optimizer=tf.keras.optimizers.Adam(), loss=&#39;binary_crossentropy&#39;,
+              metrics=[&#39;AUC&#39;, &#39;Precision&#39;, &#39;Recall&#39;])
+model.summary()
+</code></pre>
+<p>训练模型：</p>
+<pre><code>model.fit(train_model_input, data[target].values,                    batch_size=256, epochs=20, verbose=2,                    validation_split=0.2            )
+</code></pre>
+<p>开始训练：</p>
+<pre><code>Epoch 1/20
+625/625 - 3s - loss: 0.5081 - auc: 0.8279 - precision: 0.7419 - recall: 0.7695 - val_loss: 0.4745 - val_auc: 0.8513 - val_precision: 0.7563 - val_recall: 0.7936
+Epoch 2/20
+625/625 - 2s - loss: 0.4695 - auc: 0.8538 - precision: 0.7494 - recall: 0.8105 - val_loss: 0.4708 - val_auc: 0.8539 - val_precision: 0.7498 - val_recall: 0.8127
+Epoch 3/20
+625/625 - 2s - loss: 0.4652 - auc: 0.8564 - precision: 0.7513 - recall: 0.8139 - val_loss: 0.4704 - val_auc: 0.8545 - val_precision: 0.7561 - val_recall: 0.8017
+Epoch 4/20
+625/625 - 2s - loss: 0.4624 - auc: 0.8579 - precision: 0.7516 - recall: 0.8146 - val_loss: 0.4724 - val_auc: 0.8542 - val_precision: 0.7296 - val_recall: 0.8526
+Epoch 5/20
+625/625 - 2s - loss: 0.4607 - auc: 0.8590 - precision: 0.7521 - recall: 0.8173 - val_loss: 0.4699 - val_auc: 0.8550 - val_precision: 0.7511 - val_recall: 0.8141
+Epoch 6/20
+625/625 - 2s - loss: 0.4588 - auc: 0.8602 - precision: 0.7545 - recall: 0.8165 - val_loss: 0.4717 - val_auc: 0.8542 - val_precision: 0.7421 - val_recall: 0.8265
+Epoch 7/20
+625/625 - 2s - loss: 0.4574 - auc: 0.8610 - precision: 0.7535 - recall: 0.8192 - val_loss: 0.4722 - val_auc: 0.8547 - val_precision: 0.7549 - val_recall: 0.8023
+Epoch 8/20
+625/625 - 2s - loss: 0.4561 - auc: 0.8619 - precision: 0.7543 - recall: 0.8201 - val_loss: 0.4717 - val_auc: 0.8548 - val_precision: 0.7480 - val_recall: 0.8185
+Epoch 9/20
+625/625 - 2s - loss: 0.4531 - auc: 0.8643 - precision: 0.7573 - recall: 0.8210 - val_loss: 0.4696 - val_auc: 0.8583 - val_precision: 0.7598 - val_recall: 0.8103
+Epoch 10/20
+625/625 - 2s - loss: 0.4355 - auc: 0.8768 - precision: 0.7787 - recall: 0.8166 - val_loss: 0.4435 - val_auc: 0.8769 - val_precision: 0.7756 - val_recall: 0.8293
+Epoch 11/20
+625/625 - 2s - loss: 0.4093 - auc: 0.8923 - precision: 0.7915 - recall: 0.8373 - val_loss: 0.4301 - val_auc: 0.8840 - val_precision: 0.7806 - val_recall: 0.8390
+Epoch 12/20
+625/625 - 2s - loss: 0.3970 - auc: 0.8988 - precision: 0.7953 - recall: 0.8497 - val_loss: 0.4286 - val_auc: 0.8867 - val_precision: 0.7903 - val_recall: 0.8299
+Epoch 13/20
+625/625 - 2s - loss: 0.3896 - auc: 0.9029 - precision: 0.8001 - recall: 0.8542 - val_loss: 0.4253 - val_auc: 0.8888 - val_precision: 0.7913 - val_recall: 0.8322
+Epoch 14/20
+625/625 - 2s - loss: 0.3825 - auc: 0.9067 - precision: 0.8038 - recall: 0.8584 - val_loss: 0.4205 - val_auc: 0.8917 - val_precision: 0.7885 - val_recall: 0.8506
+Epoch 15/20
+625/625 - 2s - loss: 0.3755 - auc: 0.9102 - precision: 0.8074 - recall: 0.8624 - val_loss: 0.4204 - val_auc: 0.8940 - val_precision: 0.7868 - val_recall: 0.8607
+Epoch 16/20
+625/625 - 2s - loss: 0.3687 - auc: 0.9136 - precision: 0.8117 - recall: 0.8653 - val_loss: 0.4176 - val_auc: 0.8956 - val_precision: 0.8097 - val_recall: 0.8236
+Epoch 17/20
+625/625 - 2s - loss: 0.3617 - auc: 0.9170 - precision: 0.8155 - recall: 0.8682 - val_loss: 0.4166 - val_auc: 0.8966 - val_precision: 0.8056 - val_recall: 0.8354
+Epoch 18/20
+625/625 - 2s - loss: 0.3553 - auc: 0.9201 - precision: 0.8188 - recall: 0.8716 - val_loss: 0.4168 - val_auc: 0.8977 - val_precision: 0.7996 - val_recall: 0.8492
+Epoch 19/20
+625/625 - 2s - loss: 0.3497 - auc: 0.9227 - precision: 0.8214 - recall: 0.8741 - val_loss: 0.4187 - val_auc: 0.8973 - val_precision: 0.8079 - val_recall: 0.8358
+Epoch 20/20
+625/625 - 2s - loss: 0.3451 - auc: 0.9248 - precision: 0.8244 - recall: 0.8753 - val_loss: 0.4210 - val_auc: 0.8982 - val_precision: 0.7945 - val_recall: 0.8617
+</code></pre>
+<p>最后我们测试下数据：</p>
+<pre><code> pred_ans = model.predict(train_model_input, batch_size=256)
+ count = 0
+    for (i, j) in zip(pred_ans, data[&#39;rating&#39;].values):
+        print(i, j)
+        count += 1
+        if count &gt; 10:
+            break
+</code></pre>
+<p>输出如下：</p>
+<pre><code>[0.20468083] 0
+[0.1988303] 0
+[7.7236204e-05] 0
+[0.9439401] 1
+[0.76648283] 0
+[0.80082995] 1
+[0.7689271] 0
+[0.8515004] 1
+[0.93311656] 1
+[0.40019292] 0
+[0.60735244] 0
+</code></pre>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/w55100/article/details/90295932">deepFM in pytorch</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/itplus/article/details/40534923">皮果提《Factorization Machines 学习笔记（二）模型方程》</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012969412/article/details/88684723">·清尘·《FM、FMM、DeepFM整理（pytorch）》</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/songbinxu/article/details/80151814">用Keras实现一个DeepFM</a></li>
+</ul>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/10/12/jqpeng-%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95%E4%B9%8B%EF%BC%9A%20LFM%20%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/12/jqpeng-%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95%E4%B9%8B%EF%BC%9A%20LFM%20%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">推荐算法之： LFM 推荐算法</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-12 21:10:00" itemprop="dateCreated datePublished" datetime="2020-10-12T21:10:00+08:00">2020-10-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/13805530.html">推荐算法之： LFM 推荐算法</a></p>
+<h2 id="LFM介绍"><a href="#LFM介绍" class="headerlink" title="LFM介绍"></a>LFM介绍</h2><p>LFM(Funk SVD) 是利用 矩阵分解的推荐算法：</p>
+<pre><code>R  = P * Q
+</code></pre>
+<p>其中：</p>
+<ul>
+<li>P矩阵是User-LF矩阵，即用户和隐含特征矩阵</li>
+<li>Q矩阵是LF-Item矩阵，即隐含特征和物品的矩阵</li>
+<li>R：R矩阵是User-Item矩阵，由P*Q得来</li>
+</ul>
+<p>见下图：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/10/12/1602505053626.png" alt="LFM"></p>
+<p>R评分举证由于物品和用户数量巨大，且稀疏，因此利用矩阵乘法，转换为 P（n_user * dim) 和 Q （dim*n_count) 两个矩阵，dim 是隐含特征数量。</p>
+<h2 id="Tensorflow实现"><a href="#Tensorflow实现" class="headerlink" title="Tensorflow实现"></a>Tensorflow实现</h2><p>下载<code>ml-100k</code> 数据集</p>
+<pre><code>!wget http://files.grouplens.org/datasets/movielens/ml-100k.zip
+!unzip ml-100k.zip
+
+
+
+Resolving files.grouplens.org (files.grouplens.org)... 128.101.65.152
+Connecting to files.grouplens.org (files.grouplens.org)|128.101.65.152|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 4924029 (4.7M) [application/zip]
+Saving to: ‘ml-100k.zip’
+
+ml-100k.zip         100%[===================&gt;]   4.70M  16.2MB/s    in 0.3s    
+
+2020-10-12 12:25:07 (16.2 MB/s) - ‘ml-100k.zip’ saved [4924029/4924029]
+
+/bin/bash: uzip: command not found
+</code></pre>
+<p>评分数据在u.data里，分别是 user_id, movie_id, rating, timestamp</p>
+<pre><code>!head ml-100k/u.data
+
+
+
+186    302    3    891717742
+22    377    1    878887116
+244    51    2    880606923
+166    346    1    886397596
+298    474    4    884182806
+115    265    2    881171488
+253    465    5    891628467
+305    451    3    886324817
+6    86    3    883603013
+</code></pre>
+<p>读取数据</p>
+<pre><code>import os
+def read_data(path: str, separator: str):
+    data = []
+    with open(path, &#39;r&#39;) as f:
+        for line in f.readlines():
+            values = line.strip().split(separator)
+            user_id, movie_id, rating, timestamp = int(values[0]), int(values[1]), int(values[2]), int(values[3])
+            data.append((user_id, movie_id, rating, timestamp))
+    return data
+
+data = read_data(&#39;ml-100k/u.data&#39;, &#39;\t&#39;)
+
+print(data[0])
+
+
+
+(0, 0, 0.6)
+</code></pre>
+<p>拆分训练集和测试集，test_ratio比例为0.3：</p>
+<pre><code>data = [(d[0], d[1], d[2]/5.0) for d in data]
+
+# 拆分
+test_ratio = 0.3
+n_test = int(len(data) * test_ratio)
+test_data, train_data = data[:n_test], data[n_test:]
+</code></pre>
+<p>id规整化，从0开始增长</p>
+<pre><code>#id 规整
+def normalize_id(data):
+    new_data = []
+    n_user, n_item = 0, 0
+    user_id_old2new, item_id_old2new = &#123;&#125;, &#123;&#125;
+    for user_id_old, item_id_old, label in data:
+        if user_id_old not in user_id_old2new:
+            user_id_old2new[user_id_old] = n_user
+            n_user += 1
+        if item_id_old not in item_id_old2new:
+            item_id_old2new[item_id_old] = n_item
+            n_item += 1
+        new_data.append((user_id_old2new[user_id_old], item_id_old2new[item_id_old], label))
+    return new_data, n_user, n_item, user_id_old2new, item_id_old2new
+
+data, n_user, n_item, user_id_old2new, item_id_old2new = normalize_id(data)
+</code></pre>
+<p>查看数据</p>
+<pre><code>print(train_data[0:10])
+print(test_data[0])
+print(&#39;n_user&#39;,n_user)
+print(&#39;n_item&#39;,n_item)
+
+
+
+(196, 242, 0.6)
+n_user 943
+n_item 1682
+</code></pre>
+<p>准备数据集</p>
+<pre><code>import tensorflow as tf
+
+def xy(data):
+        user_ids = tf.constant([d[0] for d in data], dtype=tf.int32)
+        item_ids = tf.constant([d[1] for d in data], dtype=tf.int32)
+        labels = tf.constant([d[2] for d in data], dtype=tf.keras.backend.floatx())
+        return &#123;&#39;user_id&#39;: user_ids, &#39;item_id&#39;: item_ids&#125;, labels
+
+batch = 128
+train_ds = tf.data.Dataset.from_tensor_slices(xy(train_data)).shuffle(len(train_data)).batch(batch)
+test_ds = tf.data.Dataset.from_tensor_slices(xy(test_data)).batch(batch)
+</code></pre>
+<p>TF模型</p>
+<pre><code>def LFM_model(n_user: int, n_item: int, dim=100, l2=1e-6) -&gt; tf.keras.Model:
+    l2 = tf.keras.regularizers.l2(l2)
+    user_id = tf.keras.Input(shape=(), name=&#39;user_id&#39;, dtype=tf.int32)
+
+    user_embedding = tf.keras.layers.Embedding(n_user, dim, embeddings_regularizer=l2)(user_id)
+    # (None,dim)
+    item_id = tf.keras.Input(shape=(), name=&#39;item_id&#39;, dtype=tf.int32)
+    item_embedding = tf.keras.layers.Embedding(n_item, dim, embeddings_regularizer=l2)(item_id)
+    # (None,dim)
+    r = user_embedding * item_embedding
+    y = tf.reduce_sum(r, axis=1)
+    y = tf.where(y &lt; 0., 0., y)
+    y = tf.where(y &gt; 1., 1., y)
+    y = tf.expand_dims(y, axis=1)
+    return tf.keras.Model(inputs=[user_id, item_id], outputs=y)
+
+model = LFM_model(n_user + 1, n_item + 1, 64)
+</code></pre>
+<p>编译模型</p>
+<pre><code>model.compile(optimizer=&quot;adam&quot;, loss=tf.losses.MeanSquaredError(), metrics=[&#39;AUC&#39;, &#39;Precision&#39;, &#39;Recall&#39;])
+model.summary()
+
+
+
+
+__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+user_id (InputLayer)            [(None,)]            0                                            
+__________________________________________________________________________________________________
+item_id (InputLayer)            [(None,)]            0                                            
+__________________________________________________________________________________________________
+embedding_12 (Embedding)        (None, 64)           60416       user_id[0][0]                    
+__________________________________________________________________________________________________
+embedding_13 (Embedding)        (None, 64)           107712      item_id[0][0]                    
+__________________________________________________________________________________________________
+tf_op_layer_Mul_6 (TensorFlowOp [(None, 64)]         0           embedding_12[0][0]               
+                                                                 embedding_13[0][0]               
+__________________________________________________________________________________________________
+tf_op_layer_Sum_6 (TensorFlowOp [(None,)]            0           tf_op_layer_Mul_6[0][0]          
+__________________________________________________________________________________________________
+tf_op_layer_Less_6 (TensorFlowO [(None,)]            0           tf_op_layer_Sum_6[0][0]          
+__________________________________________________________________________________________________
+tf_op_layer_SelectV2_12 (Tensor [(None,)]            0           tf_op_layer_Less_6[0][0]         
+                                                                 tf_op_layer_Sum_6[0][0]          
+__________________________________________________________________________________________________
+tf_op_layer_Greater_6 (TensorFl [(None,)]            0           tf_op_layer_SelectV2_12[0][0]    
+__________________________________________________________________________________________________
+tf_op_layer_SelectV2_13 (Tensor [(None,)]            0           tf_op_layer_Greater_6[0][0]      
+                                                                 tf_op_layer_SelectV2_12[0][0]    
+__________________________________________________________________________________________________
+tf_op_layer_ExpandDims_6 (Tenso [(None, 1)]          0           tf_op_layer_SelectV2_13[0][0]    
+==================================================================================================
+Total params: 168,128
+Trainable params: 168,128
+Non-trainable params: 0
+__________________________________________________________________________________________________
+</code></pre>
+<p>下面开始训练10次epochs</p>
+<pre><code>model.fit(train_ds,validation_data=test_ds,epochs=10)
+
+
+
+Epoch 1/10
+
+/usr/local/lib/python3.6/dist-packages/tensorflow/python/framework/indexed_slices.py:432: UserWarning: Converting sparse IndexedSlices to a dense Tensor of unknown shape. This may consume a large amount of memory.
+  &quot;Converting sparse IndexedSlices to a dense Tensor of unknown shape. &quot;
+547/547 [==============================] - 2s 4ms/step - loss: 0.4388 - auc: 0.0000e+00 - precision: 1.0000 - recall: 0.0594 - val_loss: 0.1439 - val_auc: 0.0000e+00 - val_precision: 1.0000 - val_recall: 0.4180
+Epoch 2/10
+547/547 [==============================] - 2s 4ms/step - loss: 0.0585 - auc: 0.0000e+00 - precision: 1.0000 - recall: 0.8171 - val_loss: 0.0486 - val_auc: 0.0000e+00 - val_precision: 1.0000 - val_recall: 0.8655
+Epoch 3/10
+547/547 [==============================] - 2s 3ms/step - loss: 0.0393 - auc: 0.0000e+00 - precision: 1.0000 - recall: 0.9053 - val_loss: 0.0433 - val_auc: 0.0000e+00 - val_precision: 1.0000 - val_recall: 0.8982
+Epoch 4/10
+547/547 [==============================] - 2s 3ms/step - loss: 0.0346 - auc: 0.0000e+00 - precision: 1.0000 - recall: 0.9107 - val_loss: 0.0415 - val_auc: 0.0000e+00 - val_precision: 1.0000 - val_recall: 0.8947
+Epoch 5/10
+547/547 [==============================] - 2s 4ms/step - loss: 0.0301 - auc: 0.0000e+00 - precision: 1.0000 - recall: 0.9071 - val_loss: 0.0410 - val_auc: 0.0000e+00 - val_precision: 1.0000 - val_recall: 0.8869
+Epoch 6/10
+547/547 [==============================] - 2s 4ms/step - loss: 0.0257 - auc: 0.0000e+00 - precision: 1.0000 - recall: 0.8958 - val_loss: 0.0410 - val_auc: 0.0000e+00 - val_precision: 1.0000 - val_recall: 0.8849
+Epoch 7/10
+547/547 [==============================] - 2s 4ms/step - loss: 0.0218 - auc: 0.0000e+00 - precision: 1.0000 - recall: 0.8844 - val_loss: 0.0414 - val_auc: 0.0000e+00 - val_precision: 1.0000 - val_recall: 0.8753
+Epoch 8/10
+547/547 [==============================] - 2s 4ms/step - loss: 0.0183 - auc: 0.0000e+00 - precision: 1.0000 - recall: 0.8719 - val_loss: 0.0425 - val_auc: 0.0000e+00 - val_precision: 1.0000 - val_recall: 0.8659
+Epoch 9/10
+547/547 [==============================] - 2s 4ms/step - loss: 0.0153 - auc: 0.0000e+00 - precision: 1.0000 - recall: 0.8624 - val_loss: 0.0435 - val_auc: 0.0000e+00 - val_precision: 1.0000 - val_recall: 0.8620
+Epoch 10/10
+547/547 [==============================] - 2s 4ms/step - loss: 0.0132 - auc: 0.0000e+00 - precision: 1.0000 - recall: 0.8535 - val_loss: 0.0449 - val_auc: 0.0000e+00 - val_precision: 1.0000 - val_recall: 0.8531
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/10/11/jqpeng-docker%20%E7%94%B1%E4%BA%8Eiptables%E5%AF%BC%E8%87%B4%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8%E9%97%AE%E9%A2%98%E4%B8%B4%E6%97%B6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/11/jqpeng-docker%20%E7%94%B1%E4%BA%8Eiptables%E5%AF%BC%E8%87%B4%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8%E9%97%AE%E9%A2%98%E4%B8%B4%E6%97%B6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="post-title-link" itemprop="url">docker 由于iptables导致无法正常启动问题临时解决方案</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-12 00:01:00" itemprop="dateCreated datePublished" datetime="2020-10-12T00:01:00+08:00">2020-10-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>310</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/13800447.html">docker 由于iptables导致无法正常启动问题临时解决方案</a></p>
+<p>docker安装新的ca证书后无法正常启动，<br> 表现为<code>/sbin/iptables --wait -t filter -N DOCKER-ISOLATION-STAGE-2</code> hang住，<br> 日志有报错 <code>xtables contention detected while running ..</code></p>
+<p>解决历程：</p>
+<ol>
+<li>重启大法，先stop再start无果</li>
+<li>iptables 重装大法，无果</li>
+<li>docker升级到最新版本无果</li>
+<li>确定还是iptables的问题，暂时没时间详细排查，于是docker禁用iptables，先卸载iptables，docker启动设置iptables false</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

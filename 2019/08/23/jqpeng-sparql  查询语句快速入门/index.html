@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: sparql  查询语句快速入门 介绍 RDF is a directed, labeled graph data format for representing information in the Web. RDF is often used to represent, among other things, personal information, soc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sparql  查询语句快速入门">
+<meta property="og:url" content="http://blog.iflyresearch.com/2019/08/23/jqpeng-sparql%20%20%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: sparql  查询语句快速入门 介绍 RDF is a directed, labeled graph data format for representing information in the Web. RDF is often used to represent, among other things, personal information, soc">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2019/8/23/1566543446161.png">
+<meta property="article:published_time" content="2019-08-23T07:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="知识图谱">
+<meta property="article:tag" content="sparql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/jadepeng/pic/raw/master/pic/2019/8/23/1566543446161.png">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2019/08/23/jqpeng-sparql%20%20%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>sparql  查询语句快速入门 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/08/23/jqpeng-sparql%20%20%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          sparql  查询语句快速入门
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-23 15:00:00" itemprop="dateCreated datePublished" datetime="2019-08-23T15:00:00+08:00">2019-08-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/sparql.html">sparql  查询语句快速入门</a></p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><blockquote>
+<p>RDF is a directed, labeled graph data format for representing information in the Web. RDF is often used to represent, among other things, personal information, social networks, metadata about digital artifacts, as well as to provide a means of integration over disparate sources of information. This specification defines the syntax and semantics of the SPARQL query language for RDF.<br> The SPARQL query language for RDF is designed to meet the use cases and requirements identified by the RDF Data Access Working Group in RDF Data Access Use Cases and Requirements [UCNR].</p>
+</blockquote>
+<p>SPARQL即SPARQL Protocol and RDF Query Language的递归缩写，被专门设计用来访问和操作RDF数据，是语义网的核心技术之一。W3C的RDF数据存取小组（RDF Data Access Working Group, RDAWG）对其进行了标准化。2008年1月15日，SPARQL正式成为一项W3C推荐标准。</p>
+<p>我们可以将抽取的RDF三元组导入Apache Jena Fuseki，通过SPARQL进行查询：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2019/8/23/1566543446161.png" alt="SParql demo"></p>
+<h2 id="简单查询"><a href="#简单查询" class="headerlink" title="简单查询"></a>简单查询</h2><table>
+<thead>
+<tr>
+<th>SQL</th>
+<th>sparql</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SELECT title from book where id=’book1’</td>
+<td>SELECT ?title    <br>WHERE   <br>{ &lt;<a target="_blank" rel="noopener" href="http://example.org/book/book1">http://example.org/book/book1</a>&gt; &lt;<a target="_blank" rel="noopener" href="http://purl.org/dc/elements/1.1/title">http://purl.org/dc/elements/1.1/title</a>&gt; ?title .   <br> }</td>
+</tr>
+</tbody></table>
+<p>Query Result:</p>
+<table>
+<thead>
+<tr>
+<th>title</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>“SPARQL Tutorial”</td>
+</tr>
+</tbody></table>
+<h2 id="多字段匹配"><a href="#多字段匹配" class="headerlink" title="多字段匹配"></a>多字段匹配</h2><p>RDF 数据</p>
+<pre><code>@prefix foaf:  &lt;http://xmlns.com/foaf/0.1/&gt; .
+
+_:a  foaf:name   &quot;Johnny Lee Outlaw&quot; .
+_:a  foaf:mbox   &lt;mailto:jlow@example.com&gt; .
+_:b  foaf:name   &quot;Peter Goodguy&quot; .
+_:b  foaf:mbox   &lt;mailto:peter@example.org&gt; .
+_:c  foaf:mbox   &lt;mailto:carol@example.org&gt; .
+</code></pre>
+<p>sparql:</p>
+<pre><code>PREFIX foaf:   &lt;http://xmlns.com/foaf/0.1/&gt;
+SELECT ?name ?mbox
+WHERE
+  &#123; ?x foaf:name ?name .
+    ?x foaf:mbox ?mbox &#125;
+</code></pre>
+<p>SQL:</p>
+<pre><code>SELECT ?name ?mbox
+from foaf
+</code></pre>
+<p>查询结果:</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>mbox</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>“Johnny Lee Outlaw”</td>
+<td><a href="mailto:jlow@example.com">mailto:jlow@example.com</a></td>
+</tr>
+<tr>
+<td>“Peter Goodguy”</td>
+<td><a href="mailto:peter@example.org">mailto:peter@example.org</a></td>
+</tr>
+</tbody></table>
+<h2 id="数据属性匹配"><a href="#数据属性匹配" class="headerlink" title="数据属性匹配"></a>数据属性匹配</h2><p>对于string类型，需要用双引号包裹起来。</p>
+<p>sparql:</p>
+<pre><code>SELECT ?v WHERE &#123; ?v ?p &quot;cat&quot; &#125;
+</code></pre>
+<p>SQL:</p>
+<pre><code>SELECT *
+from ns
+where p=&#39;cat&#39;
+</code></pre>
+<p>对于数字类型：</p>
+<p>sparql:</p>
+<pre><code>SELECT ?v WHERE &#123; ?v ?p 42 &#125;
+</code></pre>
+<p>SQL:</p>
+<pre><code>SELECT * from ns where p= 42
+</code></pre>
+<p>另外，在spaql里可以指定匹配的类型：</p>
+<pre><code>SELECT ?v WHERE &#123; ?v ?p &quot;abc&quot;^^&lt;http://example.org/datatype#specialDatatype&gt; &#125;
+</code></pre>
+<h2 id="条件过滤"><a href="#条件过滤" class="headerlink" title="条件过滤"></a>条件过滤</h2><h3 id="模糊匹配"><a href="#模糊匹配" class="headerlink" title="模糊匹配"></a>模糊匹配</h3><p>通过<code>regex</code>函数可以进行字符串正则匹配，通过<code>FILTER</code>进行过滤</p>
+<pre><code>PREFIX  dc:  &lt;http://purl.org/dc/elements/1.1/&gt;
+SELECT  ?title
+WHERE   &#123; ?x dc:title ?title
+          FILTER regex(?title, &quot;web&quot;, &quot;i&quot; ) 
+        &#125;
+</code></pre>
+<p>SQL:</p>
+<pre><code>SELECT * from table where title like &#39;%web%&#39;
+</code></pre>
+<h3 id="数字比较"><a href="#数字比较" class="headerlink" title="数字比较"></a>数字比较</h3><pre><code>PREFIX  dc:  &lt;http://purl.org/dc/elements/1.1/&gt;
+PREFIX  ns:  &lt;http://example.org/ns#&gt;
+SELECT  ?title ?price
+WHERE   &#123; ?x ns:price ?price .
+          FILTER (?price &lt; 30.5)
+          ?x dc:title ?title . &#125;
+</code></pre>
+<p>SQL:</p>
+<pre><code>SELECT title,price from table where price &lt;30.5
+</code></pre>
+<h2 id="OPTIONAL（可选值）"><a href="#OPTIONAL（可选值）" class="headerlink" title="OPTIONAL（可选值）"></a>OPTIONAL（可选值）</h2><p>RDF 数据，用户Bob没有mbox，而用户Alice有两个mbox</p>
+<pre><code>@prefix foaf:       &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix rdf:        &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+
+_:a  rdf:type        foaf:Person .
+_:a  foaf:name       &quot;Alice&quot; .
+_:a  foaf:mbox       &lt;mailto:alice@example.com&gt; .
+_:a  foaf:mbox       &lt;mailto:alice@work.example&gt; .
+
+_:b  rdf:type        foaf:Person .
+_:b  foaf:name       &quot;Bob&quot; .
+</code></pre>
+<p>正常查询，因为Bob没有mbox，所以查询不出来，可以通过<code>OPTIONAL</code>标记mbox为可选，这样Bob就可以查询出来。</p>
+<p>sparql:</p>
+<pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+SELECT ?name ?mbox
+WHERE  &#123; ?x foaf:name  ?name .
+         OPTIONAL &#123; ?x  foaf:mbox  ?mbox &#125;
+       &#125;
+</code></pre>
+<p>查询结果</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>mbox</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>“Alice”</td>
+<td><a href="mailto:alice@example.com">mailto:alice@example.com</a></td>
+</tr>
+<tr>
+<td>“Alice”</td>
+<td><a href="mailto:alice@work.example">mailto:alice@work.example</a></td>
+</tr>
+<tr>
+<td>“Bob”</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>可以看到， <code>&quot;Bob&quot;</code>的 <code>mbox</code>是空值。</p>
+<p>对于关系型数据库，可以假设两个表</p>
+<p>User { id,name}<br> Mbox {id,uid,name} (uid为外键）</p>
+<p>对应的sql：</p>
+<pre><code>SELECT user.name AS name,mbox.name AS mboxName
+FROM User user
+LEFT OUTER JOIN Mbox mbox ON mbox.uid=user.id
+</code></pre>
+<h2 id="OPTIONAL-FILTER"><a href="#OPTIONAL-FILTER" class="headerlink" title="OPTIONAL + FILTER"></a>OPTIONAL + FILTER</h2><p>OPTIONAL 可以和FILTER 组合使用</p>
+<pre><code>PREFIX  dc:  &lt;http://purl.org/dc/elements/1.1/&gt;
+PREFIX  ns:  &lt;http://example.org/ns#&gt;
+SELECT  ?title ?price
+WHERE   &#123; ?x dc:title ?title .
+          OPTIONAL &#123; ?x ns:price ?price . FILTER (?price &lt; 30) &#125;
+        &#125;        
+</code></pre>
+<h2 id="UNION"><a href="#UNION" class="headerlink" title="UNION"></a>UNION</h2><p>Data:</p>
+<pre><code>@prefix dc10:  &lt;http://purl.org/dc/elements/1.0/&gt; .
+@prefix dc11:  &lt;http://purl.org/dc/elements/1.1/&gt; .
+
+_:a  dc10:title     &quot;SPARQL Query Language Tutorial&quot; .
+_:a  dc10:creator   &quot;Alice&quot; .
+
+_:b  dc11:title     &quot;SPARQL Protocol Tutorial&quot; .
+_:b  dc11:creator   &quot;Bob&quot; .
+
+_:c  dc10:title     &quot;SPARQL&quot; .
+_:c  dc11:title     &quot;SPARQL (updated)&quot; 
+</code></pre>
+<p>查询:</p>
+<pre><code>PREFIX dc10:  &lt;http://purl.org/dc/elements/1.0/&gt;
+PREFIX dc11:  &lt;http://purl.org/dc/elements/1.1/&gt;
+
+SELECT ?title
+WHERE  &#123; &#123; ?book dc10:title  ?title &#125; UNION &#123; ?book dc11:title  ?title &#125; &#125;
+</code></pre>
+<p>Query result:</p>
+<pre><code>title
+&quot;SPARQL Protocol Tutorial&quot;
+&quot;SPARQL&quot;
+&quot;SPARQL (updated)&quot;
+&quot;SPARQL Query Language Tutorial&quot;
+</code></pre>
+<h2 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h2><p>和sql一样，使用ORDER BY 排序，示例如下：</p>
+<pre><code>PREFIX foaf:    &lt;http://xmlns.com/foaf/0.1/&gt;
+
+SELECT ?name
+WHERE &#123; ?x foaf:name ?name ; :empId ?emp &#125;
+ORDER BY ?name DESC(?emp)
+</code></pre>
+<h2 id="去重"><a href="#去重" class="headerlink" title="去重"></a>去重</h2><p>和sql一样，使用DISTINCT来去重，示例如下：</p>
+<pre><code>PREFIX foaf:    &lt;http://xmlns.com/foaf/0.1/&gt;
+SELECT DISTINCT ?name WHERE &#123; ?x foaf:name ?name &#125;
+</code></pre>
+<h2 id="判断是否存在"><a href="#判断是否存在" class="headerlink" title="判断是否存在"></a>判断是否存在</h2><p>使用ask来判断是否有解决方案</p>
+<pre><code>PREFIX foaf:    &lt;http://xmlns.com/foaf/0.1/&gt;
+ASK  &#123; ?x foaf:name  &quot;Alice&quot; ;
+          foaf:mbox  &lt;mailto:alice@work.example&gt; &#125;
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" rel="tag"># 知识图谱</a>
+              <a href="/tags/sparql/" rel="tag"># sparql</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/08/08/jqpeng-Docker%E5%90%AF%E7%94%A8TLS%E8%BF%9B%E8%A1%8C%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/" rel="prev" title="Docker启用TLS进行安全配置">
+      <i class="fa fa-chevron-left"></i> Docker启用TLS进行安全配置
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/08/26/jqpeng-XNginx%E5%8D%87%E7%BA%A7%E8%AE%B0%E5%BD%95/" rel="next" title="XNginx升级记录">
+      XNginx升级记录 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E6%9F%A5%E8%AF%A2"><span class="nav-number">2.</span> <span class="nav-text">简单查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E5%AD%97%E6%AE%B5%E5%8C%B9%E9%85%8D"><span class="nav-number">3.</span> <span class="nav-text">多字段匹配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%B1%9E%E6%80%A7%E5%8C%B9%E9%85%8D"><span class="nav-number">4.</span> <span class="nav-text">数据属性匹配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E8%BF%87%E6%BB%A4"><span class="nav-number">5.</span> <span class="nav-text">条件过滤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E7%B3%8A%E5%8C%B9%E9%85%8D"><span class="nav-number">5.1.</span> <span class="nav-text">模糊匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E6%AF%94%E8%BE%83"><span class="nav-number">5.2.</span> <span class="nav-text">数字比较</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OPTIONAL%EF%BC%88%E5%8F%AF%E9%80%89%E5%80%BC%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">OPTIONAL（可选值）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OPTIONAL-FILTER"><span class="nav-number">7.</span> <span class="nav-text">OPTIONAL + FILTER</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UNION"><span class="nav-number">8.</span> <span class="nav-text">UNION</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F"><span class="nav-number">9.</span> <span class="nav-text">排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%BB%E9%87%8D"><span class="nav-number">10.</span> <span class="nav-text">去重</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="nav-number">11.</span> <span class="nav-text">判断是否存在</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

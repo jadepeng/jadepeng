@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: 使用SpringBoot开发REST服务 本文介绍如何基于Spring Boot搭建一个简易的REST服务框架，以及如何通过自定义注解实现Rest服务鉴权 搭建框架pom.xml首先，引入相关依赖，数据库使用mongodb，同时使用redis做缓存 注意，这里没有使用tomcat，而是使用undertow        &lt;dependency&gt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用SpringBoot开发REST服务">
+<meta property="og:url" content="http://blog.iflyresearch.com/2017/12/08/jqpeng-%E4%BD%BF%E7%94%A8SpringBoot%E5%BC%80%E5%8F%91REST%E6%9C%8D%E5%8A%A1/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: 使用SpringBoot开发REST服务 本文介绍如何基于Spring Boot搭建一个简易的REST服务框架，以及如何通过自定义注解实现Rest服务鉴权 搭建框架pom.xml首先，引入相关依赖，数据库使用mongodb，同时使用redis做缓存 注意，这里没有使用tomcat，而是使用undertow        &lt;dependency&gt;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-12-08T08:35:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="REST服务">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2017/12/08/jqpeng-%E4%BD%BF%E7%94%A8SpringBoot%E5%BC%80%E5%8F%91REST%E6%9C%8D%E5%8A%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>使用SpringBoot开发REST服务 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/12/08/jqpeng-%E4%BD%BF%E7%94%A8SpringBoot%E5%BC%80%E5%8F%91REST%E6%9C%8D%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用SpringBoot开发REST服务
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-12-08 16:35:00" itemprop="dateCreated datePublished" datetime="2017-12-08T16:35:00+08:00">2017-12-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/SpringBootRest.html">使用SpringBoot开发REST服务</a></p>
+<p>本文介绍如何基于Spring Boot搭建一个简易的REST服务框架，以及如何通过自定义注解实现Rest服务鉴权</p>
+<h1 id="搭建框架"><a href="#搭建框架" class="headerlink" title="搭建框架"></a>搭建框架</h1><h2 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h2><p>首先，引入相关依赖，数据库使用mongodb，同时使用redis做缓存</p>
+<pre><code>注意，这里没有使用tomcat，而是使用undertow
+
+
+
+    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter&lt;/artifactId&gt;    &lt;/dependency&gt;
+    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;        &lt;scope&gt;test&lt;/scope&gt;    &lt;/dependency&gt;
+    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;        &lt;exclusions&gt;            &lt;exclusion&gt;                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;                &lt;artifactId&gt;spring-boot-starter-tomcat&lt;/artifactId&gt;            &lt;/exclusion&gt;        &lt;/exclusions&gt;    &lt;/dependency&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-undertow&lt;/artifactId&gt;    &lt;/dependency&gt;
+    &lt;!--redis支持--&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;    &lt;/dependency&gt;
+    &lt;!--mongodb支持--&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-data-mongodb&lt;/artifactId&gt;    &lt;/dependency&gt;
+</code></pre>
+<ul>
+<li>引入spring-boot-starter-web支持web服务</li>
+<li>引入spring-boot-starter-data-redis 和spring-boot-starter-data-mongodb就可以方便的使用mongodb和redis了</li>
+</ul>
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><h3 id="profiles功能"><a href="#profiles功能" class="headerlink" title="profiles功能"></a>profiles功能</h3><p>为了方便 区分开发环境和线上环境，可以使用profiles功能，在application.properties里增加<br> spring.profiles.active=dev</p>
+<p>然后增加application-dev.properties作为dev配置文件。</p>
+<h3 id="mondb配置"><a href="#mondb配置" class="headerlink" title="mondb配置"></a>mondb配置</h3><p>配置数据库地址即可</p>
+<pre><code>spring.data.mongodb.uri=mongodb://ip:port/database?readPreference=primaryPreferred
+</code></pre>
+<h3 id="redis配置"><a href="#redis配置" class="headerlink" title="redis配置"></a>redis配置</h3><pre><code>spring.redis.database=0  
+# Redis服务器地址
+spring.redis.host=ip
+# Redis服务器连接端口
+spring.redis.port=6379  
+# Redis服务器连接密码（默认为空）
+spring.redis.password=
+# 连接池最大连接数（使用负值表示没有限制）
+spring.redis.pool.max-active=8  
+# 连接池最大阻塞等待时间（使用负值表示没有限制）
+spring.redis.pool.max-wait=-1  
+# 连接池中的最大空闲连接
+spring.redis.pool.max-idle=8  
+# 连接池中的最小空闲连接
+spring.redis.pool.min-idle=0  
+# 连接超时时间（毫秒）
+spring.redis.timeout=0  
+</code></pre>
+<h2 id="数据访问"><a href="#数据访问" class="headerlink" title="数据访问"></a>数据访问</h2><h3 id="mongdb"><a href="#mongdb" class="headerlink" title="mongdb"></a>mongdb</h3><p>mongdb访问很简单，直接定义接口extends MongoRepository即可，另外可以支持JPA语法，例如：</p>
+<pre><code>@Component
+public interface UserRepository extends MongoRepository&lt;User, Integer&gt; &#123;
+public User findByUserName(String userName);
+&#125;
+</code></pre>
+<p>使用时，加上@Autowired注解即可。</p>
+<pre><code>@Component
+public class AuthService extends BaseService &#123;
+@AutowiredUserRepository userRepository;&#125;
+</code></pre>
+<h3 id="Redis访问"><a href="#Redis访问" class="headerlink" title="Redis访问"></a>Redis访问</h3><p>使用StringRedisTemplate即可直接访问Redis</p>
+<pre><code>@Component
+public class BaseService &#123;@Autowiredprotected MongoTemplate mongoTemplate;
+@Autowiredprotected StringRedisTemplate stringRedisTemplate;
+&#125;
+</code></pre>
+<p>储存数据：</p>
+<pre><code>.stringRedisTemplate.opsForValue().set(token_key, user.getId()+&quot;&quot;,token_max_age, TimeUnit.SECONDS);
+</code></pre>
+<p>删除数据：</p>
+<pre><code>stringRedisTemplate.delete(getFormatToken(accessToken,platform));
+</code></pre>
+<h2 id="Web服务"><a href="#Web服务" class="headerlink" title="Web服务"></a>Web服务</h2><p>定义一个Controller类，加上RestController即可，使用RequestMapping用来设置url route</p>
+<pre><code>@RestController
+public class AuthController extends BaseController &#123;
+@RequestMapping(value = &#123;&quot;/&quot;&#125;, produces = &quot;application/json;charset=utf-8&quot;, method = &#123;RequestMethod.GET, RequestMethod.POST&#125;)@ResponseBodypublic String main() &#123;    return &quot;hello world！&quot;;&#125;
+
+&#125;
+</code></pre>
+<p>现在启动，应该就能看到hello world！了</p>
+<h1 id="服务鉴权"><a href="#服务鉴权" class="headerlink" title="服务鉴权"></a>服务鉴权</h1><h2 id="简易accessToken机制"><a href="#简易accessToken机制" class="headerlink" title="简易accessToken机制"></a>简易accessToken机制</h2><p>提供登录接口，认证成功后，生成一个accessToken，以后访问接口时，带上accessToken，服务端通过accessToken来判断是否是合法用户。</p>
+<p>为了方便，可以将accessToken存入redis，设定有效期。</p>
+<pre><code>        String token = EncryptionUtils.sha256Hex(String.format(&quot;%s%s&quot;, user.getUserName(), System.currentTimeMillis()));    String token_key = getFormatToken(token, platform);    this.stringRedisTemplate.opsForValue().set(token_key, user.getId()+&quot;&quot;,token_max_age, TimeUnit.SECONDS);
+</code></pre>
+<h2 id="拦截器身份认证"><a href="#拦截器身份认证" class="headerlink" title="拦截器身份认证"></a>拦截器身份认证</h2><p>为了方便做统一的身份认证，可以基于Spring的拦截器机制，创建一个拦截器来做统一认证。</p>
+<pre><code>public class AuthCheckInterceptor implements HandlerInterceptor &#123;
+&#125;
+</code></pre>
+<p>要使拦截器生效，还需要一步，增加配置：</p>
+<pre><code>@Configuration
+public class SessionConfiguration extends WebMvcConfigurerAdapter &#123;
+@AutowiredAuthCheckInterceptor authCheckInterceptor;
+@Overridepublic void addInterceptors(InterceptorRegistry registry) &#123;    super.addInterceptors(registry);    // 添加拦截器    registry.addInterceptor(authCheckInterceptor).addPathPatterns(&quot;/**&quot;);&#125;
+&#125;
+</code></pre>
+<h2 id="自定义认证注解"><a href="#自定义认证注解" class="headerlink" title="自定义认证注解"></a>自定义认证注解</h2><p>为了精细化权限认证，比如有的接口只能具有特定权限的人才能访问，可以通过自定义注解轻松解决。在自定义的注解里，加上roles即可。</p>
+<pre><code>/**
+ *  权限检验注解
+ */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface AuthCheck &#123;
+/** *  角色列表 * @return */String[] roles() default &#123;&#125;;
+&#125;
+</code></pre>
+<p>检验逻辑：</p>
+<ul>
+<li>只要接口加上了AuthCheck注解，就必须是登陆用户</li>
+<li>如果指定了roles，则除了登录外，用户还应该具备相应的角色。</li>
+</ul>
+<pre><code>    String[] ignoreUrls = new String[]&#123;
+            &quot;/user/.*&quot;,
+            &quot;/cat/.*&quot;,
+            &quot;/app/.*&quot;,
+            &quot;/error&quot;
+    &#125;;
+ public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception &#123;
+
+        // 0 检验公共参数
+        if(!checkParams(&quot;platform&quot;,httpServletRequest,httpServletResponse))&#123;
+            return  false;
+        &#125;
+
+        // 1、忽略验证的URL
+        String url = httpServletRequest.getRequestURI().toString();
+        for(String ignoreUrl :ignoreUrls)&#123;
+            if(url.matches(ignoreUrl))&#123;
+                return true;
+            &#125;
+        &#125;
+
+        // 2、查询验证注解
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Method method = handlerMethod.getMethod();
+        // 查询注解
+        AuthCheck authCheck = method.getAnnotation(AuthCheck.class);
+        if (authCheck == null) &#123;
+            // 无注解，不需要
+            return true;
+        &#125;
+
+        // 3、有注解，先检查accessToken
+        if(!checkParams(&quot;accessToken&quot;,httpServletRequest,httpServletResponse))&#123;
+            return  false;
+        &#125;
+        // 检验token是否过期
+        Integer userId = authService.getUserIdFromToken(httpServletRequest.getParameter(&quot;accessToken&quot;),
+                httpServletRequest.getParameter(&quot;platform&quot;));
+        if(userId==null)&#123;
+            logger.debug(&quot;accessToken timeout&quot;);
+            output(ResponseResult.Builder.error(&quot;accessToken已过期&quot;).build(),httpServletResponse);
+            return false;
+        &#125;
+
+        // 4、再检验是否包含必要的角色
+        if(authCheck.roles()!=null&amp;&amp;authCheck.roles().length&gt;0)&#123;
+            User user = authService.getUser(userId);
+            boolean isMatch = false;
+            for(String role : authCheck.roles())&#123;
+                if(user.getRole().getName().equals(role))&#123;
+                    isMatch =  true;
+                    break;
+                &#125;
+            &#125;
+            // 角色未匹配，验证失败
+            if(!isMatch)&#123;
+                return false;
+            &#125;
+        &#125;
+
+        return true;
+    &#125;
+</code></pre>
+<h1 id="服务响应结果封装"><a href="#服务响应结果封装" class="headerlink" title="服务响应结果封装"></a>服务响应结果封装</h1><p>增加一个Builder，方便生成最终结果</p>
+<pre><code>public class ResponseResult &#123;
+
+    public static class Builder&#123;
+        ResponseResult responseResult;
+
+        Map&lt;String,Object&gt; dataMap = Maps.newHashMap();
+
+        public Builder()&#123;
+            this.responseResult = new ResponseResult();
+        &#125;
+
+        public Builder(String state)&#123;
+            this.responseResult = new ResponseResult(state);
+        &#125;
+
+
+        public static Builder newBuilder()&#123;
+           return new Builder();
+        &#125;
+
+        public static Builder success()&#123;
+            return new Builder(&quot;success&quot;);
+        &#125;
+
+        public static Builder error(String message)&#123;
+            Builder builder =  new Builder(&quot;error&quot;);
+            builder.responseResult.setError(message);
+            return builder;
+        &#125;
+
+        public  Builder append(String key,Object data)&#123;
+            this.dataMap.put(key,data);
+            return this;
+        &#125;
+
+        /**
+         *  设置列表数据
+         * @param datas 数据
+         * @return
+         */
+        public  Builder setListData(List&lt;?&gt; datas)&#123;
+            this.dataMap.put(&quot;result&quot;,datas);
+            this.dataMap.put(&quot;total&quot;,datas.size());
+            return this;
+        &#125;
+
+        public  Builder setData(Object data)&#123;
+            this.dataMap.clear();
+            this.responseResult.setData(data);
+            return this;
+        &#125;
+
+        boolean wrapData = false;
+
+        /**
+         * 将数据包裹在data中
+         * @param wrapData
+         * @return
+         */
+        public  Builder wrap(boolean wrapData)&#123;
+            this.wrapData = wrapData;
+            return this;
+        &#125;
+
+        public String build()&#123;
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(&quot;state&quot;,this.responseResult.getState());
+            if(this.responseResult.getState().equals(&quot;error&quot;))&#123;
+                jsonObject.put(&quot;error&quot;,this.responseResult.getError());
+            &#125;
+            if(this.responseResult.getData()!=null)&#123;
+                jsonObject.put(&quot;data&quot;, JSON.toJSON(this.responseResult.getData()));
+            &#125;else  if(dataMap.size()&gt;0)&#123;
+                if(wrapData) &#123;
+                    JSONObject data = new JSONObject();
+                    dataMap.forEach((key, value) -&gt; &#123;
+                        data.put(key, value);
+                    &#125;);
+                    jsonObject.put(&quot;data&quot;, data);
+                &#125;else&#123;
+                    dataMap.forEach((key, value) -&gt; &#123;
+                        jsonObject.put(key, value);
+                    &#125;);
+                &#125;
+            &#125;
+            return jsonObject.toJSONString();
+        &#125;
+
+    &#125;
+
+    private String state;
+    private Object data;
+    private String error;
+
+
+    public String getError() &#123;
+        return error;
+    &#125;
+
+    public void setError(String error) &#123;
+        this.error = error;
+    &#125;
+
+    public ResponseResult()&#123;&#125;
+
+    public ResponseResult(String rc)&#123;
+        this.state = rc;
+    &#125;
+
+    /**
+     * 成功时返回
+     * @param rc
+     * @param result
+     */
+    public ResponseResult(String rc, Object result)&#123;
+        this.state = rc;
+        this.data = result;
+    &#125;
+
+    public String getState() &#123;
+        return state;
+    &#125;
+
+    public void setState(String state) &#123;
+        this.state = state;
+    &#125;
+
+    public Object getData() &#123;
+        return data;
+    &#125;
+
+    public void setData(Object data) &#123;
+        this.data = data;
+    &#125;
+
+&#125;
+</code></pre>
+<p>调用时可以优雅一点</p>
+<pre><code>    @RequestMapping(value = &#123;&quot;/user/login&quot;,&quot;/pc/user/login&quot;&#125;, produces = &quot;application/json;charset=utf-8&quot;, method = &#123;RequestMethod.GET, RequestMethod.POST&#125;)
+    @ResponseBody
+    public String login(String userName,String password,Integer platform) &#123;
+        User user = this.authService.login(userName,password);
+        if(user!=null)&#123;
+            //  登陆
+            String token = authService.updateToken(user,platform);
+            return ResponseResult.Builder                 .success()
+                    .append(&quot;accessToken&quot;,token)
+                    .append(&quot;userId&quot;,user.getId())
+                    .build();
+        &#125;
+        return ResponseResult.Builder.error(&quot;用户不存在或密码错误&quot;).build();
+    &#125;
+    protected String error(String message)&#123;
+        return  ResponseResult.Builder.error(message).build();
+    &#125;
+
+    protected String success()&#123;
+        return  ResponseResult.Builder
+                .success()
+                .build();
+    &#125;
+
+    protected String successDataList(List&lt;?&gt; data)&#123;
+        return ResponseResult.Builder
+                .success()
+                .wrap(true) // data包裹
+                .setListData(data)
+                .build();
+    &#125;
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+              <a href="/tags/REST%E6%9C%8D%E5%8A%A1/" rel="tag"># REST服务</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/12/01/jqpeng-%E4%B8%80%E8%B5%B7%E8%AF%BB%E6%BA%90%E7%A0%81%E4%B9%8Bzookeeper(1)%20--%20%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/" rel="prev" title="一起读源码之zookeeper(1) -- 启动分析">
+      <i class="fa fa-chevron-left"></i> 一起读源码之zookeeper(1) -- 启动分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/12/22/jqpeng-kgtemp%E6%96%87%E4%BB%B6%E8%BD%ACmp3%E5%B7%A5%E5%85%B7/" rel="next" title="kgtemp文件转mp3工具">
+      kgtemp文件转mp3工具 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%90%AD%E5%BB%BA%E6%A1%86%E6%9E%B6"><span class="nav-number">1.</span> <span class="nav-text">搭建框架</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pom-xml"><span class="nav-number">1.1.</span> <span class="nav-text">pom.xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#profiles%E5%8A%9F%E8%83%BD"><span class="nav-number">1.2.1.</span> <span class="nav-text">profiles功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mondb%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.2.</span> <span class="nav-text">mondb配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#redis%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.3.</span> <span class="nav-text">redis配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE"><span class="nav-number">1.3.</span> <span class="nav-text">数据访问</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mongdb"><span class="nav-number">1.3.1.</span> <span class="nav-text">mongdb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis%E8%AE%BF%E9%97%AE"><span class="nav-number">1.3.2.</span> <span class="nav-text">Redis访问</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Web%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.4.</span> <span class="nav-text">Web服务</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E9%89%B4%E6%9D%83"><span class="nav-number">2.</span> <span class="nav-text">服务鉴权</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E6%98%93accessToken%E6%9C%BA%E5%88%B6"><span class="nav-number">2.1.</span> <span class="nav-text">简易accessToken机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%A6%E6%88%AA%E5%99%A8%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="nav-number">2.2.</span> <span class="nav-text">拦截器身份认证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%AE%A4%E8%AF%81%E6%B3%A8%E8%A7%A3"><span class="nav-number">2.3.</span> <span class="nav-text">自定义认证注解</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%93%8D%E5%BA%94%E7%BB%93%E6%9E%9C%E5%B0%81%E8%A3%85"><span class="nav-number">3.</span> <span class="nav-text">服务响应结果封装</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: 基于spring security 实现前后端分离项目权限控制 前后端分离的项目，前端有菜单（menu），后端有API（backendApi），一个menu对应的页面有N个API接口来支持，本文介绍如何基于spring security实现前后端的同步权限控制。 实现思路还是基于Role来实现，具体的思路是，一个Role拥有多个Menu，一个menu有多个back">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于spring security 实现前后端分离项目权限控制">
+<meta property="og:url" content="http://blog.iflyresearch.com/2018/06/14/jqpeng-%E5%9F%BA%E4%BA%8Espring%20security%20%E5%AE%9E%E7%8E%B0%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: 基于spring security 实现前后端分离项目权限控制 前后端分离的项目，前端有菜单（menu），后端有API（backendApi），一个menu对应的页面有N个API接口来支持，本文介绍如何基于spring security实现前后端的同步权限控制。 实现思路还是基于Role来实现，具体的思路是，一个Role拥有多个Menu，一个menu有多个back">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/2018/1528886480360.jpg">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/2018/1528886647893.jpg">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/2018/1528886586348.jpg">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/2018/1528886692091.jpg">
+<meta property="article:published_time" content="2018-06-14T01:04:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.585Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Security">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/2018/1528886480360.jpg">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2018/06/14/jqpeng-%E5%9F%BA%E4%BA%8Espring%20security%20%E5%AE%9E%E7%8E%B0%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>基于spring security 实现前后端分离项目权限控制 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/06/14/jqpeng-%E5%9F%BA%E4%BA%8Espring%20security%20%E5%AE%9E%E7%8E%B0%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于spring security 实现前后端分离项目权限控制
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-06-14 09:04:00" itemprop="dateCreated datePublished" datetime="2018-06-14T09:04:00+08:00">2018-06-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/spring-security-usage.html">基于spring security 实现前后端分离项目权限控制</a></p>
+<p>前后端分离的项目，前端有菜单（menu），后端有API（backendApi），一个menu对应的页面有N个API接口来支持，本文介绍如何基于spring security实现前后端的同步权限控制。</p>
+<h2 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h2><p>还是基于Role来实现，具体的思路是，一个Role拥有多个Menu，一个menu有多个backendApi，其中Role和menu，以及menu和backendApi都是ManyToMany关系。</p>
+<p>验证授权也很简单，用户登陆系统时，获取Role关联的Menu，页面访问后端API时，再验证下用户是否有访问API的权限。</p>
+<h3 id="domain定义"><a href="#domain定义" class="headerlink" title="domain定义"></a>domain定义</h3><p>我们用JPA来实现，先来定义Role</p>
+<pre><code>public class Role implements Serializable &#123;
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /**
+     * 名称
+     */
+    @NotNull
+    @ApiModelProperty(value = &quot;名称&quot;, required = true)
+    @Column(name = &quot;name&quot;, nullable = false)
+    private String name;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(value = &quot;备注&quot;)
+    @Column(name = &quot;remark&quot;)
+    private String remark;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+        name = &quot;role_menus&quot;,
+        joinColumns = &#123;@JoinColumn(name = &quot;role_id&quot;, referencedColumnName = &quot;id&quot;)&#125;,
+        inverseJoinColumns = &#123;@JoinColumn(name = &quot;menu_id&quot;, referencedColumnName = &quot;id&quot;)&#125;)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @BatchSize(size = 100)
+    private Set&lt;Menu&gt; menus = new HashSet&lt;&gt;();&#125;
+</code></pre>
+<p>以及Menu：</p>
+<pre><code>public class Menu implements Serializable &#123;
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = &quot;parent_id&quot;)
+    private Integer parentId;
+
+    /**
+     * 文本
+     */
+    @ApiModelProperty(value = &quot;文本&quot;)
+    @Column(name = &quot;text&quot;)
+    private String text;@ApiModelProperty(value = &quot;angular路由&quot;)
+    @Column(name = &quot;link&quot;)
+    private String link;
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(name = &quot;backend_api_menus&quot;,
+        joinColumns = @JoinColumn(name=&quot;menus_id&quot;, referencedColumnName=&quot;id&quot;),
+        inverseJoinColumns = @JoinColumn(name=&quot;backend_apis_id&quot;, referencedColumnName=&quot;id&quot;))
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set&lt;BackendApi&gt; backendApis = new HashSet&lt;&gt;();
+
+    @ManyToMany(mappedBy = &quot;menus&quot;)
+    @JsonIgnore
+    private Set&lt;Role&gt; roles = new HashSet&lt;&gt;();&#125;
+</code></pre>
+<p>最后是BackendApi，区分method（HTTP请求方法）、tag（哪一个Controller）和path（API请求路径）：</p>
+<pre><code>public class BackendApi implements Serializable &#123;
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = &quot;tag&quot;)
+    private String tag;
+
+    @Column(name = &quot;path&quot;)
+    private String path;
+
+    @Column(name = &quot;method&quot;)
+    private String method;
+
+    @Column(name = &quot;summary&quot;)
+    private String summary;
+
+    @Column(name = &quot;operation_id&quot;)
+    private String operationId;
+
+    @ManyToMany(mappedBy = &quot;backendApis&quot;)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set&lt;Menu&gt; menus = new HashSet&lt;&gt;();&#125;
+</code></pre>
+<h2 id="管理页面实现"><a href="#管理页面实现" class="headerlink" title="管理页面实现"></a>管理页面实现</h2><p>Menu菜单是业务需求确定的，因此提供CRUD编辑即可。<br> BackendAPI，可以通过swagger来获取。<br> 前端选择ng-algin，参见<a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/angular-ng-alain.html">Angular 中后台前端解决方案 - Ng Alain 介绍</a></p>
+<h3 id="通过swagger获取BackendAPI"><a href="#通过swagger获取BackendAPI" class="headerlink" title="通过swagger获取BackendAPI"></a>通过swagger获取BackendAPI</h3><p>获取swagger api有多种方法，最简单的就是访问http接口获取json，然后解析，这很简单，这里不赘述，还有一种就是直接调用相关API获取Swagger对象。</p>
+<p>查看官方的web代码，可以看到获取数据大概是这样的：</p>
+<pre><code>        String groupName = Optional.fromNullable(swaggerGroup).or(Docket.DEFAULT_GROUP_NAME);
+        Documentation documentation = documentationCache.documentationByGroup(groupName);
+        if (documentation == null) &#123;
+            return new ResponseEntity&lt;Json&gt;(HttpStatus.NOT_FOUND);
+        &#125;
+        Swagger swagger = mapper.mapDocumentation(documentation);
+        UriComponents uriComponents = componentsFrom(servletRequest, swagger.getBasePath());
+        swagger.basePath(Strings.isNullOrEmpty(uriComponents.getPath()) ? &quot;/&quot; : uriComponents.getPath());
+        if (isNullOrEmpty(swagger.getHost())) &#123;
+            swagger.host(hostName(uriComponents));
+        &#125;
+        return new ResponseEntity&lt;Json&gt;(jsonSerializer.toJson(swagger), HttpStatus.OK);
+</code></pre>
+<p>其中的documentationCache、environment、mapper等可以直接Autowired获得：</p>
+<pre><code>@Autowired
+    public SwaggerResource(
+        Environment environment,
+        DocumentationCache documentationCache,
+        ServiceModelToSwagger2Mapper mapper,
+        BackendApiRepository backendApiRepository,
+        JsonSerializer jsonSerializer) &#123;
+
+        this.hostNameOverride = environment.getProperty(&quot;springfox.documentation.swagger.v2.host&quot;, &quot;DEFAULT&quot;);
+        this.documentationCache = documentationCache;
+        this.mapper = mapper;
+        this.jsonSerializer = jsonSerializer;
+
+        this.backendApiRepository = backendApiRepository;
+
+    &#125;
+</code></pre>
+<p>然后我们自动加载就简单了，写一个updateApi接口，读取swagger对象，然后解析成BackendAPI，存储到数据库：</p>
+<pre><code>@RequestMapping(
+        value = &quot;/api/updateApi&quot;,
+        method = RequestMethod.GET,
+        produces = &#123; APPLICATION_JSON_VALUE, HAL_MEDIA_TYPE &#125;)
+    @PropertySourcedMapping(
+        value = &quot;$&#123;springfox.documentation.swagger.v2.path&#125;&quot;,
+        propertyKey = &quot;springfox.documentation.swagger.v2.path&quot;)
+    @ResponseBody
+    public ResponseEntity&lt;Json&gt; updateApi(
+        @RequestParam(value = &quot;group&quot;, required = false) String swaggerGroup) &#123;
+
+        // 加载已有的api
+        Map&lt;String,Boolean&gt; apiMap = Maps.newHashMap();
+        List&lt;BackendApi&gt; apis = backendApiRepository.findAll();
+        apis.stream().forEach(api-&gt;apiMap.put(api.getPath()+api.getMethod(),true));
+
+        // 获取swagger
+        String groupName = Optional.fromNullable(swaggerGroup).or(Docket.DEFAULT_GROUP_NAME);
+        Documentation documentation = documentationCache.documentationByGroup(groupName);
+        if (documentation == null) &#123;
+            return new ResponseEntity&lt;Json&gt;(HttpStatus.NOT_FOUND);
+        &#125;
+        Swagger swagger = mapper.mapDocumentation(documentation);
+
+        // 加载到数据库
+        for(Map.Entry&lt;String, Path&gt; item : swagger.getPaths().entrySet())&#123;
+            String path = item.getKey();
+            Path pathInfo = item.getValue();
+            createApiIfNeeded(apiMap, path,  pathInfo.getGet(), HttpMethod.GET.name());
+            createApiIfNeeded(apiMap, path,  pathInfo.getPost(), HttpMethod.POST.name());
+            createApiIfNeeded(apiMap, path,  pathInfo.getDelete(), HttpMethod.DELETE.name());
+            createApiIfNeeded(apiMap, path,  pathInfo.getPut(), HttpMethod.PUT.name());
+        &#125;
+        return new ResponseEntity&lt;Json&gt;(HttpStatus.OK);
+    &#125;
+</code></pre>
+<p>其中createApiIfNeeded，先判断下是否存在，不存在的则新增：</p>
+<pre><code> private void createApiIfNeeded(Map&lt;String, Boolean&gt; apiMap, String path, Operation operation, String method) &#123;
+        if(operation==null) &#123;
+            return;
+        &#125;
+        if(!apiMap.containsKey(path+ method))&#123;
+            apiMap.put(path+ method,true);
+
+            BackendApi api = new BackendApi();
+            api.setMethod( method);
+            api.setOperationId(operation.getOperationId());
+            api.setPath(path);
+            api.setTag(operation.getTags().get(0));
+            api.setSummary(operation.getSummary());
+
+            // 保存
+            this.backendApiRepository.save(api);
+        &#125;
+    &#125;
+</code></pre>
+<p>最后，做一个简单页面展示即可：</p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/2018/1528886480360.jpg" alt="enter description here" title="1528886480360"></p>
+<h3 id="菜单管理"><a href="#菜单管理" class="headerlink" title="菜单管理"></a>菜单管理</h3><p>新增和修改页面，可以选择上级菜单，后台API做成按tag分组，可多选即可：</p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/2018/1528886647893.jpg" alt="enter description here" title="1528886647893"></p>
+<p>列表页面</p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/2018/1528886586348.jpg" alt="enter description here" title="1528886586348"></p>
+<h3 id="角色管理"><a href="#角色管理" class="headerlink" title="角色管理"></a>角色管理</h3><p>普通的CRUD，最主要的增加一个菜单授权页面，菜单按层级显示即可：</p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/2018/1528886692091.jpg" alt="enter description here" title="1528886692091"></p>
+<h2 id="认证实现"><a href="#认证实现" class="headerlink" title="认证实现"></a>认证实现</h2><p>管理页面可以做成千奇百样，最核心的还是如何实现认证。</p>
+<p>在上一篇文章<a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/spring-security-rabc.html">spring security实现动态配置url权限的两种方法</a>里我们说了，可以自定义<code>FilterInvocationSecurityMetadataSource</code>来实现。</p>
+<p>实现<code>FilterInvocationSecurityMetadataSource</code>接口即可，核心是根据FilterInvocation的Request的method和path，获取对应的Role，然后交给RoleVoter去判断是否有权限。</p>
+<h3 id="自定义FilterInvocationSecurityMetadataSource"><a href="#自定义FilterInvocationSecurityMetadataSource" class="headerlink" title="自定义FilterInvocationSecurityMetadataSource"></a>自定义FilterInvocationSecurityMetadataSource</h3><p>我们新建一个DaoSecurityMetadataSource实现FilterInvocationSecurityMetadataSource接口，主要看getAttributes方法：</p>
+<pre><code>     @Override
+    public Collection&lt;ConfigAttribute&gt; getAttributes(Object object) throws IllegalArgumentException &#123;
+        FilterInvocation fi = (FilterInvocation) object;
+
+        List&lt;Role&gt; neededRoles = this.getRequestNeededRoles(fi.getRequest().getMethod(), fi.getRequestUrl());
+
+        if (neededRoles != null) &#123;
+            return SecurityConfig.createList(neededRoles.stream().map(role -&gt; role.getName()).collect(Collectors.toList()).toArray(new String[]&#123;&#125;));
+        &#125;
+
+        //  返回默认配置
+        return superMetadataSource.getAttributes(object);
+    &#125;
+</code></pre>
+<p>核心是getRequestNeededRoles怎么实现，获取到干净的RequestUrl（去掉参数）,然后看是否有对应的backendAPI，如果没有，则有可能该API有path参数，我们可以去掉最后的path，去库里模糊匹配，直到找到。</p>
+<pre><code> public List&lt;Role&gt; getRequestNeededRoles(String method, String path) &#123;
+        String rawPath = path;
+        //  remove parameters
+        if(path.indexOf(&quot;?&quot;)&gt;-1)&#123;
+            path = path.substring(0,path.indexOf(&quot;?&quot;));
+        &#125;
+        // /menus/&#123;id&#125;
+        BackendApi api = backendApiRepository.findByPathAndMethod(path, method);
+        if (api == null)&#123;
+            // try fetch by remove last path
+            api = loadFromSimilarApi(method, path, rawPath);
+        &#125;
+
+        if (api != null &amp;&amp; api.getMenus().size() &gt; 0) &#123;
+            return api.getMenus()
+                .stream()
+                .flatMap(menu -&gt; menuRepository.findOneWithRolesById(menu.getId()).getRoles().stream())
+                .collect(Collectors.toList());
+        &#125;
+        return null;
+    &#125;
+
+    private BackendApi loadFromSimilarApi(String method, String path, String rawPath) &#123;
+        if(path.lastIndexOf(&quot;/&quot;)&gt;-1)&#123;
+            path = path.substring(0,path.lastIndexOf(&quot;/&quot;));
+            List&lt;BackendApi&gt; apis = backendApiRepository.findByPathStartsWithAndMethod(path, method);
+
+            // 如果为空，再去掉一层path
+            while(apis==null)&#123;
+                if(path.lastIndexOf(&quot;/&quot;)&gt;-1) &#123;
+                    path = path.substring(0, path.lastIndexOf(&quot;/&quot;));
+                    apis = backendApiRepository.findByPathStartsWithAndMethod(path, method);
+                &#125;else&#123;
+                    break;
+                &#125;
+            &#125;
+
+            if(apis!=null)&#123;
+                for(BackendApi backendApi : apis)&#123;
+                    if (antPathMatcher.match(backendApi.getPath(), rawPath)) &#123;
+                        return backendApi;
+                    &#125;
+                &#125;
+            &#125;
+        &#125;
+        return null;
+    &#125;
+</code></pre>
+<p>其中，BackendApiRepository：</p>
+<pre><code>    @EntityGraph(attributePaths = &quot;menus&quot;)
+    BackendApi findByPathAndMethod(String path,String method);
+
+    @EntityGraph(attributePaths = &quot;menus&quot;)
+    List&lt;BackendApi&gt; findByPathStartsWithAndMethod(String path,String method);
+</code></pre>
+<p>以及MenuRepository</p>
+<pre><code>    @EntityGraph(attributePaths = &quot;roles&quot;)
+    Menu findOneWithRolesById(long id);
+</code></pre>
+<h3 id="使用DaoSecurityMetadataSource"><a href="#使用DaoSecurityMetadataSource" class="headerlink" title="使用DaoSecurityMetadataSource"></a>使用DaoSecurityMetadataSource</h3><p>需要注意的是，在DaoSecurityMetadataSource里，不能直接注入Repository，我们可以给DaoSecurityMetadataSource添加一个方法，方便传入：</p>
+<pre><code>   public void init(MenuRepository menuRepository, BackendApiRepository backendApiRepository) &#123;
+        this.menuRepository = menuRepository;
+        this.backendApiRepository = backendApiRepository;
+    &#125;
+</code></pre>
+<p>然后建立一个容器，存储实例化的DaoSecurityMetadataSource，我们可以建立如下的ApplicationContext来作为对象容器，存取对象：</p>
+<pre><code>public class ApplicationContext &#123;
+    static Map&lt;Class&lt;?&gt;,Object&gt; beanMap = Maps.newConcurrentMap();
+
+    public static &lt;T&gt; T getBean(Class&lt;T&gt; requireType)&#123;
+        return (T) beanMap.get(requireType);
+    &#125;
+
+    public static void registerBean(Object item)&#123;
+        beanMap.put(item.getClass(),item);
+    &#125;
+&#125;
+</code></pre>
+<p>在SecurityConfiguration配置中使用<code>DaoSecurityMetadataSource</code>，并通过<code> ApplicationContext.registerBean</code>将<code>DaoSecurityMetadataSource</code>注册：</p>
+<pre><code> @Override
+    protected void configure(HttpSecurity http) throws Exception &#123;
+        http
+            .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling()
+            .authenticationEntryPoint(problemSupport)
+            .accessDeniedHandler(problemSupport)        ....
+           // .withObjectPostProcessor()
+            // 自定义accessDecisionManager
+            .accessDecisionManager(accessDecisionManager())
+            // 自定义FilterInvocationSecurityMetadataSource
+            .withObjectPostProcessor(new ObjectPostProcessor&lt;FilterSecurityInterceptor&gt;() &#123;
+                @Override
+                public &lt;O extends FilterSecurityInterceptor&gt; O postProcess(
+                    O fsi) &#123;
+                    fsi.setSecurityMetadataSource(daoSecurityMetadataSource(fsi.getSecurityMetadataSource()));
+                    return fsi;
+                &#125;
+            &#125;)
+        .and()
+            .apply(securityConfigurerAdapter());
+
+    &#125;
+
+    @Bean
+    public DaoSecurityMetadataSource daoSecurityMetadataSource(FilterInvocationSecurityMetadataSource filterInvocationSecurityMetadataSource) &#123;
+        DaoSecurityMetadataSource securityMetadataSource = new DaoSecurityMetadataSource(filterInvocationSecurityMetadataSource);
+        ApplicationContext.registerBean(securityMetadataSource);
+        return securityMetadataSource;
+    &#125;
+</code></pre>
+<p>最后，在程序启动后，通过<code>ApplicationContext.getBean</code>获取到daoSecurityMetadataSource，然后调用init注入Repository</p>
+<pre><code> public static void postInit()&#123;
+        ApplicationContext
+            .getBean(DaoSecurityMetadataSource.class)
+ .init(applicationContext.getBean(MenuRepository.class),applicationContext.getBean(BackendApiRepository.class));
+    &#125;
+
+    static ConfigurableApplicationContext applicationContext;
+
+    public static void main(String[] args) throws UnknownHostException &#123;
+        SpringApplication app = new SpringApplication(UserCenterApp.class);
+        DefaultProfileUtil.addDefaultProfile(app);
+        applicationContext = app.run(args);
+
+        // 后初始化
+        postInit();
+&#125;
+</code></pre>
+<p>大功告成！</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/spring-security-rabc.html">spring security实现动态配置url权限的两种方法</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/spring-security.html">Spring Security 架构与源码分析</a></li>
+</ul>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+              <a href="/tags/Spring-Security/" rel="tag"># Spring Security</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/06/07/jqpeng-spring%20security%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AEurl%E6%9D%83%E9%99%90%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95/" rel="prev" title="spring security实现动态配置url权限的两种方法">
+      <i class="fa fa-chevron-left"></i> spring security实现动态配置url权限的两种方法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/06/29/jqpeng-%EF%BC%88%E8%BD%AC%E9%98%AE%E4%B8%80%E5%B3%B0%EF%BC%89%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3OAuth%202.0/" rel="next" title="（转阮一峰）深入理解OAuth 2.0">
+      （转阮一峰）深入理解OAuth 2.0 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF"><span class="nav-number">1.</span> <span class="nav-text">实现思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#domain%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.</span> <span class="nav-text">domain定义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E9%A1%B5%E9%9D%A2%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">管理页面实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87swagger%E8%8E%B7%E5%8F%96BackendAPI"><span class="nav-number">2.1.</span> <span class="nav-text">通过swagger获取BackendAPI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8F%9C%E5%8D%95%E7%AE%A1%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">菜单管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%92%E8%89%B2%E7%AE%A1%E7%90%86"><span class="nav-number">2.3.</span> <span class="nav-text">角色管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A4%E8%AF%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">认证实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89FilterInvocationSecurityMetadataSource"><span class="nav-number">3.1.</span> <span class="nav-text">自定义FilterInvocationSecurityMetadataSource</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8DaoSecurityMetadataSource"><span class="nav-number">3.2.</span> <span class="nav-text">使用DaoSecurityMetadataSource</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%B6%E4%BC%B8%E9%98%85%E8%AF%BB"><span class="nav-number">4.</span> <span class="nav-text">延伸阅读</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

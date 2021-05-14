@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: XNginx  - nginx 集群可视化管理工具 之前团队的nginx管理，都是运维同学每次去修改配置文件，然后重启，非常不方便，一直想找一个可以方便管理nginx集群的工具，翻遍web，未寻到可用之物，于是自己设计开发了一个。 效果预览 集群group管理界面   可以管理group的节点，配置文件，修改后可以一键重启所有节点，且配置文件出错时会提示错误，不会">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XNginx  - nginx 集群可视化管理工具">
+<meta property="og:url" content="http://blog.iflyresearch.com/2018/09/28/jqpeng-XNginx%20%20-%20nginx%20%E9%9B%86%E7%BE%A4%E5%8F%AF%E8%A7%86%E5%8C%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: XNginx  - nginx 集群可视化管理工具 之前团队的nginx管理，都是运维同学每次去修改配置文件，然后重启，非常不方便，一直想找一个可以方便管理nginx集群的工具，翻遍web，未寻到可用之物，于是自己设计开发了一个。 效果预览 集群group管理界面   可以管理group的节点，配置文件，修改后可以一键重启所有节点，且配置文件出错时会提示错误，不会">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116402607.png">
+<meta property="og:image" content="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116456272.png">
+<meta property="og:image" content="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116799984.png">
+<meta property="og:image" content="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116495120.png">
+<meta property="og:image" content="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116669140.png">
+<meta property="article:published_time" content="2018-09-28T09:30:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="XNginx">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116402607.png">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2018/09/28/jqpeng-XNginx%20%20-%20nginx%20%E9%9B%86%E7%BE%A4%E5%8F%AF%E8%A7%86%E5%8C%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>XNginx  - nginx 集群可视化管理工具 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/09/28/jqpeng-XNginx%20%20-%20nginx%20%E9%9B%86%E7%BE%A4%E5%8F%AF%E8%A7%86%E5%8C%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          XNginx  - nginx 集群可视化管理工具
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-09-28 17:30:00" itemprop="dateCreated datePublished" datetime="2018-09-28T17:30:00+08:00">2018-09-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/xnginx.html">XNginx  - nginx 集群可视化管理工具</a></p>
+<p>之前团队的nginx管理，都是运维同学每次去修改配置文件，然后重启，非常不方便，一直想找一个可以方便管理nginx集群的工具，翻遍web，未寻到可用之物，于是自己设计开发了一个。</p>
+<h2 id="效果预览"><a href="#效果预览" class="headerlink" title="效果预览"></a>效果预览</h2><ol>
+<li>集群group管理界面</li>
+</ol>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116402607.png" alt="Xnginx pic1"></p>
+<p>可以管理group的节点，配置文件，修改后可以一键重启所有节点，且配置文件出错时会提示错误，不会影响线上服务。</p>
+<p>2.集群Node节点管理</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116456272.png" alt="集群节点"></p>
+<p>3 .集群Node节点日志查看</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116799984.png" alt="集群日志管理"></p>
+<ol>
+<li>生成的配置文件预览</li>
+</ol>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116495120.png" alt="配置文件"></p>
+<ol>
+<li>vhost管理</li>
+</ol>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116669140.png" alt="Vhost管理"></p>
+<h2 id="设计思路"><a href="#设计思路" class="headerlink" title="设计思路"></a>设计思路</h2><p>数据结构：<br> 一个nginxGroup，拥有多个NginxNode，共享同一份配置文件。</p>
+<p>分布式架构：Manager节点+agent节点+web管理<br> 每个nginx机器部署一个agent，agent启动后自动注册到manager，通过web可以设置agent所属group，以及管理group的配置文件。</p>
+<p>配置文件变更后，manager生成配置文件，分发给存活的agent，检验OK后，控制agent重启nginx。</p>
+<h2 id="关键技术点"><a href="#关键技术点" class="headerlink" title="关键技术点"></a>关键技术点</h2><h3 id="分布式管理"><a href="#分布式管理" class="headerlink" title="分布式管理"></a>分布式管理</h3><p>一般分布式可以借助zookeeper等注册中心来实现，作为java项目，其实使用EurekaServer就可以了：</p>
+<p>manager加入eureka依赖：</p>
+<pre><code>    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-starter&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-starter-netflix-eureka-server&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+</code></pre>
+<p>然后在入口程序添加 @EnableEurekaServer</p>
+<p>agent 添加注册配置：</p>
+<pre><code>eureka:instance:    prefer-ip-address: trueclient:    service-url:        defaultZone: http://admin:admin@ip:3002/eureka/
+</code></pre>
+<p>manager 节点获取存活的agent，可以通过EurekaServerContextHolder来获取注册的agent，同时可以通过定时任务自动发现新节点。</p>
+<pre><code>public class NginxNodeDiscover &#123;
+
+    private static final String AGENT_NAME = &quot;XNGINXAGENT&quot;;
+
+    private PeerAwareInstanceRegistry getRegistry() &#123;
+        return getServerContext().getRegistry();
+    &#125;
+
+    private EurekaServerContext getServerContext() &#123;
+        return EurekaServerContextHolder.getInstance().getServerContext();
+    &#125;
+
+    @Autowired
+    NginxNodeRepository nginxNodeRepository;
+
+    @Scheduled(fixedRate = 60000)
+    public void discoverNginxNode() &#123;
+        List&lt;String&gt; nodes = getAliveAgents();
+        nodes.stream().forEach(node-&gt;&#123;
+            if(!nginxNodeRepository.findByAgent(node).isPresent())&#123;
+                NginxNode nginxNode = new NginxNode();
+                nginxNode.setAgent(node);
+                nginxNode.setName(node);
+                nginxNodeRepository.save(nginxNode);
+            &#125;
+        &#125;);
+    &#125;
+
+    public List&lt;String&gt; getAliveAgents() &#123;
+        List&lt;String&gt; instances = new ArrayList&lt;&gt;();
+        List&lt;Application&gt; sortedApplications = getRegistry().getSortedApplications();
+        Optional&lt;Application&gt; targetApp = sortedApplications.stream().filter(a-&gt;a.getName().equals(AGENT_NAME)).findFirst();
+        if(targetApp.isPresent())&#123;
+            Application app = targetApp.get();
+            for (InstanceInfo info : app.getInstances()) &#123;
+                instances.add(info.getHomePageUrl());
+            &#125;
+        &#125;
+        return instances;
+    &#125;
+&#125;
+</code></pre>
+<h3 id="RPC调用"><a href="#RPC调用" class="headerlink" title="RPC调用"></a>RPC调用</h3><p>manager 需要控制agent，按最简单的方案，agent提供rest服务，从Eureka获取地址后直接调用就可以了，另外可以借助feign来方便调用。</p>
+<p>定义接口：</p>
+<pre><code>public interface NginxAgentManager &#123;
+
+    @RequestLine(&quot;GET /nginx/start&quot;)
+     RuntimeBuilder.RuntimeResult start() ;
+
+    @RequestLine(&quot;GET /nginx/status&quot;)
+     RuntimeBuilder.RuntimeResult status() ;
+
+    @RequestLine(&quot;GET /nginx/reload&quot;)
+     RuntimeBuilder.RuntimeResult reload() ;
+
+    @RequestLine(&quot;GET /nginx/stop&quot;)
+     RuntimeBuilder.RuntimeResult stop();
+
+    @RequestLine(&quot;GET /nginx/testConfiguration&quot;)
+     RuntimeBuilder.RuntimeResult testConfiguration();
+
+    @RequestLine(&quot;GET /nginx/kill&quot;)
+     RuntimeBuilder.RuntimeResult kill() ;
+
+    @RequestLine(&quot;GET /nginx/restart&quot;)
+     RuntimeBuilder.RuntimeResult restart() ;
+
+    @RequestLine(&quot;GET /nginx/info&quot;)
+     NginxInfo info();
+
+    @RequestLine(&quot;GET /nginx/os&quot;)
+     OperationalSystemInfo os() ;
+
+    @RequestLine(&quot;GET /nginx/accesslogs/&#123;lines&#125;&quot;)
+    List&lt;NginxLoggerVM&gt; getAccesslogs(@Param(&quot;lines&quot;) int lines);
+
+    @RequestLine(&quot;GET /nginx/errorlogs/&#123;lines&#125;&quot;)
+    List&lt;NginxLoggerVM&gt; getErrorLogs(@Param(&quot;lines&quot;) int lines);
+
+&#125;
+</code></pre>
+<p>agent 实现功能：</p>
+<pre><code>@RestController
+@RequestMapping(&quot;/nginx&quot;)
+public class NginxResource &#123;
+
+   ...
+
+    @PostMapping(&quot;/update&quot;)
+    @Timed
+    public String  update(@RequestBody NginxConf conf)&#123;
+        if(conf.getSslDirectives()!=null)&#123;
+            for(SslDirective sslDirective : conf.getSslDirectives())&#123;
+                nginxControl.conf(sslDirective.getCommonName(),sslDirective.getContent());
+            &#125;
+        &#125;
+        return updateConfig(conf.getConf());
+    &#125;
+
+    @GetMapping(&quot;/accesslogs/&#123;lines&#125;&quot;)
+    @Timed
+    public List&lt;NginxLoggerVM&gt; getAccesslogs(@PathVariable Integer lines) &#123;
+        return nginxControl.getAccessLogs(lines);
+    &#125;
+
+
+&#125;
+</code></pre>
+<p>manager 调用;</p>
+<p>先生成一个Proxy实例，其中nodeurl是agent节点的url地址</p>
+<pre><code>    public NginxAgentManager getAgentManager(String nodeUrl)&#123;
+        return Feign.builder()
+            .options(new Request.Options(1000, 3500))
+            .retryer(new Retryer.Default(5000, 5000, 3))
+            .requestInterceptor(new HeaderRequestInterceptor())
+            .encoder(new GsonEncoder())
+            .decoder(new GsonDecoder())
+            .target(NginxAgentManager.class, nodeUrl);
+    &#125;
+</code></pre>
+<p>然后调用就简单了，比如要启动group：</p>
+<pre><code>public void start(String groupId)&#123;
+        operateGroup(groupId,((conf, node) -&gt; &#123;
+            NginxAgentManager manager = getAgentManager(node.getAgent());
+
+            String result = manager.update(conf);
+            if(!result.equals(&quot;success&quot;))&#123;
+                throw new XNginxException(&quot;node &quot;+ node.getAgent()+&quot; update config file failed!&quot;);
+            &#125;
+
+            RuntimeBuilder.RuntimeResult runtimeResult =   manager.start();
+            if(!runtimeResult.isSuccess())&#123;
+                throw new XNginxException(&quot;node &quot;+ node.getAgent()+&quot; start failed,&quot;+runtimeResult.getOutput());
+            &#125;
+        &#125;));
+    &#125;
+
+    public void operateGroup(String groupId,BiConsumer&lt;NginxConf,NginxNode&gt; action)&#123;
+
+        List&lt;String&gt; alivedNodes = nodeDiscover.getAliveAgents();
+        if(alivedNodes.size() == 0)&#123;
+            throw new XNginxException(&quot;no alived agent!&quot;);
+        &#125;
+        List&lt;NginxNode&gt; nginxNodes = nodeRepository.findAllByGroupId(groupId);
+        if(nginxNodes.size() ==0)&#123;
+            throw new XNginxException(&quot;the group has no nginx Nodes!&quot;);
+        &#125;
+
+        NginxConf conf = nginxConfigService.genConfig(groupId);
+
+        for(NginxNode node : nginxNodes)&#123;
+
+            if(!alivedNodes.contains(node.getAgent()))&#123;
+                continue;
+            &#125;
+
+            action.accept(conf, node);
+       &#125;
+    &#125;
+</code></pre>
+<h3 id="Nginx-配置管理"><a href="#Nginx-配置管理" class="headerlink" title="Nginx 配置管理"></a>Nginx 配置管理</h3><p>nginx的核心是各种Directive（指令），最核心的是vhost和Location。</p>
+<p>我们先来定义VHOST：</p>
+<pre><code>public class VirtualHostDirective implements Directive &#123;
+private Integer port = 80;private String aliases;private boolean enableSSL;private SslDirective sslCertificate;private SslDirective sslCertificateKey;private List&lt;LocationDirective&gt; locations;
+private String root;private  String index;private String access_log;
+&#125;
+</code></pre>
+<p>其中核心的LocationDirective，设计思路是passAddress存储location的目标地址，可以是url，也可以是upstream，通过type来区分，同时如果有upstream，则通过proxy来设置负载信息。</p>
+<pre><code>public class LocationDirective &#123;
+public static final String PROXY = &quot;PROXY&quot;;public static final String UWSGI = &quot;UWSGI&quot;;public static final String FASTCGI = &quot;FASTCGI&quot;;public static final String COMMON = &quot;STATIC&quot;;
+private String path;
+private String type = COMMON;
+private ProxyDirective proxy;
+private List&lt;String&gt; rewrites;
+private String advanced;
+private String passAddress;&#125;
+</code></pre>
+<p>再来看ProxyDirective，通过balance来区分是普通的url还是upstream，如果是upstream，servers存储负载的服务器。</p>
+<pre><code>public class ProxyDirective implements Directive &#123;
+public static final String BALANCE_UPSTREAM = &quot;upstream&quot;;public static final String BALANCE_URL = &quot;url&quot;;
+
+private String name;
+private String strategy;
+/** *  Upstream balance type : upsteam,url */private String balance = BALANCE_UPSTREAM;
+private List&lt;UpstreamDirectiveServer&gt; servers;&#125;
+</code></pre>
+<h3 id="历史数据导入"><a href="#历史数据导入" class="headerlink" title="历史数据导入"></a>历史数据导入</h3><p>已经有了配置信息，可以通过解析导入系统，解析就是常规的文本解析，这里不再赘述。</p>
+<p>核心思想就是通过匹配大括号，将配置文件分成block，然后通过正则等提取信息,比如下面的代码拆分出server{…}</p>
+<pre><code>private List&lt;String&gt; blocks() &#123;
+        List&lt;String&gt; blocks = new ArrayList&lt;&gt;();
+        List&lt;String&gt; lines = Arrays.asList(fileContent.split(&quot;\n&quot;));
+
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+        AtomicInteger currentLine = new AtomicInteger(1);
+        Integer indexStart = 0;
+        Integer serverStartIndex = 0;
+        for (String line : lines) &#123;
+            if (line.contains(&quot;&#123;&quot;)) &#123;
+                atomicInteger.getAndIncrement();
+                if (line.contains(&quot;server&quot;)) &#123;
+                    indexStart = currentLine.get() - 1;
+                    serverStartIndex = atomicInteger.get() - 1;
+                &#125;
+            &#125; else if (line.contains(&quot;&#125;&quot;)) &#123;
+                atomicInteger.getAndDecrement();
+                if (atomicInteger.get() == serverStartIndex) &#123;
+                    if (lines.get(indexStart).trim().startsWith(&quot;server&quot;)) &#123;
+                        blocks.add(StringUtils.join(lines.subList(indexStart, currentLine.get()), &quot;\n&quot;));
+                    &#125;
+                &#125;
+            &#125;
+            currentLine.getAndIncrement();
+        &#125;
+        return blocks;
+    &#125;
+</code></pre>
+<h3 id="配置文件生成"><a href="#配置文件生成" class="headerlink" title="配置文件生成"></a>配置文件生成</h3><p>配置文件生成，一般是通过模板引擎，这里也不例外，使用了Velocity库。</p>
+<pre><code>    public static StringWriter mergeFileTemplate(String pTemplatePath, Map&lt;String, Object&gt; pDto) &#123;
+        if (StringUtils.isEmpty(pTemplatePath)) &#123;
+            throw new NullPointerException(&quot;????????????&quot;);
+        &#125;
+        StringWriter writer = new StringWriter();
+        Template template;
+        try &#123;
+            template = ve.getTemplate(pTemplatePath);
+        &#125; catch (Exception e) &#123;
+            throw new RuntimeException(&quot;????????&quot;, e);
+        &#125;
+        VelocityContext context = VelocityHelper.convertDto2VelocityContext(pDto);
+        try &#123;
+            template.merge(context, writer);
+        &#125; catch (Exception e) &#123;
+            throw new RuntimeException(&quot;????????&quot;, e);
+        &#125;
+        return writer;
+    &#125;
+</code></pre>
+<p>定义模板：</p>
+<pre><code>#if($&#123;config.user&#125;)user $&#123;config.user&#125;;#end
+#if($&#123;config.workerProcesses&#125;== 0 )
+worker_processes auto;
+#else
+worker_processes  $&#123;config.workerProcesses&#125;;
+#end
+pid        /opt/xnginx/settings/nginx.pid;
+
+events &#123;
+    multi_accept off;
+    worker_connections $&#123;config.workerConnections&#125;;
+&#125;
+
+...
+</code></pre>
+<p>生成配置文件;</p>
+<pre><code>    public static StringWriter buildNginxConfString(ServerConfig serverConfig, List&lt;VirtualHostDirective&gt; hostDirectiveList, List&lt;ProxyDirective&gt; proxyDirectiveList) &#123;
+        Map&lt;String,Object&gt; map = new HashMap&lt;&gt;();
+        map.put(&quot;config&quot;,serverConfig);
+        map.put(&quot;upstreams&quot;, proxyDirectiveList);
+        map.put(&quot;hosts&quot;,hostDirectiveList);
+        return VelocityHelper.mergeFileTemplate(NGINX_CONF_VM, map);
+    &#125;
+</code></pre>
+<h3 id="管理web"><a href="#管理web" class="headerlink" title="管理web"></a>管理web</h3><p>管理web基于<a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/angular-ng-alain.html">ng-alain框架</a>，typescript+angular mvvm开发起来，和后端没有本质区别</p>
+<p>开发相对简单，这里不赘述。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>目前只实现了基本的管理功能，后续可根据需要再继续补充完善，比如支持业务、负责人等信息管理维护。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/XNginx/" rel="tag"># XNginx</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/27/jqpeng-APM%20%E5%8E%9F%E7%90%86%E4%B8%8E%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B/" rel="prev" title="APM 原理与框架选型">
+      <i class="fa fa-chevron-left"></i> APM 原理与框架选型
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/12/jqpeng-K8S%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/" rel="next" title="K8S集群安装">
+      K8S集群安装 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%88%E6%9E%9C%E9%A2%84%E8%A7%88"><span class="nav-number">1.</span> <span class="nav-text">效果预览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF"><span class="nav-number">2.</span> <span class="nav-text">设计思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E7%82%B9"><span class="nav-number">3.</span> <span class="nav-text">关键技术点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%AE%A1%E7%90%86"><span class="nav-number">3.1.</span> <span class="nav-text">分布式管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RPC%E8%B0%83%E7%94%A8"><span class="nav-number">3.2.</span> <span class="nav-text">RPC调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nginx-%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86"><span class="nav-number">3.3.</span> <span class="nav-text">Nginx 配置管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%86%E5%8F%B2%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5"><span class="nav-number">3.4.</span> <span class="nav-text">历史数据导入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90"><span class="nav-number">3.5.</span> <span class="nav-text">配置文件生成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E7%90%86web"><span class="nav-number">3.6.</span> <span class="nav-text">管理web</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

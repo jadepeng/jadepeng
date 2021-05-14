@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: Latex 公式在线可视化编辑器 寻觅最近的一个demo需要用到Latex公式在线编辑器，从搜索引擎一般会得到类似http:&#x2F;&#x2F;latex.codecogs.com&#x2F;eqneditor&#x2F;editor.php的结果，这个编辑器的问题在于使用成本高，并且界面不美观。 继续探寻，发现了wiris Editor： 支持mathml和latex： 那么就它了！ 选型首先，我">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Latex 公式在线可视化编辑器">
+<meta property="og:url" content="http://blog.iflyresearch.com/2017/04/21/jqpeng-Latex%20%E5%85%AC%E5%BC%8F%E5%9C%A8%E7%BA%BF%E5%8F%AF%E8%A7%86%E5%8C%96%E7%BC%96%E8%BE%91%E5%99%A8/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: Latex 公式在线可视化编辑器 寻觅最近的一个demo需要用到Latex公式在线编辑器，从搜索引擎一般会得到类似http:&#x2F;&#x2F;latex.codecogs.com&#x2F;eqneditor&#x2F;editor.php的结果，这个编辑器的问题在于使用成本高，并且界面不美观。 继续探寻，发现了wiris Editor： 支持mathml和latex： 那么就它了！ 选型首先，我">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/20/58f847b5b0998.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/20/58f8474b37a60.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/20/58f847990789b.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/20/58f849cd99f29.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/20/58f8490c90a9e.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/20/58f84a34a07e2.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/20/58f84c7433958.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/21/58f954fc81b80.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/04/21/58f9588ca5b8f.jpg">
+<meta property="article:published_time" content="2017-04-21T01:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="latex">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ooo.0o0.ooo/2017/04/20/58f847b5b0998.jpg">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2017/04/21/jqpeng-Latex%20%E5%85%AC%E5%BC%8F%E5%9C%A8%E7%BA%BF%E5%8F%AF%E8%A7%86%E5%8C%96%E7%BC%96%E8%BE%91%E5%99%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Latex 公式在线可视化编辑器 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/04/21/jqpeng-Latex%20%E5%85%AC%E5%BC%8F%E5%9C%A8%E7%BA%BF%E5%8F%AF%E8%A7%86%E5%8C%96%E7%BC%96%E8%BE%91%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Latex 公式在线可视化编辑器
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-04-21 09:00:00" itemprop="dateCreated datePublished" datetime="2017-04-21T09:00:00+08:00">2017-04-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/latex-editor.html">Latex 公式在线可视化编辑器</a></p>
+<h2 id="寻觅"><a href="#寻觅" class="headerlink" title="寻觅"></a>寻觅</h2><p>最近的一个demo需要用到Latex公式在线编辑器，从搜索引擎一般会得到类似<a target="_blank" rel="noopener" href="http://latex.codecogs.com/eqneditor/editor.php">http://latex.codecogs.com/eqneditor/editor.php</a>的结果，这个编辑器的问题在于使用成本高，并且界面不美观。<br><img src="https://ooo.0o0.ooo/2017/04/20/58f847b5b0998.jpg" alt="codecogs" title="codecogs"></p>
+<p>继续探寻，发现了<a target="_blank" rel="noopener" href="http://www.wiris.com/editor/demo/en/examples">wiris Editor</a>：<br><img src="https://ooo.0o0.ooo/2017/04/20/58f8474b37a60.jpg" alt="wiris Editor" title="wiris"></p>
+<p>支持mathml和latex：<br><img src="https://ooo.0o0.ooo/2017/04/20/58f847990789b.jpg" alt="wiris Editor" title="mathml和latex"></p>
+<p>那么就它了！</p>
+<h2 id="选型"><a href="#选型" class="headerlink" title="选型"></a>选型</h2><p>首先，我们不会直接使用这个编辑器，只是在编辑公式的时候才使用，所以要选择合适的版本。<br><img src="https://ooo.0o0.ooo/2017/04/20/58f849cd99f29.jpg" alt="wiris Editor" title="1492666829731"><br> 以前用过CKEditor，所以就这它了！选用<a target="_blank" rel="noopener" href="http://www.wiris.com/en/downloads/files/1376/011ckeditor/java-demo_ckeditor_wiris4-4.2.0.1365.zip">java版本</a><br> 我们的数据已经是latex的，在wiris 编辑器显示需要注意latex需要用两个$$包括起来<br> 例如:</p>
+<pre><code>The history of $$\sqrt(2)$$.
+</code></pre>
+<p>但是CK版本的wiris对latex的支持是非可视化支持，在编辑器里输入latex还是显示为latex：<br><img src="https://ooo.0o0.ooo/2017/04/20/58f8490c90a9e.jpg" alt="enter description here" title="1492666637204"></p>
+<p>将焦点移动到$$内部，再点击按钮出现wiris的公式编辑器：</p>
+<p><img src="https://ooo.0o0.ooo/2017/04/20/58f84a34a07e2.jpg" alt="enter description here" title="1492666933326"><br> 这种设计适合对latex熟悉的人员，可以裸写latex，同时对不熟悉的人来说，可以使用公式编辑器。但是，这样不直观啊！你让不会latex的看到的就一堆符号！</p>
+<h2 id="适配"><a href="#适配" class="headerlink" title="适配"></a>适配</h2><p>简单试用可以发现，如果直接使用公式编辑器插入公式，是直观显示的：<br><img src="https://ooo.0o0.ooo/2017/04/20/58f84c7433958.jpg" alt="enter description here" title="1492667508804"></p>
+<p>可以看到保存的时候，mathml是：</p>
+<pre><code>&lt;math class=&quot;wrs_chemistry&quot; xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msqrt&gt;    &lt;mn&gt;2&lt;/mn&gt;&lt;/msqrt&gt;
+&lt;/math&gt;
+</code></pre>
+<p>那么在latex输入情况下呢：</p>
+<pre><code>&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;semantics&gt;    &lt;mrow&gt;        &lt;msqrt&gt;&lt;mo&gt;(&lt;/mo&gt;&lt;/msqrt&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;mo&gt;)&lt;/mo&gt;    &lt;/mrow&gt;    &lt;annotation encoding=&quot;LaTeX&quot;&gt;\sqrt(2)&lt;/annotation&gt;&lt;/semantics&gt;
+&lt;/math&gt;
+</code></pre>
+<p>原来问题在这里，正是mathML的区别导致处理的区别。也就是说一开始就生成不带LaTeX的mathML，然后再放入编辑器。简单查看代码，可以知道先调用wrs_endParse，再wrs_initParse就可以了。</p>
+<pre><code>CKEDITOR.on(&quot;instanceReady&quot;, function(event)&#123;    CKEDITOR.instances.example.focus();    var mathxml = wrs_endParse(&quot;已知向量$$\\vec&#123;a&#125;=(\\sqrt&#123;3&#125;,2)$$,$$\\vec&#123;b&#125;=(0,-2)$$,向量$$\\vec&#123;c&#125;=(k,\\sqrt&#123;2&#125;)$$.$$\\vec&#123;a&#125;-1\\vec&#123;b&#125;$$与$$\\vec&#123;d&#125;$$共线,$$k=$$__.&quot;);    CKEDITOR.instances.example.setData(wrs_initParse(mathxml));    // 等待完成    window.setTimeout(updateFunction,0);&#125;);
+</code></pre>
+<p><img src="https://ooo.0o0.ooo/2017/04/21/58f954fc81b80.jpg" alt="Latex" title="Latex可视化"></p>
+<p>直观显示没问题了，但是mathml如何再转换成Latex呢？core.js里的wrs_parseMathmlToLatex函数是直接从mathml里将<annotation encoding="LaTeX">。。。</annotation>里的内容提取出来：</p>
+<pre><code>function wrs_parseMathmlToLatex(content, characters)&#123;
+    ....
+    var openTarget = characters.tagOpener + &#39;annotation encoding=&#39; + characters.doubleQuote + &#39;LaTeX&#39; + characters.doubleQuote + characters.tagCloser;
+ 
+        mathml = content.substring(start, end);
+
+        startAnnotation = mathml.indexOf(openTarget);    // 包含 encoding=latex，保留latex
+        if (startAnnotation != -1)&#123;
+            startAnnotation += openTarget.length;
+            closeAnnotation = mathml.indexOf(closeTarget);
+            var latex = mathml.substring(startAnnotation, closeAnnotation);
+            if (characters == _wrs_safeXmlCharacters) &#123;
+                latex = wrs_mathmlDecode(latex);
+            &#125;
+            output += &#39;$$&#39; + latex + &#39;$$&#39;;
+            // Populate latex into cache.
+            wrs_populateLatexCache(latex, mathml);
+        &#125;else&#123;
+            output += mathml;
+        &#125;
+   ......
+&#125;
+</code></pre>
+<p>但是现在的mathml不包含这个信息，如何处理？查看官方文档，发现有一个mathml2latex的服务，查看官方给的java demo里servlet并不包含这个服务，但是jar包里存在代码，于是自己封装一个servlet即可：</p>
+<pre><code>public class ServiceServlet extends com.wiris.plugin.dispatchers.MainServlet &#123;
+
+    @Override
+    public void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response)
+            throws ServletException, IOException &#123;
+        PluginBuilder pb = newPluginBuilder(request);
+        String origin = request.getHeader(&quot;origin&quot;);
+        HttpResponse res = new HttpResponse(response);
+        pb.addCorsHeaders(res, origin);
+        String pathInfo = request.getServletPath();
+        if (pathInfo.equals(&quot;/mathml2latex&quot;)) &#123;
+            response.setContentType(&quot;text/plain; charset=utf-8&quot;);
+            ParamsProvider provider = pb.getCustomParamsProvider();
+            String mml = provider.getParameter(&quot;mml&quot;, (String)null);
+            String r = pb.newTextService().mathml2latex(mml);
+            PrintWriter out = response.getWriter();
+            out.print(r);
+            out.close();
+        &#125;
+</code></pre>
+<p>js里，调用这个服务：</p>
+<pre><code>var _wrs_mathmlCache = &#123;&#125;;
+function wrs_getLatexFromMathML(mml) &#123;
+    if (_wrs_mathmlCache.hasOwnProperty(mml)) &#123;
+        return _wrs_mathmlCache[mml];
+    &#125;
+    var data = &#123;
+        &#39;service&#39;: &#39;mathml2latex&#39;,
+        &#39;mml&#39;: mml
+    &#125;;
+
+    var latex = wrs_getContent(_wrs_conf_servicePath, data);
+    // Populate LatexCache.
+    if (!_wrs_mathmlCache.hasOwnProperty(mml)) &#123;
+        _wrs_mathmlCache[mml] = latex;
+    &#125;
+    return latex.split(&quot;\r&quot;).join(&#39;&#39;).split(&quot;\n&quot;).join(&#39; &#39;);
+&#125;
+</code></pre>
+<p>wrs_getLatexFromMathML只能将一个mathml转换为latex，对于编辑器里的内容来说，需要将mathML抽取出来逐一转换：</p>
+<pre><code>function wrs_parseRawMathmlToLatex(content, characters)&#123;
+    var output = &#39;&#39;;
+    var mathTagBegin = characters.tagOpener + &#39;math&#39;;
+    var mathTagEnd = characters.tagOpener + &#39;/math&#39; + characters.tagCloser;
+    var start = content.indexOf(mathTagBegin);
+    var end = 0;
+    var mathml, startAnnotation, closeAnnotation;
+
+    while (start != -1) &#123;
+        output += content.substring(end, start);
+        end = content.indexOf(mathTagEnd, start);
+
+        if (end == -1) &#123;
+            end = content.length - 1;
+        &#125;
+        else &#123;
+            end += mathTagEnd.length;
+        &#125;
+
+        mathml = content.substring(start, end);
+
+        output += wrs_getLatexFromMathML(mathml);
+
+        start = content.indexOf(mathTagBegin, end);
+    &#125;
+
+    output += content.substring(end, content.length);
+    return output;
+&#125;
+function wrs_getLatex(code) &#123;
+    return wrs_parseRawMathmlToLatex(code, _wrs_xmlCharacters);
+&#125;
+</code></pre>
+<p>末了，为了方便获取，可以将latex放到_current_latex变量里：</p>
+<pre><code>    // 获取数据editor.on(&#39;getData&#39;, function (e) &#123;    e.data.dataValue = wrs_endParse(e.data.dataValue || &quot;&quot;);    _current_latex = wrs_getLatex(e.data.dataValue || &quot;&quot;);&#125;);
+</code></pre>
+<p>再简单修改下网页，显示latex：<br><img src="https://ooo.0o0.ooo/2017/04/21/58f9588ca5b8f.jpg" alt="enter description here" title="获取Latex"></p>
+<p>收官!</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/latex/" rel="tag"># latex</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/04/13/jqpeng-RPC%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/" rel="prev" title="RPC框架原理与实现">
+      <i class="fa fa-chevron-left"></i> RPC框架原理与实现
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/04/26/jqpeng-%E9%AB%98%E6%95%88%E6%B2%9F%E9%80%9A%E6%8A%80%E5%B7%A7/" rel="next" title="高效沟通技巧">
+      高效沟通技巧 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BB%E8%A7%85"><span class="nav-number">1.</span> <span class="nav-text">寻觅</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">选型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%82%E9%85%8D"><span class="nav-number">3.</span> <span class="nav-text">适配</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

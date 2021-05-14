@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: APM 原理与框架选型 发些存稿:) 0. APM简介随着微服务架构的流行，一次请求往往需要涉及到多个服务，因此服务性能监控和排查就变得更复杂：  不同的服务可能由不同的团队开发、甚至可能使用不同的编程语言来实现 服务有可能布在了几千台服务器，横跨多个不同的数据中心  因此，就需要一些可以帮助理解系统行为、用于分析性能问题的工具，以便发生故障的时候，能够快速定位和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="APM 原理与框架选型">
+<meta property="og:url" content="http://blog.iflyresearch.com/2018/08/27/jqpeng-APM%20%E5%8E%9F%E7%90%86%E4%B8%8E%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: APM 原理与框架选型 发些存稿:) 0. APM简介随着微服务架构的流行，一次请求往往需要涉及到多个服务，因此服务性能监控和排查就变得更复杂：  不同的服务可能由不同的团队开发、甚至可能使用不同的编程语言来实现 服务有可能布在了几千台服务器，横跨多个不同的数据中心  因此，就需要一些可以帮助理解系统行为、用于分析性能问题的工具，以便发生故障的时候，能够快速定位和">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535337727679.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535338174615.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535338251754.png">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/6/4/163c9bee3a9d029a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339573733.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339676013.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339690665.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339702378.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339925728.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339959895.png">
+<meta property="og:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339973274.png">
+<meta property="article:published_time" content="2018-08-27T07:59:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.577Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="apm">
+<meta property="article:tag" content="jqpeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535337727679.png">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2018/08/27/jqpeng-APM%20%E5%8E%9F%E7%90%86%E4%B8%8E%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>APM 原理与框架选型 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/08/27/jqpeng-APM%20%E5%8E%9F%E7%90%86%E4%B8%8E%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          APM 原理与框架选型
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-27 15:59:00" itemprop="dateCreated datePublished" datetime="2018-08-27T15:59:00+08:00">2018-08-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/apm.html">APM 原理与框架选型</a></p>
+<p>发些存稿:)</p>
+<h2 id="0-APM简介"><a href="#0-APM简介" class="headerlink" title="0. APM简介"></a>0. APM简介</h2><p>随着微服务架构的流行，一次请求往往需要涉及到多个服务，因此服务性能监控和排查就变得更复杂：</p>
+<ul>
+<li>不同的服务可能由不同的团队开发、甚至可能使用不同的编程语言来实现</li>
+<li>服务有可能布在了几千台服务器，横跨多个不同的数据中心</li>
+</ul>
+<p>因此，就需要一些可以帮助理解系统行为、用于分析性能问题的工具，以便发生故障的时候，能够快速定位和解决问题，这就是APM系统，全称是（<strong>A</strong>pplication <strong>P</strong>erformance <strong>M</strong>onitor，当然也有叫 <strong>A</strong>pplication <strong>P</strong>erformance <strong>M</strong>anagement tools）</p>
+<p>AMP最早是谷歌公开的论文提到的 <a target="_blank" rel="noopener" href="http://bigbully.github.io/Dapper-translation">Google Dapper</a>。Dapper是Google生产环境下的分布式跟踪系统，自从Dapper发展成为一流的监控系统之后，给google的开发者和运维团队帮了大忙，所以谷歌公开论文分享了Dapper。</p>
+<h2 id="1-谷歌Dapper介绍"><a href="#1-谷歌Dapper介绍" class="headerlink" title="1. 谷歌Dapper介绍"></a>1. 谷歌Dapper介绍</h2><h3 id="1-1-Dapper的挑战"><a href="#1-1-Dapper的挑战" class="headerlink" title="1.1 Dapper的挑战"></a>1.1 <strong>Dapper的挑战</strong></h3><p>在google的首页页面，提交一个查询请求后，会经历什么：</p>
+<ul>
+<li>可能对上百台查询服务器发起了一个Web查询，每一个查询都有自己的Index</li>
+<li>这个查询可能会被发送到多个的子系统，这些子系统分别用来处理广告、进行拼写检查或是查找一些像图片、视频或新闻这样的特殊结果</li>
+<li>根据每个子系统的查询结果进行筛选，得到最终结果，最后汇总到页面上</li>
+</ul>
+<p>总结一下：</p>
+<ul>
+<li>一次全局搜索有可能调用上千台服务器，涉及各种服务。</li>
+<li>用户对搜索的耗时是很敏感的，而任何一个子系统的低效都导致导致最终的搜索耗时</li>
+</ul>
+<p>如果一次查询耗时不正常，工程师怎么来排查到底是由哪个服务调用造成的？</p>
+<ul>
+<li>首先，这个工程师可能无法准确的定位到这次全局搜索是调用了哪些服务，因为新的服务、乃至服务上的某个片段，都有可能在任何时间上过线或修改过，有可能是面向用户功能，也有可能是一些例如针对性能或安全认证方面的功能改进</li>
+<li>其次，你不能苛求这个工程师对所有参与这次全局搜索的服务都了如指掌，每一个服务都有可能是由不同的团队开发或维护的</li>
+<li>再次，这些暴露出来的服务或服务器有可能同时还被其他客户端使用着，所以这次全局搜索的性能问题甚至有可能是由其他应用造成的</li>
+</ul>
+<p>从上面可以看出Dapper需要：</p>
+<ul>
+<li>无所不在的部署，无所不在的重要性不言而喻，因为在使用跟踪系统的进行监控时，即便只有一小部分没被监控到，那么人们对这个系统是不是值得信任都会产生巨大的质疑</li>
+<li>持续的监控</li>
+</ul>
+<h3 id="1-2-Dapper的三个具体设计目标"><a href="#1-2-Dapper的三个具体设计目标" class="headerlink" title="1.2 Dapper的三个具体设计目标"></a>1.2 Dapper的三个具体设计目标</h3><ol>
+<li><strong>性能消耗低</strong><br> APM组件服务的影响应该做到足够小。<strong>服务调用埋点本身会带来性能损耗，这就需要调用跟踪的低损耗，实际中还会通过配置采样率的方式，选择一部分请求去分析请求路径</strong>。在一些高度优化过的服务，即使一点点损耗也会很容易察觉到，而且有可能迫使在线服务的部署团队不得不将跟踪系统关停。</li>
+<li><strong>应用透明</strong>，也就是<strong>代码的侵入性小</strong><br> <strong>即也作为业务组件，应当尽可能少入侵或者无入侵其他业务系统，对于使用方透明，减少开发人员的负担</strong>。<br> 对于应用的程序员来说，是不需要知道有跟踪系统这回事的。如果一个跟踪系统想生效，就必须需要依赖应用的开发者主动配合，那么这个跟踪系统也太脆弱了，往往由于跟踪系统在应用中植入代码的bug或疏忽导致应用出问题，这样才是无法满足对跟踪系统“无所不在的部署”这个需求。</li>
+<li><strong>可扩展性</strong><br> <strong>一个优秀的调用跟踪系统必须支持分布式部署，具备良好的可扩展性。能够支持的组件越多当然越好</strong>。或者提供便捷的插件开发API，对于一些没有监控到的组件，应用开发者也可以自行扩展。</li>
+<li><strong>数据的分析</strong><br> <strong>数据的分析要快 ，分析的维度尽可能多</strong>。跟踪系统能提供足够快的信息反馈，就可以对生产环境下的异常状况做出快速反应。<strong>分析的全面，能够避免二次开发</strong>。</li>
+</ol>
+<h3 id="1-3-Dapper的分布式跟踪原理"><a href="#1-3-Dapper的分布式跟踪原理" class="headerlink" title="1.3 Dapper的分布式跟踪原理"></a>1.3 Dapper的分布式跟踪原理</h3><p>先来看一次请求调用示例：</p>
+<ol>
+<li>包括：前端（A），两个中间层（B和C），以及两个后端（D和E）</li>
+<li>当用户发起一个请求时，首先到达前端A服务，然后分别对B服务和C服务进行RPC调用；</li>
+<li>B服务处理完给A做出响应，但是C服务还需要和后端的D服务和E服务交互之后再返还给A服务，最后由A服务来响应用户的请求；</li>
+</ol>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535337727679.png" alt="Dapper的分布式跟踪"></p>
+<p>Dapper是如何来跟踪记录这次请求呢？</p>
+<h4 id="1-3-1-跟踪树和span"><a href="#1-3-1-跟踪树和span" class="headerlink" title="1.3.1  跟踪树和span"></a>1.3.1  <strong>跟踪树和span</strong></h4><p>Span是dapper的<strong>基本工作单元</strong>，一次链路调用（可以是RPC，DB等没有特定的限制）创建一个span，通过一个64位ID标识它；同时附加（Annotation）作为payload负载信息，用于记录性能等数据。</p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535338174615.png" alt="5个span在Dapper跟踪树种短暂的关联关系"></p>
+<p>上图说明了span在一次大的跟踪过程中是什么样的。<strong>Dapper记录了span名称，以及每个span的ID和父ID，以重建在一次追踪过程中不同span之间的关系</strong>。如果一个span没有父ID被称为root span。<strong>所有span都挂在一个特定的跟踪上，也共用一个跟踪id</strong>。</p>
+<p>再来看下<strong>Span的细节</strong>：</p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535338251754.png" alt="一个单独的span的细节图"></p>
+<p><strong>Span数据结构</strong>：</p>
+<pre><code>type Span struct &#123;
+    TraceID    int64 // 用于标示一次完整的请求id
+    Name       string
+    ID         int64 // 当前这次调用span_id
+    ParentID   int64 // 上层服务的调用span_id  最上层服务parent_id为null
+    Annotation []Annotation // 用于标记的时间戳
+    Debug      bool
+&#125;
+</code></pre>
+<h4 id="1-3-2-TraceID"><a href="#1-3-2-TraceID" class="headerlink" title="1.3.2 TraceID"></a>1.3.2 TraceID</h4><p>类似于 <strong>树结构的Span集合</strong>，表示一次完整的跟踪，从请求到服务器开始，服务器返回response结束，跟踪每次rpc调用的耗时，存在唯一标识trace_id。比如：你运行的分布式大数据存储一次Trace就由你的一次请求组成。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/6/4/163c9bee3a9d029a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="Trace"></p>
+<p>每种颜色的note标注了一个span，一条链路通过TraceId唯一标识，Span标识发起的请求信息。<strong>树节点是整个架构的基本单元，而每一个节点又是对span的引用</strong>。节点之间的连线表示的span和它的父span直接的关系。虽然span在日志文件中只是简单的代表span的开始和结束时间，他们在整个树形结构中却是相对独立的。</p>
+<h4 id="1-3-3-Annotation"><a href="#1-3-3-Annotation" class="headerlink" title="1.3.3 Annotation"></a>1.3.3 Annotation</h4><p>Dapper允许应用程序开发人员在Dapper跟踪的过程中添加额外的信息，以监控更高级别的系统行为，或帮助调试问题。这就是Annotation：</p>
+<p><strong>Annotation</strong>，用来记录请求特定事件相关信息（例如时间），<strong>一个span中会有多个annotation注解描述</strong>。通常包含四个注解信息：</p>
+<blockquote>
+<p>(1) <strong>cs</strong>：Client Start，表示客户端发起请求<br> (2) <strong>sr</strong>：Server Receive，表示服务端收到请求<br> (3) <strong>ss</strong>：Server Send，表示服务端完成处理，并将结果发送给客户端<br> (4) <strong>cr</strong>：Client Received，表示客户端获取到服务端返回信息</p>
+</blockquote>
+<p><strong>Annotation数据结构</strong>：</p>
+<pre><code>type Annotation struct &#123;
+    Timestamp int64
+    Value     string
+    Host      Endpoint
+    Duration  int32
+&#125;
+</code></pre>
+<h4 id="1-3-4-采样率"><a href="#1-3-4-采样率" class="headerlink" title="1.3.4 采样率"></a>1.3.4 采样率</h4><p>低损耗的是Dapper的一个关键的设计目标，因为如果这个工具价值未被证实但又对性能有影响的话，你可以理解服务运营人员为什么不愿意部署它。</p>
+<p>另外，某些类型的Web服务对植入带来的性能损耗确实非常敏感。</p>
+<p>因此，除了把Dapper的收集工作对基本组件的性能损耗限制的尽可能小之外，Dapper支持设置采样率来减少性能损耗，同时支持<strong>可变采样</strong>。</p>
+<h2 id="2-APM组件选型"><a href="#2-APM组件选型" class="headerlink" title="2. APM组件选型"></a>2. APM组件选型</h2><p>市面上的全链路监控理论模型大多都是借鉴Google Dapper论文，重点关注以下三种APM组件：</p>
+<blockquote>
+<ol>
+<li>**<a href="https://link.juejin.im/?target=http://zipkin.io/">Zipkin</a>**：由Twitter公司开源，开放源代码分布式的跟踪系统，用于收集服务的定时数据，以解决微服务架构中的延迟问题，包括：数据的收集、存储、查找和展现。</li>
+<li>**<a href="https://link.juejin.im/?target=https://github.com/naver/pinpoint">Pinpoint</a>**：一款对Java编写的大规模分布式系统的APM工具，由韩国人开源的分布式跟踪组件。</li>
+<li>**<a href="https://link.juejin.im/?target=http://skywalking.org/">Skywalking</a>**：国产的优秀APM组件，是一个对JAVA分布式应用程序集群的业务运行情况进行追踪、告警和分析的系统。</li>
+</ol>
+</blockquote>
+<h3 id="2-1-对比项"><a href="#2-1-对比项" class="headerlink" title="2.1 对比项"></a>2.1 对比项</h3><p>主要对比项：</p>
+<ol>
+<li><strong>探针的性能</strong><br> 主要是agent对服务的吞吐量、CPU和内存的影响。微服务的规模和动态性使得数据收集的成本大幅度提高。</li>
+<li><strong>collector的可扩展性</strong><br> 能够水平扩展以便支持大规模服务器集群。</li>
+<li><strong>全面的调用链路数据分析</strong><br> 提供代码级别的可见性以便轻松定位失败点和瓶颈。</li>
+<li><strong>对于开发透明，容易开关</strong><br> 添加新功能而无需修改代码，容易启用或者禁用。</li>
+<li><strong>完整的调用链应用拓扑</strong><br> 自动检测应用拓扑，帮助你搞清楚应用的架构</li>
+</ol>
+<h3 id="2-2-探针的性能"><a href="#2-2-探针的性能" class="headerlink" title="2.2 探针的性能"></a>2.2 探针的性能</h3><p>比较关注探针的性能，毕竟APM定位还是工具，如果启用了链路监控组建后，直接导致吞吐量降低过半，那也是不能接受的。对skywalking、zipkin、pinpoint进行了压测，并与基线（未使用探针）的情况进行了对比。</p>
+<p>选用了一个常见的基于Spring的应用程序，他包含Spring Boot, Spring MVC，redis客户端，mysql。 监控这个应用程序，每个trace，探针会抓取5个span(1 Tomcat, 1 SpringMVC, 2 Jedis, 1 Mysql)。这边基本和 <a href="https://link.juejin.im/?target=https://link.juejin.im?target=https%253A%252F%252Fskywalkingtest.github.io%252FAgent-Benchmarks%252FREADME_zh.html">skywalkingtest</a> 的测试应用差不多。</p>
+<p>模拟了三种并发用户：500，750，1000。使用jmeter测试，每个线程发送30个请求，设置思考时间为10ms。使用的采样率为1，即100%，这边与生产可能有差别。pinpoint默认的采样率为20，即50%，通过设置agent的配置文件改为100%。zipkin默认也是1。组合起来，一共有12种。下面看下汇总表：</p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339573733.png" alt="探针性能"></p>
+<p>从上表可以看出，在三种链路监控组件中，<strong>skywalking的探针对吞吐量的影响最小，zipkin的吞吐量居中。pinpoint的探针对吞吐量的影响较为明显</strong>，在500并发用户时，测试服务的吞吐量从1385降低到774，影响很大。然后再看下CPU和memory的影响，在内部服务器进行的压测，对CPU和memory的影响都差不多在10%之内。</p>
+<h3 id="2-3-collector的可扩展性"><a href="#2-3-collector的可扩展性" class="headerlink" title="2.3 collector的可扩展性"></a>2.3 collector的可扩展性</h3><p>collector的可扩展性，使得能够水平扩展以便支持大规模服务器集群。</p>
+<ol>
+<li><strong>zipkin</strong><br> 开发zipkin-Server（其实就是提供的开箱即用包），zipkin-agent与zipkin-Server通过http或者mq进行通信，<strong>http通信会对正常的访问造成影响，所以还是推荐基于mq异步方式通信</strong>，zipkin-Server通过订阅具体的topic进行消费。这个当然是可以扩展的，<strong>多个zipkin-Server实例进行异步消费mq中的监控信息</strong>。</li>
+<li><strong>skywalking</strong><br> skywalking的collector支持两种部署方式：<strong>单机和集群模式。collector与agent之间的通信使用了gRPC</strong>。</li>
+<li><strong>pinpoint</strong><br> 同样，pinpoint也是支持集群和单机部署的。<strong>pinpoint agent通过thrift通信框架，发送链路信息到collector</strong>。</li>
+</ol>
+<h3 id="2-4-全面的调用链路数据分析"><a href="#2-4-全面的调用链路数据分析" class="headerlink" title="2.4 全面的调用链路数据分析"></a>2.4 全面的调用链路数据分析</h3><p>全面的调用链路数据分析，提供代码级别的可见性以便轻松定位失败点和瓶颈。</p>
+<p><strong>zipkin</strong></p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339676013.png" alt="zipkin"><br><strong>zipkin的链路监控粒度相对没有那么细</strong>，从上图可以看到调用链中具体到接口级别，再进一步的调用信息并未涉及。</p>
+<p><strong>skywalking</strong></p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339690665.png" alt="skywalking"></p>
+<pre><code>**skywalking 还支持20+的中间件、框架、类库**，比如：主流的dubbo、Okhttp，还有DB和消息中间件。上图skywalking链路调用分析截取的比较简单，网关调用user服务，**由于支持众多的中间件，所以skywalking链路调用分析比zipkin完备些**。
+</code></pre>
+<p><strong>pinpoint</strong></p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339702378.png" alt="pinpoint"><br> pinpoint应该是这三种APM组件中，<strong>数据分析最为完备的组件</strong>。提供代码级别的可见性以便轻松定位失败点和瓶颈，上图可以看到对于执行的sql语句，都进行了记录。还可以配置报警规则等，设置每个应用对应的负责人，根据配置的规则报警，支持的中间件和框架也比较完备。</p>
+<h3 id="2-5-对于开发透明，容易开关"><a href="#2-5-对于开发透明，容易开关" class="headerlink" title="2.5  对于开发透明，容易开关"></a>2.5  对于开发透明，容易开关</h3><p>对于开发透明，容易开关，添加新功能而无需修改代码，容易启用或者禁用。我们期望功能可以不修改代码就工作并希望得到代码级别的可见性。</p>
+<p>对于这一点，<strong>Zipkin 使用修改过的类库和它自己的容器(Finagle)来提供分布式事务跟踪的功能</strong>。但是，它要求在需要时修改代码。<strong>skywalking和pinpoint都是基于字节码增强的方式，开发人员不需要修改代码，并且可以收集到更多精确的数据因为有字节码中的更多信息</strong>。</p>
+<h3 id="2-6-完整的调用链应用拓扑"><a href="#2-6-完整的调用链应用拓扑" class="headerlink" title="2.6  完整的调用链应用拓扑"></a>2.6  完整的调用链应用拓扑</h3><p>自动检测应用拓扑，帮助你搞清楚应用的架构。</p>
+<p>zipkin链路拓扑：<br><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339925728.png" alt="zipkin链路拓扑"></p>
+<p>skywalking链路拓扑：</p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339959895.png" alt="skywalking链路拓扑"></p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339973274.png" alt="pinpoint"></p>
+<p>三个组件都能实现完整的调用链应用拓扑。相对来说：</p>
+<ul>
+<li>pinpoint界面显示的更加丰富，具体到调用的DB名</li>
+<li>zipkin的拓扑局限于服务于服务之间</li>
+</ul>
+<h3 id="2-7-社区支持"><a href="#2-7-社区支持" class="headerlink" title="2.7  社区支持"></a>2.7  社区支持</h3><p>Zipkin 由 Twitter 开发，可以算得上是明星团队，而 pinpoint的Naver 的团队只是一个默默无闻的小团队，skywalking是国内的明星项目，目前属于apache孵化项目，社区活跃。</p>
+<h3 id="2-8-总结"><a href="#2-8-总结" class="headerlink" title="2.8  总结"></a>2.8  总结</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>zipkin</th>
+<th>pinpoint</th>
+<th>skywalking</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>探针性能</td>
+<td>中</td>
+<td>低</td>
+<td><strong>高</strong></td>
+</tr>
+<tr>
+<td>collector扩展性</td>
+<td><strong>高</strong></td>
+<td>中</td>
+<td><strong>高</strong></td>
+</tr>
+<tr>
+<td>调用链路数据分析</td>
+<td>低</td>
+<td><strong>高</strong></td>
+<td>中</td>
+</tr>
+<tr>
+<td>对开发透明性</td>
+<td>中</td>
+<td><strong>高</strong></td>
+<td><strong>高</strong></td>
+</tr>
+<tr>
+<td>调用链应用拓扑</td>
+<td>中</td>
+<td><strong>高</strong></td>
+<td>中</td>
+</tr>
+<tr>
+<td>社区支持</td>
+<td><strong>高</strong></td>
+<td>中</td>
+<td><strong>高</strong></td>
+</tr>
+</tbody></table>
+<p>相对来说，skywalking更占优，因此团队采用skywalking作为APM工具。</p>
+<h2 id="3-参考内容"><a href="#3-参考内容" class="headerlink" title="3. 参考内容"></a>3. 参考内容</h2><p>本文主要内容参考下文：<br><a target="_blank" rel="noopener" href="https://juejin.im/post/5a7a9e0af265da4e914b46f1">https://juejin.im/post/5a7a9e0af265da4e914b46f1</a><br><a target="_blank" rel="noopener" href="http://bigbully.github.io/Dapper-translation/">http://bigbully.github.io/Dapper-translation/</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/apm/" rel="tag"># apm</a>
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/24/jqpeng-%E7%BB%9F%E4%B8%80%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E9%80%89%E5%9E%8B%E5%AF%B9%E6%AF%94/" rel="prev" title="统一配置中心选型对比">
+      <i class="fa fa-chevron-left"></i> 统一配置中心选型对比
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/09/28/jqpeng-XNginx%20%20-%20nginx%20%E9%9B%86%E7%BE%A4%E5%8F%AF%E8%A7%86%E5%8C%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7/" rel="next" title="XNginx  - nginx 集群可视化管理工具">
+      XNginx  - nginx 集群可视化管理工具 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-APM%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">0. APM简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%B0%B7%E6%AD%8CDapper%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">1. 谷歌Dapper介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Dapper%E7%9A%84%E6%8C%91%E6%88%98"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 Dapper的挑战</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Dapper%E7%9A%84%E4%B8%89%E4%B8%AA%E5%85%B7%E4%BD%93%E8%AE%BE%E8%AE%A1%E7%9B%AE%E6%A0%87"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 Dapper的三个具体设计目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-Dapper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E8%B7%9F%E8%B8%AA%E5%8E%9F%E7%90%86"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 Dapper的分布式跟踪原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-1-%E8%B7%9F%E8%B8%AA%E6%A0%91%E5%92%8Cspan"><span class="nav-number">2.3.1.</span> <span class="nav-text">1.3.1  跟踪树和span</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-2-TraceID"><span class="nav-number">2.3.2.</span> <span class="nav-text">1.3.2 TraceID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-3-Annotation"><span class="nav-number">2.3.3.</span> <span class="nav-text">1.3.3 Annotation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-4-%E9%87%87%E6%A0%B7%E7%8E%87"><span class="nav-number">2.3.4.</span> <span class="nav-text">1.3.4 采样率</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-APM%E7%BB%84%E4%BB%B6%E9%80%89%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">2. APM组件选型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%AF%B9%E6%AF%94%E9%A1%B9"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 对比项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%8E%A2%E9%92%88%E7%9A%84%E6%80%A7%E8%83%BD"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 探针的性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-collector%E7%9A%84%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 collector的可扩展性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E5%85%A8%E9%9D%A2%E7%9A%84%E8%B0%83%E7%94%A8%E9%93%BE%E8%B7%AF%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90"><span class="nav-number">3.4.</span> <span class="nav-text">2.4 全面的调用链路数据分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E5%AF%B9%E4%BA%8E%E5%BC%80%E5%8F%91%E9%80%8F%E6%98%8E%EF%BC%8C%E5%AE%B9%E6%98%93%E5%BC%80%E5%85%B3"><span class="nav-number">3.5.</span> <span class="nav-text">2.5  对于开发透明，容易开关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-%E5%AE%8C%E6%95%B4%E7%9A%84%E8%B0%83%E7%94%A8%E9%93%BE%E5%BA%94%E7%94%A8%E6%8B%93%E6%89%91"><span class="nav-number">3.6.</span> <span class="nav-text">2.6  完整的调用链应用拓扑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-7-%E7%A4%BE%E5%8C%BA%E6%94%AF%E6%8C%81"><span class="nav-number">3.7.</span> <span class="nav-text">2.7  社区支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-8-%E6%80%BB%E7%BB%93"><span class="nav-number">3.8.</span> <span class="nav-text">2.8  总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%8F%82%E8%80%83%E5%86%85%E5%AE%B9"><span class="nav-number">4.</span> <span class="nav-text">3. 参考内容</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

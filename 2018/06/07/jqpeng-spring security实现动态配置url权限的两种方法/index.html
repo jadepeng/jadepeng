@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: spring security实现动态配置url权限的两种方法 缘起标准的RABC, 权限需要支持动态配置，spring security默认是在代码里约定好权限，真实的业务场景通常需要可以支持动态配置角色访问权限，即在运行时去配置url对应的访问角色。 基于spring security，如何实现这个需求呢？ 最简单的方法就是自定义一个Filter去完成权限判断">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spring security实现动态配置url权限的两种方法">
+<meta property="og:url" content="http://blog.iflyresearch.com/2018/06/07/jqpeng-spring%20security%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AEurl%E6%9D%83%E9%99%90%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: spring security实现动态配置url权限的两种方法 缘起标准的RABC, 权限需要支持动态配置，spring security默认是在代码里约定好权限，真实的业务场景通常需要可以支持动态配置角色访问权限，即在运行时去配置url对应的访问角色。 基于spring security，如何实现这个需求呢？ 最简单的方法就是自定义一个Filter去完成权限判断">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-06-07T07:33:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.581Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Security">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2018/06/07/jqpeng-spring%20security%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AEurl%E6%9D%83%E9%99%90%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>spring security实现动态配置url权限的两种方法 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/06/07/jqpeng-spring%20security%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AEurl%E6%9D%83%E9%99%90%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          spring security实现动态配置url权限的两种方法
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-06-07 15:33:00" itemprop="dateCreated datePublished" datetime="2018-06-07T15:33:00+08:00">2018-06-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/spring-security-rabc.html">spring security实现动态配置url权限的两种方法</a></p>
+<h2 id="缘起"><a href="#缘起" class="headerlink" title="缘起"></a>缘起</h2><p>标准的RABC, 权限需要支持动态配置，spring security默认是在代码里约定好权限，真实的业务场景通常需要可以支持动态配置角色访问权限，即在运行时去配置url对应的访问角色。</p>
+<p>基于spring security，如何实现这个需求呢？</p>
+<p>最简单的方法就是自定义一个Filter去完成权限判断，但这脱离了spring security框架，如何基于spring security优雅的实现呢？</p>
+<h2 id="spring-security-授权回顾"><a href="#spring-security-授权回顾" class="headerlink" title="spring security 授权回顾"></a>spring security 授权回顾</h2><p>spring security 通过FilterChainProxy作为注册到web的filter，FilterChainProxy里面一次包含了内置的多个过滤器，我们首先需要了解spring security内置的各种filter：</p>
+<table>
+<thead>
+<tr>
+<th>Alias</th>
+<th>Filter Class</th>
+<th>Namespace Element or Attribute</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CHANNEL_FILTER</td>
+<td>ChannelProcessingFilter</td>
+<td>http/intercept-url@requires-channel</td>
+</tr>
+<tr>
+<td>SECURITY_CONTEXT_FILTER</td>
+<td>SecurityContextPersistenceFilter</td>
+<td>http</td>
+</tr>
+<tr>
+<td>CONCURRENT_SESSION_FILTER</td>
+<td>ConcurrentSessionFilter</td>
+<td>session-management/concurrency-control</td>
+</tr>
+<tr>
+<td>HEADERS_FILTER</td>
+<td>HeaderWriterFilter</td>
+<td>http/headers</td>
+</tr>
+<tr>
+<td>CSRF_FILTER</td>
+<td>CsrfFilter</td>
+<td>http/csrf</td>
+</tr>
+<tr>
+<td>LOGOUT_FILTER</td>
+<td>LogoutFilter</td>
+<td>http/logout</td>
+</tr>
+<tr>
+<td>X509_FILTER</td>
+<td>X509AuthenticationFilter</td>
+<td>http/x509</td>
+</tr>
+<tr>
+<td>PRE_AUTH_FILTER</td>
+<td>AbstractPreAuthenticatedProcessingFilter Subclasses</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>CAS_FILTER</td>
+<td>CasAuthenticationFilter</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>FORM_LOGIN_FILTER</td>
+<td>UsernamePasswordAuthenticationFilter</td>
+<td>http/form-login</td>
+</tr>
+<tr>
+<td>BASIC_AUTH_FILTER</td>
+<td>BasicAuthenticationFilter</td>
+<td>http/http-basic</td>
+</tr>
+<tr>
+<td>SERVLET_API_SUPPORT_FILTER</td>
+<td>SecurityContextHolderAwareRequestFilter</td>
+<td>http/@servlet-api-provision</td>
+</tr>
+<tr>
+<td>JAAS_API_SUPPORT_FILTER</td>
+<td>JaasApiIntegrationFilter</td>
+<td>http/@jaas-api-provision</td>
+</tr>
+<tr>
+<td>REMEMBER_ME_FILTER</td>
+<td>RememberMeAuthenticationFilter</td>
+<td>http/remember-me</td>
+</tr>
+<tr>
+<td>ANONYMOUS_FILTER</td>
+<td>AnonymousAuthenticationFilter</td>
+<td>http/anonymous</td>
+</tr>
+<tr>
+<td>SESSION_MANAGEMENT_FILTER</td>
+<td>SessionManagementFilter</td>
+<td>session-management</td>
+</tr>
+<tr>
+<td>EXCEPTION_TRANSLATION_FILTER</td>
+<td>ExceptionTranslationFilter</td>
+<td>http</td>
+</tr>
+<tr>
+<td>FILTER_SECURITY_INTERCEPTOR</td>
+<td>FilterSecurityInterceptor</td>
+<td>http</td>
+</tr>
+<tr>
+<td>SWITCH_USER_FILTER</td>
+<td>SwitchUserFilter</td>
+<td>N/A</td>
+</tr>
+</tbody></table>
+<p>最重要的是<code>FilterSecurityInterceptor</code>，该过滤器实现了主要的鉴权逻辑，最核心的代码在这里：</p>
+<pre><code>protected InterceptorStatusToken beforeInvocation(Object object) &#123;    // 获取访问URL所需权限    Collection&lt;ConfigAttribute&gt; attributes = this.obtainSecurityMetadataSource()            .getAttributes(object);
+    Authentication authenticated = authenticateIfRequired();
+    // 通过accessDecisionManager鉴权    try &#123;        this.accessDecisionManager.decide(authenticated, object, attributes);    &#125;    catch (AccessDeniedException accessDeniedException) &#123;        publishEvent(new AuthorizationFailureEvent(object, attributes, authenticated,                accessDeniedException));
+        throw accessDeniedException;    &#125;
+    if (debug) &#123;        logger.debug(&quot;Authorization successful&quot;);    &#125;
+    if (publishAuthorizationSuccess) &#123;        publishEvent(new AuthorizedEvent(object, attributes, authenticated));    &#125;
+    // Attempt to run as a different user    Authentication runAs = this.runAsManager.buildRunAs(authenticated, object,            attributes);
+    if (runAs == null) &#123;        if (debug) &#123;            logger.debug(&quot;RunAsManager did not change Authentication object&quot;);        &#125;
+        // no further work post-invocation        return new InterceptorStatusToken(SecurityContextHolder.getContext(), false,                attributes, object);    &#125;    else &#123;        if (debug) &#123;            logger.debug(&quot;Switching to RunAs Authentication: &quot; + runAs);        &#125;
+        SecurityContext origCtx = SecurityContextHolder.getContext();        SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());        SecurityContextHolder.getContext().setAuthentication(runAs);
+        // need to revert to token.Authenticated post-invocation        return new InterceptorStatusToken(origCtx, true, attributes, object);    &#125;&#125;
+</code></pre>
+<p>从上面可以看出，要实现动态鉴权，可以从两方面着手：</p>
+<ul>
+<li>自定义SecurityMetadataSource，实现从数据库加载ConfigAttribute</li>
+<li>另外就是可以自定义accessDecisionManager，官方的UnanimousBased其实足够使用，并且他是基于AccessDecisionVoter来实现权限认证的，因此我们只需要自定义一个AccessDecisionVoter就可以了</li>
+</ul>
+<p>下面来看分别如何实现。</p>
+<h2 id="自定义AccessDecisionManager"><a href="#自定义AccessDecisionManager" class="headerlink" title="自定义AccessDecisionManager"></a>自定义AccessDecisionManager</h2><p>官方的三个AccessDecisionManager都是基于AccessDecisionVoter来实现权限认证的，因此我们只需要自定义一个AccessDecisionVoter就可以了。</p>
+<p>自定义主要是实现<code>AccessDecisionVoter</code>接口，我们可以仿照官方的RoleVoter实现一个：</p>
+<pre><code>public class RoleBasedVoter implements AccessDecisionVoter&lt;Object&gt; &#123;
+
+    @Override
+    public boolean supports(ConfigAttribute attribute) &#123;
+        return true;
+    &#125;
+
+    @Override
+    public int vote(Authentication authentication, Object object, Collection&lt;ConfigAttribute&gt; attributes) &#123;
+        if(authentication == null) &#123;
+            return ACCESS_DENIED;
+        &#125;
+        int result = ACCESS_ABSTAIN;
+        Collection&lt;? extends GrantedAuthority&gt; authorities = extractAuthorities(authentication);
+
+        for (ConfigAttribute attribute : attributes) &#123;
+            if(attribute.getAttribute()==null)&#123;
+                continue;
+            &#125;
+            if (this.supports(attribute)) &#123;
+                result = ACCESS_DENIED;
+
+                // Attempt to find a matching granted authority
+                for (GrantedAuthority authority : authorities) &#123;
+                    if (attribute.getAttribute().equals(authority.getAuthority())) &#123;
+                        return ACCESS_GRANTED;
+                    &#125;
+                &#125;
+            &#125;
+        &#125;
+
+        return result;
+    &#125;
+
+    Collection&lt;? extends GrantedAuthority&gt; extractAuthorities(
+        Authentication authentication) &#123;
+        return authentication.getAuthorities();
+    &#125;
+
+    @Override
+    public boolean supports(Class clazz) &#123;
+        return true;
+    &#125;
+&#125;
+</code></pre>
+<p>如何加入动态权限呢？</p>
+<p><code>vote(Authentication authentication, Object object, Collection&lt;ConfigAttribute&gt; attributes) </code>里的<code>Object object</code>的类型是<code>FilterInvocation</code>，可以通过<code>getRequestUrl</code>获取当前请求的URL:</p>
+<pre><code>  FilterInvocation fi = (FilterInvocation) object;
+  String url = fi.getRequestUrl();
+</code></pre>
+<p>因此这里扩展空间就大了，可以从DB动态加载，然后判断URL的ConfigAttribute就可以了。</p>
+<p>如何使用这个RoleBasedVoter呢？在configure里使用accessDecisionManager方法自定义，我们还是使用官方的<code>UnanimousBased</code>，然后将自定义的RoleBasedVoter加入即可。</p>
+<pre><code>@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter &#123;
+
+ 
+    @Override
+    protected void configure(HttpSecurity http) throws Exception &#123;
+        http
+            .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling()
+            .authenticationEntryPoint(problemSupport)
+            .accessDeniedHandler(problemSupport)
+        .and()
+            .csrf()
+            .disable()
+            .headers()
+            .frameOptions()
+            .disable()
+        .and()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+            .authorizeRequests()
+            // 自定义accessDecisionManager
+            .accessDecisionManager(accessDecisionManager())
+          
+        .and()
+            .apply(securityConfigurerAdapter());
+
+    &#125;
+
+
+    @Bean
+    public AccessDecisionManager accessDecisionManager() &#123;
+        List&lt;AccessDecisionVoter&lt;? extends Object&gt;&gt; decisionVoters
+            = Arrays.asList(
+            new WebExpressionVoter(),
+            // new RoleVoter(),
+            new RoleBasedVoter(),
+            new AuthenticatedVoter());
+        return new UnanimousBased(decisionVoters);
+    &#125;
+</code></pre>
+<h2 id="自定义SecurityMetadataSource"><a href="#自定义SecurityMetadataSource" class="headerlink" title="自定义SecurityMetadataSource"></a>自定义SecurityMetadataSource</h2><p>自定义FilterInvocationSecurityMetadataSource只要实现接口即可，在接口里从DB动态加载规则。</p>
+<p>为了复用代码里的定义，我们可以将代码里生成的SecurityMetadataSource带上，在构造函数里传入默认的FilterInvocationSecurityMetadataSource。</p>
+<pre><code>public class AppFilterInvocationSecurityMetadataSource implements org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource &#123;
+
+    private FilterInvocationSecurityMetadataSource  superMetadataSource;
+
+    @Override
+    public Collection&lt;ConfigAttribute&gt; getAllConfigAttributes() &#123;
+        return null;
+    &#125;
+
+    public AppFilterInvocationSecurityMetadataSource(FilterInvocationSecurityMetadataSource expressionBasedFilterInvocationSecurityMetadataSource)&#123;
+         this.superMetadataSource = expressionBasedFilterInvocationSecurityMetadataSource;
+
+         // TODO 从数据库加载权限配置
+    &#125;
+
+    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
+    // 这里的需要从DB加载
+    private final Map&lt;String,String&gt; urlRoleMap = new HashMap&lt;String,String&gt;()&#123;&#123;
+            put("/open/**","ROLE_ANONYMOUS");
+            put("/health","ROLE_ANONYMOUS");
+            put("/restart","ROLE_ADMIN");
+            put("/demo","ROLE_USER");
+        &#125;&#125;;
+
+    @Override
+    public Collection&lt;ConfigAttribute&gt; getAttributes(Object object) throws IllegalArgumentException &#123;
+        FilterInvocation fi = (FilterInvocation) object;
+        String url = fi.getRequestUrl();
+
+        for(Map.Entry&lt;String,String&gt; entry:urlRoleMap.entrySet())&#123;
+            if(antPathMatcher.match(entry.getKey(),url))&#123;
+                return SecurityConfig.createList(entry.getValue());
+            &#125;
+        &#125;
+
+        //  返回代码定义的默认配置
+        return superMetadataSource.getAttributes(object);
+    &#125;
+
+
+
+    @Override
+    public boolean supports(Class&lt;?&gt; clazz) &#123;
+        return FilterInvocation.class.isAssignableFrom(clazz);
+    &#125;
+&#125;
+</code></pre>
+<p>怎么使用？和<code>accessDecisionManager</code>不一样，<code>ExpressionUrlAuthorizationConfigurer</code> 并没有提供set方法设置<code>FilterSecurityInterceptor</code>的<code>FilterInvocationSecurityMetadataSource</code>，how to do?</p>
+<p>发现一个扩展方法<code>withObjectPostProcessor</code>，通过该方法自定义一个处理<code>FilterSecurityInterceptor</code>类型的<code>ObjectPostProcessor</code>就可以修改<code>FilterSecurityInterceptor</code>。</p>
+<pre><code>@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter &#123;
+
+ 
+    @Override
+    protected void configure(HttpSecurity http) throws Exception &#123;
+        http
+            .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling()
+            .authenticationEntryPoint(problemSupport)
+            .accessDeniedHandler(problemSupport)
+        .and()
+            .csrf()
+            .disable()
+            .headers()
+            .frameOptions()
+            .disable()
+        .and()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+            .authorizeRequests()
+              // 自定义FilterInvocationSecurityMetadataSource
+            .withObjectPostProcessor(new ObjectPostProcessor&lt;FilterSecurityInterceptor&gt;() &#123;
+                @Override
+                public &lt;O extends FilterSecurityInterceptor&gt; O postProcess(
+                    O fsi) &#123;
+                    fsi.setSecurityMetadataSource(mySecurityMetadataSource(fsi.getSecurityMetadataSource()));
+                    return fsi;
+                &#125;
+            &#125;)
+        .and()
+            .apply(securityConfigurerAdapter());
+
+    &#125;
+
+
+    @Bean
+    public AppFilterInvocationSecurityMetadataSource mySecurityMetadataSource(FilterInvocationSecurityMetadataSource filterInvocationSecurityMetadataSource) &#123;
+        AppFilterInvocationSecurityMetadataSource securityMetadataSource = new AppFilterInvocationSecurityMetadataSource(filterInvocationSecurityMetadataSource);
+        return securityMetadataSource;
+&#125;
+</code></pre>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文介绍了两种基于spring security实现动态权限的方法，一是自定义accessDecisionManager，二是自定义FilterInvocationSecurityMetadataSource。实际项目里可以根据需要灵活选择。</p>
+<p>延伸阅读:</p>
+<p><a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi/p/spring-security.html">Spring Security 架构与源码分析</a></p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+              <a href="/tags/Spring-Security/" rel="tag"># Spring Security</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/06/06/jqpeng-Spring%20Security%20%E6%9E%B6%E6%9E%84%E4%B8%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" rel="prev" title="Spring Security 架构与源码分析">
+      <i class="fa fa-chevron-left"></i> Spring Security 架构与源码分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/06/14/jqpeng-%E5%9F%BA%E4%BA%8Espring%20security%20%E5%AE%9E%E7%8E%B0%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6/" rel="next" title="基于spring security 实现前后端分离项目权限控制">
+      基于spring security 实现前后端分离项目权限控制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%98%E8%B5%B7"><span class="nav-number">1.</span> <span class="nav-text">缘起</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#spring-security-%E6%8E%88%E6%9D%83%E5%9B%9E%E9%A1%BE"><span class="nav-number">2.</span> <span class="nav-text">spring security 授权回顾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89AccessDecisionManager"><span class="nav-number">3.</span> <span class="nav-text">自定义AccessDecisionManager</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89SecurityMetadataSource"><span class="nav-number">4.</span> <span class="nav-text">自定义SecurityMetadataSource</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="文章作者:jqpeng原文链接: 易企秀前端压缩源码分析与还原 你是否想知道易企秀炫酷的H5是如何实现的，原理是什么，本文会为你揭秘并还原压缩过的源代码。 易企秀是一款h5页面制作工具，因方便易用成为业界标杆。后续一个项目会用到类似易企秀这样的自定义H5的功能，因此首先分析下易企秀的前端代码，看看他们是怎么实现的，再取其精华去其糟粕。 由于代码较多，且是压缩处理过的，阅读和还原起来较为困难，不过可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="易企秀前端压缩源码分析与还原">
+<meta property="og:url" content="http://blog.iflyresearch.com/2018/03/08/jqpeng-%E6%98%93%E4%BC%81%E7%A7%80%E5%89%8D%E7%AB%AF%E5%8E%8B%E7%BC%A9%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8E%E8%BF%98%E5%8E%9F/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="文章作者:jqpeng原文链接: 易企秀前端压缩源码分析与还原 你是否想知道易企秀炫酷的H5是如何实现的，原理是什么，本文会为你揭秘并还原压缩过的源代码。 易企秀是一款h5页面制作工具，因方便易用成为业界标杆。后续一个项目会用到类似易企秀这样的自定义H5的功能，因此首先分析下易企秀的前端代码，看看他们是怎么实现的，再取其精华去其糟粕。 由于代码较多，且是压缩处理过的，阅读和还原起来较为困难，不过可">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1520492536143.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1520493739334.jpg">
+<meta property="article:published_time" content="2018-03-08T09:50:00.000Z">
+<meta property="article:modified_time" content="2021-05-14T09:34:38.585Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="jqpeng">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1520492536143.jpg">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2018/03/08/jqpeng-%E6%98%93%E4%BC%81%E7%A7%80%E5%89%8D%E7%AB%AF%E5%8E%8B%E7%BC%A9%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8E%E8%BF%98%E5%8E%9F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>易企秀前端压缩源码分析与还原 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/03/08/jqpeng-%E6%98%93%E4%BC%81%E7%A7%80%E5%89%8D%E7%AB%AF%E5%8E%8B%E7%BC%A9%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8E%E8%BF%98%E5%8E%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          易企秀前端压缩源码分析与还原
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-03-08 17:50:00" itemprop="dateCreated datePublished" datetime="2018-03-08T17:50:00+08:00">2018-03-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>35k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>32 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/8529899.html">易企秀前端压缩源码分析与还原</a></p>
+<p>你是否想知道易企秀炫酷的H5是如何实现的，原理是什么，本文会为你揭秘并还原压缩过的源代码。</p>
+<p>易企秀是一款h5页面制作工具，因方便易用成为业界标杆。后续一个项目会用到类似易企秀这样的自定义H5的功能，因此首先分析下易企秀的前端代码，看看他们是怎么实现的，再取其精华去其糟粕。<br> 由于代码较多，且是压缩处理过的，阅读和还原起来较为困难，不过可以先大概分析下原理，然后有针对性的看主要代码，并借助VS Code等工具对变量、函数进行重命名，稍微耐心一点就能大概还原源代码。</p>
+<h2 id="分析数据模型"><a href="#分析数据模型" class="headerlink" title="分析数据模型"></a>分析数据模型</h2><p>前端分析第一步，看看易企秀的数据模型：</p>
+<p><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1520492536143.jpg" alt="数据模型" title="1520492536143"></p>
+<p>dataList是页面配置信息，elemengts是页面元素的配置信息，obj是H5的配置信息，</p>
+<h2 id="加载流程分析"><a href="#加载流程分析" class="headerlink" title="加载流程分析"></a>加载流程分析</h2><p>查看H5源代码，发现入口函数是：</p>
+<pre><code> eqShow.bootstrap();
+</code></pre>
+<p>顺藤摸瓜，大概分析下，主要流程如下：</p>
+<p><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1520493739334.jpg" alt="加载主要流程" title="1520493739334"></p>
+<p>主要的功能函数在eqxiu和window对象下面，其中的重点是parsePage、renderPage和app,下面一一来分析。</p>
+<h2 id="parsePage"><a href="#parsePage" class="headerlink" title="parsePage"></a>parsePage</h2><p>先看主要代码（重命名后的），主要功能是为每一页生成一个section并appendTo(“.nr”)，另外如果页面有特效，加载相关js库并执行，最后再renderPage。</p>
+<pre><code>function parsePage(dataList, response) &#123;
+
+        for (var pageIndex = 1; pageIndex &lt;= dataList.length; pageIndex++) &#123;
+            // 分页容器
+            $(&#39;&lt;section class=&quot;main-page&quot;&gt;&lt;div class=&quot;m-img&quot; id=&quot;page&#39; + pageIndex + &#39;&quot;&gt;&lt;/div&gt;&lt;/section&gt;&#39;).appendTo(&quot;.nr&quot;);
+
+            if (10 == pageMode) &#123;
+                $(&quot;#page&quot; + pageIndex).parent(&quot;.main-page&quot;).wrap(&#39;&lt;div class=&quot;flip-mask&quot; id=&quot;flip&#39; + pageIndex + &#39;&quot;&gt;&lt;/div&gt;&#39;),
+                    $(&quot;.main-page&quot;).css(&#123;
+                        width: $(&quot;.nr&quot;).width() + &quot;px&quot;,
+                        height: $(&quot;.nr&quot;).height() + &quot;px&quot;
+                    &#125;);
+            &#125;
+
+            if (dataList.length &gt; 1 &amp;&amp; 14 != pageMode &amp;&amp; !response.obj.property.forbidHandFlip) &#123;
+                if (0 == pageMode || 1 == pageMode || 2 == pageMode || 6 == pageMode || 7 == pageMode ||
+                    8 == pageMode || 11 == pageMode || 12 == pageMode || 13 == pageMode || 14 == pageMode) &#123;
+                    $(&#39;&lt;section class=&quot;u-arrow-bottom&quot;&gt;&lt;div class=&quot;pre-wrap&quot;&gt;&lt;div class=&quot;pre-box1&quot;&gt;&lt;div class=&quot;pre1&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;pre-box2&quot;&gt;&lt;div class=&quot;pre2&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&#39;)
+                        .appendTo(&quot;#page&quot; + pageIndex)
+                &#125; else if (3 == pageMode || 4 == pageMode || 5 == pageMode || 9 == pageMode || 10 == pageMode) &#123;
+                    $(&#39;&lt;section class=&quot;u-arrow-right&quot;&gt;&lt;div class=&quot;pre-wrap-right&quot;&gt;&lt;div class=&quot;pre-box3&quot;&gt;&lt;div class=&quot;pre3&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;pre-box4&quot;&gt;&lt;div class=&quot;pre4&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&#39;)
+                        .appendTo(&quot;#page&quot; + pageIndex);
+                &#125;
+            &#125;
+
+              ....
+           renderPage(eqShow, pageIndex, dataList);
+
+                // 最后一页
+                if (pageIndex == dataList.length) &#123;
+                    eqxiu.app($(&quot;.nr&quot;), response.obj.pageMode, dataList, response);
+                    addEnabledClassToPageCtrl(response);
+                &#125;
+            &#125;
+
+        &#125;
+
+        hasSymbols || addReportToLastPage(dataList, response);
+    &#125;
+</code></pre>
+<h2 id="渲染页面和组件"><a href="#渲染页面和组件" class="headerlink" title="渲染页面和组件"></a>渲染页面和组件</h2><p>parsePage搭建了页面框架，renderPage实现页面渲染。</p>
+<p>rendepage里，核心代码是：</p>
+<pre><code>eqShow.templateParser(&quot;jsonParser&quot;).parse(&#123;
+    def: dataList[pageIndex - 1],
+    appendTo: &quot;#page&quot; + pageIndex,
+    mode: &quot;view&quot;,
+    disEvent: disEvent
+&#125;);
+</code></pre>
+<p>templateParser负责将页面上的elements还原为组件，因此这里核心是要了解下templateParser，大致还原的代码如下：</p>
+<pre><code>            var jsonTemplateParser = eqShow.templateParser(&quot;jsonParser&quot;, function () &#123;
+
+                function createContainerFunction(container) &#123;
+                    return function (key, value) &#123;
+                        container[key] = value
+                    &#125;
+                &#125;
+
+                function wrapComp(element, mode) &#123;
+                    try &#123;
+                        var comp = components[(&quot;&quot; + element.type).charAt(0)](element, mode)
+                    &#125; catch (e) &#123;
+                        return
+                    &#125;
+                    if (comp) &#123;
+                        var elementContainer = $(&#39;&lt;li comp-drag comp-rotate class=&quot;comp-resize comp-rotate inside&quot; id=&quot;inside_&#39; + element.id + &#39;&quot; num=&quot;&#39; +
+                                element.num + &#39;&quot; ctype=&quot;&#39; + element.type + &#39;&quot;&gt;&lt;/li&gt;&#39;),
+                            elementType = (&quot;&quot; + element.type).charAt(0);
+
+                        if (&quot;3&quot; !== elementType &amp;&amp; &quot;1&quot; !== elementType) &#123;
+                            elementContainer.attr(&quot;comp-resize&quot;, &quot;&quot;)
+                        &#125;
+
+                        // 组件类型
+                        /**
+                         *  2 文本
+                         *  3 背景
+                         *  9 音乐
+                         *  v video
+                         *  4 图片
+                         *  h shape形状
+                         *  p 图集
+                         *  5 输入框
+                         *  r radio
+                         *  c checkbox
+                         *  z 多选按钮
+                         *  a 评分组件
+                         *  b 留言板
+                         *  6 提交按钮
+                         */
+                        switch (elementType) &#123;
+                            case &quot;p&quot;:
+                                elementContainer.removeAttr(&quot;comp-rotate&quot;);
+                                break;
+                            case &quot;1&quot;:
+                                elementContainer.removeAttr(&quot;comp-drag&quot;);
+                                break;
+                            case &quot;2&quot;: // 文本
+                                elementContainer.addClass(&quot;wsite-text&quot;);
+                                break;
+                            case &quot;3&quot;:
+                                // 背景
+                                break;
+                            case &quot;x&quot;:
+                                elementContainer.addClass(&quot;show-text&quot;);
+                                break;
+                            case &quot;4&quot;:
+                                // image
+                                element.properties.imgStyle &amp;&amp; $(comp).css(element.properties.imgStyle), elementContainer.addClass(&quot;wsite-image&quot;);
+                                break;
+                            case &quot;n&quot;:
+                                elementContainer.addClass(&quot;wsite-image&quot;);
+                                break;
+                            case &quot;h&quot;:
+                                elementContainer.addClass(&quot;wsite-shape&quot;)
+                                break;
+                            case &quot;5&quot;:
+                                elementContainer.removeAttr(&quot;comp-input&quot;);
+                                break;
+                            case &quot;6&quot;:
+                            case &quot;8&quot;:
+                                elementContainer.removeAttr(&quot;comp-button&quot;);
+                                break;
+                            case &quot;v&quot;:
+                                elementContainer.removeAttr(&quot;comp-video&quot;);
+                                elementContainer.addClass(&quot;wsite-video&quot;);
+                                if (element.properties &amp;&amp; element.properties.lock) &#123;
+                                    elementContainer.addClass(&quot;alock&quot;)
+                                &#125;
+                                break;
+                            case &quot;b&quot;:
+                                elementContainer.removeAttr(&quot;comp-boards&quot;);
+                                elementContainer.attr(&quot;min-h&quot;, 60),
+                                    elementContainer.attr(&quot;min-w&quot;, 230);
+                                break;
+                            default:
+                                break;
+                        &#125;
+
+                        elementContainer.mouseenter(function () &#123;
+                                $(this).addClass(&quot;inside-hover&quot;)
+                            &#125;),
+                            elementContainer.mouseleave(function () &#123;
+                                $(this).removeClass(&quot;inside-hover&quot;)
+                            &#125;);
+
+                        // edit或者非文本type，再套一层
+                        if (&quot;edit&quot; === jsonTemplateParser.mode || &quot;x&quot; !== (&quot;&quot; + element.type).charAt(0)) &#123;
+                            var elementBoxContent = $(&#39;&lt;div class=&quot;element-box-contents&quot;&gt;&#39;),
+                                elementBox = $(&#39;&lt;div class=&quot;element-box&quot;&gt;&#39;).append(elementBoxContent.append(comp));
+                            elementContainer.append(elementBox),
+                                &quot;5&quot; !== (&quot;&quot; + element.type).charAt(0) &amp;&amp; &quot;6&quot; !== (&quot;&quot; + element.type).charAt(0) &amp;&amp; &quot;r&quot; !== element.type &amp;&amp; &quot;c&quot; !== element.type &amp;&amp; &quot;a&quot; !== element.type &amp;&amp; &quot;8&quot; !== element.type &amp;&amp; &quot;l&quot; !== element.type &amp;&amp; &quot;s&quot; !== element.type &amp;&amp; &quot;i&quot; !== element.type &amp;&amp; &quot;h&quot; !== element.type &amp;&amp; &quot;z&quot; !== element.type || &quot;edit&quot; !== mode || $(comp).before($(&#39;&lt;div class=&quot;element&quot; style=&quot;position: absolute; height: 100%; width: 100%;z-index: 1;&quot;&gt;&#39;))
+                        &#125;
+
+                        // 文本类型，处理font
+                        var k, eleFonts = element.fonts || element.css.fontFamily || element.fontFamily;
+                        if (&quot;2&quot; === elementType || &quot;x&quot; === elementType) &#123;
+                            for (var content = element.content, font_pattern = /font-family:(.*?);/g, matchResults = [], fonts = []; null !== (matchResults = font_pattern.exec(content));)
+                                fonts.push(matchResults[1].trim());
+                            if (1 !== fonts.length || &quot;defaultFont&quot; !== fonts[0] &amp;&amp; &quot;moren&quot; !== fonts[0] || (eleFonts = null),
+                                eleFonts) &#123;
+                                if (&quot;view&quot; === jsonTemplateParser.mode &amp;&amp; element.css.fontFamily &amp;&amp; window.scene &amp;&amp; (window.scene.publishTime || !mobilecheck() &amp;&amp; !tabletCheck() || (k = &quot;@font-face&#123;font-family:&quot; + element.css.fontFamily + &#39;;src: url(&quot;&#39; + element.properties.localFontPath + &#39;&quot;) format(&quot;truetype&quot;);&#125;&#39;,
+                                        b(k))),
+                                    &quot;object&quot; == typeof eleFonts &amp;&amp; eleFonts.constructor === Object) &#123;
+                                    if (!jQuery.isEmptyObject(eleFonts))
+                                        for (var q in eleFonts)
+                                            u[q] || (&quot;edit&quot; === jsonTemplateParser.mode ? k = &quot;@font-face&#123;font-family:&quot; + q + &quot;;src: url(&quot; + PREFIX_FILE_HOST + eleFonts[q] + &quot;) format(woff);&#125;&quot; : window.scene &amp;&amp; window.scene.publishTime &amp;&amp; (k = &quot;@font-face&#123;font-family:&quot; + q + &#39;;src: url(&quot;&#39; + PREFIX_S2_URL + &quot;fc/&quot; + q + &quot;_&quot; + element.sceneId + &quot;_&quot; + scene.publishTime + &#39;.woff&quot;) format(&quot;woff&quot;);&#125;&#39;),
+                                                b(k),
+                                                u[q] = !0)
+                                &#125; else
+                                    u[eleFonts] || (&quot;edit&quot; === jsonTemplateParser.mode ? k = &quot;@font-face&#123;font-family:&quot; + eleFonts + &quot;;src: url(&quot; + PREFIX_FILE_HOST + element.preWoffPath + &quot;) format(woff);&#125;&quot; : window.scene &amp;&amp; window.scene.publishTime &amp;&amp; (k = &quot;@font-face&#123;font-family:&quot; + eleFonts + &#39;;src: url(&quot;&#39; + PREFIX_S2_URL + &quot;fc/&quot; + eleFonts + &quot;_&quot; + element.sceneId + &quot;_&quot; + scene.publishTime + &#39;.woff&quot;) format(&quot;woff&quot;);&#125;&#39;),
+                                        b(k),
+                                        u[eleFonts] = !0);
+                                &quot;edit&quot; === jsonTemplateParser.mode &amp;&amp; localStorage.setItem(&quot;shoppingFontFamily&quot;, JSON.stringify(u))
+                            &#125;
+                        &#125;
+
+                        // 处理css
+                        if (element.css) &#123;
+                            var elementWidth = 320 - parseInt(element.css.left, 10);
+                            elementContainer.css(&#123;
+                                width: elementWidth
+                            &#125;);
+                            elementContainer.css(&#123;
+                                width: element.css.width,
+                                height: element.css.height,
+                                left: element.css.left,
+                                top: element.css.top,
+                                zIndex: element.css.zIndex,
+                                bottom: element.css.bottom,
+                                transform: element.css.transform
+                            &#125;);
+                            if (0 === element.css.boxShadowSize || &quot;&quot; + element.css.boxShadowSize == &quot;0&quot;) &#123;
+                                element.css.boxShadow = &quot;0px 0px 0px rgba(0,0,0,0.5)&quot;;
+                                if (&quot;edit&quot; !== jsonTemplateParser.mode &amp;&amp; &quot;x&quot; === (&quot;&quot; + element.type).charAt(0)) &#123;
+                                    return elementContainer.append(comp),
+                                        elementContainer.find(&quot;.element-box&quot;).css(&#123;
+                                            borderStyle: element.css.borderStyle,
+                                            borderWidth: element.css.borderWidth,
+                                            borderColor: element.css.borderColor,
+                                            borderTopLeftRadius: element.css.borderTopLeftRadius,
+                                            borderTopRightRadius: element.css.borderTopRightRadius,
+                                            borderBottomRightRadius: element.css.borderBottomRightRadius,
+                                            borderBottomLeftRadius: element.css.borderBottomLeftRadius,
+                                            boxShadow: element.css.boxShadow,
+                                            backgroundColor: element.css.backgroundColor,
+                                            opacity: element.css.opacity,
+                                            width: &quot;100%&quot;,
+                                            height: &quot;100%&quot;,
+                                            overflow: &quot;hidden&quot;
+                                        &#125;),
+                                        elementContainer.find(&quot;img&quot;).css(&#123;
+                                            width: &quot;100%&quot;
+                                        &#125;),
+                                        elementContainer;
+                                &#125;
+                            &#125;
+
+                            // Android 微信，图片，设置borderColor
+                            isAndroid() &amp;&amp;
+                                isWeixin() &amp;&amp;
+                                &quot;&quot; + element.type == &quot;4&quot; &amp;&amp;
+                                &quot;0px&quot; !== element.css.borderRadius &amp;&amp;
+                                0 === element.css.borderWidth &amp;&amp;
+                                element.properties.anim &amp;&amp; (element.css.borderWidth = 1, element.css.borderColor = &quot;rgba(0,0,0,0)&quot;);
+
+                            var elementCss = $.extend(!0, &#123;&#125;, element.css);
+                            delete elementCss.fontFamily,
+                                elementBox.css(elementCss).css(&#123;
+                                    width: &quot;100%&quot;,
+                                    height: &quot;100%&quot;,
+                                    transform: &quot;none&quot;
+                                &#125;),
+                                elementBox.children(&quot;.element-box-contents&quot;).css(&#123;
+                                    width: &quot;100%&quot;,
+                                    height: &quot;100%&quot;
+                                &#125;),
+                                // 设置宽高
+                                &quot;4&quot; !== (&quot;&quot; + element.type).charAt(0) &amp;&amp;
+                                &quot;n&quot; !== (&quot;&quot; + element.type).charAt(0) &amp;&amp;
+                                &quot;p&quot; !== (&quot;&quot; + element.type).charAt(0) &amp;&amp;
+                                &quot;h&quot; !== (&quot;&quot; + element.type).charAt(0) &amp;&amp; &quot;t&quot; !== (&quot;&quot; + element.type).charAt(0) &amp;&amp;
+                                &quot;z&quot; !== (&quot;&quot; + element.type).charAt(0) &amp;&amp;
+                                $(comp).css(&#123;
+                                    width: element.css.width,
+                                    height: element.css.height
+                                &#125;),
+                                // w01 w02 设置lineHeight
+                                (&quot;w01&quot; === element.type || &quot;w02&quot; === element.type) &amp;&amp;
+                                $(comp).css(&#123;
+                                    lineHeight: element.css.height + &quot;px&quot;
+                                &#125;),
+                                // shape 类型
+                                &quot;h&quot; === (&quot;&quot; + element.type).charAt(0) &amp;&amp;
+                                ($(comp).find(&quot;g&quot;).length ?
+                                    $(comp).find(&quot;g&quot;).attr(&quot;fill&quot;, element.css.color) :
+                                    $(comp).children().attr(&quot;fill&quot;, element.css.color),
+                                    elementBox.children(&quot;.element-box-contents&quot;).css(&quot;position&quot;, &quot;relative&quot;))
+                        &#125;
+                        return elementContainer
+                    &#125;
+                &#125;
+
+                /**
+                 * 将element按zindex排序
+                 */
+                function sortElementsByZindex(elements) &#123;
+                    for (var i = 0; i &lt; elements.length - 1; i++)
+                        for (var j = i + 1; j &lt; elements.length; j++)
+                            if (parseInt(elements[i].css.zIndex, 10) &gt; parseInt(elements[j].css.zIndex, 10)) &#123;
+                                var element = elements[i];
+                                elements[i] = elements[j],
+                                    elements[j] = element
+                            &#125;
+                    for (var e = 0; e &lt; elements.length; e++)
+                        elements[e].css.zIndex = e + 1 + &quot;&quot;;
+                    return elements
+                &#125;
+
+                function parseElements(pageDef, $edit_wrapper, mode) &#123;
+                    $edit_wrapper = $edit_wrapper.find(&quot;.edit_area&quot;);
+                    var i, elements = pageDef.elements;
+                    if (elements)
+                        for (elements = sortElementsByZindex(elements),
+                            i = 0; i &lt; elements.length; i++)
+                            if (elements[i].sceneId = pageDef.sceneId,
+                                &quot;&quot; + elements[i].type == &quot;3&quot;) &#123;
+                                // type == 3 
+                                var component = components[(&quot;&quot; + elements[i].type).charAt(0)](elements[i], $edit_wrapper);
+
+                                // if is edit mode, dispatch edit event
+                                &quot;edit&quot; === mode
+                                    &amp;&amp;
+                                    editEvents[(&quot;&quot; + elements[i].type).charAt(0)] &amp;&amp;
+                                    editEvents[(&quot;&quot; + elements[i].type).charAt(0)](component, elements[i])
+                            &#125; else &#123;
+                                var comp = wrapComp(elements[i], mode);
+                                if (!comp)
+                                    continue;
+                                $edit_wrapper.append(comp);
+
+                                // invoke interceptors
+                                for (var n = 0; n &lt; interceptors.length; n++)
+                                    interceptors[n](comp, elements[i], mode);
+
+                                afterRenderEvents[(&quot;&quot; + elements[i].type).charAt(0)] &amp;&amp;
+                                    (
+                                        afterRenderEvents[(&quot;&quot; + elements[i].type).charAt(0)](comp, elements[i]),
+                                        &quot;edit&quot; !== mode &amp;&amp; (
+                                            parseElementTrigger(comp, elements[i]),
+                                            r(comp, elements[i])
+                                        )
+                                    ),
+
+                                    &quot;edit&quot; === mode &amp;&amp;
+                                    editEvents[(&quot;&quot; + elements[i].type).charAt(0)] &amp;&amp;
+                                    editEvents[(&quot;&quot; + elements[i].type).charAt(0)](comp, elements[i])
+                            &#125;
+                &#125;
+
+                function getEventHandlers() &#123;
+                    return editEvents
+                &#125;
+
+                function getComponents() &#123;
+                    return components
+                &#125;
+
+                function addInterceptor(interceptor) &#123;
+                    interceptors.push(interceptor)
+                &#125;
+
+                function getInterceptors() &#123;
+                    return interceptors
+                &#125;
+                var components = &#123;&#125;,
+                    editEvents = &#123;&#125;,
+                    afterRenderEvents = &#123;&#125;,
+                    interceptors = [],
+                    _width = containerWidth = 320,
+                    _height = containerHeight = 486,
+                    p = 1,
+                    s = 1,
+                    parser = &#123;
+                        getComponents: getComponents,
+                        getEventHandlers: getEventHandlers,
+                        addComponent: createContainerFunction(components),
+                        bindEditEvent: createContainerFunction(editEvents),
+                        bindAfterRenderEvent: createContainerFunction(afterRenderEvents),
+                        addInterceptor: addInterceptor,
+                        getInterceptors: getInterceptors,
+                        wrapComp: wrapComp,
+                        disEvent: !1,
+                        mode: &quot;view&quot;,
+                        parse: function (parseInfo) &#123;
+                            var edit_wrapper = $(&#39;&lt;div class=&quot;edit_wrapper&quot; data-scene-id=&quot;&#39; + parseInfo.def.sceneId + &#39;&quot;&gt;&lt;ul eqx-edit-destroy id=&quot;edit_area&#39; + parseInfo.def.id + &#39;&quot; paste-element class=&quot;edit_area weebly-content-area weebly-area-active&quot;&gt;&lt;/div&gt;&#39;),
+                                mode = this.mode = parseInfo.mode;
+                            // page 定义
+                            this.def = parseInfo.def,
+                                parseInfo.disEvent &amp;&amp; (this.disEvent = !0),
+                                &quot;view&quot; === mode &amp;&amp; tplCount++;
+                            // 页面容器
+                            var pageContainer = $(parseInfo.appendTo);
+                            return containerWidth = pageContainer.width(),
+                                containerHeight = pageContainer.height(),
+                                p = _width / containerWidth,
+                                s = _height / containerHeight,
+                                parseElements(parseInfo.def, edit_wrapper.appendTo($(parseInfo.appendTo)), mode)
+                        &#125;
+                    &#125;;
+                return parser
+            &#125;);
+</code></pre>
+<p>上面的重点是parseElements，先把elements按zindex排序，然后逐个渲染。<br> 注意，渲染是根据elementType,从components找到对应的组件，然后创建一个实例，因此这里要单独说下组件是如何定义的。</p>
+<p>先看下一个组件的配置信息大概是这样，有id，css，type和动画等配置信息：</p>
+<pre><code>    &#123;
+    &quot;id&quot;: 29,
+    &quot;css&quot;: &#123;
+        &quot;top&quot;: 124.93546211843,
+        &quot;left&quot;: 62.967731059217,
+        &quot;color&quot;: &quot;#676767&quot;,
+        &quot;width&quot;: 195,
+        &quot;height&quot;: 195,
+        &quot;zIndex&quot;: &quot;1&quot;,
+        &quot;opacity&quot;: 1,
+        &quot;boxShadow&quot;: &quot;0px 0px 0px rgba(0,0,0,0.5)&quot;,
+        &quot;transform&quot;: &quot;rotateZ(45deg)&quot;,
+        &quot;lineHeight&quot;: 1,
+        &quot;paddingTop&quot;: 0,
+        &quot;borderColor&quot;: &quot;rgba(255,255,255,1)&quot;,
+        &quot;borderStyle&quot;: &quot;double&quot;,
+        &quot;borderWidth&quot;: 4,
+        &quot;borderRadius&quot;: &quot;0px&quot;,
+        &quot;boxShadowSize&quot;: 0,
+        &quot;paddingBottom&quot;: 0,
+        &quot;backgroundColor&quot;: &quot;rgba(252,230,238,0.16)&quot;,
+        &quot;borderRadiusPerc&quot;: 0,
+        &quot;boxShadowDirection&quot;: 0,
+        &quot;textAlign&quot;: &quot;left&quot;,
+        &quot;borderBottomRightRadius&quot;: &quot;0px&quot;,
+        &quot;borderBottomLeftRadius&quot;: &quot;0px&quot;,
+        &quot;borderTopRightRadius&quot;: &quot;0px&quot;,
+        &quot;borderTopLeftRadius&quot;: &quot;0px&quot;
+    &#125;,
+    &quot;type&quot;: &quot;2&quot;,
+    &quot;pageId&quot;: &quot;24642&quot;,
+    &quot;content&quot;: &quot;&lt;div style=\&quot;text-align: center;\&quot;&gt;&lt;br&gt;&lt;/div&gt;&quot;,
+    &quot;sceneId&quot;: 8831293,
+    &quot;properties&quot;: &#123;
+        &quot;anim&quot;: &#123;
+            &quot;type&quot;: 4,
+            &quot;delay&quot;: 0.6,
+            &quot;countNum&quot;: 1,
+            &quot;duration&quot;: 1,
+            &quot;direction&quot;: 0
+        &#125;,
+        &quot;width&quot;: 195,
+        &quot;height&quot;: 195
+    &#125;
+&#125;
+</code></pre>
+<p>jsonParser里用一个components对象存储组件，通过addComponent添加组件，key就是组件的type：</p>
+<pre><code>addComponent: createContainerFunction(components)
+function createContainerFunction(container) &#123;
+                return function (key, value) &#123;
+                    container[key] = value
+                &#125;
+            &#125;
+</code></pre>
+<p>添加组件时，type 作为key，value为创建组件的函数：</p>
+<pre><code>// 添加组件1jsonTemplateParser.addComponent(&quot;1&quot;, function (element, mode) &#123;    var comp = document.createElement(&quot;div&quot;);    if (comp.id = element.id,        comp.setAttribute(&quot;class&quot;, &quot;element comp_title&quot;),        // 设置组件content        element.content &amp;&amp; (comp.textContent = element.content),        element.css) &#123;        var item, elementCss = element.css;        for (item in elementCss)            comp.style[item] = elementCss[item]    &#125;    if (element.properties.labels)        for (var labels = element.properties.labels, f = 0; f &lt; labels.length; f++)            $(&#39;&lt;a class = &quot;label_content&quot; style = &quot;display: inline-block;&quot;&gt;&#39;)            .appendTo($(comp))            .html(labels[f].title)            .css(labels[f].color)            .css(&quot;width&quot;, 100 / labels.length + &quot;%&quot;);    return comp&#125;);
+</code></pre>
+<p>这样渲染组件时，根据element的类型就能找到createCompFunction，从而创建组件。</p>
+<h2 id="组件动画播放"><a href="#组件动画播放" class="headerlink" title="组件动画播放"></a>组件动画播放</h2><p>H5之所以炫酷，很大一部分因为每个组件都有定制好的CSS3动画，我们这里来看看这些动画是如何执行的。</p>
+<p>代码还是上一部分的代码，我们注意到组件渲染后，有一段代码;</p>
+<pre><code>  // invoke interceptorsfor (var n = 0; n &lt; interceptors.length; n++)    interceptors[n](comp, elements[i], mode);
+</code></pre>
+<p>执行interceptors，这个interceptors可以通过addInterceptor注册拦截器，在组件渲染完成后会调用定义的拦截器，组件的动画就是这样来调用的。</p>
+<pre><code>        // 添加拦截器执行动画
+        jsonTemplateParser.addInterceptor(function (comp, element, mode) &#123;
+            eqxCommon.animation(comp, element, mode, jsonTemplateParser.def.properties)
+        &#125;);
+</code></pre>
+<p>我们发现，eqxiu通过addInterceptor注册了一个拦截器，该拦截器调用eqxCommon.animation执行组件动画，因此分析eqxCommon.animation就可以了解动画是如何实现的。</p>
+<p>还是先看element里的定义：</p>
+<pre><code>     &quot;properties&quot;: &#123;        &quot;anim&quot;: &#123;            &quot;type&quot;: 4,            &quot;delay&quot;: 0.6,            &quot;countNum&quot;: 1,            &quot;duration&quot;: 1,            &quot;direction&quot;: 0        &#125;,
+</code></pre>
+<p>我们看到，anim里定义了type，delay，duration等配置信息，可以设想播放动画无非就是解析这个配置，然后执行，其中type应该是对应的各种动画类型，分析代码吧，下面给出破解后的代码：</p>
+<pre><code>        // 动画播放序号
+        var animIndex = 0;
+
+        // 处理动画属性
+        if (element.properties &amp;&amp; element.properties.anim) &#123;
+            var anim = [];
+            element.properties.anim.length ? anim = element.properties.anim : anim.push(element.properties.anim);
+            var elementBox = $(&quot;.element-box&quot;, comp);
+            elementBox.attr(&quot;element-anim&quot;, &quot;&quot;);
+
+            // 找出animations
+            for (var animType, animTypes = [], anims = [], index = 0, animLength = anim.length; animLength &gt; index; index++)
+                if (null != anim[index].type &amp;&amp;
+                    -1 != anim[index].type) &#123;
+                    animType = eqxCommon.convertType(anim[index]),
+                        animTypes.push(animType),
+                        anims.push(anim[index]);
+                &#125;
+
+            if (properties &amp;&amp; properties.scale)
+                return;
+
+            // 动画播放类型
+            element.properties.anim.trigger ?
+                comp.click(function () &#123;
+                    // 点击播放
+                    playAnimation(elementBox, animType, element.properties.anim)
+                &#125;) :
+                properties &amp;&amp; properties.longPage ?
+                playAnimation(elementBox, animTypes, anims, !0, element.css) // longpage
+                :
+                playAnimation(elementBox, animTypes, anims)
+        &#125;
+</code></pre>
+<p>上面的逻辑是先从element里找到anim，放入数组，然后再playAnimation。这里使用了convertType函数将数字type转换为真实的动画类型：</p>
+<pre><code>var convertType = function (a) &#123;
+        var animType, c, d = a.type;
+        return &quot;typer&quot; === d &amp;&amp; (animType = &quot;typer&quot;),
+            0 === d &amp;&amp; (animType = &quot;fadeIn&quot;),
+            1 === d &amp;&amp; (c = a.direction,
+                0 === c &amp;&amp; (animType = &quot;fadeInLeft&quot;),
+                1 === c &amp;&amp; (animType = &quot;fadeInDown&quot;),
+                2 === c &amp;&amp; (animType = &quot;fadeInRight&quot;),
+                3 === c &amp;&amp; (animType = &quot;fadeInUp&quot;)),
+            6 === d &amp;&amp; (animType = &quot;wobble&quot;),
+            5 === d &amp;&amp; (animType = &quot;rubberBand&quot;),
+            7 === d &amp;&amp; (animType = &quot;rotateIn&quot;),
+            8 === d &amp;&amp; (animType = &quot;flip&quot;),
+            9 === d &amp;&amp; (animType = &quot;swing&quot;),
+            2 === d &amp;&amp; (c = a.direction,
+                0 === c &amp;&amp; (animType = &quot;bounceInLeft&quot;),
+                1 === c &amp;&amp; (animType = &quot;bounceInDown&quot;),
+                2 === c &amp;&amp; (animType = &quot;bounceInRight&quot;),
+                3 === c &amp;&amp; (animType = &quot;bounceInUp&quot;)),
+            3 === d &amp;&amp; (animType = &quot;bounceIn&quot;),
+            4 === d &amp;&amp; (animType = &quot;zoomIn&quot;),
+            10 === d &amp;&amp; (animType = &quot;fadeOut&quot;),
+            11 === d &amp;&amp; (animType = &quot;flipOutY&quot;),
+            12 === d &amp;&amp; (animType = &quot;rollIn&quot;),
+            13 === d &amp;&amp; (animType = &quot;lightSpeedIn&quot;),
+            14 === d &amp;&amp; (animType = &quot;bounceOut&quot;),
+            15 === d &amp;&amp; (animType = &quot;rollOut&quot;),
+            16 === d &amp;&amp; (animType = &quot;lightSpeedOut&quot;),
+            17 === d &amp;&amp; (c = a.direction,
+                0 === c &amp;&amp; (animType = &quot;fadeOutRight&quot;),
+                1 === c &amp;&amp; (animType = &quot;fadeOutDown&quot;),
+                2 === c &amp;&amp; (animType = &quot;fadeOutLeft&quot;),
+                3 === c &amp;&amp; (animType = &quot;fadeOutUp&quot;)),
+            18 === d &amp;&amp; (animType = &quot;zoomOut&quot;),
+            19 === d &amp;&amp; (c = a.direction,
+                0 === c &amp;&amp; (animType = &quot;bounceOutRight&quot;),
+                1 === c &amp;&amp; (animType = &quot;bounceOutDown&quot;),
+                2 === c &amp;&amp; (animType = &quot;bounceOutLeft&quot;),
+                3 === c &amp;&amp; (animType = &quot;bounceOutUp&quot;)),
+            20 === d &amp;&amp; (animType = &quot;flipInY&quot;),
+            21 === d &amp;&amp; (animType = &quot;tada&quot;),
+            22 === d &amp;&amp; (animType = &quot;jello&quot;),
+            23 === d &amp;&amp; (animType = &quot;flash&quot;),
+            26 === d &amp;&amp; (animType = &quot;twisterInDown&quot;),
+            27 === d &amp;&amp; (animType = &quot;puffIn&quot;),
+            28 === d &amp;&amp; (animType = &quot;puffOut&quot;),
+            29 === d &amp;&amp; (animType = &quot;slideDown&quot;),
+            30 === d &amp;&amp; (animType = &quot;slideUp&quot;),
+            24 === d &amp;&amp; (animType = &quot;flipInX&quot;),
+            25 === d &amp;&amp; (animType = &quot;flipOutX&quot;),
+            31 === d &amp;&amp; (animType = &quot;twisterInUp&quot;),
+            32 == d &amp;&amp; (animType = &quot;vanishOut&quot;),
+            33 == d &amp;&amp; (animType = &quot;vanishIn&quot;),
+            animType
+    &#125;;
+</code></pre>
+<p>播放动画函数在playAnimation里：</p>
+<ul>
+<li>大概是先判断类型是否是typer，typer的话是打字机特效，调用相关代码</li>
+<li>设置element的的css animation属性，本质上是CSS3的animation动画,可以参见（<a target="_blank" rel="noopener" href="http://www.w3school.com.cn/css3/css3_animation.asp%EF%BC%89">http://www.w3school.com.cn/css3/css3_animation.asp）</a></li>
+</ul>
+<pre><code> elementBox.css(&quot;animation&quot;, &quot;&quot;);
+                elementBox.css(&quot;animation&quot;, animTypes[animIndex] + &quot; &quot; + anims[animIndex].duration + &quot;s ease &quot; + anims[animIndex].delay + &quot;s &quot; +
+                    (anims[animIndex].countNum ? anims[animIndex].countNum : &quot;&quot;));                 anims[animIndex].count &amp;&amp; animIndex == anims.length - 1 &amp;&amp; elementBox.css(&quot;animation-iteration-count&quot;, &quot;infinite&quot;);
+                    elementBox.css(&quot;animation-fill-mode&quot;, &quot;both&quot;);
+</code></pre>
+<p>最后，如果有多个动画，在播放完成后继续播放下一个：</p>
+<pre><code>// 动画播放结束，播放下一个动画（一个组件可能有多个动画）
+                elementBox.one(&quot;webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend&quot;, function () &#123;
+                    animIndex++;
+                    playAnimation(elementBox, animTypes, anims);
+                &#125;)
+</code></pre>
+<h2 id="页面切换"><a href="#页面切换" class="headerlink" title="页面切换"></a>页面切换</h2><p>由于是多页应用，因此涉及到页面切换，并且页面切换时还需要有对应的切换动画，改工作是由一个eqxiu对象来管理和实现的。</p>
+<p>老套路，先看这块的配置吧，页面的配置在obj下面,其中pageMode定义了翻页效果：</p>
+<pre><code>&quot;obj&quot;: &#123;
+    &quot;id&quot;: 8831293,
+    &quot;name&quot;: &quot;房产广告&quot;,
+    &quot;createUser&quot;: &quot;1&quot;,
+    &quot;type&quot;: 103,
+    &quot;pageMode&quot;: 4,
+    &quot;image&quot;: &#123;&#125;,
+    &quot;property&quot;: &quot;&#123;\&quot;triggerLoop\&quot;:true,\&quot;slideNumber\&quot;:true,\&quot;autoFlipTime\&quot;:4,\&quot;shareDes\&quot;:\&quot;\&quot;,\&quot;eqAdType\&quot;:1,\&quot;hideEqAd\&quot;:false,\&quot;autoFlip\&quot;:true,\&quot;lastPageId\&quot;:604964&#125;&quot;,
+    &quot;timeout&quot;: &quot;&quot;,
+    &quot;timeout_url&quot;: &quot;&quot;,
+    &quot;accessCode&quot;: null,
+    &quot;cover&quot;: &quot;syspic/pageimg/yq0KA1UrbkOAV_yiAAFuhyGx9LE397.jpg&quot;,
+    &quot;bgAudio&quot;: &quot;&#123;\&quot;url\&quot;:\&quot;syspic/mp3/yq0KA1RHT3iAMXYOAAgPq1MjV9M930.mp3\&quot;,\&quot;type\&quot;:\&quot;3\&quot;&#125;&quot;,
+    &quot;isTpl&quot;: 0,
+    &quot;isPromotion&quot;: 0,
+    &quot;status&quot;: 1,
+    &quot;openLimit&quot;: 0,
+    &quot;startDate&quot;: null,
+    &quot;endDate&quot;: null,
+    &quot;updateTime&quot;: 1426045746000,
+    &quot;createTime&quot;: 1426572693000,
+    &quot;publishTime&quot;: 1426572693000,
+    &quot;applyTemplate&quot;: 0,
+    &quot;applyPromotion&quot;: 0,
+    &quot;sourceId&quot;: null,
+    &quot;code&quot;: &quot;U903078B74Q5&quot;,
+    &quot;description&quot;: &quot;房产广告&quot;,
+    &quot;sort&quot;: 0,
+    &quot;pageCount&quot;: 0,
+    &quot;dataCount&quot;: 0,
+    &quot;showCount&quot;: 44,
+    &quot;eqcode&quot;: &quot;&quot;,
+    &quot;userLoginName&quot;: null,
+    &quot;userName&quot;: null
+&#125;,
+</code></pre>
+<p>pagemode是这样定义的：</p>
+<pre><code>pagemodes = [&#123;        id: 0,        name: &quot;上下翻页&quot;    &#125;, &#123;        id: 4,        name: &quot;左右翻页&quot;    &#125;, &#123;        id: 1,        name: &quot;上下惯性翻页&quot;    &#125;, &#123;        id: 3,        name: &quot;左右惯性翻页&quot;    &#125;, &#123;        id: 11,        name: &quot;上下连续翻页&quot;    &#125;, &#123;        id: 5,        name: &quot;左右连续翻页&quot;    &#125;, &#123;        id: 6,        name: &quot;立体翻页&quot;    &#125;, &#123;        id: 7,        name: &quot;卡片翻页&quot;    &#125;, &#123;        id: 8,        name: &quot;放大翻页&quot;    &#125;, &#123;        id: 9,        name: &quot;交换翻页&quot;    &#125;, &#123;        id: 10,        name: &quot;翻书翻页&quot;    &#125;, &#123;        id: 12,        name: &quot;掉落翻页&quot;    &#125;, &#123;        id: 13,        name: &quot;淡入翻页&quot;    &#125;];
+</code></pre>
+<p>在renderpage结束后，调用eqxiu.app：</p>
+<pre><code>                  // 最后一页
+                if (pageIndex == dataList.length) &#123;
+                    eqxiu.app($(&quot;.nr&quot;), response.obj.pageMode, dataList, response);
+                    addEnabledClassToPageCtrl(response);
+                &#125;
+</code></pre>
+<p>来分析eqxiu.app代码，通过pagemode，我们可以看出翻页打开分为上下翻页、左右翻页两个大类：</p>
+<pre><code>if (&quot;8&quot; == pageMode || &quot;9&quot; == pageMode) &#123;
+            transformTime = 0.7;
+            timeoutDelay = 800;
+        &#125;
+        // 上下翻页  上下惯性翻页 立体翻页 卡片翻页 放大翻页 上下连续翻页 上下连续翻页
+        if (0 == pageMode || (1 == pageMode || (2 == pageMode || (6 == pageMode || (7 == pageMode || (8 == pageMode || (11 == pageMode || 12 == pageMode))))))) &#123;
+            /** @type &#123;boolean&#125; */
+            upDownMode = true;
+        &#125; else &#123;
+            // 左右惯性翻页 左右翻页 左右连续翻页  翻书翻页
+            if (3 == pageMode || (4 == pageMode || (5 == pageMode || 10 == pageMode))) &#123;
+                /** @type &#123;boolean&#125; */
+                leftRightMode = true;
+            &#125;
+        &#125;
+</code></pre>
+<p>然后配置里有一个autoFlip，代表是否自动翻页,通过setInterval设置定时翻页任务：</p>
+<pre><code>        // 自动翻页
+        if (response.obj.property.autoFlip) &#123;
+            // 自动翻页时间
+            autoFlipTimeMS = 1000 * response.obj.property.autoFlipTime;
+            setAndStartAutoFlip(autoFlipTimeMS);
+        &#125;    
+    /**
+     * 设置翻页时间间隔并启动翻页
+     * @param &#123;number&#125; textStatus
+     * @return &#123;undefined&#125;
+     */
+    function setAndStartAutoFlip(autoFlipTime) &#123;
+        autoFlipTime = autoFlipTime;
+        pauseAutoFlip();
+        startAutoFlip();
+    &#125;           /**
+     * 启动自动翻页
+     * @return &#123;undefined&#125;
+     */
+    function startAutoFlip() &#123;
+        // 通过setInterval
+        autoFlipIntervalId = setInterval(function () &#123;
+            if (!(10 === self._scrollMode)) &#123;
+                if (!isTouching) &#123;
+                    nextPage();
+                &#125;
+            &#125;
+        &#125;, autoFlipTimeMS);
+    &#125;
+</code></pre>
+<p>默认情况下H5是支持touch滑动翻页的，这种滑动操作一般是监听相关事件，开始滑动、滑动中和滑动结束，为了同时支持移动端和PC端，还需要加上鼠标点击事件：</p>
+<pre><code>        var isTouch = false;
+        self._$app.on(&quot;mousedown touchstart&quot;, function (e) &#123;
+            if (!self._isforbidHandFlip) &#123;
+                onTouchStart(e);
+                isTouch = true;
+            &#125;
+        &#125;).on(&quot;mousemove touchmove&quot;, function (e) &#123;
+            if (!self._isforbidHandFlip) &#123;
+                if (isTouch) &#123;
+                    onTouchMove(e);
+                &#125;
+            &#125;
+        &#125;).on(&quot;mouseup touchend mouseleave&quot;, function (events) &#123;
+            if (!self._isforbidHandFlip) &#123;
+                onTouchEnd(events);
+                /** @type &#123;boolean&#125; */
+                isTouch = false;
+            &#125;
+        &#125;);
+</code></pre>
+<p>翻页的核心无非就是判断位移是否超过特定的值，比如左右翻页X位移是否大于Y位移并且X的偏移量大于20。因此onTouchStart开始时，记录初始位置，onTouchMove时计算offset变化，按照pageMode执行对应的动画，onTouchEnd时判断位移是否足够，足够就切换页面，否则复位。</p>
+<pre><code>/**
+         * 开始滑动
+         * @param &#123;Object&#125; e
+         * @return &#123;undefined&#125;
+         */
+        onTouchStart = function (e) &#123;
+            /** @type &#123;boolean&#125; */
+            fa = false;
+            if (isMobile) &#123;
+                if (e) &#123;
+                    e = event;
+                &#125;
+            &#125;
+            if (!self._isDisableFlipPage) &#123;
+                self.$currentPage = self._$pages.filter(&quot;.z-current&quot;).get(0);
+                if (!C) &#123;
+                    /** @type &#123;null&#125; */
+                    self.$activePage = null;
+                &#125;
+                if (self.$currentPage) &#123;
+                    if (completeEffect($(self.$currentPage))) &#123;
+                        isTouching = true;
+                        isCursorAtEnd = false;
+                        ignoreEvent = true;
+                        offsetX = 0;
+                        offsetY = 0;
+                        if (e &amp;&amp; &quot;mousedown&quot; == e.type) &#123;
+                            currentPageX = e.pageX;
+                            currentPageY = e.pageY;
+                        &#125; else if (e &amp;&amp; &quot;touchstart&quot; == e.type) &#123;
+                            currentPageX = e.touches ? e.touches[0].pageX : e.originalEvent.touches[0].pageX;
+                            currentPageY = e.touches ? e.touches[0].pageY : e.originalEvent.touches[0].pageY;
+                        &#125;
+                        self.$currentPage.classList.add(&quot;z-move&quot;);
+                        setAttribute(self.$currentPage.style, &quot;Transition&quot;, &quot;none&quot;);
+                        if (&quot;12&quot; == self._scrollMode) &#123;
+                            /** @type &#123;number&#125; */
+                            self.$currentPage.style.zIndex = 3;
+                        &#125;
+                    &#125;
+                &#125;
+            &#125;
+        &#125;;
+
+        /**
+         * 滑动处理
+         * @param &#123;Object&#125; e
+         * @return &#123;undefined&#125;
+         */
+        onTouchMove = function (e) &#123;
+            if (isMobile) &#123;
+                if (e) &#123;
+                    e = event;
+                &#125;
+            &#125;
+            if (isTouching) &#123;
+                if (self._$pages.length &gt; 1) &#123;
+                    if (e &amp;&amp; &quot;mousemove&quot; == e.type) &#123;
+                        offsetX = e.pageX - currentPageX;
+                        offsetY = e.pageY - currentPageY;
+                    &#125; else &#123;
+                        if (e) &#123;
+                            if (&quot;touchmove&quot; == e.type) &#123;
+                                offsetX = (e.touches ? e.touches[0].pageX : e.originalEvent.touches[0].pageX) - currentPageX;
+                                offsetY = (e.touches ? e.touches[0].pageY : e.originalEvent.touches[0].pageY) - currentPageY;
+                            &#125;
+                        &#125;
+                    &#125;
+                    if (!fa) &#123;
+                        if (Math.abs(offsetX) &gt; 20 || Math.abs(offsetY) &gt; 20) &#123;
+                            /** @type &#123;boolean&#125; */
+                            fa = true;
+                        &#125;
+                    &#125;
+
+                    switch (self._scrollMode + &quot;&quot;) &#123;
+                        case &quot;0&quot;:
+                        case &quot;1&quot;:
+                        case &quot;2&quot;:
+                        case &quot;15&quot;:
+                            //上下翻页
+                            upDownFlip();
+                            break;
+                        case &quot;3&quot;:
+                        case &quot;4&quot;:
+                            // 左右翻页
+                            leftRightFlip();
+                            break;
+                        case &quot;5&quot;:
+                            // 左右连续翻页
+                            leftRightLoopFlip();
+                            break;
+                        case &quot;7&quot;:
+                            cardFlip();
+                            break;
+                        case &quot;8&quot;:
+                            scaleUpFlip();
+                            break;
+                        case &quot;9&quot;:
+                            switchFlip();
+                            break;
+                        case &quot;11&quot;:
+                            //上下连续翻页
+                            upDownContinuousFlip();
+                            break;
+                        case &quot;12&quot;:
+                            //掉落翻页
+                            dropFlip();
+                            break;
+                        case &quot;13&quot;:
+                        case &quot;14&quot;:
+                            //淡入翻页
+                            fadeFlip();
+                            break;
+                        default:
+                            break;
+                    &#125;
+                &#125;
+            &#125;
+        &#125;;
+
+
+        /**
+         *  滑动结束
+         * @param &#123;?&#125; e
+         * @return &#123;undefined&#125;
+         */
+        onTouchEnd = function (e) &#123;
+            if (isTouching &amp;&amp; completeEffect($(self.$currentPage))) &#123;
+                isTouching = false;
+                if (self.$activePage) &#123;
+                    self._isDisableFlipPage = true;
+                    var ease;
+                    ease = &quot;6&quot; == self._scrollMode || &quot;7&quot; == self._scrollMode ? &quot;cubic-bezier(0,0,0.99,1)&quot; : &quot;12&quot; == self._scrollMode ? &quot;cubic-bezier(.17,.67,.87,.13)&quot; : &quot;linear&quot;;
+                    self.$currentPage.style.webkitTransition = &quot;-webkit-transform &quot; + transformTime + &quot;s &quot; + ease;
+                    self.$activePage.style.webkitTransition = &quot;-webkit-transform &quot; + transformTime + &quot;s &quot; + ease;
+                    self.$currentPage.style.mozTransition = &quot;-moz-transform &quot; + transformTime + &quot;s &quot; + ease;
+                    self.$activePage.style.mozTransition = &quot;-moz-transform &quot; + transformTime + &quot;s &quot; + ease;
+                    self.$currentPage.style.transition = &quot;transform &quot; + transformTime + &quot;s &quot; + ease;
+                    self.$activePage.style.transition = &quot;transform &quot; + transformTime + &quot;s &quot; + ease;
+
+                    // 完成翻页
+                    if (&quot;0&quot; == self._scrollMode || (&quot;2&quot; == self._scrollMode || (&quot;1&quot; == self._scrollMode || &quot;15&quot; == self._scrollMode))) &#123;
+                        endUpDownFlip();
+                    &#125; else if (&quot;4&quot; == self._scrollMode || &quot;3&quot; == self._scrollMode) &#123;
+                        // 左右翻页
+                        endLeftRightFlip();
+                    &#125; else if (&quot;5&quot; == self._scrollMode) &#123;
+                        //左右连续翻页
+                        endLeftRightContinueFlip();
+                    &#125; else if (&quot;6&quot; == self._scrollMode) &#123;
+                        //立体翻页
+                        endCubeFlip();
+                    &#125; else if (&quot;7&quot; == self._scrollMode) &#123;
+                        //卡片翻页
+                        endCardFlip();
+                    &#125; else if (&quot;8&quot; == self._scrollMode) &#123;
+                        //放大翻页
+                        endScaleUpFlip();
+                    &#125; else if (&quot;9&quot; == self._scrollMode) &#123;
+                        //交换翻页
+                        endSwitchFlip();
+                    &#125; else if (&quot;11&quot; == self._scrollMode) &#123;
+                        //上下连续翻页
+                        endUpDownContinueFlip();
+                    &#125; else if (&quot;12&quot; == self._scrollMode) &#123;
+                        //掉落翻页
+                        endDropFlip();
+                    &#125; else if (&quot;13&quot; == self._scrollMode || &quot;14&quot; == self._scrollMode) &#123;
+                        //淡入翻页
+                        endFadeFlip();
+                    &#125; 
+
+                    /** @type &#123;number&#125; */
+                    var pageIndex = $(self.$activePage).find(&quot;.m-img&quot;).attr(&quot;id&quot;).replace(&quot;page&quot;, &quot;&quot;) - 1;
+                    if (self._pageData[pageIndex].properties) &#123;
+                        if (self._pageData[pageIndex].properties.longPage) &#123;
+                            $(document).trigger(&quot;clearTouchPos&quot;);
+                        &#125;
+                    &#125;
+                    $(self.$activePage).find(&quot;li.comp-resize&quot;).each(function (dataAndEvents) &#123;
+                        /** @type &#123;number&#125; */
+                        var i = 0;
+                        for (; i &lt; self._pageData[pageIndex].elements.length; i++) &#123;
+                            if (self._pageData[pageIndex].elements[i].id == parseInt($(this).attr(&quot;id&quot;).substring(7), 10)) &#123;
+                                eqxCommon.animation($(this), self._pageData[pageIndex].elements[i], &quot;view&quot;, self._pageData[pageIndex].properties);
+                                var r20 = getComp(self._pageData[pageIndex].elements[i].id);
+                                eqxCommon.bindTrigger(r20, self._pageData[pageIndex].elements[i]);
+                            &#125;
+                        &#125;
+                    &#125;);
+                    /** @type &#123;number&#125; */
+                    var i = 0;
+                    for (; i &lt; self._pageData.length; i++) &#123;
+                        if (self._pageData[i].effObj) &#123;
+                            /** @type &#123;boolean&#125; */
+                            self._pageData[i].effObj.pause = true;
+                        &#125;
+                    &#125;
+                    if (self._pageData[pageIndex].effObj) &#123;
+                        self._pageData[pageIndex].effObj.startPlay();
+                    &#125;
+                    eqShow.setPageHis(self._pageData[pageIndex].id);
+                &#125; else &#123;
+                    self.$currentPage.classList.remove(&quot;z-move&quot;);
+                &#125;
+            &#125;
+            C = false;
+        &#125;;
+</code></pre>
+<p>然后再来看自动翻页nextPage</p>
+<pre><code>  /**
+     * 启动自动翻页
+     * @return &#123;undefined&#125;
+     */
+    function startAutoFlip() &#123;
+        // 通过setInterval
+        autoFlipIntervalId = setInterval(function () &#123;
+            if (!(10 === self._scrollMode)) &#123;
+                if (!isTouching) &#123;
+                    nextPage();
+                &#125;
+            &#125;
+        &#125;, autoFlipTimeMS);
+    &#125;
+</code></pre>
+<p>自动翻页比较简单，模拟滑动操作，当位移足够时就可以自动翻页了：</p>
+<pre><code>/**
+     *  上一页
+     * @param &#123;number&#125; direction
+     * @return &#123;undefined&#125;
+     */
+    function prePage(direction) &#123;
+        if (!(leftRightMode &amp;&amp; 2 == direction || upDownMode &amp;&amp; 1 == direction)) &#123;
+            if (&quot;10&quot; != self._scrollMode) &#123;
+                var offset = 0;
+                // 开启滑动
+                onTouchStart();
+                // 定时器，增加offset,模拟滑动
+                var poll = setInterval(function () &#123;
+                    offset += 2;
+                    if (&quot;0&quot; == self._scrollMode || (&quot;1&quot; == self._scrollMode || (&quot;2&quot; == self._scrollMode || (&quot;6&quot; == self._scrollMode || (&quot;7&quot; == self._scrollMode || (&quot;8&quot; == self._scrollMode || (&quot;11&quot; == self._scrollMode || (&quot;12&quot; == self._scrollMode || (&quot;13&quot; == self._scrollMode || (&quot;14&quot; == self._scrollMode || &quot;15&quot; == self._scrollMode)))))))))) &#123;
+                        // 纵向翻页，增加y
+                        offsetY = offset;
+                    &#125; else &#123;
+                        if (&quot;3&quot; == self._scrollMode || (&quot;4&quot; == self._scrollMode || (&quot;5&quot; == self._scrollMode || &quot;9&quot; == self._scrollMode))) &#123;
+                            // 横向翻页，增加x
+                            offsetX = offset;
+                        &#125;
+                    &#125;
+                    // 触发move操作，模拟滑动
+                    onTouchMove();
+                    if (offset &gt;= 21) &#123;
+                        // 位移超过20，
+                        clearInterval(poll);
+                        // 停止滑动,完成翻页
+                        onTouchEnd();
+                    &#125;
+                &#125;, 1);
+            &#125; else &#123;
+                // 翻书
+                $(document).trigger(&quot;bookFlipPre&quot;);
+            &#125;
+        &#125;
+    &#125;
+
+    /**
+     * 下一页，逻辑和prePage类似
+     * @param &#123;number&#125; direction
+     * @return &#123;undefined&#125;
+     */
+    function nextPage(direction) &#123;
+        if (!(leftRightMode &amp;&amp; 2 == direction || upDownMode &amp;&amp; 1 == direction)) &#123;
+            if (&quot;10&quot; != self._scrollMode) &#123;
+                u = false;
+                var offset = 0;
+                if (&quot;block&quot; == $(&quot;body .boards-panel&quot;).css(&quot;display&quot;)) &#123;
+                    $(&quot;body .boards-panel&quot;).hide();
+                    $(&quot;body .z-current&quot;).show();
+                &#125;
+                onTouchStart();
+                var poll = setInterval(function () &#123;
+                    offset -= 2;
+                    if (&quot;0&quot; == self._scrollMode || (&quot;1&quot; == self._scrollMode || (&quot;2&quot; == self._scrollMode || (&quot;6&quot; == self._scrollMode || (&quot;7&quot; == self._scrollMode || (&quot;8&quot; == self._scrollMode || (&quot;11&quot; == self._scrollMode || (&quot;12&quot; == self._scrollMode || (&quot;13&quot; == self._scrollMode || (&quot;14&quot; == self._scrollMode || &quot;15&quot; == self._scrollMode)))))))))) &#123;
+                        offsetY = offset;
+                    &#125; else &#123;
+                        if (&quot;3&quot; == self._scrollMode || (&quot;4&quot; == self._scrollMode || (&quot;5&quot; == self._scrollMode || &quot;9&quot; == self._scrollMode))) &#123;
+                            offsetX = offset;
+                        &#125;
+                    &#125;
+                    onTouchMove();
+                    if (-21 &gt;= offset) &#123;
+                        clearInterval(poll);
+                        onTouchEnd();
+                        if (!triggerLoop) &#123;
+                            if (!self.$activePage) &#123;
+                                clearInterval(autoFlipIntervalId);
+                            &#125;
+                        &#125;
+                    &#125;
+                &#125;, 1);
+            &#125; else &#123;
+                $(document).trigger(&quot;bookFlipNext&quot;);
+            &#125;
+        &#125;
+    &#125;
+</code></pre>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上面是花了大概一天多的时间阅读代码的成果，总结经验就是阅读代码先分析大的流程，再层层递进分析一些细节，就能一步一步接近真相。</p>
+<p>另外，阅读压缩过的代码，可以借助VS Code，善用F2重命名，修改的越多，越接近本来的代码：）</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jqpeng/" rel="tag"># jqpeng</a>
+              <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/02/28/jqpeng-Spring%20boot%E8%87%AA%E5%AE%9A%E4%B9%89%E5%90%AF%E5%8A%A8%E5%AD%97%E7%AC%A6%E7%94%BB%EF%BC%88banner%EF%BC%89/" rel="prev" title="Spring boot自定义启动字符画（banner）">
+      <i class="fa fa-chevron-left"></i> Spring boot自定义启动字符画（banner）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/04/04/jqpeng-Spring%20boot%20web%E7%A8%8B%E5%BA%8Fstatic%E8%B5%84%E6%BA%90%E6%94%BE%E5%9C%A8jar%E5%A4%96%E9%83%A8/" rel="next" title="Spring boot web程序static资源放在jar外部">
+      Spring boot web程序static资源放在jar外部 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">分析数据模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">加载流程分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#parsePage"><span class="nav-number">3.</span> <span class="nav-text">parsePage</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%B2%E6%9F%93%E9%A1%B5%E9%9D%A2%E5%92%8C%E7%BB%84%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">渲染页面和组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E5%8A%A8%E7%94%BB%E6%92%AD%E6%94%BE"><span class="nav-number">5.</span> <span class="nav-text">组件动画播放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B5%E9%9D%A2%E5%88%87%E6%8D%A2"><span class="nav-number">6.</span> <span class="nav-text">页面切换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

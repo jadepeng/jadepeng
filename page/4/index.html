@@ -1,0 +1,3205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JadePeng的技术笔记本">
+<meta property="og:type" content="website">
+<meta property="og:title" content="JadePeng的技术笔记本">
+<meta property="og:url" content="http://blog.iflyresearch.com/page/4/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="JadePeng的技术笔记本">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="JadePeng">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/page/4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/05/22/jqpeng-Vue%20%E4%BD%BF%E7%94%A8typescript%EF%BC%8C%20%E4%BC%98%E9%9B%85%E7%9A%84%E8%B0%83%E7%94%A8swagger%20API/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/22/jqpeng-Vue%20%E4%BD%BF%E7%94%A8typescript%EF%BC%8C%20%E4%BC%98%E9%9B%85%E7%9A%84%E8%B0%83%E7%94%A8swagger%20API/" class="post-title-link" itemprop="url">Vue 使用typescript， 优雅的调用swagger API</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-22 18:31:00" itemprop="dateCreated datePublished" datetime="2020-05-22T18:31:00+08:00">2020-05-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/generator-swagger-2-ts-2.html">Vue 使用typescript， 优雅的调用swagger API</a></p>
+<p>Swagger 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务，后端集成下Swagger，然后就可以提供一个在线文档地址给前端同学。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/5/22/1590142373032.png" alt="swagger"></p>
+<p>前端如何优雅的调用呢？</p>
+<h2 id="入门版"><a href="#入门版" class="headerlink" title="入门版"></a>入门版</h2><p>根据文档，用axios自动来调用</p>
+<pre><code>// 应用管理相关接口
+import axios from &#39;../interceptors.js&#39;
+
+// 获取应用列表
+export const getList = (data) =&gt; &#123;
+  return axios(&#123;
+    url: &#39;/app/list?sort=createdDate,desc&#39;,
+    method: &#39;get&#39;,
+    params: data
+  &#125;)
+&#125;
+</code></pre>
+<p>这里的问题是，有多少个接口，你就要编写多少个函数，且数据结构需要查看文档获取。</p>
+<h2 id="进阶版本"><a href="#进阶版本" class="headerlink" title="进阶版本"></a>进阶版本</h2><p>使用typescript，编写API，通过Type定义数据结构，进行约束。</p>
+<p>问题： 还是需要手写</p>
+<h2 id="优雅版本"><a href="#优雅版本" class="headerlink" title="优雅版本"></a>优雅版本</h2><p>swagger 其实是一个json-schema描述文档，我们可以基于此，自动生成。</p>
+<p>很早之前，写过一个插件 <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/generator-swagger-2-ts">generator-swagger-2-t</a>, 简单的实现了将swagger生成typescript api。</p>
+<p>今天，笔者对这个做了升级，方便支持后端返回的泛型数据结构。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>需要同时安装 <a target="_blank" rel="noopener" href="http://yeoman.io/">Yeoman</a> 和 -swagger-2-ts</p>
+<pre><code>npm install -g generator-swagger-2-ts
+</code></pre>
+<p>然后cd到你的工作目录，执行:</p>
+<pre><code>yo swagger-2-ts
+</code></pre>
+<p>按提示</p>
+<ul>
+<li>输入swagger-ui 地址，例如<a target="_blank" rel="noopener" href="http://192.168.86.8:8051/swagger-ui.html">http://192.168.86.8:8051/swagger-ui.html</a></li>
+<li>可选生成js 或者 typescript</li>
+<li>可以自定义生成的api class名称、api文件名</li>
+<li>API 支持泛型</li>
+</ul>
+<p>也可以通过命令行直接传递参数</p>
+<pre><code> yo swagger-2-ts --swaggerUrl=http://localhost:8080/swagger-ui.html --className=API --type=typescript --outputFile=api.ts
+</code></pre>
+<ul>
+<li>swaggerUrl: swagger ui url swaggerui地址</li>
+<li>className： API class name 类名</li>
+<li>type： typescript or javascipt</li>
+<li>outputFile: api 文件保存路径</li>
+</ul>
+<h3 id="生成代码demo："><a href="#生成代码demo：" class="headerlink" title="生成代码demo："></a>生成代码demo：</h3><pre><code>export type AccountUserInfo = &#123;
+  disableTime?: string
+  isDisable?: number
+  lastLoginIp?: string
+  lastLoginPlace?: string
+  lastLoginTime?: string
+  openId?: string
+&#125;
+
+
+export type BasePayloadResponse = &#123;
+  data?: object
+  desc?: string
+  retcode?: string
+
+&#125;
+
+/**
+ * User Account Controller
+ * @class UserAccountAPI
+ */
+export class UserAccountAPI &#123;
+/**
+  * changeUserState
+  * @method
+  * @name UserAccountAPI#changeUserState
+  
+  * @param  accountUserInfo - accountUserInfo 
+  
+  * @param $domain API域名,没有指定则使用构造函数指定的
+  */
+  changeUserState(parameters: &#123;
+    &#39;accountUserInfo&#39;: AccountUserInfo,
+    $queryParameters?: any,
+    $domain?: string
+  &#125;): Promise&lt;AxiosResponse&lt;BasePayloadResponse&gt;&gt; &#123;
+
+    let config: AxiosRequestConfig = &#123;
+      baseURL: parameters.$domain || this.$defaultDomain,
+      url: &#39;/userAccount/changeUserState&#39;,
+      method: &#39;PUT&#39;
+    &#125;
+
+    config.headers = &#123;&#125;
+    config.params = &#123;&#125;
+
+    config.headers[ &#39;Accept&#39; ] = &#39;*/*&#39;
+    config.headers[ &#39;Content-Type&#39; ] = &#39;application/json&#39;
+
+    config.data = parameters.accountUserInfo
+    return axios.request(config)
+  &#125;
+
+  _UserAccountAPI: UserAccountAPI = null;
+
+  /**
+  * 获取 User Account Controller API
+  * return @class UserAccountAPI
+  */
+  getUserAccountAPI(): UserAccountAPI &#123;
+    if (!this._UserAccountAPI) &#123;
+      this._UserAccountAPI = new UserAccountAPI(this.$defaultDomain)
+    &#125;
+    return this._UserAccountAPI
+  &#125;
+&#125;
+
+
+/**
+ * 管理系统接口描述
+ * @class API
+ */
+export class API &#123;
+  /**
+   *  API构造函数
+   * @param domain API域名
+   */
+  constructor(domain?: string) &#123;
+    this.$defaultDomain = domain || &#39;http://localhost:8080&#39;
+  &#125;
+&#125;
+</code></pre>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><pre><code>import &#123; API &#125; from &#39;./http/api/manageApi&#39;
+// in main.ts
+let api = new API(&quot;/api/&quot;)
+api.getUserAccountAPI().changeUserState(&#123;
+  isDisable: 1
+  openId: &#39;open id&#39;
+&#125;)
+</code></pre>
+<h2 id="Vue中最佳实践"><a href="#Vue中最佳实践" class="headerlink" title="Vue中最佳实践"></a>Vue中最佳实践</h2><h3 id="main-ts-全局定义"><a href="#main-ts-全局定义" class="headerlink" title="main.ts 全局定义"></a>main.ts 全局定义</h3><pre><code>import &#123; API &#125; from &#39;./http/api/manageApi&#39;
+
+Vue.prototype.$manageApi = new API(&#39;/api/&#39;)
+</code></pre>
+<h3 id="增加-d-ts"><a href="#增加-d-ts" class="headerlink" title="增加.d.ts"></a>增加.d.ts</h3><p>增加types文件，方便使用智能提示</p>
+<pre><code>import &#123; API &#125; from &#39;@/http/api/manageApi&#39;
+import &#123; MarkAPI &#125; from &#39;@/http/api/mark-center-api&#39;
+declare module &quot;vue/types/vue&quot; &#123;
+  interface Vue &#123;
+    $manageApi: API
+    $markApi: MarkAPI
+  &#125;
+&#125;
+</code></pre>
+<h3 id="实际使用"><a href="#实际使用" class="headerlink" title="实际使用"></a>实际使用</h3><p>现在可以在vue里直接调用了。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/5/22/1590143121653.png" alt="vscode调用"></p>
+<pre><code>this.$manageApi
+      .getUserAccountAPI().changeUserState(&#123;isDisable: 1， openId: &#39;open id&#39;&#125;)
+</code></pre>
+<h2 id="开源地址"><a href="#开源地址" class="headerlink" title="开源地址"></a>开源地址</h2><p><a target="_blank" rel="noopener" href="https://github.com/jadepeng/generator-swagger-2-ts">https://github.com/jadepeng/generator-swagger-2-ts</a></p>
+<p>欢迎star！</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/04/16/jqpeng-Spring%20Data%20Mongodb%20%E4%B9%90%E8%A7%82%E9%94%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/04/16/jqpeng-Spring%20Data%20Mongodb%20%E4%B9%90%E8%A7%82%E9%94%81/" class="post-title-link" itemprop="url">Spring Data Mongodb 乐观锁</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-16 14:17:00" itemprop="dateCreated datePublished" datetime="2020-04-16T14:17:00+08:00">2020-04-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/spring-data-optimistic-lock.html">Spring Data Mongodb 乐观锁</a></p>
+<p>Spring Data 针对mongodb提供了乐观锁实现：</p>
+<pre><code>The @Version annotation provides syntax similar to that of JPA in the context of MongoDB and makes sure updates are only applied to documents with a matching version. Therefore, the actual value of the version property is added to the update query in such a way that the update does not have any effect if another operation altered the document in the meantime. In that case, an OptimisticLockingFailureException is thrown. The following example shows these features:
+</code></pre>
+<p>提供@Version注解，用来标识版本，保存、删除等操作会验证version，不一致会抛出<code>OptimisticLockingFailureException</code></p>
+<p>来看一个例子：</p>
+<pre><code>@Document
+class Person &#123;
+
+  @Id String id;
+  String firstname;
+  String lastname;
+  @Version Long version;
+&#125;
+
+Person daenerys = template.insert(new Person(&quot;Daenerys&quot;));                            (1)
+
+Person tmp = template.findOne(query(where(&quot;id&quot;).is(daenerys.getId())), Person.class); (2)
+
+daenerys.setLastname(&quot;Targaryen&quot;);
+template.save(daenerys);                                                              (3)
+
+template.save(tmp); // throws OptimisticLockingFailureException                       (4)
+</code></pre>
+<ol>
+<li>最初插入一个<code>person</code> <code>daenerys</code>，<code>version</code>为<code>0</code>。</li>
+<li>加载刚插入的数据，<code>tmp</code>。<code>version</code>还是<code>0</code>。</li>
+<li>更新<code>version = 0</code>的<code>daenerys</code>，更新<code>lastname</code>，save后<code>version</code>变为<code>1</code>。</li>
+<li>现在来更新，会抛出<code>OptimisticLockingFailureException</code>， 提示操作失败。</li>
+</ol>
+<p>注意：</p>
+<table>
+<thead>
+<tr>
+<th>Important</th>
+<th>Optimistic Locking requires to set the <code>WriteConcern</code> to <code>ACKNOWLEDGED</code>. Otherwise <code>OptimisticLockingFailureException</code> can be silently swallowed.</th>
+</tr>
+</thead>
+</table>
+<table>
+<thead>
+<tr>
+<th>Note</th>
+<th>As of Version 2.2 <code>MongoOperations</code> also includes the <code>@Version</code> property when removing an entity from the database. To remove a <code>Document</code> without version check use <code>MongoOperations#remove(Query,…​)</code> instead of <code>MongoOperations#remove(Object)</code>.</th>
+</tr>
+</thead>
+</table>
+<table>
+<thead>
+<tr>
+<th>Note</th>
+<th>As of Version 2.2 repositories check for the outcome of acknowledged deletes when removing versioned entities. An <code>OptimisticLockingFailureException</code> is raised if a versioned entity cannot be deleted through <code>CrudRepository.delete(Object)</code>. In such case, the version was changed or the object was deleted in the meantime. Use <code>CrudRepository.deleteById(ID)</code> to bypass optimistic locking functionality and delete objects regardless of their version.</th>
+</tr>
+</thead>
+</table>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/04/09/jqpeng-java%E5%BA%94%E7%94%A8%E8%AF%8A%E6%96%AD%E5%92%8C%E5%9C%A8%E7%BA%BFdebug%E5%88%A9%E5%99%A8bistoury%E4%BB%8B%E7%BB%8D%E4%B8%8E%E5%9C%A8K8S%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/04/09/jqpeng-java%E5%BA%94%E7%94%A8%E8%AF%8A%E6%96%AD%E5%92%8C%E5%9C%A8%E7%BA%BFdebug%E5%88%A9%E5%99%A8bistoury%E4%BB%8B%E7%BB%8D%E4%B8%8E%E5%9C%A8K8S%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">java应用诊断和在线debug利器bistoury介绍与在K8S环境使用</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-09 20:31:00" itemprop="dateCreated datePublished" datetime="2020-04-09T20:31:00+08:00">2020-04-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/Bistoury.html">java应用诊断和在线debug利器bistoury介绍与在K8S环境使用</a></p>
+<hr>
+<h2 id="Bistoury介绍"><a href="#Bistoury介绍" class="headerlink" title="Bistoury介绍"></a>Bistoury介绍</h2><p><code>Bistoury</code> 是去哪儿网开源的一个对应用透明，无侵入的java应用诊断工具，用于提升开发人员的诊断效率和能力，可以让开发人员无需登录机器或修改系统，就可以从日志、内存、线程、类信息、调试、机器和系统属性等各个方面对应用进行诊断，提升开发人员诊断问题的效率和能力。</p>
+<p><code>Bistoury</code> 集成了Alibaba开源的<a target="_blank" rel="noopener" href="https://github.com/alibaba/arthas">arthas</a>和唯品会开源的<a target="_blank" rel="noopener" href="https://github.com/vipshop/vjtools">vjtools</a>，因此arthas和vjtools相关功能都可以在<code>Bistoury</code>中使用。<br> Arthas和vjtools通过命令行或类似的方式使用，Bistoury在保留命令行界面的基础上，还对很多命令提供了图形化界面，方面用户使用。</p>
+<p><code>Bistoury</code> 英文解释是外科手术刀，含义也就不言而喻了。</p>
+<h2 id="Screenshots"><a href="#Screenshots" class="headerlink" title="Screenshots"></a>Screenshots</h2><p>通过命令行界面查看日志，使用arthas和vjtools的各项功能<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/console.png" alt="console"></p>
+<p>在线debug，在线应用调试神器<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/debug_panel.png" alt="debug"></p>
+<p>线程级cpu监控，帮助你掌握线程级cpu使用率<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/jstack.png" alt="jstack_dump"></p>
+<p>在web界面查看JVM运行信息，以及各种其它信息<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/jvm.png" alt="jvm"></p>
+<p>动态给方法添加监控<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/monitor.png" alt="monitor"></p>
+<p>线程dump<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/thread_dump.png" alt="thread_dump"></p>
+<h2 id="Bistoury架构分析"><a href="#Bistoury架构分析" class="headerlink" title="Bistoury架构分析"></a>Bistoury架构分析</h2><p>Bistoury核心组件包含agent，proxy，ui：</p>
+<ul>
+<li>agent ： 与需要诊断的应用部署到一起，负责具体的诊断命令执行，通过域名连接proxy</li>
+<li>proxy：agent的代理，agent启动时会通过ws和proxy连接注册，proxy可以部署多个，推荐使用域名负载</li>
+<li>ui：ui提供图形化和命令行界面，接收从用户传来的命令，传递命令给proxy，接收从proxy传来的结果并展示给用户。</li>
+</ul>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586431812716.png"></p>
+<p>一次命令执行的数据流向为 ui -&gt; proxy -&gt; agent -&gt; proxy -&gt; ui</p>
+<p>具体分析一下：</p>
+<ul>
+<li>proxy 先启动，将自己地址注册到zk</li>
+<li>agent通过域名访问proxy，随机分配到一个proxy，在proxy注册自己</li>
+<li>UI 访问一个具体的应用时，通过zk拿到所有的proxy，然后依次检查app对应的agent是否在该proxy，如果在，web网页连接这个proxy</li>
+<li>web上输入一个命令:web-&gt;proxy-&gt;agent-&gt;proxy-&gt;ui</li>
+</ul>
+<p>具体参见 <a target="_blank" rel="noopener" href="https://github.com/qunarcorp/bistoury/blob/master/docs/cn/design/design.md">https://github.com/qunarcorp/bistoury/blob/master/docs/cn/design/design.md</a></p>
+<p>bistoury原理分析： <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/f7202e490156">https://www.jianshu.com/p/f7202e490156</a></p>
+<p>总结下就是使用类似skywalking那样的agent技术，来监测和协助运行在JVM上的程序。</p>
+<h2 id="Bistoury快速开始"><a href="#Bistoury快速开始" class="headerlink" title="Bistoury快速开始"></a>Bistoury快速开始</h2><p>官方有一个快速开始文档： <a target="_blank" rel="noopener" href="https://github.com/qunarcorp/bistoury/blob/master/docs/cn/quick_start.md">https://github.com/qunarcorp/bistoury/blob/master/docs/cn/quick_start.md</a></p>
+<p>可以下载release包快速启动，就可以体验了。</p>
+<p>首先我们将快速启动包 bistoury-quick-start.tar.gz 拷贝到想要安装的位置。</p>
+<p>然后解压启动包：</p>
+<pre><code>tar -zxvf bistoury-quick-start.tar.gz
+cd bistoury
+</code></pre>
+<p>最后是启动 Bistoury，因为 Bistoury 会用到 jstack 等操作，为了保证所有功能可用，需要使用和待诊断 JAVA 应用相同的用户启动。</p>
+<p>假设应用进程 id 为 1024</p>
+<ul>
+<li>如果应用以本人用户启动，可以直接运行</li>
+</ul>
+<pre><code>./quick_start.sh -p 1024 start
+</code></pre>
+<ul>
+<li>如果应用以其它帐号启动，比如 tomcat，需要指定一下用户然后运行</li>
+</ul>
+<pre><code>sudo -u tomcat ./quick_start.sh -p 1024 start
+</code></pre>
+<ul>
+<li>停止运行</li>
+</ul>
+<pre><code>./quick_start.sh stop
+</code></pre>
+<h2 id="Bistoury-在docker运行"><a href="#Bistoury-在docker运行" class="headerlink" title="Bistoury 在docker运行"></a>Bistoury 在docker运行</h2><p>官方的git仓库里，有一个docker分支，翻阅后找到相关文档。</p>
+<p>官方的快速启动命令：</p>
+<pre><code>#!/bin/bash
+#创建网络
+echo &quot;start create network&quot;
+docker network create --subnet=172.19.0.0/16 bistoury
+#mysql 镜像
+echo &quot;start run mysql image&quot;
+docker run --name mysql -p 3307:3306 -e MYSQL_ROOT_PASSWORD=root -d -i --net bistoury --ip 172.19.0.7  registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-db
+#zk 镜像
+echo &quot;start run zk image&quot;
+docker run -d -p 2181:2181 -it --net bistoury --ip 172.19.0.2 registry.cn-hangzhou.aliyuncs.com/bistoury/zk:latest
+sleep 30
+#proxy 镜像
+echo &quot;start run proxy module&quot;
+docker run -d -p 9880:9880 -p 9881:9881 -p 9090:9090 -i --net bistoury --ip 172.19.0.3 registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-proxy --real-ip $1 --zk-address 172.19.0.2:2181 --proxy-jdbc-url jdbc:mysql://172.19.0.7:3306/bistoury
+#ui 镜像
+echo &quot;start run ui module&quot;
+docker run -p 9091:9091  -it -d --net bistoury --ip 172.19.0.4 registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-ui --zk-address 172.19.0.2:2181 --ui-jdbc-url jdbc:mysql://172.19.0.7:3306/bistoury
+#boot 镜像
+echo &quot;start run demo application&quot;
+docker  run -it -d  -p 8686:8686 -i --net bistoury --ip 172.19.0.5 registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-demo --proxy-host $1:9090
+docker  run -it -d  -p 8687:8686 -i --net bistoury --ip 172.19.0.6 registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-demo --proxy-host $1:9090
+</code></pre>
+<p>上面的命令不能直接运行，<code>$1</code>是需要替换成当前服务器IP，然后再运行就OK了。</p>
+<h2 id="Bistoury-在生产环境运行"><a href="#Bistoury-在生产环境运行" class="headerlink" title="Bistoury 在生产环境运行"></a>Bistoury 在生产环境运行</h2><p>官方推荐部署方式：</p>
+<ul>
+<li>ui 独立部署，推荐部署在多台机器，并提供独立的域名</li>
+<li>proxy 独立部署，推荐部署在多台机器，并提供独立的域名</li>
+<li>agent 需要和应用部署在同一台机器上。推荐在测试环境全环境自动部署，线上环境提供单机一键部署，以及应用下所有机器一键部署</li>
+<li>独立的应用中心，管理所有功能内部应用和机器信息，这是一个和 Bistoury 相独立的系统，Bistoury 从中拿到不断更新的应用和机器信息</li>
+</ul>
+<p>这里有个关键的点，应用中心，Bistoury内置了一个简单的应用中心，Bistoury里代码对应bistoury-application，ui和proxy都通过这个工程获取应用信息，官方默认实现了一个mysql版本的：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586433126733.png" alt="application"></p>
+<p>使用mysql的缺点是，你需要ui界面里手动维护应用以及应用的服务器，做个demo还OK，生产环境肯定不行。更优雅的方式是，用户系统应该在启动时自动注册到注册中心上，汇报自己的应用、机器信息（ip、域名等）、端口等信息。当然这个对大部分微服务架构来说，注册中心是标配的，因此实现一套bistoury-application-api接口即可。</p>
+<h2 id="bistoury-application-k8s-Bistoury-on-K8S"><a href="#bistoury-application-k8s-Bistoury-on-K8S" class="headerlink" title="bistoury-application-k8s(Bistoury on K8S)"></a>bistoury-application-k8s(Bistoury on K8S)</h2><p>我们项目组所有的应用都部署在K8S环境，因此要实现一个<code>bistoury-application-k8s</code>。</p>
+<p>拷贝<code>bistoury-application-mysql</code>项目，建立<code>bistoury-application-k8s</code></p>
+<p>简单对应下：</p>
+<ul>
+<li>一个应用对应一个deployment，对应一个application</li>
+<li>一个deployment里有n个pod，对应applicationServer</li>
+</ul>
+<p>所以，我们只需要调用调用K8S API 获取deployment和pod即可。</p>
+<p>首先引入相关jar包：</p>
+<pre><code>   &lt;dependency&gt;
+            &lt;groupId&gt;io.kubernetes&lt;/groupId&gt;
+            &lt;artifactId&gt;client-java&lt;/artifactId&gt;
+            &lt;version&gt;8.0.0&lt;/version&gt;
+            &lt;scope&gt;compile&lt;/scope&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>初始化ApiClient</p>
+<pre><code>            ApiClient defaultClient = Configuration.getDefaultApiClient();
+            defaultClient.setBasePath(k8sApiServer);
+            ApiKeyAuth BearerToken = (ApiKeyAuth) defaultClient.getAuthentication(&quot;BearerToken&quot;);
+            BearerToken.setApiKey(k8sToken);
+            BearerToken.setApiKeyPrefix(&quot;Bearer&quot;);
+            defaultClient.setVerifyingSsl(false);
+</code></pre>
+<h3 id="获取deployment"><a href="#获取deployment" class="headerlink" title="获取deployment"></a>获取deployment</h3><p>区分下是获取所有namespace，还是获取指定的namespace</p>
+<pre><code>   private List&lt;V1Deployment&gt; getDeployments() throws ApiException &#123;
+        AppsV1Api appsV1Api = new AppsV1Api(k8SConfiguration.getApiClient());
+        return k8SConfiguration.isAllNamespace()
+                ? appsV1Api.listDeploymentForAllNamespaces(false, null, null, null, 0, null, null, 120, false).getItems()
+                : getNamespacesDeployments(k8SConfiguration.getAllowedNamespace());
+    &#125;
+
+    List&lt;V1Deployment&gt; getNamespacesDeployments(List&lt;String&gt; namespaces) &#123;
+        AppsV1Api appsV1Api = new AppsV1Api(k8SConfiguration.getApiClient());
+        List&lt;V1Deployment&gt; deploymentList = new ArrayList&lt;&gt;();
+        for (String nameSpace : namespaces) &#123;
+            try &#123;
+                deploymentList.addAll(appsV1Api.listNamespacedDeployment(nameSpace, null, null, null, null, null, 0, null, 120, false).getItems());
+            &#125; catch (ApiException e) &#123;
+                logger.error(&quot;get &quot; + nameSpace + &quot;&#39;s deployment error&quot;, e);
+            &#125;
+        &#125;
+        return deploymentList;
+    &#125;
+</code></pre>
+<p>转换为application：</p>
+<pre><code>    private List&lt;Application&gt; getApplications(List&lt;V1Deployment&gt; applist) &#123;
+        return applist.stream().map(this::getApplication).collect(Collectors.toList());
+    &#125;
+
+    private Application getApplication(V1Deployment deployment) &#123;
+        Application application = new Application();
+        application.setCreateTime(deployment.getMetadata().getCreationTimestamp().toDate());
+        application.setCreator(deployment.getMetadata().getName());
+        application.setGroupCode(deployment.getMetadata().getNamespace());
+        application.setName(deployment.getMetadata().getName());
+        application.setStatus(1);
+        application.setCode(getAppCode(deployment.getMetadata().getNamespace(), deployment.getMetadata().getName()));
+        return application;
+    &#125;
+</code></pre>
+<h3 id="获取pod"><a href="#获取pod" class="headerlink" title="获取pod"></a>获取pod</h3><p>获取pod相对麻烦点，需要先获取到V1Deployment，拿到部署的lableSelector，然后根据lableSelector选择pod：</p>
+<pre><code> public List&lt;AppServer&gt; getAppServerByAppCode(final String appCode) &#123;
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(appCode), &quot;app code cannot be null or empty&quot;);
+
+        try &#123;
+            V1Deployment deployment = getDeployMent(appCode);
+            String nameSpace = appCode.split(APPCODE_SPLITTER)[0];
+            Map&lt;String, String&gt; labelMap = Objects.requireNonNull(deployment.getSpec()).getSelector().getMatchLabels();
+            StringBuilder lableSelector = new StringBuilder();
+            labelMap.entrySet().stream().forEach(e -&gt; &#123;
+                if (lableSelector.length() &gt; 0) &#123;
+                    lableSelector.append(&quot;,&quot;);
+                &#125;
+                lableSelector.append(e.getKey()).append(&quot;=&quot;).append(e.getValue());
+            &#125;);
+
+            CoreV1Api coreV1Api = new CoreV1Api(k8SConfiguration.getApiClient());
+            V1PodList podList = coreV1Api.listNamespacedPod(nameSpace, null, false, null,
+                    null, lableSelector.toString(), 200, null, 600, false);
+
+            return podList.getItems().stream().map(pod -&gt; &#123;
+                AppServer server = new AppServer();
+                server.setAppCode(appCode);
+                server.setHost(pod.getMetadata().getName());
+                server.setIp(pod.getStatus().getPodIP());
+                server.setLogDir(k8SConfiguration.getAppLogPath());
+                server.setAutoJMapHistoEnable(true);
+                server.setAutoJStackEnable(true);
+                server.setPort(8080);
+                return server;
+            &#125;).collect(Collectors.toList());
+
+        &#125; catch (ApiException e) &#123;
+            logger.error(&quot;get deployment&#39;s pod  error&quot;, e);
+        &#125;
+
+        return null;
+
+    &#125;
+</code></pre>
+<p>最后，修改ui和proxy工程，将原来的mysql替换为k8s：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434230879.png" alt="修改pom"></p>
+<h2 id="应用引入bistoury-agent"><a href="#应用引入bistoury-agent" class="headerlink" title="应用引入bistoury agent"></a>应用引入bistoury agent</h2><p>这块相对比较容易：</p>
+<p>在需要调试的应用的Dockerfile里增加：</p>
+<pre><code>COPY  --from=hub.xfyun.cn/abkdev/bistoury-agent:2.0.11  /home/q/bistoury  /opt/bistoury
+</code></pre>
+<p>然后修改应用的启动脚本，在最前面增加：</p>
+<pre><code>BISTOURY_APP_LIB_CLASS=&quot;org.springframework.web.servlet.DispatcherServlet&quot;
+
+# default proxy
+PROXY=&quot;bistoury-bistoury-proxy.incubation:9090&quot;
+AGENT_JAVA_HOME=&quot;/usr/local/openjdk-8/&quot;
+
+# env
+if [[ -n $PROXY_HOST ]]; then
+    PROXY=$PROXY_HOST
+fi
+
+TEMP=`getopt -o : --long proxy-host:,app-class:,agent-java-home: -- &quot;$@&quot;`
+
+eval set -- &quot;$TEMP&quot;
+
+while true; do
+  case &quot;$1&quot; in
+    --proxy-host )
+      PROXY=&quot;$2&quot;; shift 2 ;;
+    --app-class )
+      BISTOURY_APP_LIB_CLASS=&quot;$2&quot;; shift 2 ;;
+    --agent-java-home )
+      AGENT_JAVA_HOME=&quot;$2&quot;; shift 2 ;;
+    * ) break ;;
+  esac
+done
+
+
+echo &quot;proxy host: &quot;$PROXY_HOST
+echo &quot;app class: &quot;$BISTOURY_APP_LIB_CLASS
+echo &quot;agent java home: &quot;$AGENT_JAVA_HOME
+</code></pre>
+<p>在最后面增加：</p>
+<pre><code>APP_PID=`$AGENT_JAVA_HOME/bin/jps -l|awk &#39;&#123;if($2!=&quot;sun.tools.jps.Jps&quot;)&#123;print $1 ;&#123;exit&#125;&#125; &#125;&#39;`
+
+echo &quot;app pid: &quot;$APP_PID
+
+/opt/bistoury/agent/bin/bistoury-agent.sh -j $AGENT_JAVA_HOME -p $APP_PID -c $BISTOURY_APP_LIB_CLASS -s $PROXY -f start
+</code></pre>
+<h2 id="集成测试"><a href="#集成测试" class="headerlink" title="集成测试"></a>集成测试</h2><p>部署一个测试应用 agent-debug-demo，部署到jx namespace：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434610449.png" alt=" agent-debug-demo"></p>
+<pre><code>&#123;
+  &quot;kind&quot;: &quot;Deployment&quot;,
+  &quot;apiVersion&quot;: &quot;extensions/v1beta1&quot;,
+  &quot;metadata&quot;: &#123;
+    &quot;name&quot;: &quot;agent-debug-demo&quot;,
+    &quot;namespace&quot;: &quot;jx&quot;,
+    &quot;annotations&quot;: &#123;
+      &quot;deployment.kubernetes.io/revision&quot;: &quot;2&quot;
+    &#125;
+  &#125;,
+  &quot;spec&quot;: &#123;
+    &quot;replicas&quot;: 1,
+    &quot;selector&quot;: &#123;
+      &quot;matchLabels&quot;: &#123;
+        &quot;app&quot;: &quot;agent-debug-demo&quot;,
+        &quot;draft&quot;: &quot;draft-app&quot;
+      &#125;
+    &#125;,
+    &quot;template&quot;: &#123;
+      &quot;metadata&quot;: &#123;
+        &quot;creationTimestamp&quot;: null,
+        &quot;labels&quot;: &#123;
+          &quot;app&quot;: &quot;agent-debug-demo&quot;,
+          &quot;draft&quot;: &quot;draft-app&quot;
+        &#125;
+      &#125;,
+      &quot;spec&quot;: &#123;
+        &quot;containers&quot;: [
+          &#123;
+            &quot;name&quot;: &quot;springboot-rest-demo&quot;,
+            &quot;image&quot;: &quot;hub.xxx.cn/abkdev/springboot-rest-demo:dev-113&quot;,
+            &quot;ports&quot;: [
+              &#123;
+                &quot;containerPort&quot;: 8080,
+                &quot;protocol&quot;: &quot;TCP&quot;
+              &#125;
+            ],
+            &quot;env&quot;: [
+              &#123;
+                &quot;name&quot;: &quot;SPRING_PROFILES_ACTIVE&quot;,
+                &quot;value&quot;: &quot;dev&quot;
+              &#125;,
+              &#123;
+                &quot;name&quot;: &quot;PROXY_HOST&quot;,
+                &quot;value&quot;: &quot;$PROXY_HOST:9090&quot;
+              &#125;
+            ],
+            &quot;resources&quot;: &#123;&#125;,
+            &quot;terminationMessagePath&quot;: &quot;/dev/termination-log&quot;,
+            &quot;terminationMessagePolicy&quot;: &quot;File&quot;,
+            &quot;imagePullPolicy&quot;: &quot;IfNotPresent&quot;
+          &#125;
+        ],
+        &quot;restartPolicy&quot;: &quot;Always&quot;,
+        &quot;terminationGracePeriodSeconds&quot;: 10,
+        &quot;dnsPolicy&quot;: &quot;ClusterFirst&quot;,
+        &quot;securityContext&quot;: &#123;&#125;,
+        &quot;schedulerName&quot;: &quot;default-scheduler&quot;
+      &#125;
+    &#125;,
+    &quot;strategy&quot;: &#123;
+      &quot;type&quot;: &quot;RollingUpdate&quot;,
+      &quot;rollingUpdate&quot;: &#123;
+        &quot;maxUnavailable&quot;: 1,
+        &quot;maxSurge&quot;: 1
+      &#125;
+    &#125;,
+    &quot;revisionHistoryLimit&quot;: 2147483647,
+    &quot;progressDeadlineSeconds&quot;: 2147483647
+  &#125;,
+  &quot;status&quot;: &#123;
+    &quot;observedGeneration&quot;: 2,
+    &quot;replicas&quot;: 1,
+    &quot;updatedReplicas&quot;: 1,
+    &quot;unavailableReplicas&quot;: 1,
+    &quot;conditions&quot;: [
+      &#123;
+        &quot;type&quot;: &quot;Available&quot;,
+        &quot;status&quot;: &quot;True&quot;,
+        &quot;lastUpdateTime&quot;: &quot;2020-04-09T01:32:42Z&quot;,
+        &quot;lastTransitionTime&quot;: &quot;2020-04-09T01:32:42Z&quot;,
+        &quot;reason&quot;: &quot;MinimumReplicasAvailable&quot;,
+        &quot;message&quot;: &quot;Deployment has minimum availability.&quot;
+      &#125;
+    ]
+  &#125;
+&#125;
+</code></pre>
+<p>部署后：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434889358.png" alt="K8S Dashboard"></p>
+<p>打开ui，查看：</p>
+<p>应用名称显示为： namespace名称-部署名称</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434848921.png" alt="bistoury"></p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434991429.png" alt="ThreadDump"></p>
+<p>在线调试：</p>
+<p>先选择应用：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586435034455.png" alt="选择应用"></p>
+<p>点击Debug，然后选择需要调试的类，</p>
+<p>测试工程源代码为：</p>
+<pre><code>@SpringBootApplication
+@Controller
+public class RestPrometheusApplication &#123;
+@Autowiredprivate MeterRegistry registry;
+@Autowiredprivate Environment env;
+@GetMapping(path = &quot;/&quot;, produces = &quot;application/json&quot;)@ResponseBodypublic Map&lt;String, Object&gt; landingPage() &#123;    Counter.builder(&quot;mymetric&quot;).tag(&quot;foo&quot;, &quot;bar&quot;).register(registry).increment();    String profile = &quot;default&quot;;    if(env.getActiveProfiles().length &gt; 0)&#123;        profile = env.getActiveProfiles()[0];    &#125;
+    return singletonMap(&quot;hello&quot;, &quot;&quot;+ profile);&#125;
+public static void main(String[] args) &#123;    SpringApplication.run(RestPrometheusApplication.class, args);&#125;
+
+&#125;
+</code></pre>
+<p>因此，我们输入RestPrometheusApplication筛选：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586435105776.png" alt="选择Class"></p>
+<p>然后点击调试，可以看到，反编译出来了源代码：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586435149849.png" alt="在线debug1"></p>
+<p>在landingPage最后一行加一个端点，然后点击添加端点，最后访问该POD对应的服务,该pod对应的ip是170.22.149.37，因此我们访问：</p>
+<pre><code>curl http://170.22.149.37:8080
+&#123;&quot;hello&quot;:&quot;dev&quot;&#125;
+</code></pre>
+<p>再回到UI，可以看到成员变量，局部变量和调用堆栈等信息。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586435287216.png" alt="在线debug2"></p>
+<p>well down！</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/03/10/jqpeng-%E8%8E%B7%E5%8F%96free-ss%E8%B4%A6%E5%8F%B7%E5%B9%B6%E5%AF%BC%E5%85%A5SSR/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/10/jqpeng-%E8%8E%B7%E5%8F%96free-ss%E8%B4%A6%E5%8F%B7%E5%B9%B6%E5%AF%BC%E5%85%A5SSR/" class="post-title-link" itemprop="url">获取free-ss账号并导入SSR</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-10 18:39:00" itemprop="dateCreated datePublished" datetime="2020-03-10T18:39:00+08:00">2020-03-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/free-ss.html">获取free-ss账号并导入SSR</a></p>
+<h2 id="pre"><a href="#pre" class="headerlink" title="pre"></a>pre</h2><ul>
+<li>如果不知道SSR，请略过</li>
+<li>下载SSR</li>
+<li>电脑配置host： 104.18.36.36 free-ss.site</li>
+</ul>
+<h2 id="获取账号"><a href="#获取账号" class="headerlink" title="获取账号"></a>获取账号</h2><ul>
+<li>打开free-ss.site，等待账号出现</li>
+<li>F12打开开发者工具，console写入脚本,会自动解析账号，然后提示保存文件</li>
+</ul>
+<pre><code>function download(filename, text) &#123;
+  var element = document.createElement(&#39;a&#39;);
+  element.setAttribute(&#39;href&#39;, &#39;data:text/plain;charset=utf-8,&#39; + encodeURIComponent(text));
+  element.setAttribute(&#39;download&#39;, filename);
+ 
+  element.style.display = &#39;none&#39;;
+  document.body.appendChild(element);
+ 
+  element.click();
+ 
+  document.body.removeChild(element);
+&#125;
+
+var trList = $(&quot;#tbss tr&quot;)
+ssList = []
+for (let i = 1; i &lt; trList.length; i++) &#123;
+      const tdList = trList.eq(i).find(&#39;td&#39;);
+      ssList.push(&#123;
+        server: tdList.eq(1).text(),
+        server_port: tdList.eq(2).text(),
+        password: tdList.eq(4).text(),
+        method: tdList.eq(3).text() || &#39;aes-256-cfb&#39;,
+        group:&quot;crawl&quot;,
+        enable: true,
+        remarks: tdList.eq(6).text() + &#39; &#39; + (Math.ceil(Math.random() * 10000)),
+        timeout: 5
+      &#125;);
+    &#125;
+download(&quot;ssr-list.txt&quot;,JSON.stringify(&#123;&quot;configs&quot; : ssList&#125;))
+</code></pre>
+<h2 id="导入SSR"><a href="#导入SSR" class="headerlink" title="导入SSR"></a>导入SSR</h2><ul>
+<li>打开SSR软件，服务器-从文件导入服务器，选择刚生成那个文件</li>
+<li>服务器选择crawl分组的服务器</li>
+<li>启用服务器负载均衡</li>
+</ul>
+<p>搞定！</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/01/18/jqpeng-%E5%AE%B9%E5%99%A8%E7%8E%AF%E5%A2%83%E7%9A%84JVM%E5%86%85%E5%AD%98%E8%AE%BE%E7%BD%AE%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/18/jqpeng-%E5%AE%B9%E5%99%A8%E7%8E%AF%E5%A2%83%E7%9A%84JVM%E5%86%85%E5%AD%98%E8%AE%BE%E7%BD%AE%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">容器环境的JVM内存设置最佳实践</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-18 16:54:00" itemprop="dateCreated datePublished" datetime="2020-01-18T16:54:00+08:00">2020-01-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/container-jvm.html">容器环境的JVM内存设置最佳实践</a></p>
+<p>Docker和K8S的兴起，很多服务已经运行在容器环境，对于java程序，JVM设置是一个重要的环节。这里总结下我们项目里的最佳实践。</p>
+<h2 id="Java-Heap基础知识"><a href="#Java-Heap基础知识" class="headerlink" title="Java Heap基础知识"></a>Java Heap基础知识</h2><p>默认情况下，jvm自动分配的heap大小取决于机器配置，比如我们到一台64G内存服务器：</p>
+<pre><code>java -XX:+PrintFlagsFinal -version | grep -Ei &quot;maxheapsize|maxram&quot;
+    uintx DefaultMaxRAMFraction                     = 4                                   &#123;product&#125;
+    uintx MaxHeapSize                              := 16875782144                         &#123;product&#125;
+ uint64_t MaxRAM                                    = 137438953472                        &#123;pd product&#125;
+    uintx MaxRAMFraction                            = 4                                   &#123;product&#125;
+   double MaxRAMPercentage                          = 25.000000                           &#123;product&#125;
+java version &quot;1.8.0_192&quot;
+Java(TM) SE Runtime Environment (build 1.8.0_192-b12)
+Java HotSpot(TM) 64-Bit Server VM (build 25.192-b12, mixed mode)
+</code></pre>
+<p>可以看到，JVM 分配的最大MaxHeapSize为 16G，计算公式如下：</p>
+<pre><code>MaxHeapSize = MaxRAM * 1 / MaxRAMFraction
+</code></pre>
+<p>MaxRAMFraction 默认是4，意味着，每个jvm最多使用25%的机器内存。</p>
+<p>但是需要注意的是，JVM实际使用的内存会比heap内存大：</p>
+<pre><code>JVM内存  = heap 内存 + 线程stack内存 (XSS) * 线程数 + 启动开销（constant overhead）
+</code></pre>
+<p>默认的XSS通常在256KB到1MB，也就是说每个线程会分配最少256K额外的内存，constant overhead是JVM分配的其他内存。</p>
+<p>我们可以通过<code>-Xmx</code> 指定最大堆大小。</p>
+<pre><code>java -XX:+PrintFlagsFinal -Xmx1g -version | grep -Ei &quot;maxheapsize|maxram&quot;
+    uintx DefaultMaxRAMFraction                     = 4                                   &#123;product&#125;
+    uintx MaxHeapSize                              := 1073741824                          &#123;product&#125;
+ uint64_t MaxRAM                                    = 137438953472                        &#123;pd product&#125;
+    uintx MaxRAMFraction                            = 4                                   &#123;product&#125;
+   double MaxRAMPercentage                          = 25.000000                           &#123;product&#125;
+java version &quot;1.8.0_192&quot;
+Java(TM) SE Runtime Environment (build 1.8.0_192-b12)
+Java HotSpot(TM) 64-Bit Server VM (build 25.192-b12, mixed mode)
+</code></pre>
+<p>此外，还可以使用<code>XX:MaxRAM</code>来指定。</p>
+<pre><code>java -XX:+PrintFlagsFinal -XX:MaxRAM=1g -version | grep -Ei 
+</code></pre>
+<p>但是指定-Xmx或者MaxRAM需要了解机器的内存，更好的方式是设置<code>MaxRAMFraction</code>，以下是不同的Fraction对应的可用内存比例：</p>
+<pre><code>+----------------+-------------------+
+| MaxRAMFraction | % of RAM for heap |
+|----------------+-------------------|
+|              1 |              100% |
+|              2 |               50% |
+|              3 |               33% |
+|              4 |               25% |
++----------------+-------------------+
+</code></pre>
+<h2 id="容器环境的Java-Heap"><a href="#容器环境的Java-Heap" class="headerlink" title="容器环境的Java Heap"></a>容器环境的Java Heap</h2><p>容器环境，由于java获取不到容器的内存限制，只能获取到服务器的配置：</p>
+<pre><code>$ docker run --rm alpine free -m
+             total     used     free   shared  buffers   cached
+Mem:          1998     1565      432        0        8     1244
+$ docker run --rm -m 256m alpine free -m
+             total     used     free   shared  buffers   cached
+Mem:          1998     1552      445        1        8     1244
+</code></pre>
+<p>这样容易引起不必要问题，例如限制容器使用100M内存，但是jvm根据服务器配置来分配初始化内存，导致java进程超过容器限制被kill掉。为了解决这个问题，可以设置-Xmx或者MaxRAM来解决，但就想第一部分描述的一样，这样太不优雅了！</p>
+<p>为了解决这个问题，Java 10 引入了 +<code>UseContainerSupport</code>（默认情况下启用），通过这个特性，可以使得JVM在容器环境分配合理的堆内存。 并且，在JDK8U191版本之后，这个功能引入到了JDK 8，而JDK 8是广为使用的JDK版本。</p>
+<h3 id="UseContainerSupport"><a href="#UseContainerSupport" class="headerlink" title="UseContainerSupport"></a>UseContainerSupport</h3><p>-XX:+UseContainerSupport允许JVM 从主机读取cgroup限制，例如可用的CPU和RAM，并进行相应的配置。这样当容器超过内存限制时，会抛出OOM异常，而不是杀死容器。<br> 该特性在Java 8u191 +，10及更高版本上可用。</p>
+<p>注意，在191版本后，-XX:{Min|Max}RAMFraction 被弃用，引入了<code>-XX:MaxRAMPercentage</code>，其值介于0.0到100.0之间，默认值为25.0。</p>
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><p>拉取最新的openjdk:8-jre-alpine作为底包，截止这篇博客，最新的版本是212，&gt;191</p>
+<pre><code>docker run -it --rm openjdk:8-jre-alpine java -version
+openjdk version &quot;1.8.0_212&quot;
+OpenJDK Runtime Environment (IcedTea 3.12.0) (Alpine 8.212.04-r0)
+OpenJDK 64-Bit Server VM (build 25.212-b04, mixed mode)
+</code></pre>
+<p>我们构建一个基础镜像，dockerfile如下：</p>
+<pre><code>FROM openjdk:8-jre-alpine
+MAINTAINER jadepeng
+
+RUN echo &quot;http://mirrors.aliyun.com/alpine/v3.6/main&quot; &gt; /etc/apk/repositories \
+    &amp;&amp; echo &quot;http://mirrors.aliyun.com/alpine/v3.6/community&quot; &gt;&gt; /etc/apk/repositories \
+    &amp;&amp; apk update upgrade \
+    &amp;&amp; apk add --no-cache procps unzip curl bash tzdata \
+    &amp;&amp; ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    &amp;&amp; echo &quot;Asia/Shanghai&quot; &gt; /etc/timezone
+
+RUN apk add --update ttf-dejavu &amp;&amp; rm -rf /var/cache/apk/*
+</code></pre>
+<p>在应用的启动参数，设置 -XX:+UseContainerSupport，设置-XX:MaxRAMPercentage=75.0，这样为其他进程（debug、监控）留下足够的内存空间，又不会太浪费RAM。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/01/17/jqpeng-K8S%E5%9F%BA%E4%BA%8Eingress-nginx%E5%AE%9E%E7%8E%B0%E7%81%B0%E5%BA%A6%E5%8F%91%E5%B8%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/17/jqpeng-K8S%E5%9F%BA%E4%BA%8Eingress-nginx%E5%AE%9E%E7%8E%B0%E7%81%B0%E5%BA%A6%E5%8F%91%E5%B8%83/" class="post-title-link" itemprop="url">K8S基于ingress-nginx实现灰度发布</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-17 16:42:00" itemprop="dateCreated datePublished" datetime="2020-01-17T16:42:00+08:00">2020-01-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/ingress-nginx-canary.html">K8S基于ingress-nginx实现灰度发布</a></p>
+<p>之前介绍过<a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/ambassador.html">使用ambassador实现灰度发布</a>，今天介绍如何使用ingre-nginx实现。</p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>Ingress-Nginx  是一个K8S ingress工具，支持配置 Ingress Annotations 来实现不同场景下的灰度发布和测试。 <a target="_blank" rel="noopener" href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#canary">Nginx Annotations</a> 支持以下 4 种 Canary 规则：</p>
+<ul>
+<li><code>nginx.ingress.kubernetes.io/canary-by-header</code>：基于 Request Header 的流量切分，适用于灰度发布以及 A/B 测试。当 Request Header 设置为 <code>always</code>时，请求将会被一直发送到 Canary 版本；当 Request Header 设置为 <code>never</code>时，请求不会被发送到 Canary 入口；对于任何其他 Header 值，将忽略 Header，并通过优先级将请求与其他金丝雀规则进行优先级的比较。</li>
+<li><code>nginx.ingress.kubernetes.io/canary-by-header-value</code>：要匹配的 Request Header 的值，用于通知 Ingress 将请求路由到 Canary Ingress 中指定的服务。当 Request Header 设置为此值时，它将被路由到 Canary 入口。该规则允许用户自定义 Request Header 的值，必须与上一个 annotation (即：canary-by-header）一起使用。</li>
+<li><code>nginx.ingress.kubernetes.io/canary-weight</code>：基于服务权重的流量切分，适用于蓝绿部署，权重范围 0 - 100 按百分比将请求路由到 Canary Ingress 中指定的服务。权重为 0 意味着该金丝雀规则不会向 Canary 入口的服务发送任何请求。权重为 100 意味着所有请求都将被发送到 Canary 入口。</li>
+<li><code>nginx.ingress.kubernetes.io/canary-by-cookie</code>：基于 Cookie 的流量切分，适用于灰度发布与 A/B 测试。用于通知 Ingress 将请求路由到 Canary Ingress 中指定的服务的cookie。当 cookie 值设置为 <code>always</code>时，它将被路由到 Canary 入口；当 cookie 值设置为 <code>never</code>时，请求不会被发送到 Canary 入口；对于任何其他值，将忽略 cookie 并将请求与其他金丝雀规则进行优先级的比较。</li>
+</ul>
+<p>注意：金丝雀规则按优先顺序进行如下排序：</p>
+<blockquote>
+<p><code>canary-by-header - &gt; canary-by-cookie - &gt; canary-weight</code></p>
+</blockquote>
+<p>我们可以把以上的四个 annotation 规则可以总体划分为以下两类：</p>
+<ul>
+<li>基于权重的 Canary 规则</li>
+</ul>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/1/17/1579246552422.png" alt="基于权重"></p>
+<ul>
+<li>基于用户请求的 Canary 规则</li>
+</ul>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/1/17/1579246569310.png" alt="基于规则"></p>
+<p>注意： Ingress-Nginx 实在0.21.0 版本 中，引入的Canary 功能，因此要确保ingress版本OK</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><h3 id="应用准备"><a href="#应用准备" class="headerlink" title="应用准备"></a>应用准备</h3><p>两个版本的服务，正常版本：</p>
+<pre><code>import static java.util.Collections.singletonMap;
+
+@SpringBootApplication
+@Controller
+public class RestPrometheusApplication &#123;
+@Autowiredprivate MeterRegistry registry;
+@GetMapping(path = &quot;/&quot;, produces = &quot;application/json&quot;)@ResponseBodypublic Map&lt;String, Object&gt; landingPage() &#123;    Counter.builder(&quot;mymetric&quot;).tag(&quot;foo&quot;, &quot;bar&quot;).register(registry).increment();    return singletonMap(&quot;hello&quot;, &quot;ambassador&quot;);&#125;
+public static void main(String[] args) &#123;    SpringApplication.run(RestPrometheusApplication.class, args);&#125;
+
+&#125;
+</code></pre>
+<p>访问会输出：</p>
+<pre><code>&#123;&quot;hello&quot;:&quot;ambassador&quot;&#125;    
+</code></pre>
+<p>灰度版本：</p>
+<pre><code>import static java.util.Collections.singletonMap;
+
+@SpringBootApplication
+@Controller
+public class RestPrometheusApplication &#123;
+@Autowiredprivate MeterRegistry registry;
+@GetMapping(path = &quot;/&quot;, produces = &quot;application/json&quot;)@ResponseBodypublic Map&lt;String, Object&gt; landingPage() &#123;    Counter.builder(&quot;mymetric&quot;).tag(&quot;foo&quot;, &quot;bar&quot;).register(registry).increment();    return singletonMap(&quot;hello&quot;, &quot;ambassador, this is a gray version&quot;);&#125;
+public static void main(String[] args) &#123;    SpringApplication.run(RestPrometheusApplication.class, args);&#125;
+
+&#125;
+</code></pre>
+<p>访问会输出：</p>
+<pre><code>&#123;&quot;hello&quot;:&quot;ambassador, this is a gray version&quot;&#125;    
+</code></pre>
+<h3 id="ingress-配置"><a href="#ingress-配置" class="headerlink" title="ingress 配置"></a>ingress 配置</h3><p>我们部署好两个服务，springboot-rest-demo是正常的服务，springboot-rest-demo-gray是灰度服务，我们来配置ingress，通过canary-by-header来实现：</p>
+<p>正常服务的：</p>
+<pre><code>apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: springboot-rest-demo
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - host: springboot-rest.jadepeng.com
+    http:
+      paths:
+      - backend:
+          serviceName: springboot-rest-demo
+          servicePort: 80
+</code></pre>
+<p>canary 的：</p>
+<pre><code>apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: springboot-rest-demo-gray
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/canary: &quot;true&quot;
+    nginx.ingress.kubernetes.io/canary-by-header: &quot;canary&quot;nginx.ingress.kubernetes.io/canary-by-header-value: &quot;true&quot;
+spec:
+  rules:
+  - host: springboot-rest.jadepeng.com
+    http:
+      paths:
+      - backend:
+          serviceName: springboot-rest-demo-gray
+          servicePort: 80
+</code></pre>
+<p>将上面的文件执行：</p>
+<pre><code>kubectl -n=default apply -f ingress-test.yml 
+ingress.extensions/springboot-rest-demo created
+ingress.extensions/springboot-rest-demo-gray created
+</code></pre>
+<p>执行测试，不添加header，访问的默认是正式版本：</p>
+<pre><code># curl http://springboot-rest.jadepeng.com; echo
+&#123;&quot;hello&quot;:&quot;ambassador&quot;&#125;
+# curl http://springboot-rest.jadepeng.com; echo
+&#123;&quot;hello&quot;:&quot;ambassador&quot;&#125;
+</code></pre>
+<p>添加header，可以看到，访问的已经是灰度版本了</p>
+<pre><code># curl -H &quot;canary: true&quot; http://springboot-rest.jadepeng.com; echo
+&#123;&quot;hello&quot;:&quot;ambassador, this is a gray version&quot;&#125;
+</code></pre>
+<h2 id="多实例Ingress-controllers"><a href="#多实例Ingress-controllers" class="headerlink" title="多实例Ingress controllers"></a>多实例Ingress controllers</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://kubesphere.com.cn/docs/v2.0/zh-CN/quick-start/ingress-canary/#ingress-nginx-annotation-%E7%AE%80%E4%BB%8B">https://kubesphere.com.cn/docs/v2.0/zh-CN/quick-start/ingress-canary/#ingress-nginx-annotation-简介</a></li>
+<li><a target="_blank" rel="noopener" href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#canary">https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#canary</a></li>
+</ul>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/01/02/jqpeng-%E5%9F%BA%E4%BA%8Eambassador%E5%AE%9E%E7%8E%B0K8S%E7%81%B0%E5%BA%A6%E5%8F%91%E5%B8%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/02/jqpeng-%E5%9F%BA%E4%BA%8Eambassador%E5%AE%9E%E7%8E%B0K8S%E7%81%B0%E5%BA%A6%E5%8F%91%E5%B8%83/" class="post-title-link" itemprop="url">基于ambassador实现K8S灰度发布</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-02 20:32:00" itemprop="dateCreated datePublished" datetime="2020-01-02T20:32:00+08:00">2020-01-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/ambassador.html">基于ambassador实现K8S灰度发布</a></p>
+<h2 id="为什么需要灰度发布"><a href="#为什么需要灰度发布" class="headerlink" title="为什么需要灰度发布"></a>为什么需要灰度发布</h2><p>灰度发布（又名金丝雀发布）是指在黑与白之间，能够平滑过渡的一种发布方式。在其上可以进行A/B testing，即让一部分用户继续用产品特性A，一部分用户开始用产品特性B，如果用户对B没有什么反对意见，那么逐步扩大范围，把所有用户都迁移到B上面来。</p>
+<p>总结下一些应用场景：</p>
+<ul>
+<li>微服务依赖很多组件，需要在实际环境验证</li>
+<li>部署新功能有风险，然后可以通过导流一小部分用户实际使用，来减小风险</li>
+<li>让特定的用户访问新版本，比如部署一个版本，只让测试使用</li>
+<li>A/B Testing，部署两个版本，进行版本对比，比如验证两个推荐服务的推荐效果</li>
+</ul>
+<p>灰度发布可以保证整体系统的稳定，在初始灰度的时候就可以发现、调整问题，以保证其影响度。</p>
+<h2 id="ambassador介绍"><a href="#ambassador介绍" class="headerlink" title="ambassador介绍"></a>ambassador介绍</h2><p>ambassador[æmˈbæsədər]，是Kubernetes微服务 API gateway,基于Envoy Proxy。</p>
+<blockquote>
+<p>Open Source Kubernetes-Native API Gateway built on the Envoy Proxy</p>
+</blockquote>
+<p>官方地址：</p>
+<p><a target="_blank" rel="noopener" href="https://www.getambassador.io/">https://www.getambassador.io/</a></p>
+<h2 id="部署ambassador"><a href="#部署ambassador" class="headerlink" title="部署ambassador"></a>部署ambassador</h2><p>按官网提示部署ambassador</p>
+<pre><code>cat &lt;&lt;EOF | kubectl apply -f -
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: ambassador-admin
+  name: ambassador-admin
+spec:
+  type: NodePort
+  ports:
+  - name: ambassador-admin
+    port: 8877
+    targetPort: 8877
+  selector:
+    service: ambassador
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: ambassador
+rules:
+- apiGroups: [&quot;&quot;]
+  resources: [ &quot;endpoints&quot;, &quot;namespaces&quot;, &quot;secrets&quot;, &quot;services&quot; ]
+  verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]
+- apiGroups: [ &quot;getambassador.io&quot; ]
+  resources: [ &quot;*&quot; ]
+  verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]
+- apiGroups: [ &quot;apiextensions.k8s.io&quot; ]
+  resources: [ &quot;customresourcedefinitions&quot; ]
+  verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]
+- apiGroups: [ &quot;networking.internal.knative.dev&quot; ]
+  resources: [ &quot;clusteringresses&quot;, &quot;ingresses&quot; ]
+  verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]
+- apiGroups: [ &quot;networking.internal.knative.dev&quot; ]
+  resources: [ &quot;ingresses/status&quot;, &quot;clusteringresses/status&quot; ]
+  verbs: [&quot;update&quot;]
+- apiGroups: [ &quot;extensions&quot; ]
+  resources: [ &quot;ingresses&quot; ]
+  verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]
+- apiGroups: [ &quot;extensions&quot; ]
+  resources: [ &quot;ingresses/status&quot; ]
+  verbs: [&quot;update&quot;]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ambassador
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: ambassador
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ambassador
+subjects:
+- kind: ServiceAccount
+  name: ambassador
+  namespace: kube-system
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: authservices.getambassador.io
+spec:
+  group: getambassador.io
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+  scope: Namespaced
+  names:
+    plural: authservices
+    singular: authservice
+    kind: AuthService
+    categories:
+    - ambassador-crds
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: consulresolvers.getambassador.io
+spec:
+  group: getambassador.io
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+  scope: Namespaced
+  names:
+    plural: consulresolvers
+    singular: consulresolver
+    kind: ConsulResolver
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: kubernetesendpointresolvers.getambassador.io
+spec:
+  group: getambassador.io
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+  scope: Namespaced
+  names:
+    plural: kubernetesendpointresolvers
+    singular: kubernetesendpointresolver
+    kind: KubernetesEndpointResolver
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: kubernetesserviceresolvers.getambassador.io
+spec:
+  group: getambassador.io
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+  scope: Namespaced
+  names:
+    plural: kubernetesserviceresolvers
+    singular: kubernetesserviceresolver
+    kind: KubernetesServiceResolver
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: mappings.getambassador.io
+spec:
+  group: getambassador.io
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+  scope: Namespaced
+  names:
+    plural: mappings
+    singular: mapping
+    kind: Mapping
+    categories:
+    - ambassador-crds
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: modules.getambassador.io
+spec:
+  group: getambassador.io
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+  scope: Namespaced
+  names:
+    plural: modules
+    singular: module
+    kind: Module
+    categories:
+    - ambassador-crds
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: ratelimitservices.getambassador.io
+spec:
+  group: getambassador.io
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+  scope: Namespaced
+  names:
+    plural: ratelimitservices
+    singular: ratelimitservice
+    kind: RateLimitService
+    categories:
+    - ambassador-crds
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: tcpmappings.getambassador.io
+spec:
+  group: getambassador.io
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+  scope: Namespaced
+  names:
+    plural: tcpmappings
+    singular: tcpmapping
+    kind: TCPMapping
+    categories:
+    - ambassador-crds
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: tlscontexts.getambassador.io
+spec:
+  group: getambassador.io
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+  scope: Namespaced
+  names:
+    plural: tlscontexts
+    singular: tlscontext
+    kind: TLSContext
+    categories:
+    - ambassador-crds
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: tracingservices.getambassador.io
+spec:
+  group: getambassador.io
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+  scope: Namespaced
+  names:
+    plural: tracingservices
+    singular: tracingservice
+    kind: TracingService
+    categories:
+    - ambassador-crds
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: logservices.getambassador.io
+spec:
+  group: getambassador.io
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+  scope: Namespaced
+  names:
+    plural: logservices
+    singular: logservice
+    kind: LogService
+    categories:
+    - ambassador-crds
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ambassador
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      service: ambassador
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: &quot;false&quot;
+        &quot;consul.hashicorp.com/connect-inject&quot;: &quot;false&quot;
+      labels:
+        service: ambassador
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  service: ambassador
+              topologyKey: kubernetes.io/hostname
+      serviceAccountName: ambassador
+      containers:
+      - name: ambassador
+        image: quay.azk8s.cn/datawire/ambassador:0.86.1
+        resources:
+          limits:
+            cpu: 1
+            memory: 400Mi
+          requests:
+            cpu: 200m
+            memory: 100Mi
+        env:
+        - name: AMBASSADOR_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: https
+          containerPort: 8443
+        - name: admin
+          containerPort: 8877
+        livenessProbe:
+          httpGet:
+            path: /ambassador/v0/check_alive
+            port: 8877
+          initialDelaySeconds: 30
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /ambassador/v0/check_ready
+            port: 8877
+          initialDelaySeconds: 30
+          periodSeconds: 3
+        volumeMounts:
+        - name: ambassador-pod-info
+          mountPath: /tmp/ambassador-pod-info
+      volumes:
+      - name: ambassador-pod-info
+        downwardAPI:
+          items:
+          - path: &quot;labels&quot;
+            fieldRef:
+              fieldPath: metadata.labels
+      restartPolicy: Always
+      securityContext:
+        runAsUser: 8888
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ambassador
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  ports:
+   - port: 80
+     targetPort: 8080
+  selector:
+    service: ambassador
+
+
+EOF
+</code></pre>
+<p>为了方便访问网关，生成一个ingress：</p>
+<hr>
+<pre><code>apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+ annotations:
+   nginx.ingress.kubernetes.io/proxy-body-size: &quot;0&quot;
+   nginx.ingress.kubernetes.io/proxy-read-timeout: &quot;600&quot;
+   nginx.ingress.kubernetes.io/proxy-send-timeout: &quot;600&quot;
+   kubernetes.io/tls-acme: &#39;true&#39;
+ name: ambassador
+spec:
+ rules:
+ - host: ambassador.iflyresearch.com
+   http:
+     paths:
+     - backend:
+         serviceName: ambassador
+         servicePort: 80
+       path: /
+</code></pre>
+<h2 id="ambassador-配置"><a href="#ambassador-配置" class="headerlink" title="ambassador 配置"></a>ambassador 配置</h2><p>ambassador 使用envoy来实现相关的负载，而envoy类似nginx。ambassador的原理大概是读取service里的配置，然后自动生成envoy的配置，当service变更时，动态更新envoy的配置并重启，所以ambassador需要可以访问服务API。</p>
+<p>ambassador  的配置是放到metadata的annotations,以<code>getambassador.io/config</code>开头：</p>
+<pre><code>  annotations:
+    getambassador.io/config: |
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name:  &#123;&#123; .Values.service.name &#125;&#125;_mapping
+      prefix: /&#123;&#123; .Values.service.prefix &#125;&#125;
+      service: &#123;&#123; .Values.service.name &#125;&#125;.&#123;&#123; .Release.Namespace &#125;&#125;
+</code></pre>
+<p>profix指定如何访问服务，service指定指向那个服务。注意，需要加上namespace名称，否则容易报找不到后端。</p>
+<h2 id="ambassador-灰度"><a href="#ambassador-灰度" class="headerlink" title="ambassador 灰度"></a>ambassador 灰度</h2><p>ambassador实现灰度可以根据weight权重，或者指定匹配特定的header来实现。</p>
+<h3 id="根据weight进行灰度"><a href="#根据weight进行灰度" class="headerlink" title="根据weight进行灰度"></a>根据weight进行灰度</h3><p>用法：</p>
+<p>部署一个新版本的service，prefix和之前老服务保持一致，但是配置weight，比如20，这样20%的流量会流转到新服务，这样实现A/B Test</p>
+<pre><code>---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-gray
+  namespace: default
+  annotations:
+    getambassador.io/config: |
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name:  svc1_mapping
+      prefix: /svc/
+      service: service-gray  weight: 20
+spec:
+  selector:
+    app: testservice
+  ports:
+  - port: 8080
+    name: service-gray
+    targetPort: http-api
+</code></pre>
+<h3 id="根据请求头-header-进行灰度-regex-headers-正则匹配"><a href="#根据请求头-header-进行灰度-regex-headers-正则匹配" class="headerlink" title="根据请求头 header 进行灰度 (regex_headers 正则匹配)"></a>根据请求头 header 进行灰度 (regex_headers 正则匹配)</h3><p>部署一个新版本，只需要特定的用户才能访问，可以通过该方案来实现。</p>
+<p>例如：</p>
+<pre><code>---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-gray
+  namespace: default
+  annotations:
+    getambassador.io/config: |
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name:  svc1_mapping
+      prefix: /svc/
+      service: service-gray  headers:
+        gray: true
+spec:
+  selector:
+    app: testservice
+  ports:
+  - port: 8080
+    name: service-gray
+    targetPort: http-api
+</code></pre>
+<p>访问时，当指定gray: true时，访问灰度版本，可以用postman来测试：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/1/2/1577967795378.png" alt="POSTMAN"></p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/12/20/jqpeng-JAVA%20%E4%BD%BF%E7%94%A8jgit%E7%AE%A1%E7%90%86git%E4%BB%93%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/12/20/jqpeng-JAVA%20%E4%BD%BF%E7%94%A8jgit%E7%AE%A1%E7%90%86git%E4%BB%93%E5%BA%93/" class="post-title-link" itemprop="url">JAVA 使用jgit管理git仓库</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-20 12:08:00" itemprop="dateCreated datePublished" datetime="2019-12-20T12:08:00+08:00">2019-12-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/jgit.html">JAVA 使用jgit管理git仓库</a></p>
+<p>最近设计基于gitops新的CICD方案,需要通过java读写git仓库，这里简单记录下。</p>
+<p>JGit是一款pure java的软件包，可以读写git仓库，下面介绍基本使用。</p>
+<h2 id="引入jgit"><a href="#引入jgit" class="headerlink" title="引入jgit"></a>引入jgit</h2><p>maven引入：</p>
+<pre><code>        &lt;!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.eclipse.jgit&lt;/groupId&gt;
+            &lt;artifactId&gt;org.eclipse.jgit&lt;/artifactId&gt;
+            &lt;version&gt;5.6.0.201912101111-r&lt;/version&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>jgit 有一个Git类，可以用来执行常规的git操作</p>
+<h2 id="凭证管理"><a href="#凭证管理" class="headerlink" title="凭证管理"></a>凭证管理</h2><p>通过<code>CredentialsProvider</code>管理凭证，常用的是<code>UsernamePasswordCredentialsProvider</code></p>
+<p>通过下面代码初始化：</p>
+<pre><code>public static CredentialsProvider createCredential(String userName, String password) &#123;
+        return new UsernamePasswordCredentialsProvider(userName, password);
+    &#125;
+</code></pre>
+<h2 id="clone远程仓库"><a href="#clone远程仓库" class="headerlink" title="clone远程仓库"></a>clone远程仓库</h2><p>git 命令：</p>
+<pre><code>git clone &#123;repoUrl&#125;
+</code></pre>
+<p>通过Git.cloneRepository 来clone远程仓库，如果需要凭证，则需要指定<code>credentialsProvider</code></p>
+<pre><code> public static Git fromCloneRepository(String repoUrl, String cloneDir, CredentialsProvider provider) throws GitAPIException &#123;
+        Git git = Git.cloneRepository()
+            .setCredentialsProvider(provider)
+            .setURI(repoUrl)
+            .setDirectory(new File(cloneDir)).call();
+        return git;
+    &#125;
+</code></pre>
+<h2 id="commit"><a href="#commit" class="headerlink" title="commit"></a>commit</h2><p>git 命令：</p>
+<pre><code>git commit -a -m &#39;&#123;msg&#125;&#39;
+</code></pre>
+<p>commit比较简单，对应commit方法, 注意需要先add</p>
+<pre><code>    public static void commit(Git git, String message, CredentialsProvider provider) throws GitAPIException &#123;
+        git.add().addFilepattern(&quot;.&quot;).call();
+        git.commit()
+            .setMessage(message)
+            .call();
+    &#125;
+</code></pre>
+<h2 id="push"><a href="#push" class="headerlink" title="push"></a>push</h2><p>git 命令：</p>
+<pre><code>git push origin branchName
+</code></pre>
+<p>push直接调用push即可, 需要指定<code>credentialsProvider</code></p>
+<pre><code>   public static void push(Git git, CredentialsProvider provider) throws GitAPIException, IOException &#123;
+        push(git,null,provider);
+    &#125;
+
+    public static void push(Git git, String branch, CredentialsProvider provider) throws GitAPIException, IOException &#123;
+        if (branch == null) &#123;
+            branch = git.getRepository().getBranch();
+        &#125;
+        git.push()
+            .setCredentialsProvider(provider)
+            .setRemote(&quot;origin&quot;).setRefSpecs(new RefSpec(branch)).call();
+    &#125;
+</code></pre>
+<h2 id="读取已有仓库"><a href="#读取已有仓库" class="headerlink" title="读取已有仓库"></a>读取已有仓库</h2><p>如果git已经clone了，想直接读取，怎么办？</p>
+<pre><code> public static Repository getRepositoryFromDir(String dir) throws IOException &#123;
+        return new FileRepositoryBuilder()
+            .setGitDir(Paths.get(dir, &quot;.git&quot;).toFile())
+            .build();
+    &#125;
+</code></pre>
+<h2 id="读取仓库日志"><a href="#读取仓库日志" class="headerlink" title="读取仓库日志"></a>读取仓库日志</h2><p>可以通过RevWalk读取仓库日志。</p>
+<ul>
+<li>revWalk.parseCommit 可读取一条commit</li>
+<li>遍历revWalk，可读取所有日志</li>
+</ul>
+<pre><code> public static List&lt;String&gt; getLogs(Repository repository) throws IOException &#123;
+        return getLogsSinceCommit(repository, null, null);
+    &#125;
+
+    public static List&lt;String&gt; getLogsSinceCommit(Repository repository, String commit) throws IOException &#123;
+        return getLogsSinceCommit(repository, null, commit);
+    &#125;
+
+    public static List&lt;String&gt; getLogsSinceCommit(Repository repository, String branch, String commit) throws IOException &#123;
+        if (branch == null) &#123;
+            branch = repository.getBranch();
+        &#125;
+        Ref head = repository.findRef(&quot;refs/heads/&quot; + branch);
+        List&lt;String&gt; commits = new ArrayList&lt;&gt;();
+        if (head != null) &#123;
+            try (RevWalk revWalk = new RevWalk(repository)) &#123;
+                revWalk.markStart(revWalk.parseCommit(head.getObjectId()));
+                for (RevCommit revCommit : revWalk) &#123;
+                    if (revCommit.getId().getName().equals(commit)) &#123;
+                        break;
+                    &#125;
+                    commits.add(revCommit.getFullMessage());
+                    System.out.println(&quot;\nCommit-Message: &quot; + revCommit.getFullMessage());
+                &#125;
+                revWalk.dispose();
+            &#125;
+        &#125;
+
+        return commits;
+    &#125;
+</code></pre>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>我们来先clone仓库，然后修改，最后push</p>
+<pre><code> String yaml = &quot;dependencies:\n&quot; +
+            &quot;- name: springboot-rest-demo\n&quot; +
+            &quot;  version: 0.0.5\n&quot; +
+            &quot;  repository: http://hub.hubHOST.com/chartrepo/ainote\n&quot; +
+            &quot;  alias: demo\n&quot; +
+            &quot;- name: exposecontroller\n&quot; +
+            &quot;  version: 2.3.82\n&quot; +
+            &quot;  repository: http://chartmuseum.jenkins-x.io\n&quot; +
+            &quot;  alias: cleanup\n&quot;;
+        CredentialsProvider provider = createCredential(&quot;USR_NAME&quot;, &quot;PASSWORD&quot;);
+
+        String cloneDir = &quot;/tmp/test&quot;;
+
+        Git git = fromCloneRepository(&quot;http://gitlab.GITHOST.cn/blog/env-test.git&quot;, cloneDir, provider);
+
+        // 修改文件
+
+        FileUtils.writeStringToFile(Paths.get(cloneDir, &quot;env&quot;, &quot;requirements.yaml&quot;).toFile(), yaml, &quot;utf-8&quot;);      // 提交
+        commit(git, &quot;deploy(app): deploy  springboot-rest-demo:0.0.5 to env test&quot;, provider);
+        // push 到远程仓库
+        push(git, &quot;master&quot;, provider);
+
+        git.clean().call();
+        git.close();
+
+        FileUtils.deleteDirectory(new File(cloneDir));
+</code></pre>
+<p>读取已有仓库的日志：</p>
+<pre><code>        Repository repository = getRepositoryFromDir(&quot;GIT_DIR&quot;);
+        List&lt;String&gt; logs = getLogs(repository);
+        System.out.println(logs);
+
+        RevCommit head = getLastCommit(repository);
+        System.out.println(head.getFullMessage());
+</code></pre>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文讲述了如何通过jgit完成常规的git操作。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/12/19/jqpeng-JAVA%E4%BD%BF%E7%94%A8SnakeYAML%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%BA%8F%E5%88%97%E5%8C%96YAML/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/12/19/jqpeng-JAVA%E4%BD%BF%E7%94%A8SnakeYAML%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%BA%8F%E5%88%97%E5%8C%96YAML/" class="post-title-link" itemprop="url">JAVA使用SnakeYAML解析与序列化YAML</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-19 19:09:00" itemprop="dateCreated datePublished" datetime="2019-12-19T19:09:00+08:00">2019-12-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/SnakeYAML.html">JAVA使用SnakeYAML解析与序列化YAML</a></p>
+<h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1.概述"></a><strong>1.概述</strong></h2><p>本文，我们将学习如何使用<a target="_blank" rel="noopener" href="https://bitbucket.org/asomov/snakeyaml/overview">SnakeYAML</a>库将<br><strong>YAML文档转换为Java对象，以及JAVA对象如何序列化为YAML文档</strong>。</p>
+<h2 id="2-项目设置"><a href="#2-项目设置" class="headerlink" title="2.项目设置"></a><strong>2.项目设置</strong></h2><p>要在项目中使用SnakeYAML，需要添加Maven依赖项（可在<a target="_blank" rel="noopener" href="https://search.maven.org/classic/#search%7Cgav%7C1%7Cg%3A%22org.yaml%22%20AND%20a%3A%22snakeyaml%22">此处</a>找到最新版本）：</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.yaml&lt;/groupId&gt;
+    &lt;artifactId&gt;snakeyaml&lt;/artifactId&gt;
+    &lt;version&gt;1.25&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h2 id="3-入口点"><a href="#3-入口点" class="headerlink" title="3.入口点"></a><strong>3.入口点</strong></h2><p>该<code>YAML</code>类是API的入口点：</p>
+<pre><code>Yaml yaml = new Yaml()
+</code></pre>
+<p>由于实现不是线程安全的，因此不同的线程必须具有自己的<code>Yaml</code>实例。</p>
+<h2 id="4-加载YAML文档"><a href="#4-加载YAML文档" class="headerlink" title="4.加载YAML文档"></a><strong>4.加载YAML文档</strong></h2><p><code>SnakeYAML</code>支持从<code>String</code>或<code>InputStream</code>加载文档，我们从定义一个简单的YAML文档开始，然后将文件命名为<code>customer.yaml</code>：</p>
+<pre><code>firstName: &quot;John&quot;
+lastName: &quot;Doe&quot;
+age: 20
+</code></pre>
+<h3 id="4-1。基本用法"><a href="#4-1。基本用法" class="headerlink" title="4.1。基本用法"></a><strong>4.1。基本用法</strong></h3><p>现在，我们将使用<code>Yaml</code>类来解析上述YAML文档：</p>
+<pre><code>Yaml yaml = new Yaml();
+InputStream inputStream = this.getClass()
+  .getClassLoader()
+  .getResourceAsStream(&quot;customer.yaml&quot;);
+Map&lt;String, Object&gt; obj = yaml.load(inputStream);
+System.out.println(obj);
+</code></pre>
+<p>上面的代码生成以下输出：</p>
+<pre><code>&#123;firstName=John, lastName=Doe, age=20&#125;
+</code></pre>
+<p>默认情况下，<code>load（）</code>方法返回一个<code>Map</code>对象。查询<code>Map</code>对象时，我们需要事先知道属性键的名称，否则容易出错。更好的办法是自定义类型。</p>
+<h3 id="4-2自定义类型解析"><a href="#4-2自定义类型解析" class="headerlink" title="4.2自定义类型解析"></a><strong>4.2自定义类型解析</strong></h3><p><code>SnakeYAML</code><strong>提供了一种将文档解析为自定义类型的方法</strong></p>
+<p>让我们定义一个<code>Customer</code>类，然后尝试再次加载该文档：</p>
+<pre><code>public class Customer &#123;
+ 
+    private String firstName;
+    private String lastName;
+    private int age;
+ 
+    // getters and setters
+&#125;
+</code></pre>
+<p>现在我么来加载：</p>
+<pre><code>Yaml yaml = new Yaml();
+InputStream inputStream = this.getClass()
+ .getClassLoader()
+ .getResourceAsStream(&quot;customer.yaml&quot;);
+Customer customer = yaml.load(inputStream);
+</code></pre>
+<p>还有一种方法是使用Constructor：</p>
+<pre><code>Yaml yaml = new Yaml(new Constructor(Customer.class));
+</code></pre>
+<h3 id="4-3。隐式类型"><a href="#4-3。隐式类型" class="headerlink" title="4.3。隐式类型"></a><strong>4.3。隐式类型</strong></h3><p><strong>如果没有为给定属性定义类型，则库会自动将值转换为隐式type</strong>。</p>
+<p>例如：</p>
+<pre><code>1.0 -&gt; Float
+42 -&gt; Integer
+2009-03-30 -&gt; Date
+</code></pre>
+<p>让我们使用一个TestCase来测试这种隐式类型转换：</p>
+<pre><code>@Test
+public void whenLoadYAML_thenLoadCorrectImplicitTypes() &#123;
+   Yaml yaml = new Yaml();
+   Map&lt;Object, Object&gt; document = yaml.load(&quot;3.0: 2018-07-22&quot;);
+  
+   assertNotNull(document);
+   assertEquals(1, document.size());
+   assertTrue(document.containsKey(3.0d));   
+&#125;
+</code></pre>
+<h3 id="4-4-嵌套对象"><a href="#4-4-嵌套对象" class="headerlink" title="4.4 嵌套对象"></a><strong>4.4 嵌套对象</strong></h3><p><code>SnakeYAML</code> 支持嵌套的复杂类型。</p>
+<p>让我们向“ <code>customer.yaml”</code>添加“ <code>联系方式”</code>  和“ <code>地址” </code>详细信息<code>，</code>并将新文件另存为<code>customer_with_contact_details_and_address.yaml. </code>。</p>
+<p>现在，我们将分析新的YAML文档：</p>
+<pre><code>firstName: &quot;John&quot;
+lastName: &quot;Doe&quot;
+age: 31
+contactDetails:
+   - type: &quot;mobile&quot;
+     number: 123456789
+   - type: &quot;landline&quot;
+     number: 456786868
+homeAddress:
+   line: &quot;Xyz, DEF Street&quot;
+   city: &quot;City Y&quot;
+   state: &quot;State Y&quot;
+   zip: 345657
+</code></pre>
+<p>我们来更新java类：</p>
+<pre><code>public class Customer &#123;
+    private String firstName;
+    private String lastName;
+    private int age;
+    private List&lt;Contact&gt; contactDetails;
+    private Address homeAddress;    
+    // getters and setters
+&#125;
+
+public class Contact &#123;
+    private String type;
+    private int number;
+    // getters and setters
+&#125;
+
+public class Address &#123;
+    private String line;
+    private String city;
+    private String state;
+    private Integer zip;
+    // getters and setters
+&#125;
+</code></pre>
+<p>现在，我们来测试下<code>Yaml</code>＃<code>load（）</code>：</p>
+<pre><code>@Test
+public void
+  whenLoadYAMLDocumentWithTopLevelClass_thenLoadCorrectJavaObjectWithNestedObjects() &#123;
+  
+    Yaml yaml = new Yaml(new Constructor(Customer.class));
+    InputStream inputStream = this.getClass()
+      .getClassLoader()
+      .getResourceAsStream(&quot;yaml/customer_with_contact_details_and_address.yaml&quot;);
+    Customer customer = yaml.load(inputStream);
+  
+    assertNotNull(customer);
+    assertEquals(&quot;John&quot;, customer.getFirstName());
+    assertEquals(&quot;Doe&quot;, customer.getLastName());
+    assertEquals(31, customer.getAge());
+    assertNotNull(customer.getContactDetails());
+    assertEquals(2, customer.getContactDetails().size());
+     
+    assertEquals(&quot;mobile&quot;, customer.getContactDetails()
+      .get(0)
+      .getType());
+    assertEquals(123456789, customer.getContactDetails()
+      .get(0)
+      .getNumber());
+    assertEquals(&quot;landline&quot;, customer.getContactDetails()
+      .get(1)
+      .getType());
+    assertEquals(456786868, customer.getContactDetails()
+      .get(1)
+      .getNumber());
+    assertNotNull(customer.getHomeAddress());
+    assertEquals(&quot;Xyz, DEF Street&quot;, customer.getHomeAddress()
+      .getLine());
+&#125;
+</code></pre>
+<h3 id="4-5。类型安全的集合"><a href="#4-5。类型安全的集合" class="headerlink" title="4.5。类型安全的集合"></a><strong>4.5。类型安全的集合</strong></h3><p>当给定Java类的一个或多个属性是泛型集合类时，需要通过<code>TypeDescription</code>来指定泛型类型，以以便可以正确解析。</p>
+<p>让我们假设一个 一个<code>Customer</code>拥有多个<code>Contact</code>：</p>
+<pre><code>firstName: &quot;John&quot;
+lastName: &quot;Doe&quot;
+age: 31
+contactDetails:
+   - &#123; type: &quot;mobile&quot;, number: 123456789&#125;
+   - &#123; type: &quot;landline&quot;, number: 123456789&#125;
+</code></pre>
+<p>为了能正确解析，**我们可以在顶级类上为给定属性指定<code>TypeDescription </code>**：</p>
+<pre><code>Constructor constructor = new Constructor(Customer.class);
+TypeDescription customTypeDescription = new TypeDescription(Customer.class);
+customTypeDescription.addPropertyParameters(&quot;contactDetails&quot;, Contact.class);
+constructor.addTypeDescription(customTypeDescription);
+Yaml yaml = new Yaml(constructor);
+</code></pre>
+<h3 id="4-6。载入多个文件"><a href="#4-6。载入多个文件" class="headerlink" title="4.6。载入多个文件"></a><strong>4.6。载入多个文件</strong></h3><p>在某些情况下，单个<code>文件中</code>可能有多个YAML文档，而我们想解析所有文档。所述<code>YAML</code>类提供了一个<code>LOADALL（）</code>方法来完成这种类型的解析。</p>
+<p>假设下面的内容在一个文件中：</p>
+<pre><code>---
+firstName: &quot;John&quot;
+lastName: &quot;Doe&quot;
+age: 20
+---
+firstName: &quot;Jack&quot;
+lastName: &quot;Jones&quot;
+age: 25
+</code></pre>
+<p>我们可以使用<code>loadAll（）</code>方法解析以上内容，如以下代码示例所示：</p>
+<pre><code>@Test
+public void whenLoadMultipleYAMLDocuments_thenLoadCorrectJavaObjects() &#123;
+    Yaml yaml = new Yaml(new Constructor(Customer.class));
+    InputStream inputStream = this.getClass()
+      .getClassLoader()
+      .getResourceAsStream(&quot;yaml/customers.yaml&quot;);
+ 
+    int count = 0;
+    for (Object object : yaml.loadAll(inputStream)) &#123;
+        count++;
+        assertTrue(object instanceof Customer);
+    &#125;
+    assertEquals(2,count);
+&#125;
+</code></pre>
+<h2 id="5-生成YAML文件"><a href="#5-生成YAML文件" class="headerlink" title="5.生成YAML文件"></a><strong>5.生成YAML文件</strong></h2><p><code>SnakeYAML</code> 支持 将java对象序列化为yml。</p>
+<h3 id="5-1。基本用法"><a href="#5-1。基本用法" class="headerlink" title="5.1。基本用法"></a><strong>5.1。基本用法</strong></h3><p>我们将从一个将<code>Map &lt;String，Object&gt;</code>的实例转储到YAML文档（<code>String</code>）的简单示例开始：</p>
+<pre><code>@Test
+public void whenDumpMap_thenGenerateCorrectYAML() &#123;
+    Map&lt;String, Object&gt; data = new LinkedHashMap&lt;String, Object&gt;();
+    data.put(&quot;name&quot;, &quot;Silenthand Olleander&quot;);
+    data.put(&quot;race&quot;, &quot;Human&quot;);
+    data.put(&quot;traits&quot;, new String[] &#123; &quot;ONE_HAND&quot;, &quot;ONE_EYE&quot; &#125;);
+    Yaml yaml = new Yaml();
+    StringWriter writer = new StringWriter();
+    yaml.dump(data, writer);
+    String expectedYaml = &quot;name: Silenthand Olleander\nrace: Human\ntraits: [ONE_HAND, ONE_EYE]\n&quot;;
+ 
+    assertEquals(expectedYaml, writer.toString());
+&#125;
+</code></pre>
+<p>上面的代码产生以下输出（请注意，使用<code>LinkedHashMap</code>的实例将保留输出数据的顺序）：</p>
+<pre><code>name: Silenthand Olleander
+race: Human
+traits: [ONE_HAND, ONE_EYE]
+</code></pre>
+<h3 id="5-2。自定义Java对象"><a href="#5-2。自定义Java对象" class="headerlink" title="5.2。自定义Java对象"></a><strong>5.2。自定义Java对象</strong></h3><p>我们还可以选择<strong>将自定义Java类型转储到输出流中</strong>。</p>
+<pre><code>@Test
+public void whenDumpACustomType_thenGenerateCorrectYAML() &#123;
+    Customer customer = new Customer();
+    customer.setAge(45);
+    customer.setFirstName(&quot;Greg&quot;);
+    customer.setLastName(&quot;McDowell&quot;);
+    Yaml yaml = new Yaml();
+    StringWriter writer = new StringWriter();
+    yaml.dump(customer, writer);        
+    String expectedYaml = &quot;!!com.baeldung.snakeyaml.Customer &#123;age: 45, contactDetails: null, firstName: Greg,\n  homeAddress: null, lastName: McDowell&#125;\n&quot;;
+ 
+    assertEquals(expectedYaml, writer.toString());
+&#125;
+</code></pre>
+<p>生成内容会包含!!com.baeldung.snakeyaml.Customer，为了避免在输出文件中使用标签名，我们可以使用库提供的  <code>dumpAs（）</code>方法。</p>
+<p>因此，在上面的代码中，我们可以进行以下调整以删除标记：</p>
+<pre><code>yaml.dumpAs(customer, Tag.MAP, null);
+</code></pre>
+<h2 id="六-结语"><a href="#六-结语" class="headerlink" title="六 结语"></a><strong>六 结语</strong></h2><p>本文说明了SnakeYAML库解析和序列化YAML文档。</p>
+<p>所有示例都可以在<a target="_blank" rel="noopener" href="https://github.com/eugenp/tutorials/tree/master/libraries-data-io" title="Java 8-Lambda表达式比较示例">GitHub项目中</a>找到。</p>
+<h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><ul>
+<li>英文原文： <a target="_blank" rel="noopener" href="https://www.baeldung.com/java-snake-yaml">Parsing YAML with SnakeYAML</a></li>
+</ul>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/12/18/jqpeng-%E9%80%9A%E8%BF%87%20Drone%20Rest%20API%20%E8%8E%B7%E5%8F%96%E6%9E%84%E5%BB%BA%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/12/18/jqpeng-%E9%80%9A%E8%BF%87%20Drone%20Rest%20API%20%E8%8E%B7%E5%8F%96%E6%9E%84%E5%BB%BA%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97/" class="post-title-link" itemprop="url">通过 Drone Rest API 获取构建记录日志</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-18 16:17:00" itemprop="dateCreated datePublished" datetime="2019-12-18T16:17:00+08:00">2019-12-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 17:34:38" itemprop="dateModified" datetime="2021-05-14T17:34:38+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/drone-logs-api.html">通过 Drone Rest API 获取构建记录日志</a></p>
+<hr>
+<p>Drone是一款CICD工具，提供rest API，简单介绍下如何使用API 获取构建日志。</p>
+<h2 id="获取token"><a href="#获取token" class="headerlink" title="获取token"></a>获取token</h2><p>登录进入drone，点头像，在菜单里选择token</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2019/12/18/1576655214876.png" alt="enter description here"></p>
+<p>复制token即可</p>
+<h2 id="API-介绍"><a href="#API-介绍" class="headerlink" title="API 介绍"></a>API 介绍</h2><p>Drone的api分为几大类</p>
+<ul>
+<li>Builds 构建</li>
+<li>Cron 定时任务</li>
+<li>Repos 仓库</li>
+<li>Secrets</li>
+<li>User 用户</li>
+<li>Users</li>
+</ul>
+<p>调用举例：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2019/12/18/1576655383949.png" alt="enter description here"></p>
+<h2 id="Build-API"><a href="#Build-API" class="headerlink" title="Build API"></a>Build API</h2><h3 id="构建列表（Build-List）"><a href="#构建列表（Build-List）" class="headerlink" title="构建列表（Build List）"></a>构建列表（Build List）</h3><p>获取仓库的最新构建：</p>
+<pre><code>GET /api/repos/&#123;owner&#125;/&#123;repo&#125;/builds
+
+curl -i http://drone.YOUR_HOST.cn/api/repos/jqpeng/springboot-rest-demo/builds -H &quot;Authorization: Bearer TOKEN&quot;
+</code></pre>
+<p>响应正文示例：</p>
+<pre><code>[
+  &#123;
+      &quot;id&quot;: 100207,
+      &quot;repo_id&quot;: 296163,
+      &quot;number&quot;: 42,
+      &quot;status&quot;: &quot;success&quot;,
+      &quot;event&quot;: &quot;pull_request&quot;,
+      &quot;action&quot;: &quot;sync&quot;,
+      &quot;link&quot;: &quot;https://github.com/octoat/hello-world/compare/e3320539a4c0...9fc1ad6ebf12&quot;,
+      &quot;message&quot;: &quot;updated README&quot;,
+      &quot;before&quot;: &quot;e3320539a4c03ccfda992641646deb67d8bf98f3&quot;,
+      &quot;after&quot;: &quot;9fc1ad6ebf12462f3f9773003e26b4c6f54a772e&quot;,
+      &quot;ref&quot;: &quot;refs/heads/master&quot;,
+      &quot;source_repo&quot;: &quot;spaceghost/hello-world&quot;,
+      &quot;source&quot;: &quot;develop&quot;,
+      &quot;target&quot;: &quot;master&quot;,
+      &quot;author_login&quot;: &quot;octocat&quot;,
+      &quot;author_name&quot;: &quot;The Octocat&quot;,
+      &quot;author_email&quot;: &quot;octocat@github.com&quot;,
+      &quot;author_avatar&quot;: &quot;http://www.gravatar.com/avatar/7194e8d48fa1d2b689f99443b767316c&quot;,
+      &quot;sender&quot;: &quot;bradrydzewski&quot;,
+      &quot;started&quot;: 1564085874,
+      &quot;finished&quot;: 1564086343,
+      &quot;created&quot;: 1564085874,
+      &quot;updated&quot;: 1564085874,
+      &quot;version&quot;: 3
+  &#125;
+]
+</code></pre>
+<h3 id="构建详情"><a href="#构建详情" class="headerlink" title="构建详情"></a>构建详情</h3><p>通过该接口获取构建详情，返回构建状态等信息，{build} 为上面列表里的number，既构建序号。</p>
+<pre><code>GET /api/repos/&#123;owner&#125;/&#123;repo&#125;/builds/&#123;build&#125;
+</code></pre>
+<p>Example Response Body:</p>
+<pre><code>&#123;
+    &quot;id&quot;: 39862,
+    &quot;number&quot;: 20,
+    &quot;parent&quot;: 0,
+    &quot;event&quot;: &quot;push&quot;,
+    &quot;status&quot;: &quot;success&quot;,
+    &quot;error&quot;: &quot;&quot;,
+    &quot;enqueued_at&quot;: 1576636849,
+    &quot;created_at&quot;: 1576636849,
+    &quot;started_at&quot;: 1576636850,
+    &quot;finished_at&quot;: 1576639053,
+    &quot;deploy_to&quot;: &quot;&quot;,
+    &quot;commit&quot;: &quot;7729006bfe11933da6c564101acaf8c7f78c5f62&quot;,
+    &quot;branch&quot;: &quot;master&quot;,
+    &quot;ref&quot;: &quot;refs/heads/master&quot;,
+    &quot;refspec&quot;: &quot;&quot;,
+    &quot;remote&quot;: &quot;&quot;,
+    &quot;title&quot;: &quot;&quot;,
+    &quot;message&quot;: &quot;通过update更新\n&quot;,
+    &quot;timestamp&quot;: 0,
+    &quot;sender&quot;: &quot;&quot;,
+    &quot;author&quot;: &quot;jqpeng&quot;,
+    &quot;author_avatar&quot;: &quot;https://www.gravatar.com/avatar/4ab53b564545f18efc4079c30a2d35cf.jpg?s=128&quot;,
+    &quot;link_url&quot;: &quot;&quot;,
+    &quot;signed&quot;: false,
+    &quot;verified&quot;: true,
+    &quot;reviewed_by&quot;: &quot;&quot;,
+    &quot;reviewed_at&quot;: 0,
+    &quot;procs&quot;: [
+        &#123;
+            &quot;id&quot;: 247912,
+            &quot;build_id&quot;: 39862,
+            &quot;pid&quot;: 1,
+            &quot;ppid&quot;: 0,
+            &quot;pgid&quot;: 1,
+            &quot;name&quot;: &quot;&quot;,
+            &quot;state&quot;: &quot;success&quot;,
+            &quot;exit_code&quot;: 0,
+            &quot;start_time&quot;: 1576636850,
+            &quot;end_time&quot;: 1576639053,
+            &quot;machine&quot;: &quot;21e73ce43038&quot;,
+            &quot;children&quot;: [
+                &#123;
+                    &quot;id&quot;: 247913,
+                    &quot;build_id&quot;: 39862,
+                    &quot;pid&quot;: 2,
+                    &quot;ppid&quot;: 1,
+                    &quot;pgid&quot;: 2,
+                    &quot;name&quot;: &quot;clone&quot;,
+                    &quot;state&quot;: &quot;success&quot;,
+                    &quot;exit_code&quot;: 0,
+                    &quot;start_time&quot;: 1576636853,
+                    &quot;end_time&quot;: 1576636933,
+                    &quot;machine&quot;: &quot;21e73ce43038&quot;
+&#125;,
+                &#123;
+                    &quot;id&quot;: 247914,
+                    &quot;build_id&quot;: 39862,
+                    &quot;pid&quot;: 3,
+                    &quot;ppid&quot;: 1,
+                    &quot;pgid&quot;: 3,
+                    &quot;name&quot;: &quot;build&quot;,
+                    &quot;state&quot;: &quot;success&quot;,
+                    &quot;exit_code&quot;: 0,
+                    &quot;start_time&quot;: 1576636933,
+                    &quot;end_time&quot;: 1576636998,
+                    &quot;machine&quot;: &quot;21e73ce43038&quot;
+&#125;
+]
+&#125;
+]
+&#125;
+</code></pre>
+<p>procs 是构建的步骤，记住pid，获取构建日志有用</p>
+<h3 id="构建日志"><a href="#构建日志" class="headerlink" title="构建日志"></a>构建日志</h3><p>获取构建日志，需要传入{log} 和 {pid}, log是上面的{build}，{pid}是上一步返回的pid</p>
+<pre><code>GET /api/repos/&#123;owner&#125;/&#123;repo&#125;/logs/&#123;log&#125;/&#123;pid&#125;
+</code></pre>
+<p>响应正文示例：</p>
+<pre><code>[
+  &#123;
+    &quot;proc&quot;: &quot;clone&quot;,
+    &quot;pos&quot;: 0,
+    &quot;out&quot;: &quot;+ git init\n&quot;
+  &#125;,
+  &#123;
+    &quot;proc&quot;: &quot;clone&quot;,
+    &quot;pos&quot;: 1,
+    &quot;out&quot;: &quot;Initialized empty Git repository in /drone/src/github.com/octocat/hello-world/.git/\n&quot;
+  &#125;,
+  &#123;
+    &quot;proc&quot;: &quot;clone&quot;,
+    &quot;pos&quot;: 2,
+    &quot;out&quot;: &quot;+ git remote add origin https://github.com/octocat/hello-world.git\n&quot;
+  &#125;,
+  &#123;
+    &quot;proc&quot;: &quot;clone&quot;,
+    &quot;pos&quot;: 3,
+    &quot;out&quot;: &quot;+ git fetch --no-tags origin +refs/heads/master:\n&quot;
+  &#125;,
+  &#123;
+    &quot;proc&quot;: &quot;clone&quot;,
+    &quot;pos&quot;: 4,
+    &quot;out&quot;: &quot;From https://github.com/octocat/hello-world\n&quot;
+  &#125;,
+  &#123;
+    &quot;proc&quot;: &quot;clone&quot;,
+    &quot;pos&quot;: 5,
+    &quot;out&quot;: &quot; * branch            master     -&gt; FETCH_HEAD\n&quot;
+  &#125;,
+  &#123;
+    &quot;proc&quot;: &quot;clone&quot;,
+    &quot;pos&quot;: 6,
+    &quot;out&quot;: &quot; * [new branch]      master     -&gt; origin/master\n&quot;
+  &#125;,
+  &#123;
+    &quot;proc&quot;: &quot;clone&quot;,
+    &quot;pos&quot;: 7,
+    &quot;out&quot;: &quot;+ git reset --hard -q 62126a02ffea3dabd7789e5c5407553490973665\n&quot;
+  &#125;,
+  &#123;
+    &quot;proc&quot;: &quot;clone&quot;,
+    &quot;pos&quot;: 8,
+    &quot;out&quot;: &quot;+ git submodule update --init --recursive\n&quot;
+  &#125;
+]
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">644k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>
