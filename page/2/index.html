@@ -187,892 +187,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/01/14/jqpeng-Spring%E4%B8%AD%E7%9A%84@Valid%20%E5%92%8C%20@Validated%E6%B3%A8%E8%A7%A3%E4%BD%A0%E7%94%A8%E5%AF%B9%E4%BA%86%E5%90%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2021/01/14/jqpeng-Spring%E4%B8%AD%E7%9A%84@Valid%20%E5%92%8C%20@Validated%E6%B3%A8%E8%A7%A3%E4%BD%A0%E7%94%A8%E5%AF%B9%E4%BA%86%E5%90%97/" class="post-title-link" itemprop="url">Spring中的@Valid 和 @Validated注解你用对了吗</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-14 18:24:00" itemprop="dateCreated datePublished" datetime="2021-01-14T18:24:00+08:00">2021-01-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/spring-valid.html">Spring中的@Valid 和 @Validated注解你用对了吗</a></p>
-<h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1.概述"></a>1.概述</h2><p>本文我们将重点介绍Spring中 <a target="_blank" rel="noopener" href="https://docs.oracle.com/javaee/7/api/javax/validation/Valid.html">@Valid</a>和<a target="_blank" rel="noopener" href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/validation/annotation/Validated.html">@Validated</a>注解的区别 。</p>
-<p>验证用户输入是否正确是我们应用程序中的常见功能。Spring提供了<code>@Valid</code>和@<code>Validated</code>两个注解来实现验证功能，下面我们来详细介绍它们。</p>
-<h2 id="2-Valid和-Validate注解"><a href="#2-Valid和-Validate注解" class="headerlink" title="2. @Valid和@Validate注解"></a>2. @Valid和@Validate注解</h2><p>在Spring中，我们使用<code>@Valid</code> 注解进行方法级别验证，同时还能用它来标记成员属性以进行验证。</p>
-<p>但是，此注释不支持分组验证。<code>@Validated</code>则支持分组验证。</p>
-<h2 id="3-例子"><a href="#3-例子" class="headerlink" title="3.例子"></a>3.例子</h2><p>让我们考虑一个使用Spring Boot开发的简单用户注册表单。首先，我们只有<code>名称</code>和<code>密码</code>属性：</p>
-<pre><code>public class UserAccount &#123;
-
-    @NotNull
-    @Size(min = 4, max = 15)
-    private String password;
-
-    @NotBlank
-    private String name;
-
-    // standard constructors / setters / getters / toString
-
-&#125;
-</code></pre>
-<p>接下来，让我们看一下控制器。在这里，我们将使用带有<code>@Valid</code>批注的<code>saveBasicInfo</code>方法来验证用户输入：</p>
-<pre><code>@RequestMapping(value = &quot;/saveBasicInfo&quot;, method = RequestMethod.POST)
-public String saveBasicInfo(
-  @Valid @ModelAttribute(&quot;useraccount&quot;) UserAccount useraccount, 
-  BindingResult result, 
-  ModelMap model) &#123;
-    if (result.hasErrors()) &#123;
-        return &quot;error&quot;;
-    &#125;
-    return &quot;success&quot;;
-&#125;
-</code></pre>
-<p>现在让我们测试一下这个方法：</p>
-<pre><code>@Test
-public void givenSaveBasicInfo_whenCorrectInput`thenSuccess() throws Exception &#123;
-    this.mockMvc.perform(MockMvcRequestBuilders.post(&quot;/saveBasicInfo&quot;)
-      .accept(MediaType.TEXT_HTML)
-      .param(&quot;name&quot;, &quot;test123&quot;)
-      .param(&quot;password&quot;, &quot;pass&quot;))
-      .andExpect(view().name(&quot;success&quot;))
-      .andExpect(status().isOk())
-      .andDo(print());
-&#125;
-</code></pre>
-<p>在确认测试成功运行之后，现在让我们扩展功能。下一步的逻辑步骤是将其转换为多步骤注册表格，就像大多数向导一样。第一步，<code>名称</code>和<code>密码</code>保持不变。在第二步中，我们将获取其他信息，例如<code>age</code> 和 <code>phone</code>。因此，我们将使用以下其他字段更新域对象：</p>
-<pre><code>public class UserAccount &#123;
-
-    @NotNull
-    @Size(min = 4, max = 15)
-    private String password;
-
-    @NotBlank
-    private String name;
-
-    @Min(value = 18, message = &quot;Age should not be less than 18&quot;)
-    private int age;
-
-    @NotBlank
-    private String phone;
-
-    // standard constructors / setters / getters / toString   
-
-&#125;
-</code></pre>
-<p>但是，这一次，我们将注意到先前的测试失败。这是因为我们没有传递<code>年龄</code>和<code>电话</code>字段。</p>
-<p>为了支持此行为，我们引入支持分组验证的<code>@Validated</code>批注。</p>
-<p><code>分组验证</code>,就是将字段分组，分别验证，比如我们将用户信息分为两组：<code>BasicInfo</code>和<code>AdvanceInfo</code></p>
-<p>可以建立两个空接口：</p>
-<pre><code>public interface BasicInfo &#123;
-&#125;
-
-
-
-public interface AdvanceInfo &#123;
-&#125;
-</code></pre>
-<p>第一步将具有<code>BasicInfo</code>接口，第二步 将具有<code>AdvanceInfo</code>  。此外，我们将更新<code>UserAccount</code>类以使用这些标记接口，如下所示：</p>
-<pre><code>public class UserAccount &#123;
-
-    @NotNull(groups = BasicInfo.class)
-    @Size(min = 4, max = 15, groups = BasicInfo.class)
-    private String password;
-
-    @NotBlank(groups = BasicInfo.class)
-    private String name;
-
-    @Min(value = 18, message = &quot;Age should not be less than 18&quot;, groups = AdvanceInfo.class)
-    private int age;
-
-    @NotBlank(groups = AdvanceInfo.class)
-    private String phone;
-
-    // standard constructors / setters / getters / toString   
-
-&#125;
-</code></pre>
-<p>另外，我们现在将更新控制器以使用<code>@Validated</code>注释而不是<code>@Valid</code>：</p>
-<pre><code>@RequestMapping(value = &quot;/saveBasicInfoStep1&quot;, method = RequestMethod.POST)
-public String saveBasicInfoStep1(
-  @Validated(BasicInfo.class) 
-  @ModelAttribute(&quot;useraccount&quot;) UserAccount useraccount, 
-  BindingResult result, ModelMap model) &#123;
-    if (result.hasErrors()) &#123;
-        return &quot;error&quot;;
-    &#125;
-    return &quot;success&quot;;
-&#125;
-</code></pre>
-<p>更新后，再次执行测试，现在可以成功运行。现在，我们还要测试这个新方法：</p>
-<pre><code>@Test
-public void givenSaveBasicInfoStep1`whenCorrectInput`thenSuccess() throws Exception &#123;
-    this.mockMvc.perform(MockMvcRequestBuilders.post(&quot;/saveBasicInfoStep1&quot;)
-      .accept(MediaType.TEXT_HTML)
-      .param(&quot;name&quot;, &quot;test123&quot;)
-      .param(&quot;password&quot;, &quot;pass&quot;))
-      .andExpect(view().name(&quot;success&quot;))
-      .andExpect(status().isOk())
-      .andDo(print());
-&#125;
-</code></pre>
-<p>也成功运行！</p>
-<p>接下来，让我们看看<code>@Valid</code>对于触发嵌套属性验证是必不可少的。</p>
-<h2 id="4-使用-Valid批注标记嵌套对象"><a href="#4-使用-Valid批注标记嵌套对象" class="headerlink" title="4.使用@Valid批注标记嵌套对象"></a>4.使用<code>@Valid</code>批注标记嵌套对象</h2><p>@Valid 可以用于嵌套对象。例如，在我们当前的场景中，让我们创建一个 <code>UserAddress </code>对象：</p>
-<pre><code>public class UserAddress &#123;
-
-    @NotBlank
-    private String countryCode;
-
-    // standard constructors / setters / getters / toString
-&#125;
-</code></pre>
-<p>为了确保验证此嵌套对象，我们将使用<code>@Valid</code>批注装饰属性：</p>
-<pre><code>public class UserAccount &#123;
-
-    //...
-
-    @Valid
-    @NotNull(groups = AdvanceInfo.class)
-    private UserAddress useraddress;
-
-    // standard constructors / setters / getters / toString 
-&#125;
-</code></pre>
-<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5. 总结"></a>5. 总结</h2><p><code>@Valid</code>保证了整个对象的验证, 但是它是对整个对象进行验证，当仅需要部分验证的时候就会出现问题。 这时候，可以使用<code>@Validated</code> 进行分组验证。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://www.baeldung.com/spring-valid-vs-validated">https://www.baeldung.com/spring-valid-vs-validated</a></li>
-</ul>
-<hr>
-<blockquote>
-<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/12/09/jqpeng-hugegraph%20%E5%AD%98%E5%8F%96%E6%95%B0%E6%8D%AE%E8%A7%A3%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2020/12/09/jqpeng-hugegraph%20%E5%AD%98%E5%8F%96%E6%95%B0%E6%8D%AE%E8%A7%A3%E6%9E%90/" class="post-title-link" itemprop="url">hugegraph 存取数据解析</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-09 11:58:00" itemprop="dateCreated datePublished" datetime="2020-12-09T11:58:00+08:00">2020-12-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>8.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>8 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/hugegraph-storage.html">hugegraph 存取数据解析</a></p>
-<p>hugegraph 是百度开源的图数据库，支持hbase，mysql，rocksdb等作为存储后端。本文以EDGE 存储，hbase为存储后端，来探索hugegraph是如何存取数据的。</p>
-<h2 id="存数据"><a href="#存数据" class="headerlink" title="存数据"></a>存数据</h2><h3 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h3><p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/12/9/1607480289186.png" alt="Edge"></p>
-<p>首先需要序列化，<code>hbase</code> 使用BinarySerializer:</p>
-<ul>
-<li>keyWithIdPrefix 和indexWithIdPrefix都是false</li>
-</ul>
-<p>这个后面会用到。</p>
-<pre><code>public class HbaseSerializer extends BinarySerializer &#123;
-
-    public HbaseSerializer() &#123;
-        super(false, true);
-    &#125;
-&#125;
-</code></pre>
-<p>要存到db，首先需要序列化为BackendEntry，<code>BackendEntry</code> 是图数据库和后端存储的传输对象，Hbase对应的是<code>BinaryBackendEntry</code>:</p>
-<pre><code>public class BinaryBackendEntry implements BackendEntry &#123;
-
-    private static final byte[] EMPTY_BYTES = new byte[]&#123;&#125;;
-
-    private final HugeType type;
-    private final BinaryId id;
-    private Id subId;
-    private final List&lt;BackendColumn&gt; columns;
-    private long ttl;
-
-    public BinaryBackendEntry(HugeType type, byte[] bytes) &#123;
-        this(type, BytesBuffer.wrap(bytes).parseId(type));
-    &#125;
-
-    public BinaryBackendEntry(HugeType type, BinaryId id) &#123;
-        this.type = type;
-        this.id = id;
-        this.subId = null;
-        this.columns = new ArrayList&lt;&gt;();
-        this.ttl = 0L;
-    &#125;
-</code></pre>
-<p>我们来看序列化，序列化，其实就是要将数据放到entry的column列里。</p>
-<ul>
-<li><code>hbase</code> 的<code>keyWithIdPrefix</code>是false，因此<code>name</code>不包含ownerVertexId（参考下面的EdgeId，去掉ownerVertexId）</li>
-</ul>
-<pre><code> public BackendEntry writeEdge(HugeEdge edge) &#123;
-        BinaryBackendEntry entry = newBackendEntry(edge);
-        byte[] name = this.keyWithIdPrefix ?
-                      this.formatEdgeName(edge) : EMPTY_BYTES;
-        byte[] value = this.formatEdgeValue(edge);
-        entry.column(name, value);
-
-        if (edge.hasTtl()) &#123;
-            entry.ttl(edge.ttl());
-        &#125;
-
-        return entry;
-    &#125;
-</code></pre>
-<p>EdgeId：</p>
-<pre><code>    private final Id ownerVertexId;
-    private final Directions direction;
-    private final Id edgeLabelId;
-    private final String sortValues;
-    private final Id otherVertexId;
-
-    private final boolean directed;
-    private String cache;
-</code></pre>
-<h3 id="backend-存储"><a href="#backend-存储" class="headerlink" title="backend 存储"></a>backend 存储</h3><p>生成BackendEntry后，通过store机制，交给后端的backend存储。</p>
-<p>EDGE的保存，对应HbaseTables.Edge:</p>
-<pre><code>public static class Edge extends HbaseTable &#123;
-
-        @Override
-        public void insert(Session session, BackendEntry entry) &#123;
-            long ttl = entry.ttl();
-            if (ttl == 0L) &#123;
-                session.put(this.table(), CF, entry.id().asBytes(),
-                            entry.columns());
-            &#125; else &#123;
-                session.put(this.table(), CF, entry.id().asBytes(),
-                            entry.columns(), ttl);
-            &#125;
-        &#125;
-&#125;
-</code></pre>
-<p>CF 是固定的f：</p>
-<pre><code>    protected static final byte[] CF = &quot;f&quot;.getBytes();
-</code></pre>
-<p><code>session.put</code> 对应：</p>
-<pre><code> @Override
-        public void put(String table, byte[] family, byte[] rowkey,
-                        Collection&lt;BackendColumn&gt; columns) &#123;
-            Put put = new Put(rowkey);
-            for (BackendColumn column : columns) &#123;
-                put.addColumn(family, column.name, column.value);
-            &#125;
-            this.batch(table, put);
-        &#125;
-</code></pre>
-<p>可以看出，存储时，edgeid作为<code>rowkey</code>，然后把去除<code>ownerVertexId</code>后的<code>edgeid</code>作为<code>column.name</code></p>
-<h2 id="EDGE-读取"><a href="#EDGE-读取" class="headerlink" title="EDGE 读取"></a>EDGE 读取</h2><h3 id="从backend读取BackendEntry"><a href="#从backend读取BackendEntry" class="headerlink" title="从backend读取BackendEntry"></a>从backend读取BackendEntry</h3><p>读取就是从hbase读取result，转换为BinaryBackendEntry，再转成Edge。</p>
-<p>读取，是scan的过程：</p>
-<pre><code> /**
-         * Inner scan: send scan request to HBase and get iterator
-         */
-        @Override
-        public RowIterator scan(String table, Scan scan) &#123;
-            assert !this.hasChanges();
-
-            try (Table htable = table(table)) &#123;
-                return new RowIterator(htable.getScanner(scan));
-            &#125; catch (IOException e) &#123;
-                throw new BackendException(e);
-            &#125;
-        &#125;
-</code></pre>
-<p>scan后，返回<code>BackendEntryIterator</code></p>
-<pre><code>protected BackendEntryIterator newEntryIterator(Query query,
-                                                    RowIterator rows) &#123;
-        return new BinaryEntryIterator&lt;&gt;(rows, query, (entry, row) -&gt; &#123;
-            E.checkState(!row.isEmpty(), &quot;Can&#39;t parse empty HBase result&quot;);
-            byte[] id = row.getRow();
-            if (entry == null || !Bytes.prefixWith(id, entry.id().asBytes())) &#123;
-                HugeType type = query.resultType();
-                // NOTE: only support BinaryBackendEntry currently
-                entry = new BinaryBackendEntry(type, id);
-            &#125;
-            try &#123;
-                this.parseRowColumns(row, entry, query);
-            &#125; catch (IOException e) &#123;
-                throw new BackendException(&quot;Failed to read HBase columns&quot;, e);
-            &#125;
-            return entry;
-        &#125;);
-    &#125;
-</code></pre>
-<p>注意，<code>new BinaryBackendEntry(type, id)</code> 时，BinaryBackendEntry的id并不是<code>rowkey</code>，而是对rowkey做了处理：</p>
-<pre><code>public BinaryId parseId(HugeType type) &#123;
-        if (type.isIndex()) &#123;
-            return this.readIndexId(type);
-        &#125;
-        // Parse id from bytes
-        int start = this.buffer.position();
-        /*
-         * Since edge id in edges table doesn&#39;t prefix with leading 0x7e,
-         * so readId() will return the source vertex id instead of edge id,
-         * can&#39;t call: type.isEdge() ? this.readEdgeId() : this.readId();
-         */
-        Id id = this.readId();
-        int end = this.buffer.position();
-        int len = end - start;
-        byte[] bytes = new byte[len];
-        System.arraycopy(this.array(), start, bytes, 0, len);
-        return new BinaryId(bytes, id);
-    &#125;
-</code></pre>
-<p>这里是先读取ownervertexId作为Id部分, 然后将剩余的直接放入bytes，组合成BinaryId，和序列化的时候有差别，为什么这么设计呢？原来不管是vertex还是edge，都是当成Vertex来读取的。</p>
-<pre><code>protected final BinaryBackendEntry newBackendEntry(HugeEdge edge) &#123;
-        BinaryId id = new BinaryId(formatEdgeName(edge),
-                                   edge.idWithDirection());
-        return newBackendEntry(edge.type(), id);
-    &#125;
-
-public EdgeId directed(boolean directed) &#123;
-    return new EdgeId(this.ownerVertexId, this.direction, this.edgeLabelId,
-                      this.sortValues, this.otherVertexId, directed);
-&#125;
-</code></pre>
-<p>序列化的时候是<code>EdgeId</code>。</p>
-<p><code>BackendEntryIterator</code>迭代器支持对结果进行merge, 上面代码里的<code>!Bytes.prefixWith(id, entry.id().asBytes()))</code> 就是对比是否是同一个ownervertex，如果是同一个，则放到同一个BackendEntry的Columns里。</p>
-<pre><code>     public BinaryEntryIterator(BackendIterator&lt;Elem&gt; results, Query query,
-                               BiFunction&lt;BackendEntry, Elem, BackendEntry&gt; m)
-
-    @Override
-    protected final boolean fetch() &#123;
-        assert this.current == null;
-        if (this.next != null) &#123;
-            this.current = this.next;
-            this.next = null;
-        &#125;
-
-        while (this.results.hasNext()) &#123;
-            Elem elem = this.results.next();
-            BackendEntry merged = this.merger.apply(this.current, elem);
-            E.checkState(merged != null, &quot;Error when merging entry&quot;);
-            if (this.current == null) &#123;
-                // The first time to read
-                this.current = merged;
-            &#125; else if (merged == this.current) &#123;
-                // The next entry belongs to the current entry
-                assert this.current != null;
-                if (this.sizeOf(this.current) &gt;= INLINE_BATCH_SIZE) &#123;
-                    break;
-                &#125;
-            &#125; else &#123;
-                // New entry
-                assert this.next == null;
-                this.next = merged;
-                break;
-            &#125;
-
-            // When limit exceed, stop fetching
-            if (this.reachLimit(this.fetched() - 1)) &#123;
-                // Need remove last one because fetched limit + 1 records
-                this.removeLastRecord();
-                this.results.close();
-                break;
-            &#125;
-        &#125;
-
-        return this.current != null;
-    &#125;
-</code></pre>
-<h3 id="从BackendEntry转换为edge"><a href="#从BackendEntry转换为edge" class="headerlink" title="从BackendEntry转换为edge"></a>从BackendEntry转换为edge</h3><p>然后再来看读取数据<code>readVertex</code>，前面说了，就算是edge，其实也是当vertex来读取的：</p>
-<pre><code> @Override
-    public HugeVertex readVertex(HugeGraph graph, BackendEntry bytesEntry) &#123;
-        if (bytesEntry == null) &#123;
-            return null;
-        &#125;
-        BinaryBackendEntry entry = this.convertEntry(bytesEntry);
-
-        // Parse id
-        Id id = entry.id().origin();
-        Id vid = id.edge() ? ((EdgeId) id).ownerVertexId() : id;
-        HugeVertex vertex = new HugeVertex(graph, vid, VertexLabel.NONE);
-
-        // Parse all properties and edges of a Vertex
-        for (BackendColumn col : entry.columns()) &#123;
-            if (entry.type().isEdge()) &#123;
-                // NOTE: the entry id type is vertex even if entry type is edge
-                // Parse vertex edges
-                this.parseColumn(col, vertex);
-            &#125; else &#123;
-                assert entry.type().isVertex();
-                // Parse vertex properties
-                assert entry.columnsSize() == 1 : entry.columnsSize();
-                this.parseVertex(col.value, vertex);
-            &#125;
-        &#125;
-
-        return vertex;
-    &#125;
-</code></pre>
-<p>逻辑：</p>
-<ul>
-<li>先读取ownervertexid，生成HugeVertex，这个时候只知道id，不知道vertexlabel，所以设置为VertexLabel.NONE</li>
-<li>然后，读取BackendColumn，一个edge，一个Column（name是edgeid去除ownervertexid后的部分，value是边数据）</li>
-</ul>
-<p>读取是在<code>parseColumn</code>:</p>
-<pre><code>protected void parseColumn(BackendColumn col, HugeVertex vertex) &#123;
-        BytesBuffer buffer = BytesBuffer.wrap(col.name);
-        Id id = this.keyWithIdPrefix ? buffer.readId() : vertex.id();
-        E.checkState(buffer.remaining() &gt; 0, &quot;Missing column type&quot;);
-        byte type = buffer.read();
-        // Parse property
-        if (type == HugeType.PROPERTY.code()) &#123;
-            Id pkeyId = buffer.readId();
-            this.parseProperty(pkeyId, BytesBuffer.wrap(col.value), vertex);
-        &#125;
-        // Parse edge
-        else if (type == HugeType.EDGE_IN.code() ||
-                 type == HugeType.EDGE_OUT.code()) &#123;
-            this.parseEdge(col, vertex, vertex.graph());
-        &#125;
-        // Parse system property
-        else if (type == HugeType.SYS_PROPERTY.code()) &#123;
-            // pass
-        &#125;
-        // Invalid entry
-        else &#123;
-            E.checkState(false, &quot;Invalid entry(%s) with unknown type(%s): 0x%s&quot;,
-                         id, type &amp; 0xff, Bytes.toHex(col.name));
-        &#125;
-    &#125;
-</code></pre>
-<p>从``col.name`读取type，如果是edge，则parseEdge:</p>
-<pre><code>protected void parseEdge(BackendColumn col, HugeVertex vertex,
-                             HugeGraph graph) &#123;
-        // owner-vertex + dir + edge-label + sort-values + other-vertex
-
-        BytesBuffer buffer = BytesBuffer.wrap(col.name);
-        if (this.keyWithIdPrefix) &#123;
-            // Consume owner-vertex id
-            buffer.readId();
-        &#125;
-        byte type = buffer.read();
-        Id labelId = buffer.readId();
-        String sortValues = buffer.readStringWithEnding();
-        Id otherVertexId = buffer.readId();
-
-        boolean direction = EdgeId.isOutDirectionFromCode(type);
-        EdgeLabel edgeLabel = graph.edgeLabelOrNone(labelId);
-
-        // Construct edge
-        HugeEdge edge = HugeEdge.constructEdge(vertex, direction, edgeLabel,
-                                               sortValues, otherVertexId);
-
-        // Parse edge-id + edge-properties
-        buffer = BytesBuffer.wrap(col.value);
-
-        //Id id = buffer.readId();
-
-        // Parse edge properties
-        this.parseProperties(buffer, edge);
-
-        // Parse edge expired time if needed
-        if (edge.hasTtl()) &#123;
-            this.parseExpiredTime(buffer, edge);
-        &#125;
-    &#125;
-</code></pre>
-<p>从col.name依次读取出type,labelId,sortValues和otherVertexId：</p>
-<pre><code>        byte type = buffer.read();
-        Id labelId = buffer.readId();
-        String sortValues = buffer.readStringWithEnding();
-        Id otherVertexId = buffer.readId();
-</code></pre>
-<p>然后根据labelid找到  <code>EdgeLabel edgeLabel = graph.edgeLabelOrNone(labelId);</code></p>
-<p>创建<code>edge</code>, 解析边属性<code>parseProperties</code></p>
-<p>最后读取<code>Ttl</code>, 处理结果的时候，会过滤过期数据。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/11/18/jqpeng-spring%20boot%E5%AE%9E%E7%8E%B0%E8%B6%85%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%BD%91%E5%85%B3%EF%BC%88%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E3%80%81%E8%BD%AC%E5%8F%91%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2020/11/18/jqpeng-spring%20boot%E5%AE%9E%E7%8E%B0%E8%B6%85%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%BD%91%E5%85%B3%EF%BC%88%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E3%80%81%E8%BD%AC%E5%8F%91%EF%BC%89/" class="post-title-link" itemprop="url">spring boot实现超轻量级网关（反向代理、转发）</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-18 10:11:00" itemprop="dateCreated datePublished" datetime="2020-11-18T10:11:00+08:00">2020-11-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/spring-boot-route.html">spring boot实现超轻量级网关（反向代理、转发）</a></p>
-<p>在我们的rest服务中，需要暴露一个中间件的接口给用户，但是需要经过rest服务的认证，这是典型的网关使用场景。可以引入网关组件来搞定，但是引入zuul等中间件会增加系统复杂性，这里实现一个超轻量级的网关，只实现请求转发，认证等由rest服务的spring security来搞定。</p>
-<p>如何进行请求转发呢？ 熟悉网络请求的同学应该很清楚，请求无非就是请求方式、HTTP header，以及请求body，我们将这些信息取出来，透传给转发的url即可。</p>
-<p>举例：</p>
-<p>/graphdb/**   转发到 Graph_Server/**</p>
-<h2 id="获取转发目的地址："><a href="#获取转发目的地址：" class="headerlink" title="获取转发目的地址："></a>获取转发目的地址：</h2><pre><code>private String createRedictUrl(HttpServletRequest request, String routeUrl, String prefix) &#123;
-        String queryString = request.getQueryString();
-        return routeUrl + request.getRequestURI().replace(prefix, &quot;&quot;) +
-                (queryString != null ? &quot;?&quot; + queryString : &quot;&quot;);
-    &#125;
-</code></pre>
-<h2 id="解析请求头和内容"><a href="#解析请求头和内容" class="headerlink" title="解析请求头和内容"></a>解析请求头和内容</h2><p>然后从request中提取出header、body等内容，构造一个<code>RequestEntity</code>，后续可以用<code>RestTemplate</code>来请求。</p>
-<pre><code>private RequestEntity createRequestEntity(HttpServletRequest request, String url) throws URISyntaxException, IOException &#123;
-        String method = request.getMethod();
-        HttpMethod httpMethod = HttpMethod.resolve(method);
-        MultiValueMap&lt;String, String&gt; headers = parseRequestHeader(request);
-        byte[] body = parseRequestBody(request);
-        return new RequestEntity&lt;&gt;(body, headers, httpMethod, new URI(url));
-    &#125;
-
-
-    private byte[] parseRequestBody(HttpServletRequest request) throws IOException &#123;
-        InputStream inputStream = request.getInputStream();
-        return StreamUtils.copyToByteArray(inputStream);
-    &#125;
-
-    private MultiValueMap&lt;String, String&gt; parseRequestHeader(HttpServletRequest request) &#123;
-        HttpHeaders headers = new HttpHeaders();
-        List&lt;String&gt; headerNames = Collections.list(request.getHeaderNames());
-        for (String headerName : headerNames) &#123;
-            List&lt;String&gt; headerValues = Collections.list(request.getHeaders(headerName));
-            for (String headerValue : headerValues) &#123;
-                headers.add(headerName, headerValue);
-            &#125;
-        &#125;
-        return headers;
-    &#125;
-</code></pre>
-<h2 id="透明转发"><a href="#透明转发" class="headerlink" title="透明转发"></a>透明转发</h2><p>最后用<code>RestTemplate</code>来实现请求：</p>
-<pre><code> private ResponseEntity&lt;String&gt; route(RequestEntity requestEntity) &#123;
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.exchange(requestEntity, String.class);
-    &#125;
-</code></pre>
-<h2 id="全部代码"><a href="#全部代码" class="headerlink" title="全部代码"></a>全部代码</h2><p>以下是轻量级转发全部代码：</p>
-<pre><code>import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StreamUtils;
-import org.springframework.web.client.RestTemplate;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.List;
-
-@Service
-public class RoutingDelegate &#123;
-
-
-    public ResponseEntity&lt;String&gt; redirect(HttpServletRequest request, HttpServletResponse response,String routeUrl, String prefix) &#123;
-        try &#123;
-            // build up the redirect URL
-            String redirectUrl = createRedictUrl(request,routeUrl, prefix);
-            RequestEntity requestEntity = createRequestEntity(request, redirectUrl);
-            return route(requestEntity);
-        &#125; catch (Exception e) &#123;
-            return new ResponseEntity(&quot;REDIRECT ERROR&quot;, HttpStatus.INTERNAL_SERVER_ERROR);
-        &#125;
-    &#125;
-
-    private String createRedictUrl(HttpServletRequest request, String routeUrl, String prefix) &#123;
-        String queryString = request.getQueryString();
-        return routeUrl + request.getRequestURI().replace(prefix, &quot;&quot;) +
-                (queryString != null ? &quot;?&quot; + queryString : &quot;&quot;);
-    &#125;
-
-
-    private RequestEntity createRequestEntity(HttpServletRequest request, String url) throws URISyntaxException, IOException &#123;
-        String method = request.getMethod();
-        HttpMethod httpMethod = HttpMethod.resolve(method);
-        MultiValueMap&lt;String, String&gt; headers = parseRequestHeader(request);
-        byte[] body = parseRequestBody(request);
-        return new RequestEntity&lt;&gt;(body, headers, httpMethod, new URI(url));
-    &#125;
-    private ResponseEntity&lt;String&gt; route(RequestEntity requestEntity) &#123;
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.exchange(requestEntity, String.class);
-    &#125;
-
-
-    private byte[] parseRequestBody(HttpServletRequest request) throws IOException &#123;
-        InputStream inputStream = request.getInputStream();
-        return StreamUtils.copyToByteArray(inputStream);
-    &#125;
-
-    private MultiValueMap&lt;String, String&gt; parseRequestHeader(HttpServletRequest request) &#123;
-        HttpHeaders headers = new HttpHeaders();
-        List&lt;String&gt; headerNames = Collections.list(request.getHeaderNames());
-        for (String headerName : headerNames) &#123;
-            List&lt;String&gt; headerValues = Collections.list(request.getHeaders(headerName));
-            for (String headerValue : headerValues) &#123;
-                headers.add(headerName, headerValue);
-            &#125;
-        &#125;
-        return headers;
-    &#125;
-&#125;
-</code></pre>
-<h2 id="Spring-集成"><a href="#Spring-集成" class="headerlink" title="Spring 集成"></a>Spring 集成</h2><p>Spring Controller,RequestMapping里把GET \ POST\PUT\DELETE 支持的请求带上，就能实现转发了。</p>
-<pre><code>@RestController
-@RequestMapping(GraphDBController.DELEGATE_PREFIX)
-@Api(value = &quot;GraphDB&quot;, tags = &#123;
-        &quot;graphdb-Api&quot;
-&#125;)
-public class GraphDBController &#123;
-
-    @Autowired
-    GraphProperties graphProperties;
-
-    public final static String DELEGATE_PREFIX = &quot;/graphdb&quot;;
-
-    @Autowired
-    private RoutingDelegate routingDelegate;
-
-    @RequestMapping(value = &quot;/**&quot;, method = &#123;RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE&#125;, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity catchAll(HttpServletRequest request, HttpServletResponse response) &#123;
-        return routingDelegate.redirect(request, response, graphProperties.getGraphServer(), DELEGATE_PREFIX);
-    &#125;
-&#125;
-</code></pre>
-<hr>
-<blockquote>
-<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/11/17/jqpeng-hugegraph%20%E6%94%AF%E6%8C%81sparql%20%E4%B8%8Ecypher/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1106,7 +220,7 @@ public class GraphDBController &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1282,7 +396,7 @@ public class SparqlAPI extends API &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1516,7 +630,7 @@ RETURN bro.name, dst.name
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1638,7 +752,7 @@ const axiosInstance = axios.create()
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1812,7 +926,7 @@ public class SwaggerConfiguration &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2176,7 +1290,7 @@ Epoch 20/20
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2477,7 +1591,7 @@ Epoch 10/10
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2527,6 +1641,614 @@ Epoch 10/10
 <li>docker升级到最新版本无果</li>
 <li>确定还是iptables的问题，暂时没时间详细排查，于是docker禁用iptables，先卸载iptables，docker启动设置iptables false</li>
 </ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/09/29/jqpeng-%E9%98%BF%E9%87%8C%E5%BC%80%E6%BA%90JDK%20dragonwell8%E5%9C%A8%E5%AE%B9%E5%99%A8%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2020/09/29/jqpeng-%E9%98%BF%E9%87%8C%E5%BC%80%E6%BA%90JDK%20dragonwell8%E5%9C%A8%E5%AE%B9%E5%99%A8%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">阿里开源JDK dragonwell8在容器环境使用</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-29 15:30:00" itemprop="dateCreated datePublished" datetime="2020-09-29T15:30:00+08:00">2020-09-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/dragonwell8-docker.html">阿里开源JDK dragonwell8在容器环境使用</a></p>
+<p>Alibaba Dragonwell 是阿里巴巴的Open JDK 发行版，提供长期支持。 阿里宣传称在阿里生产环境实现了应用。Alibaba Dragonwell兼容 Java SE 标准，因此可以方便切换。</p>
+<h2 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h2><p>可以到<a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases?spm=5176.cndragonwell.0.0.4c5a7568DpYPsp">https://github.com/alibaba/dragonwell8/releases?spm=5176.cndragonwell.0.0.4c5a7568DpYPsp</a> 下载，当前的最新版是8.4.4 GA</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/9/29/1601363568094.png" alt="ali jdk8"></p>
+<p>阿里也提供了镜像下载地址，可以加速下载：</p>
+<blockquote>
+<p>8.4.4GA</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>File name</th>
+<th>中国大陆</th>
+<th>United States</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Alibaba_Dragonwell_8.4.4-GA_Linux_x64.tar.gz</td>
+<td><a target="_blank" rel="noopener" href="https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/Alibaba_Dragonwell_8.4.4-GA_Linux_x64.tar.gz">download</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/download/dragonwell-8.4.4_jdk8u262-ga/Alibaba_Dragonwell_8.4.4-GA_Linux_x64.tar.gz">download</a></td>
+</tr>
+<tr>
+<td>Alibaba_Dragonwell_8.4.4-GA_source.tar.gz</td>
+<td><a target="_blank" rel="noopener" href="https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/Alibaba_Dragonwell_8.4.4-GA_source.tar.gz">download</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/download/dragonwell-8.4.4_jdk8u262-ga/Alibaba_Dragonwell_8.4.4-GA_source.tar.gz">download</a></td>
+</tr>
+<tr>
+<td>Alibaba_Dragonwell_8.4.4-Experimental_Windows_x64.tar.gz</td>
+<td><a target="_blank" rel="noopener" href="https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/Alibaba_Dragonwell_8.4.4-Experimental_Windows_x64.tar.gz">download</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/download/dragonwell-8.4.4_jdk8u262-ga/Alibaba_Dragonwell_8.4.4-Experimental_Windows_x64.tar.gz">download</a></td>
+</tr>
+<tr>
+<td>java8-api-8.4.4-javadoc.jar</td>
+<td><a target="_blank" rel="noopener" href="https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/java8-api-8.4.4-javadoc.jar">download</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/download/dragonwell-8.4.4_jdk8u262-ga/java8-api-8.4.4-javadoc.jar">download</a></td>
+</tr>
+<tr>
+<td>java8-api-8.4.4-sources.jar</td>
+<td><a target="_blank" rel="noopener" href="https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/java8-api-8.4.4-sources.jar">download</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/download/dragonwell-8.4.4_jdk8u262-ga/java8-api-8.4.4-sources.jar">download</a></td>
+</tr>
+<tr>
+<td>java8-api-8.4.4.jar</td>
+<td><a target="_blank" rel="noopener" href="https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/java8-api-8.4.4.jar">download</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/download/dragonwell-8.4.4_jdk8u262-ga/java8-api-8.4.4.jar">download</a></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/releases/tag/dragonwell-8.4.4_jdk8u262-ga">SHA256 checksum</a></p>
+</blockquote>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><pre><code>wget https://dragonwell.oss-cn-shanghai.aliyuncs.com/8/8.4.4-GA/Alibaba_Dragonwell_8.4.4-GA_Linux_x64.tar.gz
+tar zxvf Alibaba_Dragonwell_8.4.4-GA_Linux_x64.tar.gz 
+cd jdk8u262-b10/
+ bin/java -version
+</code></pre>
+<p>输出：</p>
+<pre><code>openjdk version &quot;1.8.0_262&quot;
+OpenJDK Runtime Environment (Alibaba Dragonwell 8.4.4) (build 1.8.0_262-b10)
+OpenJDK 64-Bit Server VM (Alibaba Dragonwell 8.4.4) (build 25.262-b10, mixed mode)
+</code></pre>
+<h2 id="容器环境使用"><a href="#容器环境使用" class="headerlink" title="容器环境使用"></a>容器环境使用</h2><p>我们需要准备一个基础镜像包，我们以openjdk:8-jdk-slim为基础包，把jdk替换为dragonwell8</p>
+<pre><code> FROM openjdk:8-jdk-slim
+ MAINTAINER jadepeng
+ 
+ RUN sed -i &#39;s#http://deb.debian.org#https://mirrors.163.com#g&#39; /etc/apt/sources.list \
+     &amp;&amp; apt-get update\
+     &amp;&amp; apt-get install -y procps unzip curl bash tzdata ttf-dejavu \
+     &amp;&amp; rm -rf /var/cache/apt/ \
+     &amp;&amp; ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+     &amp;&amp; echo &quot;Asia/Shanghai&quot; &gt; /etc/timezone
+ 
+ RUN rm -r -f /usr/local/openjdk-8
+ 
+ ADD jdk8u262-b10  /usr/local/openjdk-8
+</code></pre>
+<p>构建：</p>
+<pre><code>docker build -t dragonwell8:8.4.4 .
+</code></pre>
+<p>java应用就可以用<code>dragonwell8:8.4.4 </code>为底包执行了。</p>
+<h2 id="dragonwell8-协程使用"><a href="#dragonwell8-协程使用" class="headerlink" title="dragonwell8 协程使用"></a>dragonwell8 协程使用</h2><p>dragonwell8的一大特色就是协程（Coroutine ）</p>
+<p>官方有一个demo：</p>
+<p>以一个pingpong 1,000,000次的程序为例，这是一个需要阻塞，切换密集型的应用。</p>
+<pre><code>           o      .   _______ _______
+              \_ 0     /______//______/|   @_o
+                /\_,  /______//______/     /\
+               | \    |      ||      |     / |
+
+static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
+
+public static void main(String[] args) throws Exception &#123;
+    BlockingQueue&lt;Byte&gt; q1 = new LinkedBlockingQueue&lt;&gt;(), q2 = new LinkedBlockingQueue&lt;&gt;();
+    THREAD_POOL.submit(() -&gt; pingpong(q2, q1)); // thread A
+    Future&lt;?&gt; f = THREAD_POOL.submit(() -&gt; pingpong(q1, q2)); // thread B
+    q1.put((byte) 1);
+    System.out.println(f.get() + &quot; ms&quot;);
+&#125;
+
+private static long pingpong(BlockingQueue&lt;Byte&gt; in, BlockingQueue&lt;Byte&gt; out) throws Exception &#123;
+    long start = System.currentTimeMillis();
+    for (int i = 0; i &lt; 1_000_000; i++) out.put(in.take());
+    return System.currentTimeMillis() - start;
+&#125;
+</code></pre>
+<p>运行，查看执行时间:</p>
+<pre><code>$java PingPong
+13212 ms
+
+// 开启Wisp2
+$java -XX:+UseWisp2 -XX:ActiveProcessorCount=1 PingPong
+882 ms
+</code></pre>
+<p>开启Wisp2后整体运行效率提升了近十多倍，只需要启动时增加参数<code>-XX:+UseWisp2</code>即可。不用修改一行代码，即可享受协程带来的优势。</p>
+<p>随后可以通过jstack观察到起来的线程都以协程的方式在运行了。</p>
+<pre><code> - Coroutine [0x7f6d6d60fb20] &quot;Thread-978&quot; #1076 active=1 steal=0 steal_fail=0 preempt=0 park=0/-1
+        at java.dyn.CoroutineSupport.unsafeSymmetricYieldTo(CoroutineSupport.java:138)
+--
+ - Coroutine [0x7f6d6d60f880] &quot;Thread-912&quot; #1009 active=1 steal=0 steal_fail=0 preempt=0 park=0/-1
+        at java.dyn.CoroutineSupport.unsafeSymmetricYieldTo(CoroutineSupport.java:138)
+
+...
+</code></pre>
+<p>可以看到最上方的frame上的方法是协程切换，因为线程调用了sleep，yield出了执行权。</p>
+<p>开启Wisp2后，Java线程不再简单地映射到内核级线程，而是对应到一个协程，JVM在少量内核线上调度大量协程执行，以减少内核的调度开销，提高web服务器的性能。</p>
+<p>在阿里的生产环境，性能指标：</p>
+<ul>
+<li>在复杂的业务应用中(tomcat + 大量基于netty的中间件)我们获得了大约10%的性能提升。</li>
+<li>在中间件应用(数据库代理，MQ)中我们获得大约20%的性能提升。</li>
+</ul>
+<p>更多Wisp的设计实现与API相关信息，请参考<a target="_blank" rel="noopener" href="https://github.com/alibaba/dragonwell8/wiki/Wisp%E6%96%87%E6%A1%A3">Wisp文档</a>。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/08/31/jqpeng-%E6%9D%A5%EF%BC%8C%E6%88%91%E4%BB%AC%E4%B8%80%E8%B5%B7%E6%89%93%E9%80%A0%E4%B8%80%E6%AC%BE%E4%BB%A3%E7%A0%81%E5%91%BD%E5%90%8D%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2020/08/31/jqpeng-%E6%9D%A5%EF%BC%8C%E6%88%91%E4%BB%AC%E4%B8%80%E8%B5%B7%E6%89%93%E9%80%A0%E4%B8%80%E6%AC%BE%E4%BB%A3%E7%A0%81%E5%91%BD%E5%90%8D%E5%B7%A5%E5%85%B7/" class="post-title-link" itemprop="url">来，我们一起打造一款代码命名工具</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-31 20:34:00" itemprop="dateCreated datePublished" datetime="2020-08-31T20:34:00+08:00">2020-08-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/code-naming-tool.html">来，我们一起打造一款代码命名工具</a></p>
+<p>你是否还在为代码命名而纠结不已？</p>
+<blockquote>
+<p>here are only two hard things in Computer Science: cache invalidation and naming things.– Phil Karlton</p>
+</blockquote>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/31/1598875275591.png" alt="代码命名"></p>
+<p>那么如何更好的命名呢？ 是否有好的工具可以支持我们命名呢？网上搜索一圈没有发现满意的，于是自己动手丰衣足食，<a target="_blank" rel="noopener" href="https://jadepeng.gitee.io/code-naming-tool/">https://jadepeng.gitee.io/code-naming-tool/</a>。</p>
+<p>使用方法： 打开网页后，在中文输入框中输入 中文命名，然后回车即可。也可以直接在英文输入框输入英文，搜索候选。</p>
+<h2 id="现有的工具"><a href="#现有的工具" class="headerlink" title="现有的工具"></a>现有的工具</h2><p>unbug.github.io/codelf/ 提供了一个选择，作者先调用有道、百度等翻译，然后调用searchcode搜索代码，从搜索的代码中提取变量名。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/31/1598875386957.png" alt="codeif"></p>
+<p>界面做的很酷，但是推荐出来的变量名称质量参差不齐，失去了参考意义。</p>
+<h2 id="新的思路"><a href="#新的思路" class="headerlink" title="新的思路"></a>新的思路</h2><p>我们常说以史为鉴，换一个思路，我们可以从优秀的开源库中去吸收他们命名的经验，看看他们是如何命名的，来供我们参考。</p>
+<p>实现思路：  </p>
+<ol>
+<li>从spring、apache等代码库，读取变量、方法、类名称  </li>
+<li>根据关键词匹配出候选命名  </li>
+<li>候选结果排序</li>
+</ol>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/31/1598875225454.png" alt="工具"></p>
+<h2 id="获取优秀命名"><a href="#获取优秀命名" class="headerlink" title="获取优秀命名"></a>获取优秀命名</h2><p>要获取命名，首先想到的是读取代码库，需要先下载代码，然后解析  ———— 工作量巨大，PASS。</p>
+<p>那怎么做呢，换个角度，可以通过java的反射来实现。</p>
+<p>首先添加一个辅助库：</p>
+<pre><code>&lt;dependency&gt;
+            &lt;groupId&gt;org.reflections&lt;/groupId&gt;
+            &lt;artifactId&gt;reflections&lt;/artifactId&gt;
+            &lt;version&gt;0.9.12&lt;/version&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>然后初始化Reflections,FilterBuilder可以用来过滤类库，我们设置”org”,”javax”,”com”,”io”, 基本上囊库了主要的开源类库，比如spring，apache等.</p>
+<pre><code> List&lt;ClassLoader&gt; classLoadersList = new LinkedList&lt;ClassLoader&gt;();
+        classLoadersList.add(ClasspathHelper.contextClassLoader());
+        classLoadersList.add(ClasspathHelper.staticClassLoader());
+
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .setScanners(new SubTypesScanner(false), new ResourcesScanner())
+                .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
+                .filterInputsBy(new FilterBuilder().includePackage(&quot;org&quot;,&quot;javax&quot;,&quot;com&quot;,&quot;io&quot;)));
+</code></pre>
+<p>然后，可以通过<code>reflections.getSubTypesOf(Object.class);</code>来获取相关的class了,注意，我们初始化一个<code> Map&lt;String, Integer&gt; name2count = new HashMap&lt;String, Integer&gt;();</code>用来存储代码命名以及对应的出现次数。</p>
+<pre><code>Set&lt;Class&lt;? extends Object&gt;&gt; allClasses =
+                reflections.getSubTypesOf(Object.class);
+        Map&lt;String, Integer&gt; name2count = new HashMap&lt;String, Integer&gt;();
+        for (Class&lt;?&gt; clazz : allClasses) &#123;
+            System.out.println(clazz.getName());
+            try &#123;
+                appendToNameMap(name2count, clazz.getSimpleName());
+
+                Field[] fields = clazz.getDeclaredFields();
+                for (Field field : fields) &#123;
+                    String name = field.getName();
+                    appendToNameMap(name2count, name);
+                &#125;
+                Method[] methods = clazz.getMethods();
+                for (Method method : methods) &#123;
+                    String name = method.getName();
+                    appendToNameMap(name2count, name);
+                    // parameters
+                    Parameter[] parameters =  method.getParameters();
+                    for (Parameter param : parameters) &#123;
+                        name = param.getName();
+                        appendToNameMap(name2count, name);
+                    &#125;
+                &#125;
+            &#125;catch(Throwable t)
+            &#123; &#125;
+</code></pre>
+<p>其中<code>appendToNameMap</code>:</p>
+<pre><code> private static void appendToNameMap(Map&lt;String, Integer&gt; name2count, String name) &#123;
+        // filter
+        if(name.contains(&quot;-&quot;) || name.contains(&quot;_&quot;)|| name.contains(&quot;$&quot;))&#123;
+            return;
+        &#125;
+
+        if (!name2count.containsKey(name)) &#123;
+            name2count.put(name, 1);
+        &#125; else &#123;
+            name2count.put(name, name2count.get(name) +1);
+        &#125;
+    &#125;
+</code></pre>
+<p>最后把结果存储到文件，作为我们的资源。</p>
+<pre><code>FileUtils.writeAllText(JSON.toJSONString(name2count), new File(&quot;name2count.txt&quot;));
+</code></pre>
+<p>可以到<code>https://gitee.com/jadepeng/code-naming-tool/blob/master/vars.js</code>查看结果。</p>
+<h2 id="命名推荐"><a href="#命名推荐" class="headerlink" title="命名推荐"></a>命名推荐</h2><p>命名推荐，还是遵循，先翻译，然后根据翻译结果搜索并召回。</p>
+<p>其中翻译直接调用网易有道的，但是搜索如何搞定呢？</p>
+<p>最简单的方法，肯定是分词，然后建立索引，lucene是标配。但是上lucene就要上服务器，PASS!</p>
+<p>我们来找一个浏览器端的lucene，google 后选定<code>flexsearch</code>.</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/31/1598876259412.png" alt="flexsearch"></p>
+<p>flexsearch github上有6.5k star，因此优先选择。</p>
+<p>下面来看具体的实现。</p>
+<h3 id="建立索引"><a href="#建立索引" class="headerlink" title="建立索引"></a>建立索引</h3><p>初始化FlexSearch，然后将之前获取的代码命名建立索引。</p>
+<pre><code> var index = new FlexSearch(&#123;
+            encode: &quot;advanced&quot;,
+            tokenize: &quot;reverse&quot;,
+            suggest: true,
+            cache: true
+        &#125;)
+        var data = []
+        var i = 0
+        for (var name in names) &#123;
+            var indexName = name.replace(/([A-Z])/g, &quot; $1&quot;)
+            data[i] = &#123;
+                &quot;name&quot;: name,
+                &quot;count&quot;: names[name]
+            &#125;
+            index.add(i++, indexName)
+        &#125;
+</code></pre>
+<p>这里有个小技巧，<code>name.replace(/([A-Z])/g, &quot; $1&quot;)</code> 可以将驼峰命名拆分成单词。<br> 同时data数组会保存所有的命名和响应的出现次数。</p>
+<h3 id="搜索候选"><a href="#搜索候选" class="headerlink" title="搜索候选"></a>搜索候选</h3><p>先翻译，然后将翻译结果给FlexSearch搜索。</p>
+<pre><code>function searchFromIndex(value) &#123;
+        var results = index.search(value, 25)
+    
+        results = results.map(function (i) &#123;
+            return data[i]
+        &#125;)
+    
+        results = results.sort(function (a, b) &#123;
+            return b.count - a.count
+        &#125;)
+        return results
+    &#125;
+</code></pre>
+<p>先搜索，出来的结果是data中的index序号，转换为list对象，然后按照count倒排。</p>
+<p>tips： 理论上，翻译的结果可以去除一些停用词，搜索效果应该更好，这里先放着。</p>
+<h3 id="显示结果"><a href="#显示结果" class="headerlink" title="显示结果"></a>显示结果</h3><p>对结果进行格式化：</p>
+<pre><code>function formatSuggestion(item)&#123;
+    return `$&#123;item.name&#125; &lt;span class=&#39;tips&#39;&gt;代码库共出现$&#123;item.count&#125;次 (相关搜索： &lt;a target=&#39;_blank&#39; href=&#39;https://unbug.github.io/codelf/#$&#123;item.name&#125;&#39;&gt;codelf&lt;/a&gt; &amp;nbsp; &lt;a target=&#39;_blank&#39; href=&#39;https://searchcode.com/?q=$&#123;item.name&#125;&amp;lan=23&#39;&gt;searchcode&lt;/a&gt;)&lt;/span&gt;`;
+&#125;
+</code></pre>
+<p>增加到codelf 和 searchcode的链接，显示结果如下：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/8/31/1598877282579.png" alt="搜索结果"></p>
+<h2 id="开源地址"><a href="#开源地址" class="headerlink" title="开源地址"></a>开源地址</h2><ul>
+<li>github:  <a target="_blank" rel="noopener" href="https://github.com/jadepeng/code-naming-tool">https://github.com/jadepeng/code-naming-tool</a></li>
+<li>gitee:  <a target="_blank" rel="noopener" href="https://gitee.com/jadepeng/code-naming-tool">https://gitee.com/jadepeng/code-naming-tool</a></li>
+</ul>
+<p>命名工具地址： <a target="_blank" rel="noopener" href="https://jadepeng.gitee.io/code-naming-tool/">https://jadepeng.gitee.io/code-naming-tool/</a></p>
+<p>欢迎大家体验使用，欢迎fork并贡献代码。</p>
+<h2 id="后续展望"><a href="#后续展望" class="headerlink" title="后续展望"></a>后续展望</h2><p>当前仅仅用到了翻译+搜索，还有很多可以优化的地方：</p>
+<ul>
+<li>搜索去停用词</li>
+<li>从文本语义相似度层面去推荐</li>
+<li>专业术语支持</li>
+</ul>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/08/27/jqpeng-%E8%AE%B0%E4%B8%80%E6%AC%A1keepalived%E5%92%8CVIP%E5%AF%BC%E8%87%B4%E7%9A%84%E6%95%85%E9%9A%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2020/08/27/jqpeng-%E8%AE%B0%E4%B8%80%E6%AC%A1keepalived%E5%92%8CVIP%E5%AF%BC%E8%87%B4%E7%9A%84%E6%95%85%E9%9A%9C/" class="post-title-link" itemprop="url">记一次keepalived和VIP导致的故障</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-27 10:33:00" itemprop="dateCreated datePublished" datetime="2020-08-27T10:33:00+08:00">2020-08-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/keepalived.html">记一次keepalived和VIP导致的故障</a></p>
+<h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>nginx服务器采用的keepalived+vip实现的双活，最近由于一台服务器有问题，更换了一台nginx：</p>
+<p>操作：</p>
+<ul>
+<li>停止有问题服务器keepalived和nginx</li>
+<li>新服务器部署keepalived和nginx</li>
+</ul>
+<p>更换后一切正常，但是过了几个小时，出现大面积的不能访问。</p>
+<h2 id="keepalived-升级"><a href="#keepalived-升级" class="headerlink" title="keepalived 升级"></a>keepalived 升级</h2><p>检查nginx正常，重启keepalived后OK，怀疑可能是keepalived的问题，于是编译安装最新的keepalived：</p>
+<pre><code>curl --progress http://keepalived.org/software/keepalived-1.2.15.tar.gz | tar xz
+cd keepalived-1.2.15
+./configure --prefix=/usr/local/keepalived-1.2.15
+make
+sudo make install
+</code></pre>
+<p>升级后，一切正常,。</p>
+<h2 id="再出故障，最终定位"><a href="#再出故障，最终定位" class="headerlink" title="再出故障，最终定位"></a>再出故障，最终定位</h2><p>一晚过去无异常，第二天又出现部分域名不能访问，检查服务一切正常，因此怀疑是VIP导致的问题，检查之前有问题服务器的ip：</p>
+<pre><code>ip addr
+</code></pre>
+<p>果不其然：</p>
+<pre><code>2: eno1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 90:b1:1c:2a:92:e4 brd ff:ff:ff:ff:ff:ff
+    inet 172.31.161.42/32 scope global eno1
+       valid_lft forever preferred_lft forever
+    inet 172.31.161.41/32 scope global eno1
+       valid_lft forever preferred_lft forever
+    inet 172.31.161.38/24 brd 172.31.161.255 scope global eno1
+       valid_lft forever preferred_lft forever
+    inet 172.31.161.42/0 scope global eno1::1
+       valid_lft forever preferred_lft forever
+3: eno2: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu
+</code></pre>
+<p>41,42 是我们设置的VIP，竟然还在这个有问题服务器的网卡上，这就导致一个机房内，有2台服务器绑定相同的vip。</p>
+<p>解决方案, 通过<code>ip addr delete</code>删除绑定的vip</p>
+<pre><code>ip addr delete 172.31.161.42/32 dev eno1
+ip addr delete 172.31.161.41/32 dev eno1
+ip addr delete 172.31.161.41/0 dev eno1
+</code></pre>
+<p>顺道介绍如何给网卡绑定vip：</p>
+<pre><code>ip addr add 172.31.161.41/32 dev eno1
+</code></pre>
+<h2 id="溯源与问题总结"><a href="#溯源与问题总结" class="headerlink" title="溯源与问题总结"></a>溯源与问题总结</h2><p>问题的根源在于，keepalived为网卡停止后，keepalived为网卡绑定的VIP并没有移除，导致多台机器出现同样的ip。</p>
+<p>切记： <code>停止keepalived，vip不会自动删除，需要手动清理</code></p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
 
       
     </div>
@@ -2613,19 +2335,19 @@ Epoch 10/10
       <div class="site-state-item site-state-posts">
           <a href="/jadepeng/archives/">
         
-          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-count">97</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/jadepeng/categories/">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/jadepeng/tags/">
           
-        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-count">83</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -2666,13 +2388,13 @@ Epoch 10/10
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">644k</span>
+    <span title="站点总字数">642k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">9:45</span>
+    <span title="站点阅读时长">9:44</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>

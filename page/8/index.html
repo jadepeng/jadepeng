@@ -187,1054 +187,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/06/06/jqpeng-Spring%20Security%20%E6%9E%B6%E6%9E%84%E4%B8%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2018/06/06/jqpeng-Spring%20Security%20%E6%9E%B6%E6%9E%84%E4%B8%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">Spring Security 架构与源码分析</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-06-06 16:03:00" itemprop="dateCreated datePublished" datetime="2018-06-06T16:03:00+08:00">2018-06-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>18k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>17 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/spring-security.html">Spring Security 架构与源码分析</a></p>
-<p>Spring Security 主要实现了Authentication（认证，解决who are you? ） 和 Access Control（访问控制，也就是what are you allowed to do？，也称为Authorization）。Spring Security在架构上将认证与授权分离，并提供了扩展点。</p>
-<h2 id="核心对象"><a href="#核心对象" class="headerlink" title="核心对象"></a>核心对象</h2><p>主要代码在<code>spring-security-core</code>包下面。要了解Spring Security，需要先关注里面的核心对象。</p>
-<h3 id="SecurityContextHolder-SecurityContext-和-Authentication"><a href="#SecurityContextHolder-SecurityContext-和-Authentication" class="headerlink" title="SecurityContextHolder, SecurityContext 和 Authentication"></a>SecurityContextHolder, SecurityContext 和 Authentication</h3><p>SecurityContextHolder 是 SecurityContext的存放容器，默认使用ThreadLocal 存储，意味SecurityContext在相同线程中的方法都可用。<br> SecurityContext主要是存储应用的principal信息，在Spring Security中用Authentication 来表示。</p>
-<p>获取principal：</p>
-<pre><code>Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-if (principal instanceof UserDetails) &#123;
-String username = ((UserDetails)principal).getUsername();
-&#125; else &#123;
-String username = principal.toString();
-&#125;
-</code></pre>
-<p>在Spring Security中，可以看一下Authentication定义：</p>
-<pre><code>public interface Authentication extends Principal, Serializable &#123;
-Collection&lt;? extends GrantedAuthority&gt; getAuthorities();
-/** * 通常是密码 */Object getCredentials();
-/** * Stores additional details about the authentication request. These might be an IP * address, certificate serial number etc. */Object getDetails();
-/** * 用来标识是否已认证，如果使用用户名和密码登录,通常是用户名  */Object getPrincipal();
-/** * 是否已认证 */boolean isAuthenticated();
-void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException;
-&#125;
-</code></pre>
-<p>在实际应用中，通常使用<code>UsernamePasswordAuthenticationToken</code>：</p>
-<pre><code>public abstract class AbstractAuthenticationToken implements Authentication,    CredentialsContainer &#123;    &#125;
-public class UsernamePasswordAuthenticationToken extends AbstractAuthenticationToken &#123;
-&#125;
-</code></pre>
-<p>一个常见的认证过程通常是这样的，创建一个UsernamePasswordAuthenticationToken，然后交给authenticationManager认证（后面详细说明），认证通过则通过SecurityContextHolder存放Authentication信息。</p>
-<pre><code> UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
-
-Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
-SecurityContextHolder.getContext().setAuthentication(authentication);
-</code></pre>
-<h3 id="UserDetails与UserDetailsService"><a href="#UserDetails与UserDetailsService" class="headerlink" title="UserDetails与UserDetailsService"></a>UserDetails与UserDetailsService</h3><p>UserDetails 是Spring Security里的一个关键接口，他用来表示一个principal。</p>
-<pre><code>public interface UserDetails extends Serializable &#123;/** * 用户的授权信息，可以理解为角色 */Collection&lt;? extends GrantedAuthority&gt; getAuthorities();
-/** * 用户密码 * * @return the password */String getPassword();
-/** * 用户名  *     */String getUsername();
-boolean isAccountNonExpired();
-boolean isAccountNonLocked();
-boolean isCredentialsNonExpired();
-boolean isEnabled();
-&#125;
-</code></pre>
-<p>UserDetails提供了认证所需的必要信息，在实际使用里，可以自己实现UserDetails，并增加额外的信息，比如email、mobile等信息。</p>
-<p>在Authentication中的principal通常是用户名，我们可以通过UserDetailsService来通过principal获取UserDetails：</p>
-<pre><code>public interface UserDetailsService &#123;UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
-&#125;
-</code></pre>
-<h3 id="GrantedAuthority"><a href="#GrantedAuthority" class="headerlink" title="GrantedAuthority"></a>GrantedAuthority</h3><p>在UserDetails里说了，GrantedAuthority可以理解为角色，例如 <code>ROLE_ADMINISTRATOR</code> or <code>ROLE_HR_SUPERVISOR</code>。</p>
-<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
-<li><code>SecurityContextHolder</code>, 用来访问 <code>SecurityContext</code>.</li>
-<li><code>SecurityContext</code>, 用来存储<code>Authentication</code> .</li>
-<li><code>Authentication</code>, 代表凭证.</li>
-<li><code>GrantedAuthority</code>, 代表权限.</li>
-<li><code>UserDetails</code>, 用户信息.</li>
-<li><code>UserDetailsService</code>,获取用户信息.</li>
-</ul>
-<h2 id="Authentication认证"><a href="#Authentication认证" class="headerlink" title="Authentication认证"></a>Authentication认证</h2><h3 id="AuthenticationManager"><a href="#AuthenticationManager" class="headerlink" title="AuthenticationManager"></a>AuthenticationManager</h3><p>实现认证主要是通过AuthenticationManager接口，它只包含了一个方法：</p>
-<pre><code>public interface AuthenticationManager &#123;
-  Authentication authenticate(Authentication authentication)
-    throws AuthenticationException;
-&#125;
-</code></pre>
-<p>authenticate()方法主要做三件事：</p>
-<ol>
-<li>如果验证通过，返回Authentication（通常带上authenticated=true）。</li>
-<li>认证失败抛出<code>AuthenticationException</code></li>
-<li>如果无法确定，则返回null</li>
-</ol>
-<p><code>AuthenticationException</code>是运行时异常,它通常由应用程序按通用方式处理，用户代码通常不用特意被捕获和处理这个异常。</p>
-<p><code>AuthenticationManager</code>的默认实现是<code>ProviderManager</code>，它委托一组<code>AuthenticationProvider</code>实例来实现认证。<br><code>AuthenticationProvider</code>和<code>AuthenticationManager</code>类似，都包含<code>authenticate</code>，但它有一个额外的方法<code>supports</code>，以允许查询调用方是否支持给定<code>Authentication</code>类型：</p>
-<pre><code>public interface AuthenticationProvider &#123;
-Authentication authenticate(Authentication authentication)        throws AuthenticationException;boolean supports(Class&lt;?&gt; authentication);
-&#125;
-</code></pre>
-<p>ProviderManager包含一组<code>AuthenticationProvider</code>，执行authenticate时，遍历Providers，然后调用supports，如果支持，则执行遍历当前provider的authenticate方法，如果一个provider认证成功，则break。</p>
-<pre><code>public Authentication authenticate(Authentication authentication)        throws AuthenticationException &#123;    Class&lt;? extends Authentication&gt; toTest = authentication.getClass();    AuthenticationException lastException = null;    Authentication result = null;    boolean debug = logger.isDebugEnabled();
-    for (AuthenticationProvider provider : getProviders()) &#123;        if (!provider.supports(toTest)) &#123;            continue;        &#125;
-        if (debug) &#123;            logger.debug(&quot;Authentication attempt using &quot;                    + provider.getClass().getName());        &#125;
-        try &#123;            result = provider.authenticate(authentication);
-            if (result != null) &#123;                copyDetails(authentication, result);                break;            &#125;        &#125;        catch (AccountStatusException e) &#123;            prepareException(e, authentication);            // SEC-546: Avoid polling additional providers if auth failure is due to            // invalid account status            throw e;        &#125;        catch (InternalAuthenticationServiceException e) &#123;            prepareException(e, authentication);            throw e;        &#125;        catch (AuthenticationException e) &#123;            lastException = e;        &#125;    &#125;
-    if (result == null &amp;&amp; parent != null) &#123;        // Allow the parent to try.        try &#123;            result = parent.authenticate(authentication);        &#125;        catch (ProviderNotFoundException e) &#123;            // ignore as we will throw below if no other exception occurred prior to            // calling parent and the parent            // may throw ProviderNotFound even though a provider in the child already            // handled the request        &#125;        catch (AuthenticationException e) &#123;            lastException = e;        &#125;    &#125;
-    if (result != null) &#123;        if (eraseCredentialsAfterAuthentication                &amp;&amp; (result instanceof CredentialsContainer)) &#123;            // Authentication is complete. Remove credentials and other secret data            // from authentication            ((CredentialsContainer) result).eraseCredentials();        &#125;
-        eventPublisher.publishAuthenticationSuccess(result);        return result;    &#125;
-    // Parent was null, or didn&#39;t authenticate (or throw an exception).
-    if (lastException == null) &#123;        lastException = new ProviderNotFoundException(messages.getMessage(                &quot;ProviderManager.providerNotFound&quot;,                new Object[] &#123; toTest.getName() &#125;,                &quot;No AuthenticationProvider found for &#123;0&#125;&quot;));    &#125;
-    prepareException(lastException, authentication);
-    throw lastException;&#125;
-</code></pre>
-<p>从上面的代码可以看出， <code>ProviderManager</code>有一个可选parent，如果parent不为空，则调用<code>parent.authenticate(authentication)</code></p>
-<h3 id="AuthenticationProvider"><a href="#AuthenticationProvider" class="headerlink" title="AuthenticationProvider"></a>AuthenticationProvider</h3><p><code>AuthenticationProvider</code>有多种实现，大家最关注的通常是<code>DaoAuthenticationProvider</code>，继承于<code>AbstractUserDetailsAuthenticationProvider</code>，核心是通过<code>UserDetails</code>来实现认证,<code>DaoAuthenticationProvider</code>默认会自动加载，不用手动配。</p>
-<p>先来看<code>AbstractUserDetailsAuthenticationProvide</code>r，看最核心的<code>authenticate</code>：</p>
-<pre><code>public Authentication authenticate(Authentication authentication)        throws AuthenticationException &#123;    // 必须是UsernamePasswordAuthenticationToken    Assert.isInstanceOf(UsernamePasswordAuthenticationToken.class, authentication,            messages.getMessage(                    &quot;AbstractUserDetailsAuthenticationProvider.onlySupports&quot;,                    &quot;Only UsernamePasswordAuthenticationToken is supported&quot;));
-    //  获取用户名    String username = (authentication.getPrincipal() == null) ? &quot;NONE_PROVIDED&quot;            : authentication.getName();
-    boolean cacheWasUsed = true;    // 从缓存获取    UserDetails user = this.userCache.getUserFromCache(username);
-    if (user == null) &#123;        cacheWasUsed = false;
-        try &#123;           // retrieveUser 抽象方法，获取用户            user = retrieveUser(username,                    (UsernamePasswordAuthenticationToken) authentication);        &#125;        catch (UsernameNotFoundException notFound) &#123;            logger.debug(&quot;User &#39;&quot; + username + &quot;&#39; not found&quot;);
-            if (hideUserNotFoundExceptions) &#123;                throw new BadCredentialsException(messages.getMessage(                        &quot;AbstractUserDetailsAuthenticationProvider.badCredentials&quot;,                        &quot;Bad credentials&quot;));            &#125;            else &#123;                throw notFound;            &#125;        &#125;
-          Assert.notNull(user,                &quot;retrieveUser returned null - a violation of the interface contract&quot;);    &#125;
-    try &#123;        // 预先检查，DefaultPreAuthenticationChecks，检查用户是否被lock或者账号是否可用        preAuthenticationChecks.check(user);                // 抽象方法，自定义检验        additionalAuthenticationChecks(user,                (UsernamePasswordAuthenticationToken) authentication);    &#125;    catch (AuthenticationException exception) &#123;        if (cacheWasUsed) &#123;            // There was a problem, so try again after checking            // we&#39;re using latest data (i.e. not from the cache)            cacheWasUsed = false;            user = retrieveUser(username,                    (UsernamePasswordAuthenticationToken) authentication);            preAuthenticationChecks.check(user);            additionalAuthenticationChecks(user,                    (UsernamePasswordAuthenticationToken) authentication);        &#125;        else &#123;            throw exception;        &#125;    &#125;
-          // 后置检查 DefaultPostAuthenticationChecks，检查isCredentialsNonExpired    postAuthenticationChecks.check(user);
-    if (!cacheWasUsed) &#123;        this.userCache.putUserInCache(user);    &#125;
-    Object principalToReturn = user;
-    if (forcePrincipalAsString) &#123;        principalToReturn = user.getUsername();    &#125;
-       return createSuccessAuthentication(principalToReturn, authentication, user);&#125;
-</code></pre>
-<p>上面的检验主要基于UserDetails实现，其中获取用户和检验逻辑由具体的类去实现，默认实现是DaoAuthenticationProvider，这个类的核心是让开发者提供UserDetailsService来获取UserDetails以及 PasswordEncoder来检验密码是否有效：</p>
-<pre><code>private UserDetailsService userDetailsService;
-private PasswordEncoder passwordEncoder;
-</code></pre>
-<p>看具体的实现，<code>retrieveUser</code>,直接调用userDetailsService获取用户：</p>
-<pre><code>protected final UserDetails retrieveUser(String username,        UsernamePasswordAuthenticationToken authentication)        throws AuthenticationException &#123;    UserDetails loadedUser;
-    try &#123;        loadedUser = this.getUserDetailsService().loadUserByUsername(username);    &#125;    catch (UsernameNotFoundException notFound) &#123;        if (authentication.getCredentials() != null) &#123;            String presentedPassword = authentication.getCredentials().toString();            passwordEncoder.isPasswordValid(userNotFoundEncodedPassword,                    presentedPassword, null);        &#125;        throw notFound;    &#125;    catch (Exception repositoryProblem) &#123;        throw new InternalAuthenticationServiceException(                repositoryProblem.getMessage(), repositoryProblem);    &#125;
-    if (loadedUser == null) &#123;        throw new InternalAuthenticationServiceException(                &quot;UserDetailsService returned null, which is an interface contract violation&quot;);    &#125;    return loadedUser;&#125;
-</code></pre>
-<p>再来看验证：</p>
-<pre><code>protected void additionalAuthenticationChecks(UserDetails userDetails,        UsernamePasswordAuthenticationToken authentication)        throws AuthenticationException &#123;    Object salt = null;
-    if (this.saltSource != null) &#123;        salt = this.saltSource.getSalt(userDetails);    &#125;
-    if (authentication.getCredentials() == null) &#123;        logger.debug(&quot;Authentication failed: no credentials provided&quot;);
-        throw new BadCredentialsException(messages.getMessage(                &quot;AbstractUserDetailsAuthenticationProvider.badCredentials&quot;,                &quot;Bad credentials&quot;));    &#125;
-        // 获取用户密码    String presentedPassword = authentication.getCredentials().toString();
-        // 比较passwordEncoder后的密码是否和userdetails的密码一致    if (!passwordEncoder.isPasswordValid(userDetails.getPassword(),            presentedPassword, salt)) &#123;        logger.debug(&quot;Authentication failed: password does not match stored value&quot;);
-        throw new BadCredentialsException(messages.getMessage(                &quot;AbstractUserDetailsAuthenticationProvider.badCredentials&quot;,                &quot;Bad credentials&quot;));    &#125;&#125;
-</code></pre>
-<p>小结：要自定义认证，使用DaoAuthenticationProvider，只需要为其提供PasswordEncoder和UserDetailsService就可以了。</p>
-<h3 id="定制-Authentication-Managers"><a href="#定制-Authentication-Managers" class="headerlink" title="定制 Authentication Managers"></a>定制 Authentication Managers</h3><p>Spring Security提供了一个Builder类<code>AuthenticationManagerBuilder</code>，借助它可以快速实现自定义认证。</p>
-<p>看官方源码说明：</p>
-<blockquote>
-<p>SecurityBuilder used to create an AuthenticationManager . Allows for easily building in memory authentication, LDAP authentication, JDBC based authentication, adding UserDetailsService , and adding AuthenticationProvider’s.</p>
-</blockquote>
-<p>AuthenticationManagerBuilder可以用来Build一个AuthenticationManager，可以创建基于内存的认证、LDAP认证、 JDBC认证，以及添加UserDetailsService和AuthenticationProvider。</p>
-<p>简单使用：</p>
-<pre><code>@Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-public class ApplicationSecurity extends WebSecurityConfigurerAdapter &#123;
-
-
-  public SecurityConfiguration(AuthenticationManagerBuilder authenticationManagerBuilder, UserDetailsService userDetailsService,TokenProvider tokenProvider,CorsFilter corsFilter, SecurityProblemSupport problemSupport) &#123;
-        this.authenticationManagerBuilder = authenticationManagerBuilder;
-        this.userDetailsService = userDetailsService;
-        this.tokenProvider = tokenProvider;
-        this.corsFilter = corsFilter;
-        this.problemSupport = problemSupport;
-    &#125;
-
-    @PostConstruct
-    public void init() &#123;
-        try &#123;
-            authenticationManagerBuilder
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder());
-        &#125; catch (Exception e) &#123;
-            throw new BeanInitializationException(&quot;Security configuration failed&quot;, e);
-        &#125;
-    &#125;
-
-   @Override
-    protected void configure(HttpSecurity http) throws Exception &#123;
-        http
-            .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling()
-            .authenticationEntryPoint(problemSupport)
-            .accessDeniedHandler(problemSupport)
-        .and()
-            .csrf()
-            .disable()
-            .headers()
-            .frameOptions()
-            .disable()
-        .and()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-            .authorizeRequests()
-            .antMatchers(&quot;/api/register&quot;).permitAll()
-            .antMatchers(&quot;/api/activate&quot;).permitAll()
-            .antMatchers(&quot;/api/authenticate&quot;).permitAll()
-            .antMatchers(&quot;/api/account/reset-password/init&quot;).permitAll()
-            .antMatchers(&quot;/api/account/reset-password/finish&quot;).permitAll()
-            .antMatchers(&quot;/api/profile-info&quot;).permitAll()
-            .antMatchers(&quot;/api/**&quot;).authenticated()
-            .antMatchers(&quot;/management/health&quot;).permitAll()
-            .antMatchers(&quot;/management/**&quot;).hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers(&quot;/v2/api-docs/**&quot;).permitAll()
-            .antMatchers(&quot;/swagger-resources/configuration/ui&quot;).permitAll()
-            .antMatchers(&quot;/swagger-ui/index.html&quot;).hasAuthority(AuthoritiesConstants.ADMIN)
-        .and()
-            .apply(securityConfigurerAdapter());
-
-    &#125;
-&#125;
-</code></pre>
-<h2 id="授权与访问控制"><a href="#授权与访问控制" class="headerlink" title="授权与访问控制"></a>授权与访问控制</h2><p>一旦认证成功，我们可以继续进行授权，授权是通过<code>AccessDecisionManager</code>来实现的。框架有三种实现，默认是AffirmativeBased，通过<code>AccessDecisionVoter</code>决策，有点像<code>ProviderManager</code>委托给<code>AuthenticationProviders</code>来认证。</p>
-<pre><code>public void decide(Authentication authentication, Object object,        Collection&lt;ConfigAttribute&gt; configAttributes) throws AccessDeniedException &#123;    int deny = 0;
-        // 遍历DecisionVoter     for (AccessDecisionVoter voter : getDecisionVoters()) &#123;        // 投票        int result = voter.vote(authentication, object, configAttributes);
-        if (logger.isDebugEnabled()) &#123;            logger.debug(&quot;Voter: &quot; + voter + &quot;, returned: &quot; + result);        &#125;
-        switch (result) &#123;        case AccessDecisionVoter.ACCESS_GRANTED:            return;
-        case AccessDecisionVoter.ACCESS_DENIED:            deny++;
-            break;
-        default:            break;        &#125;    &#125;
-           // 一票否决    if (deny &gt; 0) &#123;        throw new AccessDeniedException(messages.getMessage(                &quot;AbstractAccessDecisionManager.accessDenied&quot;, &quot;Access is denied&quot;));    &#125;
-    // To get this far, every AccessDecisionVoter abstained    checkAllowIfAllAbstainDecisions();&#125;
-</code></pre>
-<p>来看AccessDecisionVoter：</p>
-<pre><code>boolean supports(ConfigAttribute attribute);
-
-boolean supports(Class&lt;?&gt; clazz);
-
-int vote(Authentication authentication, S object,
-        Collection&lt;ConfigAttribute&gt; attributes);
-</code></pre>
-<p>object是用户要访问的资源，ConfigAttribute则是访问object要满足的条件，通常payload是字符串，比如ROLE_ADMIN 。所以我们来看下RoleVoter的实现，其核心就是从authentication提取出GrantedAuthority，然后和ConfigAttribute比较是否满足条件。</p>
-<pre><code>public boolean supports(ConfigAttribute attribute) &#123;    if ((attribute.getAttribute() != null)            &amp;&amp; attribute.getAttribute().startsWith(getRolePrefix())) &#123;        return true;    &#125;    else &#123;        return false;    &#125;&#125;
-public boolean supports(Class&lt;?&gt; clazz) &#123;    return true;&#125;
-
-
-public int vote(Authentication authentication, Object object,        Collection&lt;ConfigAttribute&gt; attributes) &#123;    if(authentication == null) &#123;        return ACCESS_DENIED;    &#125;    int result = ACCESS_ABSTAIN;        // 获取GrantedAuthority信息    Collection&lt;? extends GrantedAuthority&gt; authorities = extractAuthorities(authentication);
-    for (ConfigAttribute attribute : attributes) &#123;        if (this.supports(attribute)) &#123;            // 默认拒绝访问            result = ACCESS_DENIED;
-            // Attempt to find a matching granted authority            for (GrantedAuthority authority : authorities) &#123;                 // 判断是否有匹配的 authority                if (attribute.getAttribute().equals(authority.getAuthority())) &#123;                    // 可访问                    return ACCESS_GRANTED;                &#125;            &#125;        &#125;    &#125;
-    return result;&#125;
-</code></pre>
-<p>这里要疑问，ConfigAttribute哪来的？其实就是上面ApplicationSecurity的configure里的。</p>
-<h3 id="web-security-如何实现"><a href="#web-security-如何实现" class="headerlink" title="web security 如何实现"></a>web security 如何实现</h3><p>Web层中的Spring Security（用于UI和HTTP后端）基于Servlet <code>Filters</code>，下图显示了单个HTTP请求的处理程序的典型分层。</p>
-<p><img src="https://github.com/spring-guides/top-spring-security-architecture/raw/master/images/filters.png" alt="过滤链委托给一个Servlet"></p>
-<p>Spring Security通过<code>FilterChainProxy</code>作为单一的Filter注册到web层，Proxy内部的Filter。</p>
-<p><img src="https://github.com/spring-guides/top-spring-security-architecture/raw/master/images/security-filters.png" alt="Spring安全筛选器"></p>
-<p>FilterChainProxy相当于一个filter的容器，通过VirtualFilterChain来依次调用各个内部filter</p>
-<pre><code>public void doFilter(ServletRequest request, ServletResponse response,        FilterChain chain) throws IOException, ServletException &#123;    boolean clearContext = request.getAttribute(FILTER_APPLIED) == null;    if (clearContext) &#123;        try &#123;            request.setAttribute(FILTER_APPLIED, Boolean.TRUE);            doFilterInternal(request, response, chain);        &#125;        finally &#123;            SecurityContextHolder.clearContext();            request.removeAttribute(FILTER_APPLIED);        &#125;    &#125;    else &#123;        doFilterInternal(request, response, chain);    &#125;&#125;
-private void doFilterInternal(ServletRequest request, ServletResponse response,        FilterChain chain) throws IOException, ServletException &#123;
-    FirewalledRequest fwRequest = firewall            .getFirewalledRequest((HttpServletRequest) request);    HttpServletResponse fwResponse = firewall            .getFirewalledResponse((HttpServletResponse) response);
-    List&lt;Filter&gt; filters = getFilters(fwRequest);
-    if (filters == null || filters.size() == 0) &#123;        if (logger.isDebugEnabled()) &#123;            logger.debug(UrlUtils.buildRequestUrl(fwRequest)                    + (filters == null ? &quot; has no matching filters&quot;                            : &quot; has an empty filter list&quot;));        &#125;
-        fwRequest.reset();
-        chain.doFilter(fwRequest, fwResponse);
-        return;    &#125;
-    VirtualFilterChain vfc = new VirtualFilterChain(fwRequest, chain, filters);    vfc.doFilter(fwRequest, fwResponse);&#125;private static class VirtualFilterChain implements FilterChain &#123;    private final FilterChain originalChain;    private final List&lt;Filter&gt; additionalFilters;    private final FirewalledRequest firewalledRequest;    private final int size;    private int currentPosition = 0;
-    private VirtualFilterChain(FirewalledRequest firewalledRequest,            FilterChain chain, List&lt;Filter&gt; additionalFilters) &#123;        this.originalChain = chain;        this.additionalFilters = additionalFilters;        this.size = additionalFilters.size();        this.firewalledRequest = firewalledRequest;    &#125;
-    public void doFilter(ServletRequest request, ServletResponse response)            throws IOException, ServletException &#123;        if (currentPosition == size) &#123;            if (logger.isDebugEnabled()) &#123;                logger.debug(UrlUtils.buildRequestUrl(firewalledRequest)                        + &quot; reached end of additional filter chain; proceeding with original chain&quot;);            &#125;
-            // Deactivate path stripping as we exit the security filter chain            this.firewalledRequest.reset();
-            originalChain.doFilter(request, response);        &#125;        else &#123;            currentPosition++;
-            Filter nextFilter = additionalFilters.get(currentPosition - 1);
-            if (logger.isDebugEnabled()) &#123;                logger.debug(UrlUtils.buildRequestUrl(firewalledRequest)                        + &quot; at position &quot; + currentPosition + &quot; of &quot; + size                        + &quot; in additional filter chain; firing Filter: &#39;&quot;                        + nextFilter.getClass().getSimpleName() + &quot;&#39;&quot;);            &#125;
-            nextFilter.doFilter(request, response, this);        &#125;    &#125;&#125;
-</code></pre>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://spring.io/guides/topicals/spring-security-architecture/">https://spring.io/guides/topicals/spring-security-architecture/</a></li>
-<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-security/site/docs/5.0.5.RELEASE/reference/htmlsingle/#overall-architecture">https://docs.spring.io/spring-security/site/docs/5.0.5.RELEASE/reference/htmlsingle/#overall-architecture</a></li>
-</ul>
-<hr>
-<blockquote>
-<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/05/28/jqpeng-%E5%BC%80%E6%BA%90APM%E7%B3%BB%E7%BB%9Fskywalking%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2018/05/28/jqpeng-%E5%BC%80%E6%BA%90APM%E7%B3%BB%E7%BB%9Fskywalking%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">开源APM系统skywalking介绍与使用</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-05-28 11:25:00" itemprop="dateCreated datePublished" datetime="2018-05-28T11:25:00+08:00">2018-05-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/skywalking-usage.html">开源APM系统skywalking介绍与使用</a></p>
-<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p><strong>SkyWalking</strong> 创建与2015年，提供分布式追踪功能。从5.x开始，项目进化为一个完成功能的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Application_performance_management">Application Performance Management</a>系统。<br> 他被用于追踪、监控和诊断分布式系统，特别是使用微服务架构，云原生或容积技术。提供以下主要功能：</p>
-<ul>
-<li>分布式追踪和上下文传输</li>
-<li>应用、实例、服务性能指标分析</li>
-<li>根源分析</li>
-<li>应用拓扑分析</li>
-<li>应用和服务依赖分析</li>
-<li>慢服务检测</li>
-<li>性能优化</li>
-</ul>
-<h3 id="主要特性"><a href="#主要特性" class="headerlink" title="主要特性"></a>主要特性</h3><ul>
-<li>多语言探针或类库<ul>
-<li>Java自动探针，追踪和监控程序时，不需要修改源码。</li>
-<li>社区提供的其他多语言探针<ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/OpenSkywalking/skywalking-netcore">.NET Core</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/OpenSkywalking/skywalking-nodejs">Node.js</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>多种后端存储： ElasticSearch， H2</li>
-<li>支持<a target="_blank" rel="noopener" href="http://opentracing.io/">OpenTracing</a><ul>
-<li>Java自动探针支持和OpenTracing API协同工作</li>
-</ul>
-</li>
-<li>轻量级、完善功能的后端聚合和分析</li>
-<li>现代化Web UI</li>
-<li>日志集成</li>
-<li>应用、实例和服务的告警</li>
-</ul>
-<h3 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h3><p><img src="https://skywalkingtest.github.io/page-resources/5.0/architecture.png"></p>
-<h3 id="在线体验"><a href="#在线体验" class="headerlink" title="在线体验"></a>在线体验</h3><ul>
-<li>北京服务器. <a target="_blank" rel="noopener" href="http://49.4.12.44:8080/">前往</a></li>
-<li>香港服务器. <a target="_blank" rel="noopener" href="http://159.138.0.181:8080/">前往</a></li>
-</ul>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="安装es"><a href="#安装es" class="headerlink" title="安装es"></a>安装es</h3><p>新版本的skywalking使用ES作为存储，所以先安装es，注意6.X版本不行，安装5.6.8：</p>
-<pre><code>wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.8.tar.gz
-tar zxvf elasticsearch-5.6.8.tar.gz
-cd elasticsearch-5.6.8/
-</code></pre>
-<p>修改配置文件，主要修改cluster.name，并增加两行配置，<br> vim config/elasticsearch.yml：</p>
-<pre><code>cluster.name: CollectorDBCluster
-
-# ES监听的ip地址
-network.host: 0.0.0.0
-thread_pool.bulk.queue_size: 1000
-</code></pre>
-<p>保存，然后启动es：</p>
-<pre><code>nohup bin/elasticsearch &amp;
-</code></pre>
-<h3 id="安装skywalking"><a href="#安装skywalking" class="headerlink" title="安装skywalking"></a>安装skywalking</h3><p>先下载编译好的版本并解压：</p>
-<pre><code>wget http://mirrors.hust.edu.cn/apache/incubator/skywalking/5.0.0-beta/apache-skywalking-apm-incubating-5.0.0-beta.tar.gz
-tar zxvf apache-skywalking-apm-incubating-5.0.0-beta.tar.gz 
-cd apache-skywalking-apm-incubating/
-</code></pre>
-<p>然后部署，注意skywalking会使用(8080, 10800, 11800, 12800)端口，因此先排除端口占用情况。</p>
-<p>然后运行bin/startup.sh，windows用户为.bat文件。</p>
-<p>一切正常的话，访问localhost:8080就能看到页面了。</p>
-<h4 id="安装过程问题解决"><a href="#安装过程问题解决" class="headerlink" title="安装过程问题解决"></a>安装过程问题解决</h4><ol>
-<li>启动bin/startup.sh后，提示success，但是不能访问，ps 查看并无相关进程，经过检查发现是端口被占用</li>
-<li>collector 不能正常启动，发现是es问题：<ul>
-<li>es需要使用5.x版本</li>
-<li>es的集群名称需要和collector的配置文件一致</li>
-</ul>
-</li>
-</ol>
-<h3 id="java程序使用skywalking探针"><a href="#java程序使用skywalking探针" class="headerlink" title="java程序使用skywalking探针"></a>java程序使用skywalking探针</h3><p>1.拷贝apache-skywalking-apm-incubating目录下的agent目录到应用程序位置，探针包含整个目录，请不要改变目录结构<br> 2.java程序启动时，增加JVM启动参数，-javaagent:/path/to/agent/skywalking-agent.jar。参数值为skywalking-agent.jar的绝对路径</p>
-<p>在IDEA里调试程序怎么办？</p>
-<p><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1527477582714.jpg" alt="enter description here" title="IDEA 配置"></p>
-<p>增加VM参数即可。</p>
-<p>agent探针配置，简单修改下agent.application_code即可</p>
-<pre><code># 当前的应用编码，最终会显示在webui上。
-# 建议一个应用的多个实例，使用有相同的application_code。请使用英文
-agent.application_code=Your_ApplicationName
-
-# 每三秒采样的Trace数量
-# 默认为负数，代表在保证不超过内存Buffer区的前提下，采集所有的Trace
-# agent.sample_n_per_3_secs=-1
-
-# 设置需要忽略的请求地址
-# 默认配置如下
-# agent.ignore_suffix=.jpg,.jpeg,.js,.css,.png,.bmp,.gif,.ico,.mp3,.mp4,.html,.svg
-
-# 探针调试开关，如果设置为true，探针会将所有操作字节码的类输出到/debugging目录下
-# skywalking团队可能在调试，需要此文件
-# agent.is_open_debugging_class = true
-
-# 对应Collector的config/application.yml配置文件中 agent_server/jetty/port 配置内容
-# 例如：
-# 单节点配置：SERVERS=&quot;127.0.0.1:8080&quot; 
-# 集群配置：SERVERS=&quot;10.2.45.126:8080,10.2.45.127:7600&quot; 
-collector.servers=127.0.0.1:10800
-
-# 日志文件名称前缀
-logging.file_name=skywalking-agent.log
-
-# 日志文件最大大小
-# 如果超过此大小，则会生成新文件。
-# 默认为300M
-logging.max_file_size=314572800
-
-# 日志级别，默认为DEBUG。
-logging.level=DEBUG
-</code></pre>
-<p>一切正常的话，稍后就可以在skywalking ui看到了。</p>
-<p><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1527477724637.jpg" alt="enter description here" title="SW UI"></p>
-<p>可以看到累出了slow service等信息，更多的细节慢慢挖掘吧。</p>
-<hr>
-<blockquote>
-<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/05/04/jqpeng-%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%881%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2018/05/04/jqpeng-%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%881%EF%BC%89/" class="post-title-link" itemprop="url">知识图谱学习笔记（1）</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-05-04 17:25:00" itemprop="dateCreated datePublished" datetime="2018-05-04T17:25:00+08:00">2018-05-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>17k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/kg-study-part-1.html">知识图谱学习笔记（1）</a></p>
-<p>知识图谱学习笔记第一部分，包含RDF介绍，以及Jena RDF API使用</p>
-<h2 id="知识图谱的基石：RDF"><a href="#知识图谱的基石：RDF" class="headerlink" title="知识图谱的基石：RDF"></a>知识图谱的基石：RDF</h2><p>RDF(Resource Description Framework)，即资源描述框架，其本质是一个数据模型（Data Model）。它提供了一个统一的标准，用于描述实体/资源。简单来说，就是表示事物的一种方法和手段。<br><img src="https://pic2.zhimg.com/80/v2-e3478e02c36ead3875e598b0668830fd_hd.jpg" alt="enter description here"></p>
-<h3 id="RDF序列化方法"><a href="#RDF序列化方法" class="headerlink" title="RDF序列化方法"></a>RDF序列化方法</h3><p>RDF序列化的方式主要有：RDF/XML，N-Triples，Turtle，RDFa，JSON-LD等几种。</p>
-<ol>
-<li>RDF/XML，顾名思义，就是用XML的格式来表示RDF数据</li>
-<li>N-Triples，即用多个三元组来表示RDF数据集，是最直观的表示方法。在文件中，每一行表示一个三元组，方便机器解析和处理。开放领域知识图谱DBpedia通常是用这种格式来发布数据的。</li>
-<li>Turtle, [‘tɝtl] 应该是使用得最多的一种RDF序列化方式了。它比RDF/XML紧凑，且可读性比N-Triples好。</li>
-<li>RDFa,即“The Resource Description Framework in Attributes”，是HTML5的一个扩展，在不改变任何显示效果的情况下，让网站构建者能够在页面中标记实体，像人物、地点、时间、评论等等</li>
-<li>JSON-LD，即“JSON for Linking Data”，用键值对的方式来存储RDF数据</li>
-</ol>
-<p>Example1 N-Triples:</p>
-<pre><code>&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/chineseName&gt; &quot;罗纳尔多·路易斯·纳萨里奥·德·利马&quot;^^string.
-&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/career&gt; &quot;足球运动员&quot;^^string.
-&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/fullName&gt; &quot;Ronaldo Luís Nazário de Lima&quot;^^string.
-&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/birthDate&gt; &quot;1976-09-18&quot;^^date.
-&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/height&gt; &quot;180&quot;^^int.
-&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/weight&gt; &quot;98&quot;^^int.
-&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/nationality&gt; &quot;巴西&quot;^^string.
-&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/hasBirthPlace&gt; &lt;http://www.kg.com/place/10086&gt;.
-&lt;http://www.kg.com/place/10086&gt; &lt;http://www.kg.com/ontology/address&gt; &quot;里约热内卢&quot;^^string.
-&lt;http://www.kg.com/place/10086&gt; &lt;http://www.kg.com/ontology/coordinate&gt; &quot;-22.908333, -43.196389&quot;^^string.
-</code></pre>
-<p>Example2 Turtle:</p>
-<pre><code>@prefix person: &lt;http://www.kg.com/person/&gt; .
-@prefix place: &lt;http://www.kg.com/place/&gt; .
-@prefix : &lt;http://www.kg.com/ontology/&gt; .
-
-person:1 :chineseName &quot;罗纳尔多·路易斯·纳萨里奥·德·利马&quot;^^string.
-person:1 :career &quot;足球运动员&quot;^^string.
-person:1 :fullName &quot;Ronaldo Luís Nazário de Lima&quot;^^string.
-person:1 :birthDate &quot;1976-09-18&quot;^^date.
-person:1 :height &quot;180&quot;^^int. 
-person:1 :weight &quot;98&quot;^^int.
-person:1 :nationality &quot;巴西&quot;^^string. 
-person:1 :hasBirthPlace place:10086.
-place:10086 :address &quot;里约热内卢&quot;^^string.
-place:10086 :coordinate &quot;-22.908333, -43.196389&quot;^^string.
-</code></pre>
-<h3 id="RDF的表达能力"><a href="#RDF的表达能力" class="headerlink" title="RDF的表达能力"></a>RDF的表达能力</h3><p>RDF的表达能力有限，无法区分类和对象，也无法定义和描述类的关系/属性。RDF是对具体事物的描述，缺乏抽象能力，无法对同一个类别的事物进行定义和描述。就以罗纳尔多这个知识图为例，RDF能够表达罗纳尔多和里约热内卢这两个实体具有哪些属性，以及它们之间的关系。但如果我们想定义罗纳尔多是人，里约热内卢是地点，并且人具有哪些属性，地点具有哪些属性，人和地点之间存在哪些关系，这个时候RDF就表示无能为力了。</p>
-<h2 id="RDFS-OWL"><a href="#RDFS-OWL" class="headerlink" title="RDFS/OWL"></a>RDFS/OWL</h2><p>RDFS/OWL本质上是一些预定义词汇（vocabulary）构成的集合，用于对RDF进行类似的类定义及其属性的定义。</p>
-<blockquote>
-<p>RDFS/OWL序列化方式和RDF没什么不同，其实在表现形式上，它们就是RDF。其常用的方式主要是RDF/XML，Turtle。另外，通常我们用小写开头的单词或词组来表示属性，大写开头的表示类。数据属性（data property，实体和literal字面量的关系）通常由名词组成，而对象数据（object property，实体和实体之间的关系）通常由动词（has，is之类的）加名词组成。剩下的部分符合驼峰命名法。</p>
-</blockquote>
-<h3 id="轻量级的模式语言——RDFS"><a href="#轻量级的模式语言——RDFS" class="headerlink" title="轻量级的模式语言——RDFS"></a>轻量级的模式语言——RDFS</h3><p>RDFS，即“Resource Description Framework Schema”，是最基础的模式语言。还是以罗纳尔多知识图为例，我们在概念、抽象层面对RDF数据进行定义。下面的RDFS定义了人和地点这两个类，及每个类包含的属性。</p>
-<pre><code>@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
-@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
-@prefix : &lt;http://www.kg.com/ontology/&gt; .
-
-### 这里我们用词汇rdfs:Class定义了“人”和“地点”这两个类。
-:Person rdf:type rdfs:Class.
-:Place rdf:type rdfs:Class.
-
-### rdfs当中不区分数据属性和对象属性，词汇rdf:Property定义了属性，即RDF的“边”。
-
-:chineseName rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:string .
-
-:career rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:string .
-
-:fullName rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:string .
-
-:birthDate rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:date .
-
-:height rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:int .
-
-:weight rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:int .
-
-:nationality rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range xsd:string .
-
-:hasBirthPlace rdf:type rdf:Property;    rdfs:domain :Person;    rdfs:range :Place .
-
-:address rdf:type rdf:Property;    rdfs:domain :Place;    rdfs:range xsd:string .
-
-:coordinate rdf:type rdf:Property;    rdfs:domain :Place;    rdfs:range xsd:string .
-</code></pre>
-<p>RDFS几个比较重要，常用的词汇：</p>
-<ol>
-<li>rdfs:Class. 用于定义类</li>
-<li>rdfs:domain. 用于表示该属性属于哪个类别</li>
-<li>rdfs:range. 用于描述该属性的取值类型</li>
-<li>rdfs:subClassOf. 用于描述该类的父类</li>
-<li>rdfs:subProperty. 用于描述该属性的父属性</li>
-</ol>
-<p><img src="https://pic3.zhimg.com/v2-9950314f9ab6e6c44a2300d03e022bb1_r.jpg" alt="enter description here"></p>
-<p>Data层是我们用RDF对罗纳尔多知识图的具体描述，Vocabulary是我们自己定义的一些词汇（类别，属性），RDF(S)则是预定义词汇。从下到上是一个具体到抽象的过程。图中我们用红色圆角矩形表示类，绿色字体表示rdf:type，rdfs:domain，rdfs:range三种预定义词汇，虚线表示rdf:type这种所属关系。</p>
-<h3 id="RDFS的扩展——OWL"><a href="#RDFS的扩展——OWL" class="headerlink" title="RDFS的扩展——OWL"></a>RDFS的扩展——OWL</h3><p>RDFS本质上是RDF词汇的一个扩展。后来人们发现RDFS的表达能力还是相当有限，因此提出了OWL。我们也可以把OWL当做是RDFS的一个扩展，其添加了额外的预定义词汇。</p>
-<p>OWL，即“Web Ontology Language”，语义网技术栈的核心之一。OWL有两个主要的功能：</p>
-<ol>
-<li>提供快速、灵活的数据建模能力。</li>
-<li>高效的自动推理。</li>
-</ol>
-<p>用OWL对罗纳尔多知识图进行语义层的描述：</p>
-<pre><code>@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
-@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
-@prefix : &lt;http://www.kg.com/ontology/&gt; .
-@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
-
-### 这里我们用词汇owl:Class定义了“人”和“地点”这两个类。
-:Person rdf:type owl:Class.
-:Place rdf:type owl:Class.
-
-### owl区分数据属性和对象属性（对象属性表示实体和实体之间的关系）。词汇owl:DatatypeProperty定义了数据属性，owl:ObjectProperty定义了对象属性。
-:chineseName rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:string .
-
-:career rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:string .
-
-:fullName rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:string .
-
-:birthDate rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:date .
-
-:height rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:int .
-
-:weight rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:int .
-
-:nationality rdf:type owl:DatatypeProperty;    rdfs:domain :Person;    rdfs:range xsd:string .
-
-:hasBirthPlace rdf:type owl:ObjectProperty;    rdfs:domain :Person;    rdfs:range :Place .
-
-:address rdf:type owl:DatatypeProperty;    rdfs:domain :Place;    rdfs:range xsd:string .
-
-:coordinate rdf:type owl:DatatypeProperty;    rdfs:domain :Place;    rdfs:range xsd:string .
-</code></pre>
-<p>schema层的描述语言换为OWL后，层次图表示为：<br><img src="https://pic2.zhimg.com/v2-ef0de6ba9620d27ca0f2d2f4b0f18f53_r.jpg" alt="enter description here"></p>
-<p>owl区分数据属性和对象属性（对象属性表示实体和实体之间的关系）。词汇owl:DatatypeProperty定义了数据属性，owl:ObjectProperty定义了对象属性。</p>
-<p>上图中，数据属性用青色表示，对象属性由蓝色表示。</p>
-<p>描述属性特征的词汇</p>
-<ol>
-<li>owl:TransitiveProperty. 表示该属性具有传递性质。例如，我们定义“位于”是具有传递性的属性，若A位于B，B位于C，那么A肯定位于C。</li>
-<li>owl:SymmetricProperty. 表示该属性具有对称性。例如，我们定义“认识”是具有对称性的属性，若A认识B，那么B肯定认识A。</li>
-<li>owl:FunctionalProperty. 表示该属性取值的唯一性。 例如，我们定义“母亲”是具有唯一性的属性，若A的母亲是B，在其他地方我们得知A的母亲是C，那么B和C指的是同一个人。</li>
-<li>owl:inverseOf. 定义某个属性的相反关系。例如，定义“父母”的相反关系是“子女”，若A是B的父母，那么B肯定是A的子女。</li>
-</ol>
-<p>本体映射词汇（Ontology Mapping）</p>
-<ol>
-<li>owl:equivalentClass. 表示某个类和另一个类是相同的。</li>
-<li>owl:equivalentProperty. 表示某个属性和另一个属性是相同的。</li>
-<li>owl:sameAs. 表示两个实体是同一个实体。</li>
-</ol>
-<h3 id="RDFS-OWL推理的推理机（reasoner）"><a href="#RDFS-OWL推理的推理机（reasoner）" class="headerlink" title="RDFS,OWL推理的推理机（reasoner）"></a>RDFS,OWL推理的推理机（reasoner）</h3><p>RDFS同样支持推理，由于缺乏丰富的表达能力，推理能力也不强。举个例子，我们用RDFS定义人和动物两个类，另外，定义人是动物的一个子类。此时推理机能够推断出一个实体若是人，那么它也是动物。OWL当然支持这种基本的推理，除此之外，凭借其强大的表达能力，我们能进行更有实际意义的推理。想象一个场景，我们有一个庞大数据库存储人物的亲属关系。里面很多关系都是单向的，比如，其只保存了A的父亲（母亲）是B，但B的子女字段里面没有A，可以推理得到B的子女A。</p>
-<p>。<img src="https://pic4.zhimg.com/80/v2-b27db971f3fa1cefc83a47be5234dc18_hd.jpg" alt="enter description here"></p>
-<h2 id="RDF查询语言SPARQL"><a href="#RDF查询语言SPARQL" class="headerlink" title="RDF查询语言SPARQL"></a>RDF查询语言SPARQL</h2><p>SPARQL即SPARQL Protocol and RDF Query Language的递归缩写，专门用于访问和操作RDF数据，是语义网的核心技术之一。W3C的RDF数据存取小组（RDF Data Access Working Group, RDAWG）对其进行了标准化。在2008年，SPARQL 1.0成为W3C官方所推荐的标准。2013年发布了SPARQL 1.1。相对第一个版本，其支持RDF图的更新，提供更强大的查询，比如：子查询、聚合操作（像我们常用的count）等等。</p>
-<p>由两个部分组成：协议和查询语言。</p>
-<ol>
-<li>查询语言很好理解，就像SQL用于查询关系数据库中的数据，XQuery用于查询XML数据，SPARQL用于查询RDF数据。</li>
-<li>协议是指我们可以通过HTTP协议在客户端和SPARQL服务器（SPARQL endpoint）之间传输查询和结果，这也是和其他查询语言最大的区别。</li>
-</ol>
-<p>一个SPARQL查询本质上是一个带有变量的RDF图，以我们之前提到的罗纳尔多RDF数据为例：</p>
-<pre><code>&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/chineseName&gt; &quot;罗纳尔多·路易斯·纳萨里奥·德·利马&quot;^^string.
-</code></pre>
-<p>查询SPARQL</p>
-<pre><code>&lt;http://www.kg.com/person/1&gt; &lt;http://www.kg.com/ontology/chineseName&gt; ?x.
-</code></pre>
-<p>SPARQL查询是基于图匹配的思想。我们把上述的查询与RDF图进行匹配，找到符合该匹配模式的所有子图，最后得到变量的值。就上面这个例子而言，在RDF图中找到匹配的子图后，将”罗纳尔多·路易斯·纳萨里奥·德·利马”和“?x”绑定，我们就得到最后的结果。简而言之，SPARQL查询分为三个步骤：</p>
-<ol>
-<li>构建查询图模式，表现形式就是带有变量的RDF。</li>
-<li>匹配，匹配到符合指定图模式的子图。</li>
-<li>绑定，将结果绑定到查询图模式对应的变量上。</li>
-</ol>
-<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><p><strong>如何查询所有数据</strong></p>
-<pre><code>PREFIX : &lt;http://www.kgdemo.com#&gt;
-PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
-PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;
-PREFIX xsd: &lt;XML Schema&gt;
-PREFIX vocab: &lt;http://localhost:2020/resource/vocab/&gt;
-PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
-PREFIX map: &lt;http://localhost:2020/resource/#&gt;
-PREFIX db: &lt;http://localhost:2020/resource/&gt;
-
-SELECT * WHERE &#123;
-  ?s ?p ?o
-&#125;
-</code></pre>
-<p>SPARQL的部分关键词：</p>
-<ol>
-<li>SELECT， 指定我们要查询的变量。在这里我们查询所有的变量，用*代替。</li>
-<li>WHERE，指定我们要查询的图模式。含义上和SQL的WHERE没有区别。</li>
-<li>FROM，指定查询的RDF数据集。我们这里只有一个图，因此省去了FROM关键词。 PREFIX，用于IRI的缩写。</li>
-</ol>
-<p>“周星驰出演了哪些电影”：</p>
-<pre><code>PREFIX : &lt;http://www.kgdemo.com#&gt;
-PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
-PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;
-PREFIX xsd: &lt;XML Schema&gt;
-PREFIX vocab: &lt;http://localhost:2020/resource/vocab/&gt;
-PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
-PREFIX map: &lt;http://localhost:2020/resource/#&gt;
-PREFIX db: &lt;http://localhost:2020/resource/&gt;
-
-SELECT ?n WHERE &#123;
-  ?s rdf:type :Person.
-  ?s :personName &#39;周星驰&#39;.
-  ?s :hasActedIn ?o.
-  ?o :movieTitle ?n
-&#125;
-</code></pre>
-<h2 id="使用Jena-构建知识图谱"><a href="#使用Jena-构建知识图谱" class="headerlink" title="使用Jena 构建知识图谱"></a>使用Jena 构建知识图谱</h2><p>Jena是Apache基金会旗下的开源Java框架，用于构建Semantic Web 和 Linked Data 应用。</p>
-<p>下面简要的介绍下API，要使用jena，可以下载jar包或者使用maven（推荐），建议测试时下面的都加上：</p>
-<pre><code>    &lt;dependency&gt;    &lt;groupId&gt;org.apache.jena&lt;/groupId&gt;    &lt;artifactId&gt;apache-jena-libs&lt;/artifactId&gt;    &lt;type&gt;pom&lt;/type&gt;    &lt;version&gt;3.7.0&lt;/version&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.apache.jena&lt;/groupId&gt;    &lt;artifactId&gt;jena-sdb&lt;/artifactId&gt;    &lt;version&gt;3.7.0&lt;/version&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.apache.jena&lt;/groupId&gt;    &lt;artifactId&gt;jena-base&lt;/artifactId&gt;    &lt;version&gt;3.7.0&lt;/version&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.apache.jena&lt;/groupId&gt;    &lt;artifactId&gt;jena-fuseki-embedded&lt;/artifactId&gt;    &lt;version&gt;3.7.0&lt;/version&gt; &lt;!-- Set the version --&gt;&lt;/dependency&gt;
-&lt;!-- https://mvnrepository.com/artifact/org.apache.jena/jena-arq --&gt;&lt;dependency&gt;    &lt;groupId&gt;org.apache.jena&lt;/groupId&gt;    &lt;artifactId&gt;jena-arq&lt;/artifactId&gt;    &lt;version&gt;3.7.0&lt;/version&gt;&lt;/dependency&gt;
-</code></pre>
-<h3 id="Jena-RDF-API"><a href="#Jena-RDF-API" class="headerlink" title="Jena RDF API"></a>Jena RDF API</h3><p>首先，三元组（triple）组成的图称之为Model，这个图里的Node可以是resources(实体）、literals（文本）或者blank nodes。</p>
-<p>一个三元组，在jena里称之为Statement，一个 statement 包含三部分：:</p>
-<ul>
-<li>the subject ：实体</li>
-<li>the predicate ：属性</li>
-<li>the object ： 值</li>
-</ul>
-<h4 id="创建Model"><a href="#创建Model" class="headerlink" title="创建Model"></a>创建Model</h4><pre><code>// URI 定义
-static String personURI    = &quot;http://somewhere/JohnSmith&quot;;
-static String fullName     = &quot;John Smith&quot;;
-
-// 创建一个空模型（KG)
-Model model = ModelFactory.createDefaultModel();
-
-// 创建一个resource（一个subject)
-Resource johnSmith = model.createResource(personURI);
-
-// 添加属性，这里的value是一个literals（文本）
- johnSmith.addProperty(VCARD.FN, fullName);
-</code></pre>
-<p>当然，你还可以使用链式API,为resource添加多个Property</p>
-<pre><code>// create the resource
-//   and add the properties cascading style
-Resource johnSmith
-  = model.createResource(personURI)     .addProperty(VCARD.FN, fullName)     .addProperty(VCARD.N,                  model.createResource()                       .addProperty(VCARD.Given, givenName)                       .addProperty(VCARD.Family, familyName));
-</code></pre>
-<h4 id="遍历Model"><a href="#遍历Model" class="headerlink" title="遍历Model"></a>遍历Model</h4><p>使用model.listStatements遍历statements，返回一个迭代器，使用hasNext判断是否还有数据，通过getSubject，getPredicate，getObject 获取三元组信息。</p>
-<pre><code>// list the statements in the Model
-StmtIterator iter = model.listStatements();
-
-// print out the predicate, subject and object of each statement
-while (iter.hasNext()) &#123;
-    Statement stmt      = iter.nextStatement();  // get next statement
-    Resource  subject   = stmt.getSubject();     // get the subject
-    Property  predicate = stmt.getPredicate();   // get the predicate
-    RDFNode   object    = stmt.getObject();      // get the object
-    System.out.print(subject.toString());
-    System.out.print(&quot; &quot; + predicate.toString() + &quot; &quot;);
-    if (object instanceof Resource) &#123;
-       System.out.print(object.toString());
-    &#125; else &#123;
-        // object is a literal
-        System.out.print(&quot; \&quot;&quot; + object.toString() + &quot;\&quot;&quot;);
-    &#125;
-    System.out.println(&quot; .&quot;);
-&#125; 
-</code></pre>
-<p>运行结果：</p>
-<pre><code>http://somewhere/JohnSmith http://www.w3.org/2001/vcard-rdf/3.0#N 80aeb72e-ef9c-4879-807d-62daf3c13b72 .
-http://somewhere/JohnSmith http://www.w3.org/2001/vcard-rdf/3.0#FN  &quot;John Smith&quot; .
-80aeb72e-ef9c-4879-807d-62daf3c13b72 http://www.w3.org/2001/vcard-rdf/3.0#Family  &quot;Smith&quot; .
-80aeb72e-ef9c-4879-807d-62daf3c13b72 http://www.w3.org/2001/vcard-rdf/3.0#Given  &quot;John&quot; .
-</code></pre>
-<h4 id="保存为-RDF文件"><a href="#保存为-RDF文件" class="headerlink" title="保存为 RDF文件"></a>保存为 RDF文件</h4><p>可以使用model.write方便的把Model保存为rdf文件，write默认保存为XML格式</p>
-<pre><code>// now write the model in XML form to a file
-model.write(System.out);
-
-
-
-&lt;rdf:RDF
-  xmlns:rdf=&#39;http://www.w3.org/1999/02/22-rdf-syntax-ns#&#39;
-  xmlns:vcard=&#39;http://www.w3.org/2001/vcard-rdf/3.0#&#39;
- &gt;
-  &lt;rdf:Description rdf:about=&#39;http://somewhere/JohnSmith&#39;&gt;
-    &lt;vcard:FN&gt;John Smith&lt;/vcard:FN&gt;
-    &lt;vcard:N rdf:nodeID=&quot;A0&quot;/&gt;
-  &lt;/rdf:Description&gt;
-  &lt;rdf:Description rdf:nodeID=&quot;A0&quot;&gt;
-    &lt;vcard:Given&gt;John&lt;/vcard:Given&gt;
-    &lt;vcard:Family&gt;Smith&lt;/vcard:Family&gt;
-  &lt;/rdf:Description&gt;
-&lt;/rdf:RDF&gt;
-</code></pre>
-<p>write还提供重载版本write( OutputStream out, String lang )，lang可以为”RDF/XML-ABBREV”, “N-TRIPLE”, “TURTLE”, (and “TTL”) and “N3”<br> 我们来保存为常见的TURTLE：</p>
-<pre><code>model.write(System.out, &quot;TURTLE&quot;);
-</code></pre>
-<p>结果：</p>
-<pre><code>&lt;http://somewhere/JohnSmith&gt;    &lt;http://www.w3.org/2001/vcard-rdf/3.0#FN&gt;            &quot;John Smith&quot; ;    &lt;http://www.w3.org/2001/vcard-rdf/3.0#N&gt;            [ &lt;http://www.w3.org/2001/vcard-rdf/3.0#Family&gt;                      &quot;Smith&quot; ;              &lt;http://www.w3.org/2001/vcard-rdf/3.0#Given&gt;                      &quot;John&quot;            ] .
-</code></pre>
-<p>jena还提供prefix功能，我们可以指定prefix来简化turtle,下面的代码将指定prefix，并保存到文件1.rdf里：</p>
-<pre><code>    model.setNsPrefix( &quot;vCard&quot;, &quot;http://www.w3.org/2001/vcard-rdf/3.0#&quot; );    model.setNsPrefix( &quot;rdf&quot;, &quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot; );    try &#123;        model.write(new FileOutputStream(&quot;1.rdf&quot;),&quot;TURTLE&quot;);    &#125; catch (FileNotFoundException e) &#123;        e.printStackTrace();    &#125;
-</code></pre>
-<p>结果：</p>
-<pre><code>@prefix rdf:   &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
-@prefix vCard: &lt;http://www.w3.org/2001/vcard-rdf/3.0#&gt; .
-
-&lt;http://somewhere/JohnSmith&gt;    vCard:FN  &quot;John Smith&quot; ;    vCard:N   [ vCard:Family  &quot;Smith&quot; ;                vCard:Given   &quot;John&quot;              ] .
-</code></pre>
-<h4 id="读取rdf"><a href="#读取rdf" class="headerlink" title="读取rdf"></a>读取rdf</h4><p>Mode的read(Reader reader, String base)方法，提供 读取RDF文件的功能：</p>
-<pre><code>    static final String inputFileName  = &quot;1.rdf&quot;;
-                              
-    public static void main (String args[]) &#123;
-        // create an empty model
-        Model model = ModelFactory.createDefaultModel();
-
-        InputStream in = FileManager.get().open( inputFileName );
-        if (in == null) &#123;
-            throw new IllegalArgumentException( &quot;File: &quot; + inputFileName + &quot; not found&quot;);
-        &#125;
-        
-        // read the RDF/XML file
-        model.read(in, &quot;&quot;,&quot;TURTLE&quot;);
-                    
-        // write it to standard out
-        model.write(System.out);            
-    &#125;
-</code></pre>
-<p>注意，read的时候，默认是读取XML，如果是其他格式，需要指定lang。</p>
-<h4 id="从模型读取Resouce"><a href="#从模型读取Resouce" class="headerlink" title="从模型读取Resouce"></a>从模型读取Resouce</h4><p>一个resouce都有一个唯一的URI，我们可以通过URI来获取对应的Resouce：<br> 函数原型：</p>
-<pre><code>    /**    Return a Resource instance with the given URI in this model. &lt;i&gt;This method    behaves identically to &lt;code&gt;createResource(String)&lt;/code&gt;&lt;/i&gt; and exists as    legacy: createResource is now capable of, and allowed to, reuse existing objects.&lt;p&gt;    Subsequent operations on the returned object may modify this model.   @return a resource instance   @param uri the URI of the resource*/Resource getResource(String uri) ;
-</code></pre>
-<p>获取到Resouce后，通过getRequiredProperty获取属性，如果一个属性包含多个值，可以使用listProperties获取。</p>
-<pre><code> static final String inputFileName = &quot;1.rdf&quot;;
-    static final String johnSmithURI = &quot;http://somewhere/JohnSmith&quot;;
-    
-    public static void main (String args[]) &#123;
-        // create an empty model
-        Model model = ModelFactory.createDefaultModel();
-       
-        // use the FileManager to find the input file
-        InputStream in = FileManager.get().open(inputFileName);
-        if (in == null) &#123;
-            throw new IllegalArgumentException( &quot;File: &quot; + inputFileName + &quot; not found&quot;);
-        &#125;
-        
-        // read the RDF/XML file
-        model.read(new InputStreamReader(in), &quot;&quot;);
-        
-        // retrieve the Adam Smith vcard resource from the model
-        Resource vcard = model.getResource(johnSmithURI);
-
-        // retrieve the value of the N property
-        Resource name = (Resource) vcard.getRequiredProperty(VCARD.N)
-                                        .getObject();
-        // retrieve the given name property
-        String fullName = vcard.getRequiredProperty(VCARD.FN)
-                               .getString();
-        // add two nick name properties to vcard
-        vcard.addProperty(VCARD.NICKNAME, &quot;Smithy&quot;)
-             .addProperty(VCARD.NICKNAME, &quot;Adman&quot;);
-        
-        // set up the output
-        System.out.println(&quot;The nicknames of \&quot;&quot; + fullName + &quot;\&quot; are:&quot;);
-        // list the nicknames
-        StmtIterator iter = vcard.listProperties(VCARD.NICKNAME);
-        while (iter.hasNext()) &#123;
-            System.out.println(&quot;    &quot; + iter.nextStatement().getObject()
-                                            .toString());
-        &#125;
-
-        try &#123;
-            model.write(new FileOutputStream(&quot;1.rdf&quot;));
-        &#125; catch (FileNotFoundException e) &#123;
-            e.printStackTrace();
-        &#125;
-    &#125;
-</code></pre>
-<h4 id="查询模型"><a href="#查询模型" class="headerlink" title="查询模型"></a>查询模型</h4><p>可以通过listResourcesWithProperty查询包含Property的数据：</p>
-<pre><code>    ResIterator iter = model.listResourcesWithProperty(VCARD.FN);
-        if (iter.hasNext()) &#123;
-            System.out.println(&quot;The database contains vcards for:&quot;);
-            while (iter.hasNext()) &#123;
-                System.out.println(&quot;  &quot; + iter.nextResource()
-                                              .getRequiredProperty(VCARD.FN)
-                                              .getString() );
-            &#125;
-        &#125; else &#123;
-            System.out.println(&quot;No vcards were found in the database&quot;);
-        &#125;        
-</code></pre>
-<p>通过listStatements(SimpleSelector)查询Statement：</p>
-<pre><code>        // select all the resources with a VCARD.FN property
-        // whose value ends with &quot;Smith&quot;
-        StmtIterator iter = model.listStatements(
-            new 
-                SimpleSelector(null, VCARD.FN, (RDFNode) null) &#123;
-                    @Override
-                    public boolean selects(Statement s) &#123;
-                            return s.getString().endsWith(&quot;Smith&quot;);
-                    &#125;
-                &#125;);
-        if (iter.hasNext()) &#123;
-            System.out.println(&quot;The database contains vcards for:&quot;);
-            while (iter.hasNext()) &#123;
-                System.out.println(&quot;  &quot; + iter.nextStatement()
-                                              .getString());
-            &#125;
-        &#125; else &#123;
-            System.out.println(&quot;No Smith&#39;s were found in the database&quot;);
-        &#125;     
-</code></pre>
-<h4 id="模型合并"><a href="#模型合并" class="headerlink" title="模型合并"></a>模型合并</h4><p>可以通过union合并两个模型：</p>
-<p><img src="https://jena.apache.org/tutorials/figures/fig4.png" alt="enter description here"><br><img src="https://jena.apache.org/tutorials/figures/fig5.png" alt="enter description here"></p>
-<p>合并后：<br><img src="http://oyqmmpkcm.bkt.clouddn.com/1524907704194.jpg" alt="enter description here" title="1524907704194"></p>
-<h2 id="来源"><a href="#来源" class="headerlink" title="来源"></a>来源</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/32122644">知识图谱基础之RDF，RDFS与OWL</a></li>
-<li></li>
-</ul>
-<hr>
-<blockquote>
-<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/04/16/jqpeng-%E6%96%B0%E5%9E%8B%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84%E4%B8%89%E4%B8%AA%E5%A2%83%E7%95%8C%20%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%BD%AC%E5%89%8D%E7%AB%AF/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1268,7 +220,7 @@ model.write(System.out);
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1490,7 +442,7 @@ model.write(System.out);
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2024,7 +976,7 @@ axios.get(&quot;/user?ID=12345&quot;);
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2140,7 +1092,7 @@ public class StaticResourceConfiguration extends WebMvcConfigurerAdapter &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -3233,7 +2185,7 @@ function createContainerFunction(container) &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -3382,7 +2334,7 @@ function createContainerFunction(container) &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -3593,7 +2545,7 @@ f91cf4446b3746c665476b3dd214446a941d838fa9a3ad47680190bb08c9aa48
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -3805,6 +2757,1452 @@ List&lt;User&gt; findUsersByAgeBetween(int ageGT, int ageLT);
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/12/22/jqpeng-kgtemp%E6%96%87%E4%BB%B6%E8%BD%ACmp3%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2017/12/22/jqpeng-kgtemp%E6%96%87%E4%BB%B6%E8%BD%ACmp3%E5%B7%A5%E5%85%B7/" class="post-title-link" itemprop="url">kgtemp文件转mp3工具</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-12-22 13:24:00" itemprop="dateCreated datePublished" datetime="2017-12-22T13:24:00+08:00">2017-12-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/8085563.html">kgtemp文件转mp3工具</a></p>
+<p>kgtemp文件是酷我音乐软件的缓存文件，本文从技术层面探讨如何解密该文件为mp3文件，并通过读取ID3信息来重命名。</p>
+<p>备注：针对老版本的酷我音乐生效，新版本不支持！！！</p>
+<h2 id="kgtemp解密"><a href="#kgtemp解密" class="headerlink" title="kgtemp解密"></a>kgtemp解密</h2><p>kgtemp文件前1024个字节是固定的包头信息，解密方案详细可以参见(<a target="_blank" rel="noopener" href="http://www.cnblogs.com/KMBlog/p/6877752.html">http://www.cnblogs.com/KMBlog/p/6877752.html</a>)：</p>
+<pre><code>class Program&#123;    static void Main(string[] args)    &#123;
+        byte[] key=&#123;0xAC,0xEC,0xDF,0x57&#125;;        using (var input = new FileStream(@&quot;E:\KuGou\Temp\236909b6016c6e98365e5225f488dd7a.kgtemp&quot;, FileMode.Open, FileAccess.Read))        &#123;            var output = File.OpenWrite(@&quot;d:\test.mp3&quot;);//输出文件            input.Seek(1024, SeekOrigin.Begin);//跳过1024字节的包头            byte[] buffer = new byte[key.Length];            int length;            while((length=input.Read(buffer,0,buffer.Length))&gt;0)            &#123;                for(int i=0;i&lt;length;i++)                &#123;                    var k = key[i];                    var kh = k &gt;&gt; 4;                    var kl = k &amp; 0xf;                    var b = buffer[i];                    var low = b &amp; 0xf ^ kl;//解密后的低4位                    var high = (b &gt;&gt; 4) ^ kh ^ low &amp; 0xf;//解密后的高4位                    buffer[i] = (byte)(high &lt;&lt; 4 | low);                &#125;                output.Write(buffer, 0, length);            &#125;            output.Close();        &#125;        Console.WriteLine(&quot;按任意键退出...&quot;);        Console.ReadKey();    &#125;&#125;
+</code></pre>
+<p>这样解密出来就是mp3文件了</p>
+<h2 id="读取ID3信息"><a href="#读取ID3信息" class="headerlink" title="读取ID3信息"></a>读取ID3信息</h2><p>解密出来的文件还需要手动命名，不是很方便，可以读取ID3V1信息重命名文件。<br> ID3V1比较简单，它是存放在MP3文件的末尾，用16进制的编辑器打开一个MP3文件，查看其末尾的128个顺序存放字节，数据结构定义如下：<br> char Header<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1513919861693.jpg" title="1513919861693">3</a>;    /<em>标签头必须是”TAG”否则认为没有标签</em>/<br> char Title[30];    /<em>标题</em>/<br> char Artist[30];   /<em>作者</em>/<br> char Album[30];    /<em>专集</em>/<br> char Year<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1513920067729.jpg" title="1513920067729">4</a>;    /<em>出品年代</em>/<br> char Comment[30];   /<em>备注</em>/<br> char Genre;    /<em>类型，流派</em>/</p>
+<p>解析代码比较简单，注意中文歌曲用GBK编码就可以了：</p>
+<pre><code>  private static Mp3Info FormatMp3Info(byte[] Info, System.Text.Encoding Encoding)    &#123;        Mp3Info myMp3Info = new Mp3Info();        string str = null;        int i;        int position = 0主要代码jia，; //循环的起始值        int currentIndex = 0; //Info的当前索引值
+        //获取TAG标识        for (i = currentIndex; i &lt; currentIndex + 3; i++)        &#123;            str = str + (char)Info[i];            position++;        &#125;        currentIndex = position;        myMp3Info.identify = str;
+        //获取歌名        str = null;        byte[] bytTitle = new byte[30]; //将歌名部分读到一个单独的数组中        int j = 0;        for (i = currentIndex; i &lt; currentIndex + 30; i++)        &#123;            bytTitle[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Title = ByteToString(bytTitle, Encoding);
+        //获取歌手名        str = null;        j = 0;        byte[] bytArtist = new byte[30]; //将歌手名部分读到一个单独的数组中        for (i = currentIndex; i &lt; currentIndex + 30; i++)        &#123;            bytArtist[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Artist = ByteToString(bytArtist, Encoding);
+        //获取唱片名        str = null;        j = 0;        byte[] bytAlbum = new byte[30]; //将唱片名部分读到一个单独的数组中        for (i = currentIndex; i &lt; currentIndex + 30; i++)        &#123;            bytAlbum[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Album = ByteToString(bytAlbum, Encoding);
+        //获取年        str = null;        j = 0;        byte[] bytYear = new byte[4]; //将年部分读到一个单独的数组中        for (i = currentIndex; i &lt; currentIndex + 4; i++)        &#123;            bytYear[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Year = ByteToString(bytYear, Encoding);
+        //获取注释        str = null;        j = 0;        byte[] bytComment = new byte[28]; //将注释部分读到一个单独的数组中        for (i = currentIndex; i &lt; currentIndex + 25; i++)        &#123;            bytComment[j] = Info[i];            position++;            j++;        &#125;        currentIndex = position;        myMp3Info.Comment = ByteToString(bytComment, Encoding);
+        //以下获取保留位        myMp3Info.reserved1 = (char)Info[++position];        myMp3Info.reserved2 = (char)Info[++position];        myMp3Info.reserved3 = (char)Info[++position];
+        //        return myMp3Info;    &#125;
+</code></pre>
+<h2 id="转换小工具"><a href="#转换小工具" class="headerlink" title="转换小工具"></a>转换小工具</h2><p>写了一个小工具，来进行转换</p>
+<p><img src="https://raw.githubusercontent.com/jadepeng/blogpic/master/pic/2018/1513919861693.jpg" alt="装换工具" title="1513919861693"></p>
+<p>下载地址：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1o7FIsPk">https://pan.baidu.com/s/1o7FIsPk</a></p>
+<p>PS:上面只读取了IDV1，部分歌曲可能不存在<br> 可以下载@缤纷 提供的程序，增加了ID3V2的支持：<br><a target="_blank" rel="noopener" href="https://files.cnblogs.com/files/gxlxzys/kgtemp%E6%96%87%E4%BB%B6%E8%BD%ACmp3%E5%B7%A5%E5%85%B7.zip">https://files.cnblogs.com/files/gxlxzys/kgtemp文件转mp3工具.zip</a></p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/12/08/jqpeng-%E4%BD%BF%E7%94%A8SpringBoot%E5%BC%80%E5%8F%91REST%E6%9C%8D%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2017/12/08/jqpeng-%E4%BD%BF%E7%94%A8SpringBoot%E5%BC%80%E5%8F%91REST%E6%9C%8D%E5%8A%A1/" class="post-title-link" itemprop="url">使用SpringBoot开发REST服务</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-12-08 16:35:00" itemprop="dateCreated datePublished" datetime="2017-12-08T16:35:00+08:00">2017-12-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/SpringBootRest.html">使用SpringBoot开发REST服务</a></p>
+<p>本文介绍如何基于Spring Boot搭建一个简易的REST服务框架，以及如何通过自定义注解实现Rest服务鉴权</p>
+<h1 id="搭建框架"><a href="#搭建框架" class="headerlink" title="搭建框架"></a>搭建框架</h1><h2 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h2><p>首先，引入相关依赖，数据库使用mongodb，同时使用redis做缓存</p>
+<pre><code>注意，这里没有使用tomcat，而是使用undertow
+
+
+
+    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter&lt;/artifactId&gt;    &lt;/dependency&gt;
+    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;        &lt;scope&gt;test&lt;/scope&gt;    &lt;/dependency&gt;
+    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;        &lt;exclusions&gt;            &lt;exclusion&gt;                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;                &lt;artifactId&gt;spring-boot-starter-tomcat&lt;/artifactId&gt;            &lt;/exclusion&gt;        &lt;/exclusions&gt;    &lt;/dependency&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-undertow&lt;/artifactId&gt;    &lt;/dependency&gt;
+    &lt;!--redis支持--&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;    &lt;/dependency&gt;
+    &lt;!--mongodb支持--&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-data-mongodb&lt;/artifactId&gt;    &lt;/dependency&gt;
+</code></pre>
+<ul>
+<li>引入spring-boot-starter-web支持web服务</li>
+<li>引入spring-boot-starter-data-redis 和spring-boot-starter-data-mongodb就可以方便的使用mongodb和redis了</li>
+</ul>
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><h3 id="profiles功能"><a href="#profiles功能" class="headerlink" title="profiles功能"></a>profiles功能</h3><p>为了方便 区分开发环境和线上环境，可以使用profiles功能，在application.properties里增加<br> spring.profiles.active=dev</p>
+<p>然后增加application-dev.properties作为dev配置文件。</p>
+<h3 id="mondb配置"><a href="#mondb配置" class="headerlink" title="mondb配置"></a>mondb配置</h3><p>配置数据库地址即可</p>
+<pre><code>spring.data.mongodb.uri=mongodb://ip:port/database?readPreference=primaryPreferred
+</code></pre>
+<h3 id="redis配置"><a href="#redis配置" class="headerlink" title="redis配置"></a>redis配置</h3><pre><code>spring.redis.database=0  
+# Redis服务器地址
+spring.redis.host=ip
+# Redis服务器连接端口
+spring.redis.port=6379  
+# Redis服务器连接密码（默认为空）
+spring.redis.password=
+# 连接池最大连接数（使用负值表示没有限制）
+spring.redis.pool.max-active=8  
+# 连接池最大阻塞等待时间（使用负值表示没有限制）
+spring.redis.pool.max-wait=-1  
+# 连接池中的最大空闲连接
+spring.redis.pool.max-idle=8  
+# 连接池中的最小空闲连接
+spring.redis.pool.min-idle=0  
+# 连接超时时间（毫秒）
+spring.redis.timeout=0  
+</code></pre>
+<h2 id="数据访问"><a href="#数据访问" class="headerlink" title="数据访问"></a>数据访问</h2><h3 id="mongdb"><a href="#mongdb" class="headerlink" title="mongdb"></a>mongdb</h3><p>mongdb访问很简单，直接定义接口extends MongoRepository即可，另外可以支持JPA语法，例如：</p>
+<pre><code>@Component
+public interface UserRepository extends MongoRepository&lt;User, Integer&gt; &#123;
+public User findByUserName(String userName);
+&#125;
+</code></pre>
+<p>使用时，加上@Autowired注解即可。</p>
+<pre><code>@Component
+public class AuthService extends BaseService &#123;
+@AutowiredUserRepository userRepository;&#125;
+</code></pre>
+<h3 id="Redis访问"><a href="#Redis访问" class="headerlink" title="Redis访问"></a>Redis访问</h3><p>使用StringRedisTemplate即可直接访问Redis</p>
+<pre><code>@Component
+public class BaseService &#123;@Autowiredprotected MongoTemplate mongoTemplate;
+@Autowiredprotected StringRedisTemplate stringRedisTemplate;
+&#125;
+</code></pre>
+<p>储存数据：</p>
+<pre><code>.stringRedisTemplate.opsForValue().set(token_key, user.getId()+&quot;&quot;,token_max_age, TimeUnit.SECONDS);
+</code></pre>
+<p>删除数据：</p>
+<pre><code>stringRedisTemplate.delete(getFormatToken(accessToken,platform));
+</code></pre>
+<h2 id="Web服务"><a href="#Web服务" class="headerlink" title="Web服务"></a>Web服务</h2><p>定义一个Controller类，加上RestController即可，使用RequestMapping用来设置url route</p>
+<pre><code>@RestController
+public class AuthController extends BaseController &#123;
+@RequestMapping(value = &#123;&quot;/&quot;&#125;, produces = &quot;application/json;charset=utf-8&quot;, method = &#123;RequestMethod.GET, RequestMethod.POST&#125;)@ResponseBodypublic String main() &#123;    return &quot;hello world！&quot;;&#125;
+
+&#125;
+</code></pre>
+<p>现在启动，应该就能看到hello world！了</p>
+<h1 id="服务鉴权"><a href="#服务鉴权" class="headerlink" title="服务鉴权"></a>服务鉴权</h1><h2 id="简易accessToken机制"><a href="#简易accessToken机制" class="headerlink" title="简易accessToken机制"></a>简易accessToken机制</h2><p>提供登录接口，认证成功后，生成一个accessToken，以后访问接口时，带上accessToken，服务端通过accessToken来判断是否是合法用户。</p>
+<p>为了方便，可以将accessToken存入redis，设定有效期。</p>
+<pre><code>        String token = EncryptionUtils.sha256Hex(String.format(&quot;%s%s&quot;, user.getUserName(), System.currentTimeMillis()));    String token_key = getFormatToken(token, platform);    this.stringRedisTemplate.opsForValue().set(token_key, user.getId()+&quot;&quot;,token_max_age, TimeUnit.SECONDS);
+</code></pre>
+<h2 id="拦截器身份认证"><a href="#拦截器身份认证" class="headerlink" title="拦截器身份认证"></a>拦截器身份认证</h2><p>为了方便做统一的身份认证，可以基于Spring的拦截器机制，创建一个拦截器来做统一认证。</p>
+<pre><code>public class AuthCheckInterceptor implements HandlerInterceptor &#123;
+&#125;
+</code></pre>
+<p>要使拦截器生效，还需要一步，增加配置：</p>
+<pre><code>@Configuration
+public class SessionConfiguration extends WebMvcConfigurerAdapter &#123;
+@AutowiredAuthCheckInterceptor authCheckInterceptor;
+@Overridepublic void addInterceptors(InterceptorRegistry registry) &#123;    super.addInterceptors(registry);    // 添加拦截器    registry.addInterceptor(authCheckInterceptor).addPathPatterns(&quot;/**&quot;);&#125;
+&#125;
+</code></pre>
+<h2 id="自定义认证注解"><a href="#自定义认证注解" class="headerlink" title="自定义认证注解"></a>自定义认证注解</h2><p>为了精细化权限认证，比如有的接口只能具有特定权限的人才能访问，可以通过自定义注解轻松解决。在自定义的注解里，加上roles即可。</p>
+<pre><code>/**
+ *  权限检验注解
+ */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface AuthCheck &#123;
+/** *  角色列表 * @return */String[] roles() default &#123;&#125;;
+&#125;
+</code></pre>
+<p>检验逻辑：</p>
+<ul>
+<li>只要接口加上了AuthCheck注解，就必须是登陆用户</li>
+<li>如果指定了roles，则除了登录外，用户还应该具备相应的角色。</li>
+</ul>
+<pre><code>    String[] ignoreUrls = new String[]&#123;
+            &quot;/user/.*&quot;,
+            &quot;/cat/.*&quot;,
+            &quot;/app/.*&quot;,
+            &quot;/error&quot;
+    &#125;;
+ public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception &#123;
+
+        // 0 检验公共参数
+        if(!checkParams(&quot;platform&quot;,httpServletRequest,httpServletResponse))&#123;
+            return  false;
+        &#125;
+
+        // 1、忽略验证的URL
+        String url = httpServletRequest.getRequestURI().toString();
+        for(String ignoreUrl :ignoreUrls)&#123;
+            if(url.matches(ignoreUrl))&#123;
+                return true;
+            &#125;
+        &#125;
+
+        // 2、查询验证注解
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Method method = handlerMethod.getMethod();
+        // 查询注解
+        AuthCheck authCheck = method.getAnnotation(AuthCheck.class);
+        if (authCheck == null) &#123;
+            // 无注解，不需要
+            return true;
+        &#125;
+
+        // 3、有注解，先检查accessToken
+        if(!checkParams(&quot;accessToken&quot;,httpServletRequest,httpServletResponse))&#123;
+            return  false;
+        &#125;
+        // 检验token是否过期
+        Integer userId = authService.getUserIdFromToken(httpServletRequest.getParameter(&quot;accessToken&quot;),
+                httpServletRequest.getParameter(&quot;platform&quot;));
+        if(userId==null)&#123;
+            logger.debug(&quot;accessToken timeout&quot;);
+            output(ResponseResult.Builder.error(&quot;accessToken已过期&quot;).build(),httpServletResponse);
+            return false;
+        &#125;
+
+        // 4、再检验是否包含必要的角色
+        if(authCheck.roles()!=null&amp;&amp;authCheck.roles().length&gt;0)&#123;
+            User user = authService.getUser(userId);
+            boolean isMatch = false;
+            for(String role : authCheck.roles())&#123;
+                if(user.getRole().getName().equals(role))&#123;
+                    isMatch =  true;
+                    break;
+                &#125;
+            &#125;
+            // 角色未匹配，验证失败
+            if(!isMatch)&#123;
+                return false;
+            &#125;
+        &#125;
+
+        return true;
+    &#125;
+</code></pre>
+<h1 id="服务响应结果封装"><a href="#服务响应结果封装" class="headerlink" title="服务响应结果封装"></a>服务响应结果封装</h1><p>增加一个Builder，方便生成最终结果</p>
+<pre><code>public class ResponseResult &#123;
+
+    public static class Builder&#123;
+        ResponseResult responseResult;
+
+        Map&lt;String,Object&gt; dataMap = Maps.newHashMap();
+
+        public Builder()&#123;
+            this.responseResult = new ResponseResult();
+        &#125;
+
+        public Builder(String state)&#123;
+            this.responseResult = new ResponseResult(state);
+        &#125;
+
+
+        public static Builder newBuilder()&#123;
+           return new Builder();
+        &#125;
+
+        public static Builder success()&#123;
+            return new Builder(&quot;success&quot;);
+        &#125;
+
+        public static Builder error(String message)&#123;
+            Builder builder =  new Builder(&quot;error&quot;);
+            builder.responseResult.setError(message);
+            return builder;
+        &#125;
+
+        public  Builder append(String key,Object data)&#123;
+            this.dataMap.put(key,data);
+            return this;
+        &#125;
+
+        /**
+         *  设置列表数据
+         * @param datas 数据
+         * @return
+         */
+        public  Builder setListData(List&lt;?&gt; datas)&#123;
+            this.dataMap.put(&quot;result&quot;,datas);
+            this.dataMap.put(&quot;total&quot;,datas.size());
+            return this;
+        &#125;
+
+        public  Builder setData(Object data)&#123;
+            this.dataMap.clear();
+            this.responseResult.setData(data);
+            return this;
+        &#125;
+
+        boolean wrapData = false;
+
+        /**
+         * 将数据包裹在data中
+         * @param wrapData
+         * @return
+         */
+        public  Builder wrap(boolean wrapData)&#123;
+            this.wrapData = wrapData;
+            return this;
+        &#125;
+
+        public String build()&#123;
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(&quot;state&quot;,this.responseResult.getState());
+            if(this.responseResult.getState().equals(&quot;error&quot;))&#123;
+                jsonObject.put(&quot;error&quot;,this.responseResult.getError());
+            &#125;
+            if(this.responseResult.getData()!=null)&#123;
+                jsonObject.put(&quot;data&quot;, JSON.toJSON(this.responseResult.getData()));
+            &#125;else  if(dataMap.size()&gt;0)&#123;
+                if(wrapData) &#123;
+                    JSONObject data = new JSONObject();
+                    dataMap.forEach((key, value) -&gt; &#123;
+                        data.put(key, value);
+                    &#125;);
+                    jsonObject.put(&quot;data&quot;, data);
+                &#125;else&#123;
+                    dataMap.forEach((key, value) -&gt; &#123;
+                        jsonObject.put(key, value);
+                    &#125;);
+                &#125;
+            &#125;
+            return jsonObject.toJSONString();
+        &#125;
+
+    &#125;
+
+    private String state;
+    private Object data;
+    private String error;
+
+
+    public String getError() &#123;
+        return error;
+    &#125;
+
+    public void setError(String error) &#123;
+        this.error = error;
+    &#125;
+
+    public ResponseResult()&#123;&#125;
+
+    public ResponseResult(String rc)&#123;
+        this.state = rc;
+    &#125;
+
+    /**
+     * 成功时返回
+     * @param rc
+     * @param result
+     */
+    public ResponseResult(String rc, Object result)&#123;
+        this.state = rc;
+        this.data = result;
+    &#125;
+
+    public String getState() &#123;
+        return state;
+    &#125;
+
+    public void setState(String state) &#123;
+        this.state = state;
+    &#125;
+
+    public Object getData() &#123;
+        return data;
+    &#125;
+
+    public void setData(Object data) &#123;
+        this.data = data;
+    &#125;
+
+&#125;
+</code></pre>
+<p>调用时可以优雅一点</p>
+<pre><code>    @RequestMapping(value = &#123;&quot;/user/login&quot;,&quot;/pc/user/login&quot;&#125;, produces = &quot;application/json;charset=utf-8&quot;, method = &#123;RequestMethod.GET, RequestMethod.POST&#125;)
+    @ResponseBody
+    public String login(String userName,String password,Integer platform) &#123;
+        User user = this.authService.login(userName,password);
+        if(user!=null)&#123;
+            //  登陆
+            String token = authService.updateToken(user,platform);
+            return ResponseResult.Builder                 .success()
+                    .append(&quot;accessToken&quot;,token)
+                    .append(&quot;userId&quot;,user.getId())
+                    .build();
+        &#125;
+        return ResponseResult.Builder.error(&quot;用户不存在或密码错误&quot;).build();
+    &#125;
+    protected String error(String message)&#123;
+        return  ResponseResult.Builder.error(message).build();
+    &#125;
+
+    protected String success()&#123;
+        return  ResponseResult.Builder
+                .success()
+                .build();
+    &#125;
+
+    protected String successDataList(List&lt;?&gt; data)&#123;
+        return ResponseResult.Builder
+                .success()
+                .wrap(true) // data包裹
+                .setListData(data)
+                .build();
+    &#125;
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/12/01/jqpeng-%E4%B8%80%E8%B5%B7%E8%AF%BB%E6%BA%90%E7%A0%81%E4%B9%8Bzookeeper(1)%20--%20%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2017/12/01/jqpeng-%E4%B8%80%E8%B5%B7%E8%AF%BB%E6%BA%90%E7%A0%81%E4%B9%8Bzookeeper(1)%20--%20%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">一起读源码之zookeeper(1) -- 启动分析</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-12-01 14:43:00" itemprop="dateCreated datePublished" datetime="2017-12-01T14:43:00+08:00">2017-12-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>22k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>20 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/7942234.html">一起读源码之zookeeper(1) – 启动分析</a></p>
+<p>从本文开始，不定期分析一个开源项目源代码，起篇从大名鼎鼎的zookeeper开始。<br> 为什么是zk，因为用到zk的场景实在太多了，大部分耳熟能详的分布式系统都有zookeeper的影子，比如hbase，storm，dubbo，kafka等等，另外前面提到的<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi/p/java-rpc.html">RPC框架原理与实现</a>也用到了zookeeper。</p>
+<p>目录</p>
+<ul>
+<li>1 环境准备<ul>
+<li>1.1 导入代码</li>
+<li>1.2 设置配置文件</li>
+<li>1.3 调试配置</li>
+</ul>
+</li>
+<li>2 启动分析<ul>
+<li>2.1 QuorumPeerMain</li>
+<li>2.2 ZooKeeperServerMain</li>
+<li>2.3 ServerCnxnFactory</li>
+<li>2.4 ZooKeeperServer</li>
+<li>2.5 服务启动<ul>
+<li>2.5.1 配置cnxnFactory</li>
+<li>2.5.2 启动cnxnFactory<ul>
+<li>socket处理线程</li>
+<li>socket网络请求处理</li>
+<li>读取连接请求</li>
+<li>创建session</li>
+</ul>
+</li>
+<li>2.5.3 zk服务器启动<ul>
+<li>SessionTracker</li>
+</ul>
+</li>
+<li>2.5.4  ZooKeeperServer请求处理器链介绍<ul>
+<li>RequestProcessor</li>
+<li>PrepRequestProcessor</li>
+<li>SyncRequestProcessor</li>
+<li>FinalRequestProcessor</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-环境准备"><a href="#1-环境准备" class="headerlink" title="1 环境准备"></a>1 环境准备</h2><p>首先，下载zk的新版本，最新的稳定版是3.4.10，由于已下载3.4.9.先直接使用。</p>
+<h3 id="1-1-导入代码"><a href="#1-1-导入代码" class="headerlink" title="1.1 导入代码"></a>1.1 导入代码</h3><p>IDEA直接打开zk目录：<br><img src="https://ooo.0o0.ooo/2017/04/27/590166a796fb3.jpg" alt="enter description here" title="1493264040459"></p>
+<p>项目设置为jdk1.7<br> 然后，将src/java下面的main和generated设置为源码目录，同时将lib目录添加为liabary。</p>
+<h3 id="1-2-设置配置文件"><a href="#1-2-设置配置文件" class="headerlink" title="1.2 设置配置文件"></a>1.2 设置配置文件</h3><p>在conf目录，新建zoo.cfg，拷贝sample.cfg即可</p>
+<p><img src="https://ooo.0o0.ooo/2017/04/27/5901674b5600d.jpg" alt="enter description here" title="1493264204261"></p>
+<h3 id="1-3-调试配置"><a href="#1-3-调试配置" class="headerlink" title="1.3 调试配置"></a>1.3 调试配置</h3><p>查看bin/zkServer</p>
+<pre><code>set ZOOMAIN=org.apache.zookeeper.server.quorum.QuorumPeerMain
+....
+endlocal
+</code></pre>
+<p>调用的是org.apache.zookeeper.server.quorum.QuorumPeerMain，因此QuorumPeerMain，配置调试程序，arguments设置conf/zoo.cfg</p>
+<p><img src="https://ooo.0o0.ooo/2017/04/27/5901838aed112.jpg" alt="enter description here" title="1493271435981"></p>
+<p>这样，就可以愉快的Debug代码了-😃</p>
+<h2 id="2-启动分析"><a href="#2-启动分析" class="headerlink" title="2 启动分析"></a>2 启动分析</h2><h3 id="2-1-QuorumPeerMain"><a href="#2-1-QuorumPeerMain" class="headerlink" title="2.1 QuorumPeerMain"></a>2.1 QuorumPeerMain</h3><p>QuorumPeerMain的main里，调用initializeAndRun</p>
+<pre><code>    protected void initializeAndRun(String[] args)
+        throws ConfigException, IOException
+    &#123;
+        QuorumPeerConfig config = new QuorumPeerConfig();
+        if (args.length == 1) &#123;
+            config.parse(args[0]);
+        &#125;
+
+        // Start and schedule the the purge task 清理任务
+        DatadirCleanupManager purgeMgr = new DatadirCleanupManager(config
+                .getDataDir(), config.getDataLogDir(), config
+                .getSnapRetainCount(), config.getPurgeInterval());
+        purgeMgr.start();
+
+        // 集群模式
+        if (args.length == 1 &amp;&amp; config.servers.size() &gt; 0) &#123;
+            runFromConfig(config);
+        &#125; else &#123;
+            LOG.warn(&quot;Either no config or no quorum defined in config, running &quot;
+                    + &quot; in standalone mode&quot;);
+            // there is only server in the quorum -- run as standalone
+            // 单机模式
+            ZooKeeperServerMain.main(args);
+        &#125;
+    &#125;
+</code></pre>
+<p>主要执行了：</p>
+<ul>
+<li>加载解析配置文件到QuorumPeerConfig</li>
+<li>执行清理任务</li>
+<li>判断是集群模式还是单机模式，我们的配置文件未配置server，所以是单机模式，执行 ZooKeeperServerMain.main</li>
+</ul>
+<blockquote>
+<p>本文重点分析单机模式下的zk，集群模式暂时不解读</p>
+</blockquote>
+<h3 id="2-2-ZooKeeperServerMain"><a href="#2-2-ZooKeeperServerMain" class="headerlink" title="2.2 ZooKeeperServerMain"></a>2.2 ZooKeeperServerMain</h3><p>ZooKeeperServerMain.main调用initializeAndRun</p>
+<pre><code> protected void initializeAndRun(String[] args)
+        throws ConfigException, IOException
+    &#123;
+        try &#123;
+            ManagedUtil.registerLog4jMBeans();
+        &#125; catch (JMException e) &#123;
+            LOG.warn(&quot;Unable to register log4j JMX control&quot;, e);
+        &#125;
+
+        ServerConfig config = new ServerConfig();
+        if (args.length == 1) &#123;
+            config.parse(args[0]);
+        &#125; else &#123;
+            config.parse(args);
+        &#125;
+
+        runFromConfig(config);
+    &#125;```
+
+读取配置，然后runFromConfig：
+
+``` java
+ public void runFromConfig(ServerConfig config) throws IOException &#123;
+        LOG.info(&quot;Starting server&quot;);
+        FileTxnSnapLog txnLog = null;
+        try &#123;
+            // Note that this thread isn&#39;t going to be doing anything else,
+            // so rather than spawning another thread, we will just call
+            // run() in this thread.
+            // create a file logger url from the command line args
+            final ZooKeeperServer zkServer = new ZooKeeperServer();
+            // Registers shutdown handler which will be used to know the
+            // server error or shutdown state changes.
+            final CountDownLatch shutdownLatch = new CountDownLatch(1);
+            zkServer.registerServerShutdownHandler(
+                    new ZooKeeperServerShutdownHandler(shutdownLatch));
+
+            // 快照
+            txnLog = new FileTxnSnapLog(new File(config.dataLogDir), new File(
+                    config.dataDir));
+            zkServer.setTxnLogFactory(txnLog);
+            zkServer.setTickTime(config.tickTime);
+            zkServer.setMinSessionTimeout(config.minSessionTimeout);
+            zkServer.setMaxSessionTimeout(config.maxSessionTimeout);
+            // socket工厂
+            cnxnFactory = ServerCnxnFactory.createFactory();
+            cnxnFactory.configure(config.getClientPortAddress(),
+                    config.getMaxClientCnxns());
+            cnxnFactory.startup(zkServer);
+
+            // Watch status of ZooKeeper server. It will do a graceful shutdown
+            // if the server is not running or hits an internal error.
+            shutdownLatch.await();
+            shutdown();
+
+            cnxnFactory.join();
+            if (zkServer.canShutdown()) &#123;
+                zkServer.shutdown();
+            &#125;
+        &#125; catch (InterruptedException e) &#123;
+            // warn, but generally this is ok
+            LOG.warn(&quot;Server interrupted&quot;, e);
+        &#125; finally &#123;
+            if (txnLog != null) &#123;
+                txnLog.close();
+            &#125;
+        &#125;
+    &#125;
+</code></pre>
+<p>几件事情：</p>
+<ul>
+<li>创建zkServer，对ZooKeeperServer设置一些配置参数，如tickTime、minSessionTimeout、maxSessionTimeout</li>
+<li>创建CountDownLatch，注释里写了，用来watch zk的状态，当zk关闭或者出现内部错误的时候<strong>优雅</strong>的关闭服务</li>
+<li>根据配置参数dataLogDir和dataDir创建FileTxnSnapLog，用来存储zk数据和日志快照</li>
+<li>创建cnxnFactory，zk的 socket工厂，负责处理网络请求，zk里有netty和NIO两种实现</li>
+<li>cnxnFactory.startup(zkServer)，启动zk服务器</li>
+</ul>
+<h3 id="2-3-ServerCnxnFactory"><a href="#2-3-ServerCnxnFactory" class="headerlink" title="2.3 ServerCnxnFactory"></a>2.3 ServerCnxnFactory</h3><p>cnxnFactory负责zk的网络请求，createFactory中，从系统配置中读取ZOOKEEPER_SERVER_CNXN_FACTORY，默认是没有这个配置的，因此默认是使用NIOServerCnxnFactory，基于java的NIO实现，</p>
+<pre><code>    static public ServerCnxnFactory createFactory() throws IOException &#123;
+        String serverCnxnFactoryName =
+            System.getProperty(ZOOKEEPER_SERVER_CNXN_FACTORY);
+        if (serverCnxnFactoryName == null) &#123;
+            serverCnxnFactoryName = NIOServerCnxnFactory.class.getName();
+        &#125;
+        try &#123;
+            return (ServerCnxnFactory) Class.forName(serverCnxnFactoryName)
+                                                .newInstance();
+        &#125; catch (Exception e) &#123;
+            IOException ioe = new IOException(&quot;Couldn&#39;t instantiate &quot;
+                    + serverCnxnFactoryName);
+            ioe.initCause(e);
+            throw ioe;
+        &#125;
+    &#125;
+</code></pre>
+<p>当然，我们可以很容易发现：<br><img src="https://ooo.0o0.ooo/2017/04/27/59018f04f17b9.jpg" alt="enter description here" title="1493274374075"></p>
+<p>ServerCnxnFactory还有个NettyServerCnxnFactory实现，基于Netty实现NIO。ServerCnxnFactory里具体负责什么，后面再来看。</p>
+<h3 id="2-4-ZooKeeperServer"><a href="#2-4-ZooKeeperServer" class="headerlink" title="2.4 ZooKeeperServer"></a>2.4 ZooKeeperServer</h3><p>现在，主角登场，我们来看ZooKeeperServer内部有什么玄妙。<br><img src="https://ooo.0o0.ooo/2017/04/27/59018cc60446f.jpg" alt="enter description here" title="1493273799033"></p>
+<p>ZooKeeperServer是单机模式使用的类，在集群模式下使用的是它的子类。<br> 我们先来看ZooKeeperServer包含哪些内容：</p>
+<pre><code>    public static final int DEFAULT_TICK_TIME = 3000;
+    protected int tickTime = DEFAULT_TICK_TIME;
+    /** value of -1 indicates unset, use default */
+    protected int minSessionTimeout = -1;
+    /** value of -1 indicates unset, use default */
+    protected int maxSessionTimeout = -1;
+    protected SessionTracker sessionTracker; //创建和管理session
+    private FileTxnSnapLog txnLogFactory = null; //文件快照
+    private ZKDatabase zkDb; // ZooKeeper树形数据的模型
+    private final AtomicLong hzxid = new AtomicLong(0); //原子增长Long，用于分配事务编号
+    public final static Exception ok = new Exception(&quot;No prob&quot;);
+    protected RequestProcessor firstProcessor; // ZooKeeperServer请求处理器链中的第一个处理器
+    protected volatile State state = State.INITIAL;
+
+    protected enum State &#123;
+        INITIAL, RUNNING, SHUTDOWN, ERROR;
+    &#125;
+
+    /**
+     * This is the secret that we use to generate passwords, for the moment it
+     * is more of a sanity check.
+     */
+    static final private long superSecret = 0XB3415C00L;
+
+    private final AtomicInteger requestsInProcess = new AtomicInteger(0);
+    final List&lt;ChangeRecord&gt; outstandingChanges = new ArrayList&lt;ChangeRecord&gt;();
+    // this data structure must be accessed under the outstandingChanges lock
+    final HashMap&lt;String, ChangeRecord&gt; outstandingChangesForPath =
+        new HashMap&lt;String, ChangeRecord&gt;();
+    
+    private ServerCnxnFactory serverCnxnFactory; //ServerSocket工厂，接受客户端的socket连接
+
+    private final ServerStats serverStats; //server的运行状态统计
+    private final ZooKeeperServerListener listener; // ZK运行状态监听
+    private ZooKeeperServerShutdownHandler zkShutdownHandler;
+</code></pre>
+<h3 id="2-5-服务启动"><a href="#2-5-服务启动" class="headerlink" title="2.5 服务启动"></a>2.5 服务启动</h3><p>前面有点跑偏，继续回归启动过程:</p>
+<pre><code>            cnxnFactory = ServerCnxnFactory.createFactory();
+            cnxnFactory.configure(config.getClientPortAddress(),
+                    config.getMaxClientCnxns());
+            cnxnFactory.startup(zkServer);
+</code></pre>
+<h4 id="2-5-1-配置cnxnFactory"><a href="#2-5-1-配置cnxnFactory" class="headerlink" title="2.5.1 配置cnxnFactory"></a>2.5.1 配置cnxnFactory</h4><p>进入configure：</p>
+<pre><code>    @Override
+    public void configure(InetSocketAddress addr, int maxcc) throws IOException &#123;
+        configureSaslLogin();
+
+        // ZK网络请求主线程
+        thread = new ZooKeeperThread(this, &quot;NIOServerCxn.Factory:&quot; + addr);
+        thread.setDaemon(true);
+
+        maxClientCnxns = maxcc;
+        this.ss = ServerSocketChannel.open();
+        ss.socket().setReuseAddress(true);
+        LOG.info(&quot;binding to port &quot; + addr);
+        ss.socket().bind(addr);
+        ss.configureBlocking(false);
+        ss.register(selector, SelectionKey.OP_ACCEPT);
+    &#125;
+</code></pre>
+<p>几件事情：</p>
+<ul>
+<li>configureSaslLogin，具体不细看，应该是处理鉴权</li>
+<li>初始化ZooKeeperThread，这个ZooKeeperThread的作用是负责处理未处理异常：</li>
+</ul>
+<pre><code>public class ZooKeeperThread extends Thread &#123;
+
+    private static final Logger LOG = LoggerFactory
+            .getLogger(ZooKeeperThread.class);
+
+    private UncaughtExceptionHandler uncaughtExceptionalHandler = new UncaughtExceptionHandler() &#123;
+
+        @Override
+        public void uncaughtException(Thread t, Throwable e) &#123;
+            handleException(t.getName(), e);
+        &#125;
+    &#125;;
+
+    public ZooKeeperThread(Runnable thread, String threadName) &#123;
+        super(thread, threadName);
+        setUncaughtExceptionHandler(uncaughtExceptionalHandler);
+    &#125;
+
+    protected void handleException(String thName, Throwable e) &#123;
+        LOG.warn(&quot;Exception occured from thread &#123;&#125;&quot;, thName, e);
+    &#125;
+&#125;
+</code></pre>
+<ul>
+<li>启动ServerSocketChannel，并绑定配置的addr，并且注册selector（可以搜索NIO了解细节）</li>
+</ul>
+<h4 id="2-5-2-启动cnxnFactory"><a href="#2-5-2-启动cnxnFactory" class="headerlink" title="2.5.2 启动cnxnFactory"></a>2.5.2 启动cnxnFactory</h4><p>继续分析，进入cnxnFactory.startup(zkServer)</p>
+<pre><code>    @Override
+    public void startup(ZooKeeperServer zks) throws IOException,
+            InterruptedException &#123;
+        start();
+        setZooKeeperServer(zks);
+        zks.startdata();
+        zks.startup();
+    &#125;
+</code></pre>
+<p>首先，start，判断线程状态，如果未启动则启动线程，注意只会启动一次。</p>
+<pre><code>    @Override
+    public void start() &#123;
+        // ensure thread is started once and only once
+        if (thread.getState() == Thread.State.NEW) &#123;
+            thread.start();
+        &#125;
+    &#125;
+</code></pre>
+<h5 id="socket处理线程"><a href="#socket处理线程" class="headerlink" title="socket处理线程"></a>socket处理线程</h5><p>启动后，就会执行cnxnFactory.run</p>
+<pre><code>    public void run() &#123;
+        while (!ss.socket().isClosed()) &#123;
+            try &#123;
+                selector.select(1000);
+                Set&lt;SelectionKey&gt; selected;
+                synchronized (this) &#123;
+                    selected = selector.selectedKeys();
+                &#125;
+                ArrayList&lt;SelectionKey&gt; selectedList = new ArrayList&lt;SelectionKey&gt;(
+                        selected);
+                Collections.shuffle(selectedList);
+                for (SelectionKey k : selectedList) &#123;
+                    if ((k.readyOps() &amp; SelectionKey.OP_ACCEPT) != 0) &#123;
+                        SocketChannel sc = ((ServerSocketChannel) k
+                                .channel()).accept();
+                        InetAddress ia = sc.socket().getInetAddress();
+                        int cnxncount = getClientCnxnCount(ia);
+                        if (maxClientCnxns &gt; 0 &amp;&amp; cnxncount &gt;= maxClientCnxns)&#123;
+                            LOG.warn(&quot;Too many connections from &quot; + ia
+                                     + &quot; - max is &quot; + maxClientCnxns );
+                            sc.close();
+                        &#125; else &#123;
+                            LOG.info(&quot;Accepted socket connection from &quot;
+                                     + sc.socket().getRemoteSocketAddress());
+                            sc.configureBlocking(false);
+                            SelectionKey sk = sc.register(selector,
+                                    SelectionKey.OP_READ);
+                            NIOServerCnxn cnxn = createConnection(sc, sk);
+                            sk.attach(cnxn);
+                            addCnxn(cnxn);
+                        &#125;
+                    &#125; else if ((k.readyOps() &amp; (SelectionKey.OP_READ | SelectionKey.OP_WRITE)) != 0) &#123;
+                        NIOServerCnxn c = (NIOServerCnxn) k.attachment();
+                        c.doIO(k);
+                    &#125; else &#123;
+                        if (LOG.isDebugEnabled()) &#123;
+                            LOG.debug(&quot;Unexpected ops in select &quot;
+                                      + k.readyOps());
+                        &#125;
+                    &#125;
+                &#125;
+                selected.clear();
+            &#125; catch (RuntimeException e) &#123;
+                LOG.warn(&quot;Ignoring unexpected runtime exception&quot;, e);
+            &#125; catch (Exception e) &#123;
+                LOG.warn(&quot;Ignoring exception&quot;, e);
+            &#125;
+        &#125;
+        closeAll();
+        LOG.info(&quot;NIOServerCnxn factory exited run method&quot;);
+    &#125;
+</code></pre>
+<p>这里相当于一个独立线程来处理网络连接，通过selector.select(1000)来获取网络请求，一旦有连接就绪，则开始处理：</p>
+<ul>
+<li>首先打乱 Collections.shuffle(selectedList);</li>
+<li>for循环处理<ul>
+<li>如果SelectionKey.OP_ACCEPT，代表一个新连接请求，创建SocketChannel，创建NIOServerCnxn，然后addCnxn</li>
+<li>如果可读写，则 NIOServerCnxn.doIO(k)，执行IO操作</li>
+</ul>
+</li>
+</ul>
+<h5 id="socket网络请求处理"><a href="#socket网络请求处理" class="headerlink" title="socket网络请求处理"></a>socket网络请求处理</h5><p>这里简单分析下doIO,摘录部分代码：</p>
+<pre><code>void doIO(SelectionKey k) throws InterruptedException &#123;
+        try &#123;
+            if (isSocketOpen() == false) &#123;
+                LOG.warn(&quot;trying to do i/o on a null socket for session:0x&quot;
+                         + Long.toHexString(sessionId));
+
+                return;
+            &#125;
+            if (k.isReadable()) &#123;
+                // 读取4个字节
+                int rc = sock.read(incomingBuffer);
+                if (rc &lt; 0) &#123;
+                    throw new EndOfStreamException(
+                            &quot;Unable to read additional data from client sessionid 0x&quot;
+                            + Long.toHexString(sessionId)
+                            + &quot;, likely client has closed socket&quot;);
+                &#125;
+                // 读满了
+                if (incomingBuffer.remaining() == 0) &#123;
+                    boolean isPayload;
+                    if (incomingBuffer == lenBuffer) &#123; // start of next request
+                        incomingBuffer.flip(); // 复位
+                        isPayload = readLength(k); // 读取载荷长度
+                        incomingBuffer.clear();
+                    &#125; else &#123;
+                        // continuation
+                        isPayload = true;
+                    &#125;
+                    if (isPayload) &#123; // not the case for 4letterword
+                        readPayload();
+                    &#125;
+                    else &#123;
+                        // four letter words take care
+                        // need not do anything else
+                        return;
+                    &#125;
+                &#125;
+            &#125;
+</code></pre>
+<p>读取4个字节，获取到数据长度，然后读取载荷，也就是请求</p>
+<pre><code>    private void readPayload() throws IOException, InterruptedException &#123;
+        if (incomingBuffer.remaining() != 0) &#123; // have we read length bytes?
+            int rc = sock.read(incomingBuffer); // sock is non-blocking, so ok
+            if (rc &lt; 0) &#123;
+                throw new EndOfStreamException(
+                        &quot;Unable to read additional data from client sessionid 0x&quot;
+                        + Long.toHexString(sessionId)
+                        + &quot;, likely client has closed socket&quot;);
+            &#125;
+        &#125;
+
+        if (incomingBuffer.remaining() == 0) &#123; // have we read length bytes?
+            packetReceived();
+            incomingBuffer.flip(); // 复位
+            if (!initialized) &#123;
+                readConnectRequest(); // 读取连接请求
+            &#125; else &#123;
+                readRequest();
+            &#125;
+            lenBuffer.clear();
+            incomingBuffer = lenBuffer;
+        &#125;
+    &#125;
+</code></pre>
+<p>先是读取数据，然后再读取请求，这里关注readConnectRequest</p>
+<h5 id="读取连接请求"><a href="#读取连接请求" class="headerlink" title="读取连接请求"></a>读取连接请求</h5><pre><code>    private void readConnectRequest() throws IOException, InterruptedException &#123;
+        if (zkServer == null) &#123;
+            throw new IOException(&quot;ZooKeeperServer not running&quot;);
+        &#125;
+        zkServer.processConnectRequest(this, incomingBuffer);
+        initialized = true;
+    &#125;
+</code></pre>
+<p>继续，下面是处理连接请求：</p>
+<pre><code>     public void processConnectRequest(ServerCnxn cnxn, ByteBuffer incomingBuffer) throws IOException &#123;
+        BinaryInputArchive bia = BinaryInputArchive.getArchive(new ByteBufferInputStream(incomingBuffer));
+        ConnectRequest connReq = new ConnectRequest();
+        connReq.deserialize(bia, &quot;connect&quot;); // 反序列化请求
+        ....
+        // 客户端设置的超时时间
+        int sessionTimeout = connReq.getTimeOut();
+        byte passwd[] = connReq.getPasswd();
+        int minSessionTimeout = getMinSessionTimeout();
+        if (sessionTimeout &lt; minSessionTimeout) &#123;
+            sessionTimeout = minSessionTimeout;
+        &#125;
+        // 服务端设置的最大超时时间
+        int maxSessionTimeout = getMaxSessionTimeout();
+        if (sessionTimeout &gt; maxSessionTimeout) &#123;
+            sessionTimeout = maxSessionTimeout;
+        &#125;
+        cnxn.setSessionTimeout(sessionTimeout);
+        // We don&#39;t want to receive any packets until we are sure that the
+        // session is setup
+        cnxn.disableRecv();
+        // 请求是否带上sessionid
+        long sessionId = connReq.getSessionId();
+        if (sessionId != 0) &#123;
+            // 请求带了sessionid
+            long clientSessionId = connReq.getSessionId();
+            LOG.info(&quot;Client attempting to renew session 0x&quot;
+                    + Long.toHexString(clientSessionId)
+                    + &quot; at &quot; + cnxn.getRemoteSocketAddress());
+            // 关闭请求
+            serverCnxnFactory.closeSession(sessionId);
+            cnxn.setSessionId(sessionId);
+            // 重新打开请求
+            reopenSession(cnxn, sessionId, passwd, sessionTimeout);
+        &#125; else &#123;
+            LOG.info(&quot;Client attempting to establish new session at &quot;
+                    + cnxn.getRemoteSocketAddress());
+            // 创建新sesssion
+            createSession(cnxn, passwd, sessionTimeout);
+        &#125;
+    &#125;
+</code></pre>
+<p>以上完成：</p>
+<ul>
+<li>将读取出来的incomingBuffer反序列化为ConnectRequest对象</li>
+<li>然后设置超时时间，ServerCnxn接收到该申请后，根据客户端传递过来的sessionTimeout时间以及ZooKeeperServer本身的minSessionTimeout、maxSessionTimeout参数，确定最终的sessionTimeout时间</li>
+<li>判断客户端的请求是否已经含有sessionId<ul>
+<li>如果含有，则执行sessionId的是否过期、密码是否正确等检查</li>
+<li>如果没有sessionId，则创建一个session</li>
+</ul>
+</li>
+</ul>
+<h5 id="创建session"><a href="#创建session" class="headerlink" title="创建session"></a>创建session</h5><p>所以，我们需要再看一下如何创建session：</p>
+<pre><code>    long createSession(ServerCnxn cnxn, byte passwd[], int timeout) &#123;
+        long sessionId = sessionTracker.createSession(timeout);
+        Random r = new Random(sessionId ^ superSecret);
+        r.nextBytes(passwd);
+        ByteBuffer to = ByteBuffer.allocate(4);
+        to.putInt(timeout);
+        cnxn.setSessionId(sessionId);
+        submitRequest(cnxn, sessionId, OpCode.createSession, 0, to, null);
+        return sessionId;
+    &#125;
+</code></pre>
+<ul>
+<li>使用sessionTracker生成一个sessionId</li>
+<li>submitRequest构建一个Request请求，请求的类型为OpCode.createSession</li>
+</ul>
+<pre><code>    private void submitRequest(ServerCnxn cnxn, long sessionId, int type,
+            int xid, ByteBuffer bb, List&lt;Id&gt; authInfo) &#123;
+        Request si = new Request(cnxn, sessionId, xid, type, bb, authInfo);
+        submitRequest(si);
+    &#125;
+    
+    public void submitRequest(Request si) &#123;
+        if (firstProcessor == null) &#123;
+            synchronized (this) &#123;
+                try &#123;
+                    // Since all requests are passed to the request
+                    // processor it should wait for setting up the request
+                    // processor chain. The state will be updated to RUNNING
+                    // after the setup.
+                    while (state == State.INITIAL) &#123;
+                        wait(1000);
+                    &#125;
+                &#125; catch (InterruptedException e) &#123;
+                    LOG.warn(&quot;Unexpected interruption&quot;, e);
+                &#125;
+                if (firstProcessor == null || state != State.RUNNING) &#123;
+                    throw new RuntimeException(&quot;Not started&quot;);
+                &#125;
+            &#125;
+        &#125;
+        try &#123;
+            touch(si.cnxn);
+            boolean validpacket = Request.isValid(si.type);
+            if (validpacket) &#123;
+                firstProcessor.processRequest(si);
+                if (si.cnxn != null) &#123;
+                    incInProcess();
+                &#125;
+            &#125; else &#123;
+                LOG.warn(&quot;Received packet at server of unknown type &quot; + si.type);
+                new UnimplementedRequestProcessor().processRequest(si);
+            &#125;
+        &#125; catch (MissingSessionException e) &#123;
+            if (LOG.isDebugEnabled()) &#123;
+                LOG.debug(&quot;Dropping request: &quot; + e.getMessage());
+            &#125;
+        &#125; catch (RequestProcessorException e) &#123;
+            LOG.error(&quot;Unable to process request:&quot; + e.getMessage(), e);
+        &#125;
+    &#125;
+</code></pre>
+<p>上面的代码：</p>
+<ul>
+<li>创建一个Request</li>
+<li>等待firstProcessor创建完成，然后调用firstProcessor.processRequest</li>
+</ul>
+<blockquote>
+<p>firstProcessor是什么东东，下面再揭晓</p>
+</blockquote>
+<h4 id="2-5-3-zk服务器启动"><a href="#2-5-3-zk服务器启动" class="headerlink" title="2.5.3 zk服务器启动"></a>2.5.3 zk服务器启动</h4><p>再次回到startup，  setZooKeeperServer(zks)，代码很简单</p>
+<pre><code> final public void setZooKeeperServer(ZooKeeperServer zk) &#123;
+        this.zkServer = zk;
+        if (zk != null) &#123;
+            zk.setServerCnxnFactory(this);
+        &#125;
+    &#125;
+</code></pre>
+<p>然后是zk服务器的startdata:</p>
+<pre><code>    public void startdata() 
+    throws IOException, InterruptedException &#123;
+        //check to see if zkDb is not null
+        if (zkDb == null) &#123;
+            zkDb = new ZKDatabase(this.txnLogFactory);
+        &#125;  
+        if (!zkDb.isInitialized()) &#123;
+            loadData();
+        &#125;
+    &#125;
+</code></pre>
+<p>初始化ZKDatabase，从txnLogFactory里读取快照数据。</p>
+<p>最后是zk服务器的startup：</p>
+<pre><code>    public synchronized void startup() &#123;
+        if (sessionTracker == null) &#123;
+            createSessionTracker();
+        &#125;
+        startSessionTracker();
+        setupRequestProcessors();
+
+        registerJMX();
+
+        setState(State.RUNNING);
+        notifyAll();
+    &#125;
+</code></pre>
+<p>几件事情：</p>
+<ul>
+<li>createSessionTracker创建sessionTracker</li>
+<li>startSessionTracker启动SessionTracker</li>
+<li>setupRequestProcessors 创建请求处理器链</li>
+<li>registerJMX 注册JMX</li>
+<li>setState(State.RUNNING) 设置状态为运行中</li>
+</ul>
+<h5 id="SessionTracker"><a href="#SessionTracker" class="headerlink" title="SessionTracker"></a>SessionTracker</h5><p>看SessionTracker的注释：</p>
+<blockquote>
+<p>This is the basic interface that ZooKeeperServer uses to track sessions.<br> 负责追踪Session的</p>
+</blockquote>
+<p>在zk里的实现是SessionTrackerImpl：</p>
+<pre><code>    protected void createSessionTracker() &#123;
+        sessionTracker = new SessionTrackerImpl(this, zkDb.getSessionWithTimeOuts(),
+                tickTime, 1, getZooKeeperServerListener());
+    &#125;
+    
+    protected void startSessionTracker() &#123;
+        ((SessionTrackerImpl)sessionTracker).start();
+    &#125;
+</code></pre>
+<p>SessionTrackerImpl后面再详细分析。</p>
+<h4 id="2-5-4-ZooKeeperServer请求处理器链介绍"><a href="#2-5-4-ZooKeeperServer请求处理器链介绍" class="headerlink" title="2.5.4  ZooKeeperServer请求处理器链介绍"></a>2.5.4  ZooKeeperServer请求处理器链介绍</h4><p>这里是zk的核心部分之一，zk接收到的请求最终在这里进行处理。</p>
+<pre><code> protected void setupRequestProcessors() &#123;
+        RequestProcessor finalProcessor = new FinalRequestProcessor(this);
+        RequestProcessor syncProcessor = new SyncRequestProcessor(this,
+                finalProcessor);
+        ((SyncRequestProcessor)syncProcessor).start();
+        firstProcessor = new PrepRequestProcessor(this, syncProcessor);
+        ((PrepRequestProcessor)firstProcessor).start();
+    &#125;
+</code></pre>
+<p>请求处理链介绍</p>
+<ul>
+<li>首先是PrepRequestProcessor</li>
+<li>然后是SyncRequestProcessor</li>
+<li>最后是finalProcessor</li>
+</ul>
+<p>下面依次解读：</p>
+<h5 id="RequestProcessor"><a href="#RequestProcessor" class="headerlink" title="RequestProcessor"></a>RequestProcessor</h5><blockquote>
+<p>RequestProcessors are chained together to process transactions.<br> RequestProcessors都是链在一起的事务处理链</p>
+</blockquote>
+<pre><code>public interface RequestProcessor &#123;
+    @SuppressWarnings(&quot;serial&quot;)
+    public static class RequestProcessorException extends Exception &#123;
+        public RequestProcessorException(String msg, Throwable t) &#123;
+            super(msg, t);
+        &#125;
+    &#125;
+
+    void processRequest(Request request) throws RequestProcessorException;
+
+    void shutdown();
+&#125;
+</code></pre>
+<p>包含下面这些实现：<br><img src="https://ooo.0o0.ooo/2017/04/27/5901abdf8ffaa.jpg" alt="enter description here" title="1493281760211"><br> 我们重点来看下面几个：</p>
+<h5 id="PrepRequestProcessor"><a href="#PrepRequestProcessor" class="headerlink" title="PrepRequestProcessor"></a>PrepRequestProcessor</h5><p>为什么成为请求处理链，看下PrepRequestProcessor代码就知道了：</p>
+<pre><code>    RequestProcessor nextProcessor;
+
+    ZooKeeperServer zks;
+
+    public PrepRequestProcessor(ZooKeeperServer zks,
+            RequestProcessor nextProcessor) &#123;
+        super(&quot;ProcessThread(sid:&quot; + zks.getServerId() + &quot; cport:&quot;
+                + zks.getClientPort() + &quot;):&quot;, zks.getZooKeeperServerListener());
+        this.nextProcessor = nextProcessor;
+        this.zks = zks;
+    &#125;protected void pRequest(Request request) throws RequestProcessorException &#123;
+        ……
+        nextProcessor.processRequest(request);
+    &#125;
+</code></pre>
+<p>构造函数里包含nextProcessor，在pRequest完成后，执行nextProcessor.processRequest，相当于链式执行。</p>
+<p>接着分析，再来看类的定义：</p>
+<pre><code>public class PrepRequestProcessor extends ZooKeeperCriticalThread implements
+            RequestProcessor &#123;
+
+        LinkedBlockingQueue&lt;Request&gt; submittedRequests = new LinkedBlockingQueue&lt;Request&gt;();
+
+        RequestProcessor nextProcessor;    
+&#125;
+</code></pre>
+<p>几个要点</p>
+<ul>
+<li>继承自ZooKeeperCriticalThread，是一个Thread</li>
+<li>重要属性submittedRequests 是一个LinkedBlockingQueue，LinkedBlockingQueue实现是线程安全的，实现了先进先出特性，是作为生产者消费者的首选。</li>
+</ul>
+<p>PrepRequestProcessor作为处理链的源头，对外提供processRequest方法收集请求，由于是单线程，所以需要将请求放入submittedRequests队列。</p>
+<pre><code>    public void processRequest(Request request) &#123;
+        // request.addRQRec(&quot;&gt;prep=&quot;+zks.outstandingChanges.size());
+        submittedRequests.add(request);
+    &#125;
+</code></pre>
+<p>放入队列后，PrepRequestProcessor本身就是一个Thread，所以start后执行run，在run方法中又会将用户提交的请求取出来进行处理：</p>
+<pre><code>    public void run() &#123;
+            while (true) &#123;
+                // 取出一个请求
+                Request request = submittedRequests.take();
+                if (Request.requestOfDeath == request) &#123;
+                    break;
+                &#125;
+                // 处理请求
+                pRequest(request);
+            &#125;
+        &#125;
+</code></pre>
+<p>再来看pRequest：<br><img src="https://ooo.0o0.ooo/2017/04/27/5901af5b683c8.jpg" alt="enter description here" title="1493282652397"></p>
+<p>根据request的type，构造对应的请求，对于增删改等影响数据状态的操作都被认为是事务（txn:transaction) ，需要创建出事务请求头(hdr)，调用pRequest2Txn，其他操作则不属于事务操作，需要验证下sessionId是否合法。</p>
+<pre><code> //create/close session don&#39;t require request record
+            case OpCode.createSession:
+            case OpCode.closeSession:
+                pRequest2Txn(request.type, zks.getNextZxid(), request, null, true);
+                break;
+ 
+            //All the rest don&#39;t need to create a Txn - just verify session
+            case OpCode.sync:
+            case OpCode.exists:
+            case OpCode.getData:
+            case OpCode.getACL:
+            case OpCode.getChildren:
+            case OpCode.getChildren2:
+            case OpCode.ping:
+            case OpCode.setWatches:
+                zks.sessionTracker.checkSession(request.sessionId,
+                        request.getOwner());
+                break;
+</code></pre>
+<p>来看pRequest2Txn，以create为例</p>
+<pre><code>  pRequest2Txn(request.type, zks.getNextZxid(), request, createRequest, true);
+ 
+   protected void pRequest2Txn(int type, long zxid, Request request, Record record, boolean deserialize)
+        throws KeeperException, IOException, RequestProcessorException
+    &#123;
+        request.hdr = new TxnHeader(request.sessionId, request.cxid, zxid,
+                                    zks.getTime(), type);
+
+        switch (type) &#123;
+            case OpCode.create:                
+                zks.sessionTracker.checkSession(request.sessionId, request.getOwner());
+                CreateRequest createRequest = (CreateRequest)record;   
+                if(deserialize)
+                    ByteBufferInputStream.byteBuffer2Record(request.request, createRequest);
+                String path = createRequest.getPath();
+                int lastSlash = path.lastIndexOf(&#39;/&#39;);
+                if (lastSlash == -1 || path.indexOf(&#39;\0&#39;) != -1 || failCreate) &#123;
+                    LOG.info(&quot;Invalid path &quot; + path + &quot; with session 0x&quot; +
+                            Long.toHexString(request.sessionId));
+                    throw new KeeperException.BadArgumentsException(path);
+                &#125;
+                List&lt;ACL&gt; listACL = removeDuplicates(createRequest.getAcl());
+                if (!fixupACL(request.authInfo, listACL)) &#123;
+                    throw new KeeperException.InvalidACLException(path);
+                &#125;
+                String parentPath = path.substring(0, lastSlash);
+                ChangeRecord parentRecord = getRecordForPath(parentPath);
+
+                checkACL(zks, parentRecord.acl, ZooDefs.Perms.CREATE,
+                        request.authInfo);
+                int parentCVersion = parentRecord.stat.getCversion();
+                CreateMode createMode =
+                    CreateMode.fromFlag(createRequest.getFlags());
+                if (createMode.isSequential()) &#123;
+                    path = path + String.format(Locale.ENGLISH, &quot;%010d&quot;, parentCVersion);
+                &#125;
+                validatePath(path, request.sessionId);
+                try &#123;
+                    if (getRecordForPath(path) != null) &#123;
+                        throw new KeeperException.NodeExistsException(path);
+                    &#125;
+                &#125; catch (KeeperException.NoNodeException e) &#123;
+                    // ignore this one
+                &#125;
+                boolean ephemeralParent = parentRecord.stat.getEphemeralOwner() != 0;
+                if (ephemeralParent) &#123;
+                    throw new KeeperException.NoChildrenForEphemeralsException(path);
+                &#125;
+                int newCversion = parentRecord.stat.getCversion()+1;
+                request.txn = new CreateTxn(path, createRequest.getData(),
+                        listACL,
+                        createMode.isEphemeral(), newCversion);
+                StatPersisted s = new StatPersisted();
+                if (createMode.isEphemeral()) &#123;
+                    s.setEphemeralOwner(request.sessionId);
+                &#125;
+                parentRecord = parentRecord.duplicate(request.hdr.getZxid());
+                parentRecord.childCount++;
+                parentRecord.stat.setCversion(newCversion);
+                addChangeRecord(parentRecord);
+                addChangeRecord(new ChangeRecord(request.hdr.getZxid(), path, s,
+                        0, listACL));
+                break;
+</code></pre>
+<ul>
+<li>首先是 zks.getNextZxid()创建一个事务id，AtomicLong hzxid是自增长id，初始化为0，每次加一</li>
+<li>在pRequest2Txn内部，先给request创建一个TxnHeader，这个header包含事务id</li>
+<li>然后判断请求类型</li>
+<li>zks.sessionTracker.checkSession(request.sessionId, request.getOwner()) 检查session</li>
+<li>反序列化为CreateRequest</li>
+</ul>
+<h5 id="SyncRequestProcessor"><a href="#SyncRequestProcessor" class="headerlink" title="SyncRequestProcessor"></a>SyncRequestProcessor</h5><h5 id="FinalRequestProcessor"><a href="#FinalRequestProcessor" class="headerlink" title="FinalRequestProcessor"></a>FinalRequestProcessor</h5><p>未完待续</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
@@ -3876,19 +4274,19 @@ List&lt;User&gt; findUsersByAgeBetween(int ageGT, int ageLT);
       <div class="site-state-item site-state-posts">
           <a href="/jadepeng/archives/">
         
-          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-count">97</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/jadepeng/categories/">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/jadepeng/tags/">
           
-        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-count">83</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -3929,13 +4327,13 @@ List&lt;User&gt; findUsersByAgeBetween(int ageGT, int ageLT);
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">644k</span>
+    <span title="站点总字数">642k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">9:45</span>
+    <span title="站点阅读时长">9:44</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>

@@ -187,639 +187,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/08/08/jqpeng-Docker%E5%90%AF%E7%94%A8TLS%E8%BF%9B%E8%A1%8C%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2019/08/08/jqpeng-Docker%E5%90%AF%E7%94%A8TLS%E8%BF%9B%E8%A1%8C%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">Docker启用TLS进行安全配置</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-08-08 20:08:00" itemprop="dateCreated datePublished" datetime="2019-08-08T20:08:00+08:00">2019-08-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/docker-tls.html">Docker启用TLS进行安全配置</a></p>
-<p>之前开启了docker的2375 Remote API，接到公司安全部门的要求，需要启用授权，翻了下官方文档</p>
-<p><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/security/https/">Protect the Docker daemon socket</a></p>
-<h2 id="启用TLS"><a href="#启用TLS" class="headerlink" title="启用TLS"></a>启用TLS</h2><p>在docker服务器，生成CA私有和公共密钥</p>
-<pre><code>$ openssl genrsa -aes256 -out ca-key.pem 4096
-Generating RSA private key, 4096 bit long modulus
-............................................................................................................................................................................................++
-........++
-e is 65537 (0x10001)
-Enter pass phrase for ca-key.pem:
-Verifying - Enter pass phrase for ca-key.pem:
-
-$ openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem
-Enter pass phrase for ca-key.pem:
-You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter &#39;.&#39;, the field will be left blank.
------
-Country Name (2 letter code) [AU]:
-State or Province Name (full name) [Some-State]:Queensland
-Locality Name (eg, city) []:Brisbane
-Organization Name (eg, company) [Internet Widgits Pty Ltd]:Docker Inc
-Organizational Unit Name (eg, section) []:Sales
-Common Name (e.g. server FQDN or YOUR name) []:$HOST
-Email Address []:Sven@home.org.au
-</code></pre>
-<p>有了CA后，可以创建一个服务器密钥和证书签名请求(CSR)</p>
-<blockquote>
-<p>$HOST 是你的服务器ip</p>
-</blockquote>
-<pre><code>$ openssl genrsa -out server-key.pem 4096
-Generating RSA private key, 4096 bit long modulus
-.....................................................................++
-.................................................................................................++
-e is 65537 (0x10001)
-
-$ openssl req -subj &quot;/CN=$HOST&quot; -sha256 -new -key server-key.pem -out server.csr
-</code></pre>
-<p>接着，用CA来签署公共密钥:</p>
-<pre><code>$ echo subjectAltName = DNS:$HOST,IP:$HOST:127.0.0.1 &gt;&gt; extfile.cnf
-
- $ echo extendedKeyUsage = serverAuth &gt;&gt; extfile.cnf
- 
-</code></pre>
-<p>生成key：</p>
-<pre><code>$ openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem \
-  -CAcreateserial -out server-cert.pem -extfile extfile.cnf
-Signature ok
-subject=/CN=your.host.com
-Getting CA Private Key
-Enter pass phrase for ca-key.pem:
-</code></pre>
-<p>创建客户端密钥和证书签名请求:</p>
-<pre><code>$ openssl genrsa -out key.pem 4096
-Generating RSA private key, 4096 bit long modulus
-.........................................................++
-................++
-e is 65537 (0x10001)
-
-$ openssl req -subj &#39;/CN=client&#39; -new -key key.pem -out client.csr
-</code></pre>
-<p>修改<code>extfile.cnf</code>：</p>
-<pre><code>echo extendedKeyUsage = clientAuth &gt; extfile-client.cnf
-</code></pre>
-<p>生成签名私钥：</p>
-<pre><code>$ openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem \
-  -CAcreateserial -out cert.pem -extfile extfile-client.cnf
-Signature ok
-subject=/CN=client
-Getting CA Private Key
-Enter pass phrase for ca-key.pem:
-</code></pre>
-<p>将Docker服务停止，然后修改docker服务文件</p>
-<pre><code>[Unit]
-Description=Docker Application Container Engine
-Documentation=http://docs.docker.io
-
-[Service]
-Environment=&quot;PATH=/opt/kube/bin:/bin:/sbin:/usr/bin:/usr/sbin&quot;
-ExecStart=/opt/kube/bin/dockerd  --tlsverify --tlscacert=/root/docker/ca.pem --tlscert=/root/docker/server-cert.pem --tlskey=/root/docker/server-key.pem -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375
-ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
-ExecReload=/bin/kill -s HUP $MAINPID
-Restart=on-failure
-RestartSec=5
-LimitNOFILE=infinity
-LimitNPROC=infinity
-LimitCORE=infinity
-Delegate=yes
-KillMode=process
-
-[Install]
-WantedBy=multi-user.target
-</code></pre>
-<p>然后重启服务</p>
-<pre><code>systemctl daemon-reload
-systemctl restart docker.service 
-
-
-
-重启后查看服务状态：
-
-systemctl status docker.service
-● docker.service - Docker Application Container Engine
-   Loaded: loaded (/etc/systemd/system/docker.service; enabled; vendor preset: enabled)
-   Active: active (running) since Thu 2019-08-08 19:22:26 CST; 1 min ago
-</code></pre>
-<p>已经生效。</p>
-<p>使用证书连接：</p>
-<p>复制<code>ca.pem</code>,<code>cert.pem</code>,<code>key.pem</code>三个文件到客户端</p>
-<p><code>docker --tlsverify --tlscacert=ca.pem --tlscert=cert.pem --tlskey=key.pem -H=$HOST:2375 version</code>连接即可</p>
-<h2 id="docker-java-启用TLS"><a href="#docker-java-启用TLS" class="headerlink" title="docker-java 启用TLS"></a>docker-java 启用TLS</h2><p>项目里使用docker的java客户端<code>docker-java</code>调用docker，为了支持TLS，在创建客户端时，需要增加TLS设置。</p>
-<p>首先将<code>ca.pem cert.pem key.pem </code>这三个文件拷贝到本地，例如<code>E:\\docker\\&quot;</code>,</p>
-<p>然后<code>DefaultDockerClientConfig</code>里<code>withDockerTlsVerify</code>设为true，并设置<code>certpath</code>为刚拷贝的目录。</p>
-<pre><code>DefaultDockerClientConfig.Builder builder =
-                DefaultDockerClientConfig.createDefaultConfigBuilder()
-                    .withDockerHost(&quot;tcp://&quot; + server + &quot;:2375&quot;)
-                    .withApiVersion(&quot;1.30&quot;);
-            if (containerConfiguration.getDockerTlsVerify()) &#123;
-                builder = builder.withDockerTlsVerify(true)
-                    .withDockerCertPath(&quot;E:\\docker\\&quot;);
-            &#125;return  DockerClientBuilder.getInstance(builder.build()).build()        
-</code></pre>
-<p>大工搞定。</p>
-<hr>
-<blockquote>
-<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/05/28/jqpeng-mongodb%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AECRUD%E4%BC%98%E5%8C%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2019/05/28/jqpeng-mongodb%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AECRUD%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">mongodb海量数据CRUD优化</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-28 19:47:00" itemprop="dateCreated datePublished" datetime="2019-05-28T19:47:00+08:00">2019-05-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/java-mongo-crud.html">mongodb海量数据CRUD优化</a></p>
-<h2 id="1-批量保存优化"><a href="#1-批量保存优化" class="headerlink" title="1. 批量保存优化"></a>1. 批量保存优化</h2><p>避免一条一条查询，采用<code>bulkWrite</code>, 基于<code>ReplaceOneModel</code>，启用<code>upsert</code>:</p>
-<pre><code> public void batchSave(List&lt;?&gt; spoTriples, KgInstance kgInstance) &#123;
-        MongoConverter converter = mongoTemplate.getConverter();
-        List&lt;ReplaceOneModel&lt;Document&gt;&gt; bulkOperationList = spoTriples.stream()
-                .map(thing -&gt; &#123;
-                    org.bson.Document dbDoc = new org.bson.Document();
-                    converter.write(thing, dbDoc);
-                    ReplaceOneModel&lt;org.bson.Document&gt; replaceOneModel = new ReplaceOneModel(
-                            Filters.eq(UNDERSCORE_ID, dbDoc.get(UNDERSCORE_ID)), 
-                            dbDoc,
-                            new UpdateOptions().upsert(true));
-                    return replaceOneModel;
-                &#125;)
-                .collect(Collectors.toList());
-        mongoTemplate.getCollection(getCollection(kgInstance)).bulkWrite(bulkOperationList);
-    &#125;
-</code></pre>
-<h2 id="2-分页优化"><a href="#2-分页优化" class="headerlink" title="2. 分页优化"></a>2. 分页优化</h2><p>经常用于查询的字段，需要确保建立了索引。</p>
-<p>对于包含多个键的查询，可以创建符合索引。</p>
-<h3 id="2-1-避免不必要的count"><a href="#2-1-避免不必要的count" class="headerlink" title="2.1 避免不必要的count"></a>2.1 避免不必要的count</h3><p>查询时，走索引，速度并不慢，但是如果返回分页<code>Page&lt;?&gt;</code>，需要查询<code>totalcount</code>，当单表数据过大时，count会比较耗时，但是设想意向，你真的需要准确的数字吗？</p>
-<p>在google、百度等搜索引擎搜索关键词时，只会给你有限的几个结果，因此，我们也不必给出准确的数字，设定一个阈值，比如1万，当我们发现总量大于1万时，返回1万，前端显示大于1万条即可。</p>
-<p>原理也很鉴定啊，我们skip掉<code>MAX_PAGE_COUNT</code>，看是否还有数据，如果有就说明总量大于<code>MAX_PAGE_COUNT</code>，返回<code>MAX_PAGE_COUNT</code>即可，否则，计算真正的count。</p>
-<pre><code>int MAX_PAGE_COUNT = 10000;
-
-
-/**
-     * 当总数大于阈值时，不再计算总数
-     *
-     * @param mongoTemplate
-     * @param query
-     * @param collectionName
-     * @return
-     */
-    private long count(MongoTemplate mongoTemplate, Query query, String collectionName) &#123;
-        query = query.with(PageRequest.of(MAX_PAGE_COUNT, 1));
-        if (mongoTemplate.find(query, Thing.class, collectionName).size() &gt; 0) &#123;
-            return MAX_PAGE_COUNT;
-        &#125;
-        return mongoTemplate.count(query, collectionName);
-    &#125;
-</code></pre>
-<p>前端显示：</p>
-<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-28/1559041614698.png" alt="大于10000"></p>
-<h3 id="2-2-避免过多的skip"><a href="#2-2-避免过多的skip" class="headerlink" title="2.2 避免过多的skip"></a>2.2 避免过多的skip</h3><p>分页不过避免需要先跳过一些数据，这个过程是需要消耗时间的，可以通过一个小技巧避免跳过。</p>
-<p>比如，显示列表时，排序为按最后修改时间倒序，每页显示100条，现在要显示第100页。<br> 按照正常的做法，需要跳过<code>99*100</code>条数据，非常大的代价。换一个角度思考，因为数据是有序的，因此第100页的数据的最后修改时间是小于第99页最小的修改时间，查询时加上这个条件，就可以直接取符合条件的前100条即可。</p>
-<h2 id="3-全量导出优化"><a href="#3-全量导出优化" class="headerlink" title="3. 全量导出优化"></a>3. 全量导出优化</h2><h3 id="3-1-去掉不需要的字段"><a href="#3-1-去掉不需要的字段" class="headerlink" title="3.1 去掉不需要的字段"></a>3.1 去掉不需要的字段</h3><p>查询时，指定真正有用的字段，这样可以有效减少数据传输量，加快查询效率。<br> 例如：</p>
-<pre><code>         Query query = new Query();
-        query.fields().include(&quot;_id&quot;).include(&quot;name&quot;).include(&quot;hot&quot;).include(&quot;alias&quot;);
-</code></pre>
-<h3 id="3-2-避免使用findAll或者分页查询，改用stream"><a href="#3-2-避免使用findAll或者分页查询，改用stream" class="headerlink" title="3.2 避免使用findAll或者分页查询，改用stream"></a>3.2 避免使用findAll或者分页查询，改用stream</h3><p>全量导出有两个误区，一是直接<code>findAll</code>,当数据量过大时，很容易导致服务器<code>OutofMermory</code>，就算没有OOM，也会对服务器造成极大的负载，影响兄弟服务。另外，FindAll一次性加载数据到内存，整个速度也会比较慢，需要等待所有数据进入内存后才能开始处理。</p>
-<p>另外一个误区是，分页查询，依次处理。分页查询可以有效减少服务器负担，不失为一种可行的方法。但是就和上面分页说的那样，分页到后面的时候，需要skip掉前面的数据，存在无用功。稍微好一点的做法就是按照之前说的，将skip转换为condtion，这种方式效率OK，但不推荐，存在代码冗余。</p>
-<pre><code>            Page&lt;Thing&gt; dataList = entityDao.findAllByPage(kgDataStoreService.getKgCollectionByKgInstance(kg), page);
-            Map&lt;String, Individual&gt; thingId2Resource = new ConcurrentHashMap&lt;&gt;();
-
-            appendThingsToModel(model, concept2OntClass, hot, alias, dataList, thingId2Resource);
-
-            while (dataList.hasNext()) &#123;
-                page = PageRequest.of(page.getPageNumber() + 1, page.getPageSize());
-                dataList = entityDao.findAllByPage(kgDataStoreService.getKgCollectionByKgInstance(kg), page);
-                appendThingsToModel(model, concept2OntClass, hot, alias, dataList, thingId2Resource);
-            &#125;
-</code></pre>
-<p>更推荐的做法是，采用mongoTemplate的steam方法,返回<code>CloseableIterator</code>迭代器，读一条数据处理一条数据，实现高效处理：</p>
-<pre><code>@Overridepublic &lt;T&gt; CloseableIterator&lt;T&gt; stream(final Query query, final Class&lt;T&gt; entityType, final String collectionName) &#123;    return doStream(query, entityType, collectionName, entityType);&#125;
-</code></pre>
-<p>改用方法后，代码可以更简化高效：</p>
-<pre><code>  CloseableIterator&lt;Thing&gt; dataList = kgDataStoreService.getSimpleInfoIterator(kg);
-
-            // 实体导入
-            // Page&lt;Thing&gt; dataList = entityDao.findAllByPage(kgDataStoreService.getKgCollectionByKgInstance(kg), page);
-            Map&lt;String, Individual&gt; thingId2Resource = new ConcurrentHashMap&lt;&gt;();
-
-            appendThingsToModel(model, concept2OntClass, hot, alias, dataList, thingId2Resource);
-</code></pre>
-<p>待续。。。</p>
-<hr>
-<blockquote>
-<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/05/24/jqpeng-%E5%A4%9A%E8%AF%AD%E8%A8%80%E4%B8%9A%E5%8A%A1%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Sentry%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2019/05/24/jqpeng-%E5%A4%9A%E8%AF%AD%E8%A8%80%E4%B8%9A%E5%8A%A1%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Sentry%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">多语言业务错误日志收集监控工具Sentry 安装与使用</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-24 16:04:00" itemprop="dateCreated datePublished" datetime="2019-05-24T16:04:00+08:00">2019-05-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/sentry.html">多语言业务错误日志收集监控工具Sentry 安装与使用</a></p>
-<p>Sentry 是一个实时事件日志记录和汇集的平台。其专注于错误监控以及提取一切事后处理所需信息而不依赖于麻烦的用户反馈。</p>
-<p>Sentry是一个日志平台, 它分为客户端和服务端，客户端(目前客户端有Python, PHP,C#, Ruby等多种语言)就嵌入在你的应用程序中间，程序出现异常就向服务端发送消息，服务端将消息记录到数据库中并提供一个web节目方便查看。Sentry由python编写，源码开放，性能卓越，易于扩展，目前著名的用户有Disqus, Path, mozilla, Pinterest等。</p>
-<h2 id="通过docker安装"><a href="#通过docker安装" class="headerlink" title="通过docker安装"></a>通过docker安装</h2><p>官方提供了 On-Premise 安装方式</p>
-<pre><code>git clone https://github.com/getsentry/onpremise
-cd onpremise
-</code></pre>
-<p>然后创建volume，持久化存储</p>
-<pre><code>docker volume create --name=sentry-data &amp;&amp; docker volume create --name=sentry-postgres
-</code></pre>
-<p>创建环境变量配置文件：</p>
-<pre><code>cp -n .env.example .env - create env config file
-</code></pre>
-<p>docker-compose build镜像，这一步会拉取官方镜像和redis等依赖，耐心等待    ：</p>
-<pre><code>docker-compose build - Build and tag the Docker services
-</code></pre>
-<p>创建secret-key，执行后得到一个key，添加到.env中的SENTRY_SECRET_KEY</p>
-<pre><code>docker-compose run --rm web config generate-secret-key 
-</code></pre>
-<p>创建DB和初始化用户,等待创建数据库和</p>
-<pre><code>docker-compose run --rm web upgrade
-Created internal Sentry project (slug=internal, id=1)
-
-Would you like to create a user account now? [Y/n]: y
-Email: 
-Password: 
-Repeat for confirmation: 
-Should this user be a superuser? [y/N]: y
-Added to organization: sentry
-Running migrations for sentry.nodestore:
- - Migrating forwards to 0001_initial.
-</code></pre>
-<p>最后-d启动，启动成功后可以访问<a target="_blank" rel="noopener" href="http://server-ip:9000/">http://server-ip:9000</a></p>
-<pre><code>docker-compose up -d 
-</code></pre>
-<p>访问：</p>
-<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558680516195.png" alt="sentry"></p>
-<h2 id="创建项目并集成"><a href="#创建项目并集成" class="headerlink" title="创建项目并集成"></a>创建项目并集成</h2><p>先创建一个project，支持多种语言，我们创建一个java的</p>
-<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558680561117.png" alt="create project"></p>
-<h3 id="DSN（Client-Keys）"><a href="#DSN（Client-Keys）" class="headerlink" title="DSN（Client Keys）"></a>DSN（Client Keys）</h3><p>DSN格式为：</p>
-<p>DSN=”<a href="https://public:private@host:port/project\_id&quot;">https://public:private@host:port/project\_id&quot;</a></p>
-<p>可以在项目的setting-Client Keys（DSN）里查看。</p>
-<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558684229783.png" alt="DSK"></p>
-<p>然后根据格式拼成DSN即可。</p>
-<h3 id="java项目集成"><a href="#java项目集成" class="headerlink" title="java项目集成"></a>java项目集成</h3><p>有多种集成方式：</p>
-<h4 id="基本集成方式"><a href="#基本集成方式" class="headerlink" title="基本集成方式"></a>基本集成方式</h4><p>添加maven引用：</p>
-<pre><code>    &lt;dependency&gt;    &lt;groupId&gt;io.sentry&lt;/groupId&gt;    &lt;artifactId&gt;sentry&lt;/artifactId&gt;    &lt;version&gt;1.7.16&lt;/version&gt;&lt;/dependency&gt;
-</code></pre>
-<p>然后在全局异常处理里集成：</p>
-<pre><code> String dsn = &quot;http://&lt;SENTRY_PUBLIC_KEY&gt;:&lt;SENTRY_PRIVATE_KEY&gt;@host:port/&lt;PROJECT_ID&gt;&quot;;
- Sentry.init(dsn);
-</code></pre>
-<p>在有异常的地方：</p>
-<pre><code>      try &#123;
-            unsafeMethod();
-        &#125; catch (Exception e) &#123;
-            // This sends an exception event to Sentry using the statically stored instance
-            // that was created in the ``main`` method.
-            Sentry.capture(e);
-        &#125;
-</code></pre>
-<h4 id="logback集成"><a href="#logback集成" class="headerlink" title="logback集成"></a>logback集成</h4><p>logback配置：</p>
-<pre><code>&lt;configuration&gt;
-
-  &lt;appender name=&quot;Console&quot; class=&quot;ch.qos.logback.core.ConsoleAppender&quot;&gt;
-    &lt;encoder&gt;
-      &lt;pattern&gt;%d&#123;HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;36&#125; - %msg%n&lt;/pattern&gt;
-    &lt;/encoder&gt;
-  &lt;/appender&gt;
-
-  &lt;appender name=&quot;Sentry&quot; class=&quot;io.sentry.logback.SentryAppender&quot;&gt;
-    &lt;filter class=&quot;ch.qos.logback.classic.filter.ThresholdFilter&quot;&gt;
-      &lt;level&gt;WARN&lt;/level&gt;
-    &lt;/filter&gt;
-  &lt;/appender&gt;
-
-  &lt;root level=&quot;DEBUG&quot;&gt;
-    &lt;appender-ref ref=&quot;Console&quot; /&gt;
-    &lt;appender-ref ref=&quot;Sentry&quot;/&gt;
-  &lt;/root&gt;
-
-&lt;/configuration&gt;
-</code></pre>
-<h4 id="spring-boot集成"><a href="#spring-boot集成" class="headerlink" title="spring-boot集成"></a>spring-boot集成</h4><p>先添加引用：</p>
-<pre><code>        &lt;dependency&gt;        &lt;groupId&gt;io.sentry&lt;/groupId&gt;        &lt;artifactId&gt;sentry-spring&lt;/artifactId&gt;        &lt;version&gt;1.7.16&lt;/version&gt;    &lt;/dependency&gt;
-</code></pre>
-<p>在Application里集成：</p>
-<pre><code>import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.ServletContextInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-
-@Controller
-@EnableAutoConfiguration
-@SpringBootApplication
-public class Application &#123;
-    /*
-    Register a HandlerExceptionResolver that sends all exceptions to Sentry
-    and then defers all handling to the other HandlerExceptionResolvers.
-    You should only register this is you are not using a logging integration,
-    otherwise you may double report exceptions.
-     */
-    @Bean
-    public HandlerExceptionResolver sentryExceptionResolver() &#123;
-        return new io.sentry.spring.SentryExceptionResolver();
-    &#125;
-
-    /*
-    Register a ServletContextInitializer that installs the SentryServletRequestListener
-    so that Sentry events contain HTTP request information.
-    This should only be necessary in Spring Boot applications. &quot;Classic&quot; Spring
-    should automatically load the `io.sentry.servlet.SentryServletContainerInitializer`.
-     */
-    @Bean
-    public ServletContextInitializer sentryServletContextInitializer() &#123;
-        return new io.sentry.spring.SentryServletContextInitializer();
-    &#125;
-
-    @RequestMapping(&quot;/&quot;)
-    @ResponseBody
-    String home() &#123;
-        int x = 1 / 0;
-
-        return &quot;Hello World!&quot;;
-    &#125;
-
-    public static void main(String[] args) &#123;
-        SpringApplication.run(Application.class, args);
-    &#125;
-&#125;
-</code></pre>
-<h3 id="前端项目集成"><a href="#前端项目集成" class="headerlink" title="前端项目集成"></a>前端项目集成</h3><p>前端集成更简单，引用sentry的js，然后init即可</p>
-<pre><code>&lt;script src=&quot;https://browser.sentry-cdn.com/5.1.0/bundle.min.js&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
-Sentry.init(&#123; dsn: &#39;dsn&#39; &#125;);
-</code></pre>
-<hr>
-<blockquote>
-<p>作者：Jadepeng 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a> 您的支持是对博主最大的鼓励，感谢您的认真阅读。 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/05/08/jqpeng-VS%20Code%20Remote%EF%BC%8C%E5%9C%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E5%BC%80%E5%8F%91%E7%A8%8B%E5%BA%8F%EF%BC%8C%E5%BC%80%E5%90%AF%E5%85%A8%E6%96%B0%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -853,7 +220,7 @@ Sentry.init(&#123; dsn: &#39;dsn&#39; &#125;);
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1053,7 +420,7 @@ and check to make sure that only the key(s) you wanted were added.
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1149,7 +516,7 @@ and check to make sure that only the key(s) you wanted were added.
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1610,7 +977,7 @@ if r.tracer != nil &#123;    state := new(State)    state.Pipeline.Time = r.star
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1777,7 +1144,7 @@ docker.close();
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1998,7 +1365,7 @@ export DOCKER_CONFIG=/home/user/.docker
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2138,7 +1505,7 @@ RUN usermod -u 1000 www-data; \a2enmod rewrite; \chown -R www-data:www-data /var
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2438,6 +1805,2804 @@ function decrypt(result) &#123;
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/11/12/jqpeng-K8S%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2018/11/12/jqpeng-K8S%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/" class="post-title-link" itemprop="url">K8S集群安装</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-12 09:18:00" itemprop="dateCreated datePublished" datetime="2018-11-12T09:18:00+08:00">2018-11-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>79k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1:11</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/9944706.html">K8S集群安装</a></p>
+<p>主要参考 <a target="_blank" rel="noopener" href="https://github.com/opsnull/follow-me-install-kubernetes-cluster">https://github.com/opsnull/follow-me-install-kubernetes-cluster</a></p>
+<h2 id="01-系统初始化和全局变量"><a href="#01-系统初始化和全局变量" class="headerlink" title="01.系统初始化和全局变量"></a>01.系统初始化和全局变量</h2><h3 id="添加-k8s-和-docker-账户"><a href="#添加-k8s-和-docker-账户" class="headerlink" title="添加 k8s 和 docker 账户"></a>添加 k8s 和 docker 账户</h3><p>在每台机器上添加 k8s 账户，可以无密码 sudo：</p>
+<pre><code>$ sudo useradd -m k8s
+$ sudo visudo
+$ sudo grep &#39;%wheel.*NOPASSWD: ALL&#39; /etc/sudoers
+%wheel    ALL=(ALL)    NOPASSWD: ALL
+$ sudo gpasswd -a k8s wheel
+</code></pre>
+<p>在每台机器上添加 docker 账户，将 k8s 账户添加到 docker 组中，同时配置 dockerd 参数：</p>
+<pre><code>$ sudo useradd -m docker
+$ sudo gpasswd -a k8s docker
+$ sudo mkdir -p  /etc/docker/
+$ cat /etc/docker/daemon.json
+&#123;
+    &quot;registry-mirrors&quot;: [&quot;https://hub-mirror.c.163.com&quot;, &quot;https://docker.mirrors.ustc.edu.cn&quot;],
+    &quot;max-concurrent-downloads&quot;: 20
+&#125;
+</code></pre>
+<h3 id="无密码-ssh-登录其它节点"><a href="#无密码-ssh-登录其它节点" class="headerlink" title="无密码 ssh 登录其它节点"></a>无密码 ssh 登录其它节点</h3><p>ssh-copy-id root@docker86-18<br> ssh-copy-id root@docker86-21<br> ssh-copy-id root@docker86-91<br> ssh-copy-id root@docker86-9</p>
+<p>ssh-copy-id k8s@docker86-155<br> ssh-copy-id k8s@docker86-18<br> ssh-copy-id root@docker86-21<br> ssh-copy-id root@docker86-91<br> ssh-copy-id root@docker86-9</p>
+<pre><code>source ./environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p /opt/k8s/bin &amp;&amp; chown -R k8s /opt/k8s &amp;&amp; mkdir -p /etc/kubernetes/cert &amp;&amp;chown -R k8s /etc/kubernetes &amp;&amp; mkdir -p /etc/etcd/cert &amp;&amp; chown -R k8s /etc/etcd/cert &amp;&amp;  mkdir -p /var/lib/etcd &amp;&amp; chown -R k8s /etc/etcd/cert&quot;
+    scp environment.sh k8s@$&#123;node_ip&#125;:/opt/k8s/bin/
+    ssh k8s@$&#123;node_ip&#125; &quot;chmod +x /opt/k8s/bin/*&quot;
+  done
+</code></pre>
+<h3 id="定义全局变量"><a href="#定义全局变量" class="headerlink" title="定义全局变量"></a>定义全局变量</h3><pre><code>cat &lt;&lt;EOF &gt;environment.sh 
+#!/usr/bin/bash
+
+# 生成 EncryptionConfig 所需的加密 key
+ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
+
+# 最好使用 当前未用的网段 来定义服务网段和 Pod 网段
+
+# 服务网段，部署前路由不可达，部署后集群内路由可达(kube-proxy 和 ipvs 保证)
+SERVICE_CIDR=&quot;10.69.0.0/16&quot;
+
+# Pod 网段，建议 /16 段地址，部署前路由不可达，部署后集群内路由可达(flanneld 保证)
+CLUSTER_CIDR=&quot;170.22.0.0/16&quot;
+
+# 服务端口范围 (NodePort Range)
+export NODE_PORT_RANGE=&quot;10000-40000&quot;
+
+# 集群各机器 IP 数组
+export NODE_IPS=(192.168.86.154 192.168.86.155 192.168.86.156 192.168.86.18 192.168.86.21 192.168.86.91 192.168.86.9)
+
+# etcd节点
+export ETCD_NODE_IPS=(192.168.86.154 192.168.86.155 192.168.86.156)
+
+# 集群各 IP 对应的 主机名数组
+export NODE_NAMES=(docker86-154 docker86-155 docker86-156 docker86-18 docker86-21 docker86-91 docker86-9)
+
+# kube-apiserver 的 VIP（HA 组件 keepalived 发布的 IP）
+export MASTER_VIP=192.168.86.214
+
+# kube-apiserver VIP 地址（HA 组件 haproxy 监听 8443 端口）
+export KUBE_APISERVER=&quot;https://$&#123;MASTER_VIP&#125;:8443&quot;
+
+# HA 节点，配置 VIP 的网络接口名称
+export VIP_IF=&quot;em1&quot;
+
+# etcd 集群服务地址列表
+export ETCD_ENDPOINTS=&quot;https://192.168.86.154:2379,https://192.168.86.155:2379,https://192.168.86.156:2379&quot;
+
+# etcd 集群间通信的 IP 和端口
+export ETCD_NODES=&quot;docker86-154=https://192.168.86.154:2380,docker86-155=https://192.168.86.155:2380,docker86-156=https://192.168.86.156:2380&quot;
+
+# flanneld 网络配置前缀
+export FLANNEL_ETCD_PREFIX=&quot;/kubernetes/network&quot;
+
+# kubernetes 服务 IP (一般是 SERVICE_CIDR 中第一个IP)
+export CLUSTER_KUBERNETES_SVC_IP=&quot;10.69.0.1&quot;
+
+# 集群 DNS 服务 IP (从 SERVICE_CIDR 中预分配)
+export CLUSTER_DNS_SVC_IP=&quot;10.69.0.2&quot;
+
+# 集群 DNS 域名
+export CLUSTER_DNS_DOMAIN=&quot;cluster.local.&quot;
+
+# 将二进制目录 /opt/k8s/bin 加到 PATH 中
+export PATH=/opt/k8s/bin:$PATH
+EOF
+</code></pre>
+<p>然后，把全局变量定义脚本拷贝到所有节点的 /opt/k8s/bin 目录：</p>
+<pre><code>source ./environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp environment.sh k8s@$&#123;node_ip&#125;:/opt/k8s/bin/
+    ssh k8s@$&#123;node_ip&#125; &quot;chmod +x /opt/k8s/bin/*&quot;
+  done
+</code></pre>
+<h3 id="CA证书"><a href="#CA证书" class="headerlink" title="CA证书"></a>CA证书</h3><p>配置文件：<br> 17520h 2年，最大2年</p>
+<pre><code>cat &gt; ca-config.json &lt;&lt;EOF
+&#123;
+  &quot;signing&quot;: &#123;
+    &quot;default&quot;: &#123;
+      &quot;expiry&quot;: &quot;17520h&quot;
+    &#125;,
+    &quot;profiles&quot;: &#123;
+      &quot;kubernetes&quot;: &#123;
+        &quot;usages&quot;: [
+            &quot;signing&quot;,
+            &quot;key encipherment&quot;,
+            &quot;server auth&quot;,
+            &quot;client auth&quot;
+        ],
+        &quot;expiry&quot;: &quot;87600h&quot;
+      &#125;
+    &#125;
+  &#125;
+&#125;
+EOF
+</code></pre>
+<p>ca证书签名请求</p>
+<pre><code>cat &gt; ca-csr.json &lt;&lt;EOF
+&#123;
+  &quot;CN&quot;: &quot;kubernetes&quot;,
+  &quot;key&quot;: &#123;
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  &#125;,
+  &quot;names&quot;: [
+    &#123;
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;BeiJing&quot;,
+      &quot;L&quot;: &quot;BeiJing&quot;,
+      &quot;O&quot;: &quot;k8s&quot;,
+      &quot;OU&quot;: &quot;4Paradigm&quot;
+    &#125;
+  ]
+&#125;
+EOF
+</code></pre>
+<ul>
+<li>CN：<code>Common Name</code>，kube-apiserver 从证书中提取该字段作为请求的**用户名 (User Name)**，浏览器使用该字段验证网站是否合法；</li>
+<li>O：<code>Organization</code>，kube-apiserver 从证书中提取该字段作为请求用户所属的**组 (Group)**；</li>
+<li>kube-apiserver 将提取的 User、Group 作为 <code>RBAC</code> 授权的用户标识；</li>
+</ul>
+<h4 id="生成-CA-证书和私钥"><a href="#生成-CA-证书和私钥" class="headerlink" title="生成 CA 证书和私钥"></a>生成 CA 证书和私钥</h4><pre><code>cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+ls ca*
+</code></pre>
+<p>将生成的 CA 证书、秘钥文件、配置文件拷贝到所有节点的 /etc/kubernetes/cert 目录下：</p>
+<pre><code>source /opt/k8s/bin/environment.sh # 导入 NODE_IPS 环境变量
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p /etc/kubernetes/cert &amp;&amp; chown -R k8s /etc/kubernetes&quot;
+    scp ca*.pem ca-config.json k8s@$&#123;node_ip&#125;:/etc/kubernetes/cert
+  done
+</code></pre>
+<h3 id="客户端安装"><a href="#客户端安装" class="headerlink" title="客户端安装"></a>客户端安装</h3><p>wget <a target="_blank" rel="noopener" href="https://dl.k8s.io/v1.12.1/kubernetes-client-linux-amd64.tar.gz">https://dl.k8s.io/v1.12.1/kubernetes-client-linux-amd64.tar.gz</a><br> tar -xzvf kubernetes-client-linux-amd64.tar.gz</p>
+<p>分发到所有使用 kubectl 的节点：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp kubernetes/client/bin/kubectl k8s@$&#123;node_ip&#125;:/opt/k8s/bin/
+    ssh k8s@$&#123;node_ip&#125; &quot;chmod +x /opt/k8s/bin/*&quot;
+  done
+</code></pre>
+<h3 id="创建-admin-证书和私钥"><a href="#创建-admin-证书和私钥" class="headerlink" title="创建 admin 证书和私钥"></a>创建 admin 证书和私钥</h3><p>kubectl 与 apiserver https 安全端口通信，apiserver 对提供的证书进行认证和授权。</p>
+<p>kubectl 作为集群的管理工具，需要被授予最高权限。这里创建具有最高权限的 admin 证书。</p>
+<p>创建证书签名请求：</p>
+<pre><code>cat &gt; admin-csr.json &lt;&lt;EOF
+&#123;
+  &quot;CN&quot;: &quot;admin&quot;,
+  &quot;hosts&quot;: [],
+  &quot;key&quot;: &#123;
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  &#125;,
+  &quot;names&quot;: [
+    &#123;
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;BeiJing&quot;,
+      &quot;L&quot;: &quot;BeiJing&quot;,
+      &quot;O&quot;: &quot;system:masters&quot;,
+      &quot;OU&quot;: &quot;4Paradigm&quot;
+    &#125;
+  ]
+&#125;
+EOF
+</code></pre>
+<p>O 为 system:masters，kube-apiserver 收到该证书后将请求的 Group 设置为 system:masters；<br> 预定义的 ClusterRoleBinding cluster-admin 将 Group system:masters 与 Role cluster-admin 绑定，该 Role 授予所有 API的权限；<br> 该证书只会被 kubectl 当做 client 证书使用，所以 hosts 字段为空；</p>
+<h3 id="生成证书和私钥："><a href="#生成证书和私钥：" class="headerlink" title="生成证书和私钥："></a>生成证书和私钥：</h3><pre><code>cfssl gencert -ca=/etc/kubernetes/cert/ca.pem \
+  -ca-key=/etc/kubernetes/cert/ca-key.pem \
+  -config=/etc/kubernetes/cert/ca-config.json \
+  -profile=kubernetes admin-csr.json | cfssljson -bare admin
+ls admin*
+</code></pre>
+<h3 id="创建-kubeconfig-文件"><a href="#创建-kubeconfig-文件" class="headerlink" title="创建 kubeconfig 文件"></a>创建 kubeconfig 文件</h3><p>kubeconfig 为 kubectl 的配置文件，包含访问 apiserver 的所有信息，如 apiserver 地址、CA 证书和自身使用的证书；</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+# 设置集群参数
+kubectl config set-cluster kubernetes \
+  --certificate-authority=/etc/kubernetes/cert/ca.pem \
+  --embed-certs=true \
+  --server=$&#123;KUBE_APISERVER&#125; \
+  --kubeconfig=kubectl.kubeconfig
+
+# 设置客户端认证参数
+kubectl config set-credentials admin \
+  --client-certificate=admin.pem \
+  --client-key=admin-key.pem \
+  --embed-certs=true \
+  --kubeconfig=kubectl.kubeconfig
+
+# 设置上下文参数
+kubectl config set-context kubernetes \
+  --cluster=kubernetes \
+  --user=admin \
+  --kubeconfig=kubectl.kubeconfig
+  
+# 设置默认上下文
+kubectl config use-context kubernetes --kubeconfig=kubectl.kubeconfig
+--certificate-authority：验证 kube-apiserver 证书的根证书；
+--client-certificate、--client-key：刚生成的 admin 证书和私钥，连接 kube-apiserver 时使用；
+--embed-certs=true：将 ca.pem 和 admin.pem 证书内容嵌入到生成的 kubectl.kubeconfig 文件中(不加时，写入的是证书文件路径)；
+</code></pre>
+<h3 id="分发-kubeconfig-文件"><a href="#分发-kubeconfig-文件" class="headerlink" title="分发 kubeconfig 文件"></a>分发 kubeconfig 文件</h3><p>分发到所有使用 kubectl 命令的节点：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh k8s@$&#123;node_ip&#125; &quot;mkdir -p ~/.kube&quot;
+    scp kubectl.kubeconfig k8s@$&#123;node_ip&#125;:~/.kube/config
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p ~/.kube&quot;
+    scp kubectl.kubeconfig root@$&#123;node_ip&#125;:~/.kube/config
+  done
+</code></pre>
+<p>保存到用户的 ~/.kube/config 文件；</p>
+<h2 id="etcd安装"><a href="#etcd安装" class="headerlink" title="etcd安装"></a>etcd安装</h2><p>到 <a target="_blank" rel="noopener" href="https://github.com/coreos/etcd/releases">https://github.com/coreos/etcd/releases</a> 页面下载最新版本的发布包：</p>
+<pre><code>wget https://github.com/etcd-io/etcd/releases/download/v3.3.10/etcd-v3.3.10-linux-amd64.tar.gz
+tar -xvf etcd-v3.3.10-linux-amd64.tar.gz
+</code></pre>
+<h3 id="分发二进制文件到集群所有节点："><a href="#分发二进制文件到集群所有节点：" class="headerlink" title="分发二进制文件到集群所有节点："></a>分发二进制文件到集群所有节点：</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp etcd-v3.3.10-linux-amd64/etcd* k8s@$&#123;node_ip&#125;:/opt/k8s/bin
+    ssh k8s@$&#123;node_ip&#125; &quot;chmod +x /opt/k8s/bin/*&quot;
+  done
+</code></pre>
+<h3 id="创建-etcd-证书和私钥"><a href="#创建-etcd-证书和私钥" class="headerlink" title="创建 etcd 证书和私钥"></a>创建 etcd 证书和私钥</h3><p>创建证书签名请求：</p>
+<pre><code>cat &gt; etcd-csr.json &lt;&lt;EOF
+&#123;
+  &quot;CN&quot;: &quot;etcd&quot;,
+  &quot;hosts&quot;: [
+    &quot;127.0.0.1&quot;,
+    &quot;192.168.86.156&quot;,
+    &quot;192.168.86.155&quot;,
+    &quot;192.168.86.154&quot;
+  ],
+  &quot;key&quot;: &#123;
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  &#125;,
+  &quot;names&quot;: [
+    &#123;
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;BeiJing&quot;,
+      &quot;L&quot;: &quot;BeiJing&quot;,
+      &quot;O&quot;: &quot;k8s&quot;,
+      &quot;OU&quot;: &quot;4Paradigm&quot;
+    &#125;
+  ]
+&#125;
+EOF
+</code></pre>
+<h3 id="生成证书和私钥：-1"><a href="#生成证书和私钥：-1" class="headerlink" title="生成证书和私钥："></a>生成证书和私钥：</h3><pre><code>cfssl gencert -ca=/etc/kubernetes/cert/ca.pem \
+    -ca-key=/etc/kubernetes/cert/ca-key.pem \
+    -config=/etc/kubernetes/cert/ca-config.json \
+    -profile=kubernetes etcd-csr.json | cfssljson -bare etcd
+ls etcd*
+</code></pre>
+<h3 id="分发生成的证书和私钥到各-etcd-节点："><a href="#分发生成的证书和私钥到各-etcd-节点：" class="headerlink" title="分发生成的证书和私钥到各 etcd 节点："></a>分发生成的证书和私钥到各 etcd 节点：</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p /etc/etcd/cert &amp;&amp; chown -R k8s /etc/etcd/cert&quot;
+    scp etcd*.pem k8s@$&#123;node_ip&#125;:/etc/etcd/cert/
+  done
+</code></pre>
+<p>ETCD_NODE_IPS</p>
+<h3 id="创建-etcd-的-systemd-unit-模板文件"><a href="#创建-etcd-的-systemd-unit-模板文件" class="headerlink" title="创建 etcd 的 systemd unit 模板文件"></a>创建 etcd 的 systemd unit 模板文件</h3><p>cat &gt; etcd.service.template &lt;&lt;EOF<br> [Unit]<br> Description=Etcd Server<br> After=network.target<br> After=network-online.target<br> Wants=network-online.target<br> Documentation=<a target="_blank" rel="noopener" href="https://github.com/coreos">https://github.com/coreos</a></p>
+<p>[Service]<br> User=k8s<br> Type=notify<br> WorkingDirectory=/var/lib/etcd/<br> ExecStart=/opt/k8s/bin/etcd \<br> –data-dir=/var/lib/etcd \<br> –name=##NODE_NAME## \</p>
+<p>–cert-file=/etc/etcd/cert/etcd.pem \<br> –key-file=/etc/etcd/cert/etcd-key.pem \<br> –trusted-ca-file=/etc/kubernetes/cert/ca.pem \<br> –peer-cert-file=/etc/etcd/cert/etcd.pem \<br> –peer-key-file=/etc/etcd/cert/etcd-key.pem \<br> –peer-trusted-ca-file=/etc/kubernetes/cert/ca.pem \<br> –peer-client-cert-auth \<br> –client-cert-auth \<br> –listen-peer-urls=https://##NODE_IP##:2380 \<br> –initial-advertise-peer-urls=https://##NODE_IP##:2380 \<br> –listen-client-urls=https://##NODE_IP##:2379,<a target="_blank" rel="noopener" href="http://127.0.0.1:2379/">http://127.0.0.1:2379</a> \<br> –advertise-client-urls=https://##NODE_IP##:2379 \<br> –initial-cluster-token=etcd-cluster-0 \<br> –initial-cluster=${ETCD_NODES} \<br> –initial-cluster-state=new<br> Restart=on-failure<br> RestartSec=5<br> LimitNOFILE=65536</p>
+<p>[Install]<br> WantedBy=multi-user.target<br> EOF</p>
+<p>User：指定以 k8s 账户运行；<br> WorkingDirectory、–data-dir：指定工作目录和数据目录为 /var/lib/etcd，需在启动服务前创建这个目录；<br> –name：指定节点名称，当 –initial-cluster-state 值为 new 时，–name 的参数值必须位于 –initial-cluster 列表中；<br> –cert-file、–key-file：etcd server 与 client 通信时使用的证书和私钥；<br> –trusted-ca-file：签名 client 证书的 CA 证书，用于验证 client 证书；<br> –peer-cert-file、–peer-key-file：etcd 与 peer 通信使用的证书和私钥；<br> –peer-trusted-ca-file：签名 peer 证书的 CA 证书，用于验证 peer 证书；</p>
+<h3 id="为各节点创建和分发-etcd-systemd-unit-文件"><a href="#为各节点创建和分发-etcd-systemd-unit-文件" class="headerlink" title="为各节点创建和分发 etcd systemd unit 文件"></a>为各节点创建和分发 etcd systemd unit 文件</h3><pre><code>source /opt/k8s/bin/environment.sh
+for (( i=0; i &lt; 3; i++ ))
+  do
+    sed -e &quot;s/##NODE_NAME##/$&#123;NODE_NAMES[i]&#125;/&quot; -e &quot;s/##NODE_IP##/$&#123;NODE_IPS[i]&#125;/&quot; etcd.service.template &gt; etcd-$&#123;NODE_IPS[i]&#125;.service 
+  done
+ls *.service
+</code></pre>
+<p>分发生成的 systemd unit 文件：</p>
+<p>source /opt/k8s/bin/environment.sh<br> for node_ip in ${ETCD_NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> ssh root@${node_ip} “mkdir -p /var/lib/etcd &amp;&amp; chown -R k8s /var/lib/etcd”<br> scp etcd-${node_ip}.service root@${node_ip}:/etc/systemd/system/etcd.service<br> done</p>
+<h3 id="启动-etcd-服务"><a href="#启动-etcd-服务" class="headerlink" title="启动 etcd 服务"></a>启动 etcd 服务</h3><p>source ./environment.sh<br> for node_ip in ${ETCD_NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> ssh root@${node_ip} “systemctl daemon-reload &amp;&amp; systemctl enable etcd &amp;&amp; systemctl restart etcd &amp;”<br> done</p>
+<p>etcd 进程首次启动时会等待其它节点的 etcd 加入集群，命令 systemctl start etcd 会卡住一段时间，为正常现象。</p>
+<h3 id="检查启动结果"><a href="#检查启动结果" class="headerlink" title="检查启动结果"></a>检查启动结果</h3><pre><code>source ./environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh k8s@$&#123;node_ip&#125; &quot;systemctl status etcd|grep Active&quot;
+  done
+</code></pre>
+<p>确保状态为 active (running)，否则查看日志，确认原因：</p>
+<p>$ journalctl -u etcd</p>
+<h3 id="验证服务状态"><a href="#验证服务状态" class="headerlink" title="验证服务状态"></a>验证服务状态</h3><p>部署完 etcd 集群后，在任一 etc 节点上执行如下命令：</p>
+<p>source ./environment.sh<br> for node_ip in ${ETCD_NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> ETCDCTL_API=3 /opt/k8s/bin/etcdctl<br> –endpoints=https://${node_ip}:2379<br> –cacert=/etc/kubernetes/cert/ca.pem<br> –cert=/etc/etcd/cert/etcd.pem<br> –key=/etc/etcd/cert/etcd-key.pem endpoint health<br> done<br> 预期输出：</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>192.168.86.154<br><a target="_blank" rel="noopener" href="https://192.168.86.154:2379/">https://192.168.86.154:2379</a> is healthy: successfully committed proposal: took = 2.197007ms</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>192.168.86.155<br><a target="_blank" rel="noopener" href="https://192.168.86.155:2379/">https://192.168.86.155:2379</a> is healthy: successfully committed proposal: took = 2.299328ms</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>192.168.86.156<br><a target="_blank" rel="noopener" href="https://192.168.86.156:2379/">https://192.168.86.156:2379</a> is healthy: successfully committed proposal: took = 2.014274ms</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<h2 id="05-部署-flannel-网络"><a href="#05-部署-flannel-网络" class="headerlink" title="05.部署 flannel 网络"></a>05.部署 flannel 网络</h2><p>kubernetes 要求集群内各节点(包括 master 节点)能通过 Pod 网段互联互通。flannel 使用 vxlan 技术为各节点创建一个可以互通的 Pod 网络，使用的端口为 UDP 8472，需要开放该端口（如公有云 AWS 等）。</p>
+<p>flannel 第一次启动时，从 etcd 获取 Pod 网段信息，为本节点分配一个未使用的 /24 段地址，然后创建 flannel.1（也可能是其它名称，如 flannel1 等） 接口。</p>
+<p>flannel 将分配的 Pod 网段信息写入 /run/flannel/docker 文件，docker 后续使用这个文件中的环境变量设置 docker0 网桥。</p>
+<h3 id="下载和分发-flanneld-二进制文件"><a href="#下载和分发-flanneld-二进制文件" class="headerlink" title="下载和分发 flanneld 二进制文件"></a>下载和分发 flanneld 二进制文件</h3><p>到 <a target="_blank" rel="noopener" href="https://github.com/coreos/flannel/releases">https://github.com/coreos/flannel/releases</a> 页面下载最新版本的发布包：</p>
+<pre><code>mkdir flannel
+wget https://github.com/coreos/flannel/releases/download/v0.10.0/flannel-v0.10.0-linux-amd64.tar.gz
+tar -xzvf flannel-v0.10.0-linux-amd64.tar.gz -C flannel
+</code></pre>
+<h3 id="创建证书签名请求："><a href="#创建证书签名请求：" class="headerlink" title="创建证书签名请求："></a>创建证书签名请求：</h3><pre><code>cat &gt; flanneld-csr.json &lt;&lt;EOF
+&#123;
+  &quot;CN&quot;: &quot;flanneld&quot;,
+  &quot;hosts&quot;: [],
+  &quot;key&quot;: &#123;
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  &#125;,
+  &quot;names&quot;: [
+    &#123;
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;BeiJing&quot;,
+      &quot;L&quot;: &quot;BeiJing&quot;,
+      &quot;O&quot;: &quot;k8s&quot;,
+      &quot;OU&quot;: &quot;4Paradigm&quot;
+    &#125;
+  ]
+&#125;
+EOF
+</code></pre>
+<p>该证书只会被 kubectl 当做 client 证书使用，所以 hosts 字段为空；<br> 生成证书和私钥：</p>
+<pre><code>cfssl gencert -ca=/etc/kubernetes/cert/ca.pem \
+  -ca-key=/etc/kubernetes/cert/ca-key.pem \
+  -config=/etc/kubernetes/cert/ca-config.json \
+  -profile=kubernetes flanneld-csr.json | cfssljson -bare flanneld
+ls flanneld*pem
+</code></pre>
+<p>分发 flanneld 二进制文件和flannel 证书、私钥 到集群所有节点：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp  flannel/&#123;flanneld,mk-docker-opts.sh&#125; k8s@$&#123;node_ip&#125;:/opt/k8s/bin/
+    ssh k8s@$&#123;node_ip&#125; &quot;chmod +x /opt/k8s/bin/*&quot;
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p /etc/flanneld/cert &amp;&amp; chown -R k8s /etc/flanneld&quot;scp flanneld*.pem k8s@$&#123;node_ip&#125;:/etc/flanneld/cert
+  done
+</code></pre>
+<p>创建<br> flannel 从 etcd 集群存取网段分配信息，而 etcd 集群启用了双向 x509 证书认证，所以需要为 flanneld 生成证书和私钥。</p>
+<p>向 etcd 写入集群 Pod 网段信息<br> 注意：本步骤只需执行一次。</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+etcdctl \
+  --endpoints=$&#123;ETCD_ENDPOINTS&#125; \
+  --ca-file=/etc/kubernetes/cert/ca.pem \
+  --cert-file=/etc/flanneld/cert/flanneld.pem \
+  --key-file=/etc/flanneld/cert/flanneld-key.pem \
+  set $&#123;FLANNEL_ETCD_PREFIX&#125;/config &#39;&#123;&quot;Network&quot;:&quot;&#39;$&#123;CLUSTER_CIDR&#125;&#39;&quot;, &quot;SubnetLen&quot;: 24, &quot;Backend&quot;: &#123;&quot;Type&quot;: &quot;vxlan&quot;&#125;&#125;&#39;
+</code></pre>
+<p>flanneld 当前版本 (v0.10.0) 不支持 etcd v3，故使用 etcd v2 API 写入配置 key 和网段数据；<br> 写入的 Pod 网段 ${CLUSTER_CIDR} 必须是 /16 段地址，必须与 kube-controller-manager 的 –cluster-cidr 参数值一致；</p>
+<h3 id="创建-flanneld-的-systemd-unit-文件"><a href="#创建-flanneld-的-systemd-unit-文件" class="headerlink" title="创建 flanneld 的 systemd unit 文件"></a>创建 flanneld 的 systemd unit 文件</h3><pre><code>source /opt/k8s/bin/environment.sh
+export IFACE=eno1 # 有的为em1，eth0
+cat &gt; flanneld.service &lt;&lt; EOF
+[Unit]
+Description=Flanneld overlay address etcd agent
+After=network.target
+After=network-online.target
+Wants=network-online.target
+After=etcd.service
+Before=docker.service
+
+[Service]
+Type=notify
+ExecStart=/opt/k8s/bin/flanneld \\
+  -etcd-cafile=/etc/kubernetes/cert/ca.pem \\
+  -etcd-certfile=/etc/flanneld/cert/flanneld.pem \\
+  -etcd-keyfile=/etc/flanneld/cert/flanneld-key.pem \\
+  -etcd-endpoints=$&#123;ETCD_ENDPOINTS&#125; \\
+  -etcd-prefix=$&#123;FLANNEL_ETCD_PREFIX&#125; \\
+  -iface=$&#123;IFACE&#125;
+ExecStartPost=/opt/k8s/bin/mk-docker-opts.sh -k DOCKER_NETWORK_OPTIONS -d /run/flannel/docker
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=docker.service
+EOF
+</code></pre>
+<p>mk-docker-opts.sh 脚本将分配给 flanneld 的 Pod 子网网段信息写入 /run/flannel/docker 文件，后续 docker 启动时使用这个文件中的环境变量配置 docker0 网桥；<br> flanneld 使用系统缺省路由所在的接口与其它节点通信，对于有多个网络接口（如内网和公网）的节点，可以用 -iface 参数指定通信接口，如上面的 eth0 接口;<br> flanneld 运行时需要 root 权限；<br> 完整 unit 见 flanneld.service</p>
+<p>注意：<br> 有的IFACE=eno1，有的为em1，eth，通过ifconfig查看</p>
+<h3 id="分发-flanneld-systemd-unit-文件到所有节点"><a href="#分发-flanneld-systemd-unit-文件到所有节点" class="headerlink" title="分发 flanneld systemd unit 文件到所有节点"></a>分发 flanneld systemd unit 文件到所有节点</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp flanneld.service root@$&#123;node_ip&#125;:/etc/systemd/system/
+  done
+</code></pre>
+<h3 id="启动-flanneld-服务"><a href="#启动-flanneld-服务" class="headerlink" title="启动 flanneld 服务"></a>启动 flanneld 服务</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;systemctl daemon-reload &amp;&amp; systemctl enable flanneld &amp;&amp; systemctl restart flanneld&quot;
+  done
+</code></pre>
+<h3 id="检查启动结果-1"><a href="#检查启动结果-1" class="headerlink" title="检查启动结果"></a>检查启动结果</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh k8s@$&#123;node_ip&#125; &quot;systemctl status flanneld|grep Active&quot;
+  done
+</code></pre>
+<p>确保状态为 active (running)，否则查看日志，确认原因：</p>
+<p>$ journalctl -u flanneld</p>
+<h3 id="检查分配给各-flanneld-的-Pod-网段信息"><a href="#检查分配给各-flanneld-的-Pod-网段信息" class="headerlink" title="检查分配给各 flanneld 的 Pod 网段信息"></a>检查分配给各 flanneld 的 Pod 网段信息</h3><p>查看集群 Pod 网段(/16)：</p>
+<p>source /opt/k8s/bin/environment.sh<br> etcdctl<br> –endpoints=${ETCD_ENDPOINTS}<br> –ca-file=/etc/kubernetes/cert/ca.pem<br> –cert-file=/etc/flanneld/cert/flanneld.pem<br> –key-file=/etc/flanneld/cert/flanneld-key.pem<br> get ${FLANNEL_ETCD_PREFIX}/config<br> 输出：</p>
+<p>{“Network”:”170.22.0.0/16”, “SubnetLen”: 24, “Backend”: {“Type”: “vxlan”}}</p>
+<p>查看已分配的 Pod 子网段列表(/24):</p>
+<p>source /opt/k8s/bin/environment.sh<br> etcdctl<br> –endpoints=${ETCD_ENDPOINTS}<br> –ca-file=/etc/kubernetes/cert/ca.pem<br> –cert-file=/etc/flanneld/cert/flanneld.pem<br> –key-file=/etc/flanneld/cert/flanneld-key.pem<br> ls ${FLANNEL_ETCD_PREFIX}/subnets<br> 输出：</p>
+<p>/kubernetes/network/subnets/170.22.76.0-24<br> /kubernetes/network/subnets/170.22.84.0-24<br> /kubernetes/network/subnets/170.22.45.0-24<br> /kubernetes/network/subnets/170.22.7.0-24<br> /kubernetes/network/subnets/170.22.12.0-24<br> /kubernetes/network/subnets/170.22.78.0-24<br> /kubernetes/network/subnets/170.22.5.0-24</p>
+<p>查看某一 Pod 网段对应的节点 IP 和 flannel 接口地址:</p>
+<p>source /opt/k8s/bin/environment.sh<br> etcdctl<br> –endpoints=${ETCD_ENDPOINTS}<br> –ca-file=/etc/kubernetes/cert/ca.pem<br> –cert-file=/etc/flanneld/cert/flanneld.pem<br> –key-file=/etc/flanneld/cert/flanneld-key.pem<br> get ${FLANNEL_ETCD_PREFIX}/subnets/170.22.76.0-24<br> 输出：</p>
+<p>{“PublicIP”:”192.168.86.156”,”BackendType”:”vxlan”,”BackendData”:{“VtepMAC”:”6a:aa:ca:8a:ac:ed”}}</p>
+<p>验证各节点能通过 Pod 网段互通<br> 在各节点上部署 flannel 后，检查是否创建了 flannel 接口(名称可能为 flannel0、flannel.0、flannel.1 等)：</p>
+<p>source /opt/k8s/bin/environment.sh<br> for node_ip in ${NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> ssh ${node_ip} “/usr/sbin/ip addr show flannel.1|grep -w inet”<br> done<br> 输出：</p>
+<p>inet 172.30.81.0/32 scope global flannel.1<br> inet 172.30.29.0/32 scope global flannel.1<br> inet 172.30.39.0/32 scope global flannel.1<br> 在各节点上 ping 所有 flannel 接口 IP，确保能通：</p>
+<p>source /opt/k8s/bin/environment.sh<br> for node_ip in ${NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> ssh ${node_ip} “ping -c 1 172.30.81.0”<br> ssh ${node_ip} “ping -c 1 172.30.29.0”<br> ssh ${node_ip} “ping -c 1 172.30.39.0”<br> done</p>
+<h2 id="06-0-部署-master-节点"><a href="#06-0-部署-master-节点" class="headerlink" title="06-0.部署 master 节点"></a>06-0.部署 master 节点</h2><p>kubernetes master 节点运行如下组件：</p>
+<p>kube-apiserver<br> kube-scheduler<br> kube-controller-manager<br> kube-scheduler 和 kube-controller-manager 可以以集群模式运行，通过 leader 选举产生一个工作进程，其它进程处于阻塞模式。</p>
+<p>对于 kube-apiserver，可以运行多个实例（本文档是 3 实例），但对其它组件需要提供统一的访问地址，该地址需要高可用。本文档使用 keepalived 和 haproxy 实现 kube-apiserver VIP 高可用和负载均衡。</p>
+<h3 id="下载最新版本的二进制文件"><a href="#下载最新版本的二进制文件" class="headerlink" title="下载最新版本的二进制文件"></a>下载最新版本的二进制文件</h3><p>从 CHANGELOG页面 下载 server tarball 文件（需要翻墙）</p>
+<pre><code>wget https://dl.k8s.io/v1.12.1/kubernetes-server-linux-amd64.tar.gz
+tar -xzvf kubernetes-server-linux-amd64.tar.gz
+</code></pre>
+<p>将二进制文件拷贝到所有 所有节点：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp kubernetes/server/bin/* k8s@$&#123;node_ip&#125;:/opt/k8s/bin/
+    ssh k8s@$&#123;node_ip&#125; &quot;chmod +x /opt/k8s/bin/*&quot;
+  done
+</code></pre>
+<p>如果有老版本运行，先停止：</p>
+<pre><code>systemctl stop kubelet.service 
+systemctl stop kube-controller-manager.service 
+systemctl stop kube-apiserver.service 
+systemctl stop kube-proxy.service 
+systemctl stop kube-scheduler.service
+systemctl stop etcd
+systemctl stop 
+</code></pre>
+<h2 id="06-1-部署高可用组件（keepalived-haproxy"><a href="#06-1-部署高可用组件（keepalived-haproxy" class="headerlink" title="06-1.部署高可用组件（keepalived+haproxy)"></a>06-1.部署高可用组件（keepalived+haproxy)</h2><p>使用 keepalived 和 haproxy 实现 kube-apiserver 高可用的步骤：</p>
+<ul>
+<li>keepalived 提供 kube-apiserver 对外服务的 VIP；</li>
+<li>haproxy 监听 VIP，后端连接所有 kube-apiserver 实例，提供健康检查和负载均衡功能；</li>
+<li>运行 keepalived 和 haproxy 的节点称为 LB 节点。由于 keepalived 是一主多备运行模式，故至少两个 LB 节点。</li>
+</ul>
+<p>本文档复用 master 节点的三台机器，haproxy 监听的端口(8443) 需要与 kube-apiserver 的端口 6443 不同，避免冲突。</p>
+<p>keepalived 在运行过程中周期检查本机的 haproxy 进程状态，如果检测到 haproxy 进程异常，则触发重新选主的过程，VIP 将飘移到新选出来的主节点，从而实现 VIP 的高可用。</p>
+<p>所有组件（如 kubeclt、apiserver、controller-manager、scheduler 等）都通过 VIP 和 haproxy 监听的 8443 端口访问 kube-apiserver 服务。</p>
+<h3 id="安装软件包"><a href="#安装软件包" class="headerlink" title="安装软件包"></a>安装软件包</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;yum install -y keepalived haproxy&quot;
+  done
+</code></pre>
+<p>ubuntu机器，apt-get install</p>
+<h3 id="配置和下发-haproxy-配置文件"><a href="#配置和下发-haproxy-配置文件" class="headerlink" title="配置和下发 haproxy 配置文件"></a>配置和下发 haproxy 配置文件</h3><p>haproxy 配置文件：</p>
+<pre><code>cat &gt; haproxy.cfg &lt;&lt;EOF
+ global
+     log /dev/log    local0
+     log /dev/log    local1 notice
+     chroot /var/lib/haproxy
+     stats socket /var/run/haproxy-admin.sock mode 660 level admin
+     stats timeout 30s
+     user haproxy
+     group haproxy
+     daemon
+     nbproc 1
+ 
+ defaults
+     log     global
+     timeout connect 5000
+     timeout client  10m
+     timeout server  10m
+ 
+ listen  admin_stats
+     bind 0.0.0.0:10080
+     mode http
+     log 127.0.0.1 local0 err
+     stats refresh 30s
+     stats uri /status
+     stats realm welcome login\ Haproxy
+     stats auth admin:123456
+     stats hide-version
+     stats admin if TRUE
+ 
+ listen kube-master
+     bind 0.0.0.0:8443
+     mode tcp
+     option tcplog
+     balance source
+     server 192.168.86.154 192.168.86.154:6443 check inter 2000 fall 2 rise 2 weight 1
+     server 192.168.86.155 192.168.86.155:6443 check inter 2000 fall 2 rise 2 weight 1
+     server 192.168.86.156 192.168.86.156:6443 check inter 2000 fall 2 rise 2 weight 1
+EOF
+</code></pre>
+<ul>
+<li>haproxy 在 10080 端口输出 status 信息；</li>
+<li>haproxy 监听所有接口的 8443 端口，该端口与环境变量 ${KUBE_APISERVER} 指定的端口必须一致；</li>
+<li>server 字段列出所有 kube-apiserver 监听的 IP 和端口；</li>
+</ul>
+<p>下发 haproxy.cfg 到所有 master 节点：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp haproxy.cfg root@$&#123;node_ip&#125;:/etc/haproxy
+  done
+</code></pre>
+<p>起 haproxy 服务</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;systemctl restart haproxy&quot;
+  done
+</code></pre>
+<p>检查 haproxy 服务状态</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;systemctl status haproxy|grep Active&quot;
+  done
+</code></pre>
+<p>确保状态为 active (running)，否则查看日志，确认原因：</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>192.168.86.154<br> Active: active (running) since Tue 2018-11-06 10:48:13 CST; 5s ago</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>192.168.86.155<br> Active: active (running) since Tue 2018-11-06 10:48:14 CST; 5s ago</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>192.168.86.156<br> Active: active (running) since Tue 2018-11-06 10:48:13 CST; 5s ago</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>journalctl -u haproxy<br> 检查 haproxy 是否监听 8443 端口：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;netstat -lnpt|grep haproxy&quot;
+  done
+</code></pre>
+<p>确保输出类似于:</p>
+<p>tcp        0      0 0.0.0.0:8443            0.0.0.0:*               LISTEN      45606/haproxy</p>
+<h3 id="配置和下发-keepalived-配置文件"><a href="#配置和下发-keepalived-配置文件" class="headerlink" title="配置和下发 keepalived 配置文件"></a>配置和下发 keepalived 配置文件</h3><p>keepalived 是一主（master）多备（backup）运行模式，故有两种类型的配置文件。master 配置文件只有一份，backup 配置文件视节点数目而定，对于本文档而言，规划如下：</p>
+<p>master: 192.168.86.156<br> backup：192.168.86.155，192.168.86.154</p>
+<p>master 配置文件：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+cat  &gt; keepalived-master.conf &lt;&lt;EOF
+global_defs &#123;
+    router_id lb-master-105
+&#125;
+
+vrrp_script check-haproxy &#123;
+    script &quot;killall -0 haproxy&quot;
+    interval 5
+    weight -30
+&#125;
+
+vrrp_instance VI-kube-master &#123;
+    state MASTER
+    priority 120
+    dont_track_primary
+    interface $&#123;VIP_IF&#125;
+    virtual_router_id 68
+    advert_int 3
+    track_script &#123;
+        check-haproxy
+    &#125;
+    virtual_ipaddress &#123;
+        $&#123;MASTER_VIP&#125;
+    &#125;
+&#125;
+EOF
+</code></pre>
+<p>VIP 所在的接口（interface ${VIP_IF}）为 em1<br> 使用 killall -0 haproxy 命令检查所在节点的 haproxy 进程是否正常。如果异常则将权重减少（-30）,从而触发重新选主过程；<br> router_id、virtual_router_id 用于标识属于该 HA 的 keepalived 实例，如果有多套 keepalived HA，则必须各不相同；<br> backup 配置文件：</p>
+<p>source /opt/k8s/bin/environment.sh<br> cat  &gt; keepalived-backup.conf &lt;&lt;EOF<br> global_defs {<br> router_id lb-backup-105<br> }</p>
+<p>vrrp_script check-haproxy {<br> script “killall -0 haproxy”<br> interval 5<br> weight -30<br> }</p>
+<p>vrrp_instance VI-kube-master {<br> state BACKUP<br> priority 110<br> dont_track_primary<br> interface ${VIP_IF}<br> virtual_router_id 68<br> advert_int 3<br> track_script {<br> check-haproxy<br> }<br> virtual_ipaddress {<br> ${MASTER_VIP}<br> }<br> }<br> EOF</p>
+<p>VIP 所在的接口（interface ${VIP_IF}）为 em1<br> 使用 killall -0 haproxy 命令检查所在节点的 haproxy 进程是否正常。如果异常则将权重减少（-30）,从而触发重新选主过程；<br> router_id、virtual_router_id 用于标识属于该 HA 的 keepalived 实例，如果有多套 keepalived HA，则必须各不相同；<br> priority 的值必须小于 master 的值；</p>
+<h3 id="下发-keepalived-配置文件"><a href="#下发-keepalived-配置文件" class="headerlink" title="下发 keepalived 配置文件"></a>下发 keepalived 配置文件</h3><p>下发 master 配置文件：</p>
+<pre><code>scp keepalived-master.conf root@172.27.129.105:/etc/keepalived/keepalived.conf
+</code></pre>
+<p>下发 backup 配置文件：</p>
+<pre><code>scp keepalived-backup.conf root@172.27.129.111:/etc/keepalived/keepalived.conf
+scp keepalived-backup.conf root@172.27.129.112:/etc/keepalived/keepalived.conf
+</code></pre>
+<p>起 keepalived 服务</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;systemctl restart keepalived&quot;
+  done
+</code></pre>
+<p>检查 keepalived 服务<br> source /opt/k8s/bin/environment.sh<br> for node_ip in ${ETCD_NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> ssh root@${node_ip} “systemctl status keepalived|grep Active”<br> done<br> 确保状态为 active (running)，否则查看日志（journalctl -u keepalived），确认原因：</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>192.168.86.154<br> Active: active (running) since Tue 2018-11-06 10:54:01 CST; 17s ago</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>192.168.86.155<br> Active: active (running) since Tue 2018-11-06 10:54:03 CST; 18s ago</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>192.168.86.156<br> Active: active (running) since Tue 2018-11-06 10:54:03 CST; 17s ago</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>查看 VIP 所在的节点，确保可以 ping 通 VIP：</p>
+<p>source /opt/k8s/bin/environment.sh<br> for node_ip in ${NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> ssh ${node_ip} “/usr/sbin/ip addr show ${VIP_IF}”<br> ssh ${node_ip} “ping -c 1 ${MASTER_VIP}”<br> done<br> 查看 haproxy 状态页面<br> 浏览器访问 ${MASTER_VIP}:10080/status 地址，查看 haproxy 状态页面：</p>
+<h2 id="06-1-部署-kube-apiserver-组件"><a href="#06-1-部署-kube-apiserver-组件" class="headerlink" title="06-1.部署 kube-apiserver 组件"></a>06-1.部署 kube-apiserver 组件</h2><p>使用 keepalived 和 haproxy 部署一个 3 节点高可用 master 集群的步骤，对应的 LB VIP 为环境变量 ${MASTER_VIP}。</p>
+<h3 id="创建-kubernetes-证书和私钥"><a href="#创建-kubernetes-证书和私钥" class="headerlink" title="创建 kubernetes 证书和私钥"></a>创建 kubernetes 证书和私钥</h3><pre><code>source /opt/k8s/bin/environment.sh
+cat &gt; kubernetes-csr.json &lt;&lt;EOF
+&#123;
+  &quot;CN&quot;: &quot;kubernetes&quot;,
+  &quot;hosts&quot;: [
+    &quot;127.0.0.1&quot;,
+    &quot;192.168.86.156&quot;,
+    &quot;192.168.86.155&quot;,
+    &quot;192.168.86.154&quot;,
+    &quot;192.168.86.9&quot;,
+    &quot;$&#123;MASTER_VIP&#125;&quot;,
+    &quot;$&#123;CLUSTER_KUBERNETES_SVC_IP&#125;&quot;,
+    &quot;kubernetes&quot;,
+    &quot;kubernetes.default&quot;,
+    &quot;kubernetes.default.svc&quot;,
+    &quot;kubernetes.default.svc.local&quot;,
+    &quot;kubernetes.default.svc.local.com&quot;
+  ],
+  &quot;key&quot;: &#123;
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  &#125;,
+  &quot;names&quot;: [
+    &#123;
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;BeiJing&quot;,
+      &quot;L&quot;: &quot;BeiJing&quot;,
+      &quot;O&quot;: &quot;k8s&quot;,
+      &quot;OU&quot;: &quot;4Paradigm&quot;
+    &#125;
+  ]
+&#125;
+EOF
+</code></pre>
+<ul>
+<li>hosts 字段指定授权使用该证书的 IP 或域名列表，这里列出了 VIP 、apiserver 节点 IP、kubernetes 服务 IP 和域名</li>
+<li>域名最后字符不能是 .(如不能为 kubernetes.default.svc.cluster.local.)，否则解析时失败，提示： x509: cannot parse dnsName “kubernetes.default.svc.cluster.local.”；</li>
+<li>如果使用非 cluster.local 域名，如 opsnull.com，则需要修改域名列表中的最后两个域名为：kubernetes.default.svc.opsnull、kubernetes.default.svc.opsnull.com</li>
+<li>kubernetes 服务 IP 是 apiserver 自动创建的，一般是 –service-cluster-ip-range 参数指定的网段的第一个IP，后续可以通过如下命令获取：kubectl get svc kubernetes</li>
+</ul>
+<p>生成证书和私钥：</p>
+<pre><code>cfssl gencert -ca=/etc/kubernetes/cert/ca.pem \
+  -ca-key=/etc/kubernetes/cert/ca-key.pem \
+  -config=/etc/kubernetes/cert/ca-config.json \
+  -profile=kubernetes kubernetes-csr.json | cfssljson -bare kubernetes
+ls kubernetes*pem
+</code></pre>
+<p>将生成的证书和私钥文件拷贝到 master 节点：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p /etc/kubernetes/cert/ &amp;&amp; sudo chown -R k8s /etc/kubernetes/cert/&quot;
+    scp kubernetes*.pem k8s@$&#123;node_ip&#125;:/etc/kubernetes/cert/
+  done
+</code></pre>
+<p>k8s 账户可以读写 /etc/kubernetes/cert/ 目录；</p>
+<h3 id="创建加密配置文件"><a href="#创建加密配置文件" class="headerlink" title="创建加密配置文件"></a>创建加密配置文件</h3><pre><code>source /opt/k8s/bin/environment.sh
+cat &gt; encryption-config.yaml &lt;&lt;EOF
+kind: EncryptionConfig
+apiVersion: v1
+resources:
+  - resources:
+      - secrets
+    providers:
+      - aescbc:
+          keys:
+            - name: key1
+              secret: $&#123;ENCRYPTION_KEY&#125;
+      - identity: &#123;&#125;
+EOF
+
+将加密配置文件拷贝到 master 节点的 /etc/kubernetes 目录下：
+
+source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp encryption-config.yaml root@$&#123;node_ip&#125;:/etc/kubernetes/
+  done
+</code></pre>
+<h3 id="创建-kube-apiserver-systemd-unit-模板文件"><a href="#创建-kube-apiserver-systemd-unit-模板文件" class="headerlink" title="创建 kube-apiserver systemd unit 模板文件"></a>创建 kube-apiserver systemd unit 模板文件</h3><pre><code>source /opt/k8s/bin/environment.sh
+cat &gt; kube-apiserver.service.template &lt;&lt;EOF
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+After=network.target
+
+[Service]
+ExecStart=/opt/k8s/bin/kube-apiserver \\
+  --enable-admission-plugins=Initializers,NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \\
+  --anonymous-auth=false \\
+  --experimental-encryption-provider-config=/etc/kubernetes/encryption-config.yaml \\
+  --advertise-address=##NODE_IP## \\
+  --bind-address=##NODE_IP## \\
+  --insecure-port=0 \\
+  --authorization-mode=Node,RBAC \\
+  --runtime-config=api/all \\
+  --enable-bootstrap-token-auth \\
+  --service-cluster-ip-range=$&#123;SERVICE_CIDR&#125; \\
+  --service-node-port-range=$&#123;NODE_PORT_RANGE&#125; \\
+  --tls-cert-file=/etc/kubernetes/cert/kubernetes.pem \\
+  --tls-private-key-file=/etc/kubernetes/cert/kubernetes-key.pem \\
+  --client-ca-file=/etc/kubernetes/cert/ca.pem \\
+  --kubelet-client-certificate=/etc/kubernetes/cert/kubernetes.pem \\
+  --kubelet-client-key=/etc/kubernetes/cert/kubernetes-key.pem \\
+  --service-account-key-file=/etc/kubernetes/cert/ca-key.pem \\
+  --etcd-cafile=/etc/kubernetes/cert/ca.pem \\
+  --etcd-certfile=/etc/kubernetes/cert/kubernetes.pem \\
+  --etcd-keyfile=/etc/kubernetes/cert/kubernetes-key.pem \\
+  --etcd-servers=$&#123;ETCD_ENDPOINTS&#125; \\
+  --enable-swagger-ui=true \\
+  --allow-privileged=true \\
+  --apiserver-count=3 \\
+  --audit-log-maxage=30 \\
+  --audit-log-maxbackup=3 \\
+  --audit-log-maxsize=100 \\
+  --audit-log-path=/var/log/kube-apiserver-audit.log \\
+  --event-ttl=1h \\
+  --alsologtostderr=true \\
+  --logtostderr=false \\
+  --log-dir=/var/log/kubernetes \\
+  --v=2
+Restart=on-failure
+RestartSec=5
+Type=notify
+User=k8s
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+EOF
+</code></pre>
+<ul>
+<li>–experimental-encryption-provider-config：启用加密特性；</li>
+<li>–authorization-mode=Node,RBAC： 开启 Node 和 RBAC 授权模式，拒绝未授权的请求；</li>
+<li>–enable-admission-plugins：启用 ServiceAccount 和 NodeRestriction；</li>
+<li>–service-account-key-file：签名 ServiceAccount Token 的公钥文件，kube-controller-manager 的 –service-account-private-key-file 指定私钥文件，两者配对使用；</li>
+<li>–tls-*-file：指定 apiserver 使用的证书、私钥和 CA 文件。–client-ca-file 用于验证 client (kue-controller-manager、kube-scheduler、kubelet、kube-proxy 等)请求所带的证书；</li>
+<li>–kubelet-client-certificate、–kubelet-client-key：如果指定，则使用 https 访问 kubelet APIs；需要为证书对应的用户(上面 kubernetes*.pem 证书的用户为 kubernetes) 用户定义 RBAC 规则，否则访问 kubelet API * 时提示未授权；</li>
+<li>–bind-address： 不能为 127.0.0.1，否则外界不能访问它的安全端口 6443；</li>
+<li>–insecure-port=0：关闭监听非安全端口(8080)；</li>
+<li>–service-cluster-ip-range： 指定 Service Cluster IP 地址段；</li>
+<li>–service-node-port-range： 指定 NodePort 的端口范围；</li>
+<li>–runtime-config=api/all=true： 启用所有版本的 APIs，如 autoscaling/v2alpha1；</li>
+<li>–enable-bootstrap-token-auth：启用 kubelet bootstrap 的 token 认证；</li>
+<li>–apiserver-count=3：指定集群运行模式，多台 kube-apiserver 会通过 leader 选举产生一个工作节点，其它节点处于阻塞状态；</li>
+<li>User=k8s：使用 k8s 账户运行；</li>
+</ul>
+<h3 id="为各节点创建和分发-kube-apiserver-systemd-unit-文件"><a href="#为各节点创建和分发-kube-apiserver-systemd-unit-文件" class="headerlink" title="为各节点创建和分发 kube-apiserver systemd unit 文件"></a>为各节点创建和分发 kube-apiserver systemd unit 文件</h3><p>替换模板文件中的变量，为各节点创建 systemd unit 文件：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for (( i=0; i &lt; 3; i++ ))
+  do
+    sed -e &quot;s/##NODE_NAME##/$&#123;NODE_NAMES[i]&#125;/&quot; -e &quot;s/##NODE_IP##/$&#123;NODE_IPS[i]&#125;/&quot; kube-apiserver.service.template &gt; kube-apiserver-$&#123;NODE_IPS[i]&#125;.service 
+  done
+ls kube-apiserver*.service
+</code></pre>
+<p>分发生成的 systemd unit 文件</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p /var/log/kubernetes &amp;&amp; chown -R k8s /var/log/kubernetes&quot;
+    scp kube-apiserver-$&#123;node_ip&#125;.service root@$&#123;node_ip&#125;:/etc/systemd/system/kube-apiserver.service
+  done
+</code></pre>
+<h3 id="启动-kube-apiserver-服务"><a href="#启动-kube-apiserver-服务" class="headerlink" title="启动 kube-apiserver 服务"></a>启动 kube-apiserver 服务</h3><p>source /opt/k8s/bin/environment.sh<br> for node_ip in ${ETCD_NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> ssh root@${node_ip} “systemctl daemon-reload &amp;&amp; systemctl enable kube-apiserver &amp;&amp; systemctl restart kube-apiserver”<br> done</p>
+<h3 id="检查-kube-apiserver-运行状态"><a href="#检查-kube-apiserver-运行状态" class="headerlink" title="检查 kube-apiserver 运行状态"></a>检查 kube-apiserver 运行状态</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;systemctl status kube-apiserver |grep &#39;Active:&#39;&quot;
+  done
+</code></pre>
+<p>确保状态为 active (running)，否则到 master 节点查看日志，确认原因：</p>
+<p>journalctl -u kube-apiserver</p>
+<h3 id="打印-kube-apiserver-写入-etcd-的数据"><a href="#打印-kube-apiserver-写入-etcd-的数据" class="headerlink" title="打印 kube-apiserver 写入 etcd 的数据"></a>打印 kube-apiserver 写入 etcd 的数据</h3><p>source /opt/k8s/bin/environment.sh<br> ETCDCTL_API=3 etcdctl<br> –endpoints=${ETCD_ENDPOINTS}<br> –cacert=/etc/kubernetes/cert/ca.pem<br> –cert=/etc/etcd/cert/etcd.pem<br> –key=/etc/etcd/cert/etcd-key.pem<br> get /registry/ –prefix –keys-only</p>
+<p>检查集群信息</p>
+<pre><code>kubectl cluster-info
+kubectl get all --all-namespaces
+kubectl get componentstatuses
+</code></pre>
+<p>检查 kube-apiserver 监听的端口<br> sudo netstat -lnpt|grep kube<br> tcp        0      0 172.27.129.105:6443     0.0.0.0:*               LISTEN      13075/kube-apiserve</p>
+<p>6443: 接收 https 请求的安全端口，对所有请求做认证和授权；<br> 由于关闭了非安全端口，故没有监听 8080；</p>
+<h3 id="授予-kubernetes-证书访问-kubelet-API-的权限"><a href="#授予-kubernetes-证书访问-kubelet-API-的权限" class="headerlink" title="授予 kubernetes 证书访问 kubelet API 的权限"></a>授予 kubernetes 证书访问 kubelet API 的权限</h3><p>在执行 kubectl exec、run、logs 等命令时，apiserver 会转发到 kubelet。这里定义 RBAC 规则，授权 apiserver 调用 kubelet API。</p>
+<pre><code>kubectl create clusterrolebinding kube-apiserver:kubelet-apis --clusterrole=system:kubelet-api-admin --user kubernetes
+</code></pre>
+<h2 id="06-3-部署高可用-kube-controller-manager-集群"><a href="#06-3-部署高可用-kube-controller-manager-集群" class="headerlink" title="06-3.部署高可用 kube-controller-manager 集群"></a>06-3.部署高可用 kube-controller-manager 集群</h2><p>该集群包含 3 个节点，启动后将通过竞争选举机制产生一个 leader 节点，其它节点为阻塞状态。当 leader 节点不可用后，剩余节点将再次进行选举产生新的 leader 节点，从而保证服务的可用性。</p>
+<p>为保证通信安全，本文档先生成 x509 证书和私钥，kube-controller-manager 在如下两种情况下使用该证书：</p>
+<p>与 kube-apiserver 的安全端口通信时;<br> 在安全端口(https，10252) 输出 prometheus 格式的 metrics；</p>
+<h3 id="创建-kube-controller-manager-证书和私钥"><a href="#创建-kube-controller-manager-证书和私钥" class="headerlink" title="创建 kube-controller-manager 证书和私钥"></a>创建 kube-controller-manager 证书和私钥</h3><p>创建证书签名请求：</p>
+<pre><code>cat &gt; kube-controller-manager-csr.json &lt;&lt;EOF
+&#123;
+    &quot;CN&quot;: &quot;system:kube-controller-manager&quot;,
+    &quot;key&quot;: &#123;
+        &quot;algo&quot;: &quot;rsa&quot;,
+        &quot;size&quot;: 2048
+    &#125;,
+    &quot;hosts&quot;: [
+      &quot;127.0.0.1&quot;,
+      &quot;192.168.86.156&quot;,  &quot;192.168.86.155&quot;,  &quot;192.168.86.154&quot;
+    ],
+    &quot;names&quot;: [
+      &#123;
+        &quot;C&quot;: &quot;CN&quot;,
+        &quot;ST&quot;: &quot;BeiJing&quot;,
+        &quot;L&quot;: &quot;BeiJing&quot;,
+        &quot;O&quot;: &quot;system:kube-controller-manager&quot;,
+        &quot;OU&quot;: &quot;4Paradigm&quot;
+      &#125;
+    ]
+&#125;
+EOF
+</code></pre>
+<p>hosts 列表包含所有 kube-controller-manager 节点 IP；<br> CN 为 system:kube-controller-manager、O 为 system:kube-controller-manager，kubernetes 内置的 ClusterRoleBindings system:kube-controller-manager 赋予 kube-controller-manager 工作所需的权限。<br> 生成证书和私钥：</p>
+<pre><code>cfssl gencert -ca=/etc/kubernetes/cert/ca.pem \
+  -ca-key=/etc/kubernetes/cert/ca-key.pem \
+  -config=/etc/kubernetes/cert/ca-config.json \
+  -profile=kubernetes kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
+</code></pre>
+<p>将生成的证书和私钥分发到所有 master 节点：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp kube-controller-manager*.pem k8s@$&#123;node_ip&#125;:/etc/kubernetes/cert/
+  done
+</code></pre>
+<h3 id="创建和分发-kubeconfig-文件"><a href="#创建和分发-kubeconfig-文件" class="headerlink" title="创建和分发 kubeconfig 文件"></a>创建和分发 kubeconfig 文件</h3><p>kubeconfig 文件包含访问 apiserver 的所有信息，如 apiserver 地址、CA 证书和自身使用的证书；</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+kubectl config set-cluster kubernetes \
+  --certificate-authority=/etc/kubernetes/cert/ca.pem \
+  --embed-certs=true \
+  --server=$&#123;KUBE_APISERVER&#125; \
+  --kubeconfig=kube-controller-manager.kubeconfig
+
+kubectl config set-credentials system:kube-controller-manager \
+  --client-certificate=kube-controller-manager.pem \
+  --client-key=kube-controller-manager-key.pem \
+  --embed-certs=true \
+  --kubeconfig=kube-controller-manager.kubeconfig
+
+kubectl config set-context system:kube-controller-manager \
+  --cluster=kubernetes \
+  --user=system:kube-controller-manager \
+  --kubeconfig=kube-controller-manager.kubeconfig
+
+kubectl config use-context system:kube-controller-manager --kubeconfig=kube-controller-manager.kubeconfig
+</code></pre>
+<p>分发 kubeconfig 到所有 master 节点：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp kube-controller-manager.kubeconfig k8s@$&#123;node_ip&#125;:/etc/kubernetes/
+  done
+</code></pre>
+<h3 id="创建和分发-kube-controller-manager-systemd-unit-文件"><a href="#创建和分发-kube-controller-manager-systemd-unit-文件" class="headerlink" title="创建和分发 kube-controller-manager systemd unit 文件"></a>创建和分发 kube-controller-manager systemd unit 文件</h3><pre><code>source /opt/k8s/bin/environment.sh
+cat &gt; kube-controller-manager.service &lt;&lt;EOF
+[Unit]
+Description=Kubernetes Controller Manager
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+
+[Service]
+ExecStart=/opt/k8s/bin/kube-controller-manager \\
+  --port=0 \\
+  --secure-port=10252 \\
+  --bind-address=127.0.0.1 \\
+  --kubeconfig=/etc/kubernetes/kube-controller-manager.kubeconfig \\
+  --service-cluster-ip-range=$&#123;SERVICE_CIDR&#125; \\
+  --cluster-name=kubernetes \\
+  --cluster-signing-cert-file=/etc/kubernetes/cert/ca.pem \\
+  --cluster-signing-key-file=/etc/kubernetes/cert/ca-key.pem \\
+  --experimental-cluster-signing-duration=17520h \\
+  --root-ca-file=/etc/kubernetes/cert/ca.pem \\
+  --service-account-private-key-file=/etc/kubernetes/cert/ca-key.pem \\
+  --leader-elect=true \\
+  --feature-gates=RotateKubeletServerCertificate=true \\
+  --controllers=*,bootstrapsigner,tokencleaner \\
+  --horizontal-pod-autoscaler-use-rest-clients=true \\
+  --horizontal-pod-autoscaler-sync-period=10s \\
+  --tls-cert-file=/etc/kubernetes/cert/kube-controller-manager.pem \\
+  --tls-private-key-file=/etc/kubernetes/cert/kube-controller-manager-key.pem \\
+  --use-service-account-credentials=true \\
+  --alsologtostderr=true \\
+  --logtostderr=false \\
+  --log-dir=/var/log/kubernetes \\
+  --v=2
+Restart=on
+Restart=on-failure
+RestartSec=5
+User=k8s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+</code></pre>
+<ul>
+<li>–port=0：关闭监听 http /metrics 的请求，同时 –address 参数无效，–bind-address 参数有效；</li>
+<li>–secure-port=10252、–bind-address=0.0.0.0: 在所有网络接口监听 10252 端口的 https /metrics 请求；</li>
+<li>–kubeconfig：指定 kubeconfig 文件路径，kube-controller-manager 使用它连接和验证 kube-apiserver；</li>
+<li>–cluster-signing-*-file：签名 TLS Bootstrap 创建的证书；</li>
+<li>–experimental-cluster-signing-duration：指定 TLS Bootstrap 证书的有效期；</li>
+<li>–root-ca-file：放置到容器 ServiceAccount 中的 CA 证书，用来对 kube-apiserver 的证书进行校验；</li>
+<li>–service-account-private-key-file：签名 ServiceAccount 中 Token 的私钥文件，必须和 kube-apiserver 的 –service-account-key-file 指定的公钥文件配对使用；</li>
+<li>–service-cluster-ip-range ：指定 Service Cluster IP 网段，必须和 kube-apiserver 中的同名参数一致；</li>
+<li>–leader-elect=true：集群运行模式，启用选举功能；被选为 leader 的节点负责处理工作，其它节点为阻塞状态；</li>
+<li>–feature-gates=RotateKubeletServerCertificate=true：开启 kublet server 证书的自动更新特性；</li>
+<li>–controllers=*,bootstrapsigner,tokencleaner：启用的控制器列表，tokencleaner 用于自动清理过期的 Bootstrap token；</li>
+<li>–horizontal-pod-autoscaler-*：custom metrics 相关参数，支持 autoscaling/v2alpha1；</li>
+<li>–tls-cert-file、–tls-private-key-file：使用 https 输出 metrics 时使用的 Server 证书和秘钥；</li>
+<li>–use-service-account-credentials=true:</li>
+<li>User=k8s：使用 k8s 账户运行；</li>
+<li>kube-controller-manager 不对请求 https metrics 的 Client 证书进行校验，故不需要指定 –tls-ca-file 参数，而且该参数已被淘汰。</li>
+</ul>
+<p>分发 systemd unit 文件到所有 master 节点：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp kube-controller-manager.service root@$&#123;node_ip&#125;:/etc/systemd/system/
+  done
+</code></pre>
+<h3 id="kube-controller-manager-的权限"><a href="#kube-controller-manager-的权限" class="headerlink" title="kube-controller-manager 的权限"></a>kube-controller-manager 的权限</h3><p>ClusteRole: system:kube-controller-manager 的权限很小，只能创建 secret、serviceaccount 等资源对象，各 controller 的权限分散到 ClusterRole system:controller:XXX 中。</p>
+<p>需要在 kube-controller-manager 的启动参数中添加 –use-service-account-credentials=true 参数，这样 main controller 会为各 controller 创建对应的 ServiceAccount XXX-controller。</p>
+<p>内置的 ClusterRoleBinding system:controller:XXX 将赋予各 XXX-controller ServiceAccount 对应的 ClusterRole system:controller:XXX 权限。</p>
+<h3 id="启动-kube-controller-manager-服务"><a href="#启动-kube-controller-manager-服务" class="headerlink" title="启动 kube-controller-manager 服务"></a>启动 kube-controller-manager 服务</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p /var/log/kubernetes &amp;&amp; chown -R k8s /var/log/kubernetes&quot;
+    ssh root@$&#123;node_ip&#125; &quot;systemctl daemon-reload &amp;&amp; systemctl enable kube-controller-manager &amp;&amp; systemctl restart kube-controller-manager&quot;
+  done
+</code></pre>
+<p>必须先创建日志目录；</p>
+<h3 id="检查服务运行状态"><a href="#检查服务运行状态" class="headerlink" title="检查服务运行状态"></a>检查服务运行状态</h3><p>source /opt/k8s/bin/environment.sh<br> for node_ip in ${ETCD_NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> ssh k8s@${node_ip} “systemctl status kube-controller-manager|grep Active”<br> done<br> 确保状态为 active (running)，否则查看日志，确认原因：</p>
+<pre><code>$ journalctl -u kube-controller-manager
+</code></pre>
+<h3 id="查看输出的-metric"><a href="#查看输出的-metric" class="headerlink" title="查看输出的 metric"></a>查看输出的 metric</h3><p>注意：以下命令在 kube-controller-manager 节点上执行。</p>
+<p>kube-controller-manager 监听 10252 端口，接收 https 请求：</p>
+<pre><code>$ sudo netstat -lnpt|grep kube-controll
+tcp        0      0 127.0.0.1:10252         0.0.0.0:*               LISTEN      18377/kube-controll
+$ curl -s --cacert /etc/kubernetes/cert/ca.pem https://127.0.0.1:10252/metrics |head
+# HELP ClusterRoleAggregator_adds Total number of adds handled by workqueue: ClusterRoleAggregator
+# TYPE ClusterRoleAggregator_adds counter
+ClusterRoleAggregator_adds 3
+# HELP ClusterRoleAggregator_depth Current depth of workqueue: ClusterRoleAggregator
+# TYPE ClusterRoleAggregator_depth gauge
+ClusterRoleAggregator_depth 0
+# HELP ClusterRoleAggregator_queue_latency How long an item stays in workqueueClusterRoleAggregator before being requested.
+# TYPE ClusterRoleAggregator_queue_latency summary
+ClusterRoleAggregator_queue_latency&#123;quantile=&quot;0.5&quot;&#125; 57018
+ClusterRoleAggregator_queue_latency&#123;quantile=&quot;0.9&quot;&#125; 57268
+</code></pre>
+<p>curl –cacert CA 证书用来验证 kube-controller-manager https server 证书；<br> 测试 kube-controller-manager 集群的高可用<br> 停掉一个或两个节点的 kube-controller-manager 服务，观察其它节点的日志，看是否获取了 leader 权限。</p>
+<h3 id="查看当前的-leader"><a href="#查看当前的-leader" class="headerlink" title="查看当前的 leader"></a>查看当前的 leader</h3><pre><code>$ kubectl get endpoints kube-controller-manager --namespace=kube-system  -o yaml
+apiVersion: v1
+kind: Endpoints
+metadata:
+  annotations:
+    control-plane.alpha.kubernetes.io/leader: &#39;&#123;&quot;holderIdentity&quot;:&quot;docker86-155_32dbaca9-e15f-11e8-87e7-e0db5521eb14&quot;,&quot;leaseDurationSeconds&quot;:15,&quot;acquireTime&quot;:&quot;2018-11-06T00:59:52Z&quot;,&quot;renewTime&quot;:&quot;2018-11-06T01:34:01Z&quot;,&quot;leaderTransitions&quot;:39&#125;&#39;
+  creationTimestamp: 2018-10-10T15:18:11Z
+  name: kube-controller-manager
+  namespace: kube-system
+  resourceVersion: &quot;6281708&quot;
+  selfLink: /api/v1/namespaces/kube-system/endpoints/kube-controller-manager
+  uid: b38d3ea9-cc9f-11e8-9cde-d4ae52a3b675
+</code></pre>
+<p>可见，当前的 leader 为docker86-155 节点。</p>
+<p>参考<br> 关于 controller 权限和 use-service-account-credentials 参数：<a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/issues/48208">https://github.com/kubernetes/kubernetes/issues/48208</a><br> kublet 认证和授权：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/admin/kubelet-authentication-authorization/#kubelet-authorization">https://kubernetes.io/docs/admin/kubelet-authentication-authorization/#kubelet-authorization</a></p>
+<h2 id="06-3-部署高可用-kube-scheduler-集群"><a href="#06-3-部署高可用-kube-scheduler-集群" class="headerlink" title="06-3.部署高可用 kube-scheduler 集群"></a>06-3.部署高可用 kube-scheduler 集群</h2><p>该集群包含 3 个节点，启动后将通过竞争选举机制产生一个 leader 节点，其它节点为阻塞状态。当 leader 节点不可用后，剩余节点将再次进行选举产生新的 leader 节点，从而保证服务的可用性。</p>
+<p>为保证通信安全，本文档先生成 x509 证书和私钥，kube-scheduler 在如下两种情况下使用该证书：</p>
+<p>与 kube-apiserver 的安全端口通信;<br> 在安全端口(https，10251) 输出 prometheus 格式的 metrics；</p>
+<h3 id="创建-kube-scheduler-证书和私钥"><a href="#创建-kube-scheduler-证书和私钥" class="headerlink" title="创建 kube-scheduler 证书和私钥"></a>创建 kube-scheduler 证书和私钥</h3><pre><code>cat &gt; kube-scheduler-csr.json &lt;&lt;EOF
+&#123;
+    &quot;CN&quot;: &quot;system:kube-scheduler&quot;,
+    &quot;hosts&quot;: [
+      &quot;127.0.0.1&quot;,
+      &quot;192.168.86.156&quot;,  &quot;192.168.86.155&quot;,  &quot;192.168.86.154&quot;
+    ],
+    &quot;key&quot;: &#123;
+        &quot;algo&quot;: &quot;rsa&quot;,
+        &quot;size&quot;: 2048
+    &#125;,
+    &quot;names&quot;: [
+      &#123;
+        &quot;C&quot;: &quot;CN&quot;,
+        &quot;ST&quot;: &quot;BeiJing&quot;,
+        &quot;L&quot;: &quot;BeiJing&quot;,
+        &quot;O&quot;: &quot;system:kube-scheduler&quot;,
+        &quot;OU&quot;: &quot;4Paradigm&quot;
+      &#125;
+    ]
+&#125;
+EOF
+</code></pre>
+<p>生成证书和私钥：</p>
+<pre><code>cfssl gencert -ca=/etc/kubernetes/cert/ca.pem \
+  -ca-key=/etc/kubernetes/cert/ca-key.pem \
+  -config=/etc/kubernetes/cert/ca-config.json \
+  -profile=kubernetes kube-scheduler-csr.json | cfssljson -bare kube-scheduler
+</code></pre>
+<h3 id="创建和分发-kubeconfig-文件-1"><a href="#创建和分发-kubeconfig-文件-1" class="headerlink" title="创建和分发 kubeconfig 文件"></a>创建和分发 kubeconfig 文件</h3><p>kubeconfig 文件包含访问 apiserver 的所有信息，如 apiserver 地址、CA 证书和自身使用的证书；</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+kubectl config set-cluster kubernetes \
+  --certificate-authority=/etc/kubernetes/cert/ca.pem \
+  --embed-certs=true \
+  --server=$&#123;KUBE_APISERVER&#125; \
+  --kubeconfig=kube-scheduler.kubeconfig
+
+kubectl config set-credentials system:kube-scheduler \
+  --client-certificate=kube-scheduler.pem \
+  --client-key=kube-scheduler-key.pem \
+  --embed-certs=true \
+  --kubeconfig=kube-scheduler.kubeconfig
+
+kubectl config set-context system:kube-scheduler \
+  --cluster=kubernetes \
+  --user=system:kube-scheduler \
+  --kubeconfig=kube-scheduler.kubeconfig
+
+kubectl config use-context system:kube-scheduler --kubeconfig=kube-scheduler.kubeconfig
+</code></pre>
+<p>分发 kubeconfig 到所有 master 节点：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp kube-scheduler.kubeconfig k8s@$&#123;node_ip&#125;:/etc/kubernetes/
+  done
+</code></pre>
+<h3 id="创建和分发-kube-scheduler-systemd-unit-文件"><a href="#创建和分发-kube-scheduler-systemd-unit-文件" class="headerlink" title="创建和分发 kube-scheduler systemd unit 文件"></a>创建和分发 kube-scheduler systemd unit 文件</h3><pre><code>cat &gt; kube-scheduler.service &lt;&lt;EOF
+[Unit]
+Description=Kubernetes Scheduler
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+
+[Service]
+ExecStart=/opt/k8s/bin/kube-scheduler \\
+  --address=127.0.0.1 \\
+  --kubeconfig=/etc/kubernetes/kube-scheduler.kubeconfig \\
+  --leader-elect=true \\
+  --alsologtostderr=true \\
+  --logtostderr=false \\
+  --log-dir=/var/log/kubernetes \\
+  --v=2
+Restart=on-failure
+RestartSec=5
+User=k8s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+</code></pre>
+<p>–address：在 127.0.0.1:10251 端口接收 http /metrics 请求；kube-scheduler 目前还不支持接收 https 请求；<br> –kubeconfig：指定 kubeconfig 文件路径，kube-scheduler 使用它连接和验证 kube-apiserver；<br> –leader-elect=true：集群运行模式，启用选举功能；被选为 leader 的节点负责处理工作，其它节点为阻塞状态；<br> User=k8s：使用 k8s 账户运行；</p>
+<h3 id="分发-systemd-unit-文件到所有-master-节点："><a href="#分发-systemd-unit-文件到所有-master-节点：" class="headerlink" title="分发 systemd unit 文件到所有 master 节点："></a>分发 systemd unit 文件到所有 master 节点：</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp kube-scheduler.service root@$&#123;node_ip&#125;:/etc/systemd/system/
+  done
+</code></pre>
+<h3 id="启动-kube-scheduler-服务"><a href="#启动-kube-scheduler-服务" class="headerlink" title="启动 kube-scheduler 服务"></a>启动 kube-scheduler 服务</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p /var/log/kubernetes &amp;&amp; chown -R k8s /var/log/kubernetes&quot;
+    ssh root@$&#123;node_ip&#125; &quot;systemctl daemon-reload &amp;&amp; systemctl enable kube-scheduler &amp;&amp; systemctl restart kube-scheduler&quot;
+  done
+</code></pre>
+<p>必须先创建日志目录；</p>
+<p>检查服务运行状态<br> source /opt/k8s/bin/environment.sh<br> for node_ip in ${ETCD_NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> ssh k8s@${node_ip} “systemctl status kube-scheduler|grep Active”<br> done</p>
+<p>确保状态为 active (running)，否则查看日志，确认原因：</p>
+<pre><code>journalctl -u kube-scheduler
+</code></pre>
+<h3 id="查看输出的-metric-1"><a href="#查看输出的-metric-1" class="headerlink" title="查看输出的 metric"></a>查看输出的 metric</h3><p>注意：以下命令在 kube-scheduler 节点上执行。</p>
+<p>kube-scheduler 监听 10251 端口，接收 http 请求：</p>
+<p>$ sudo netstat -lnpt|grep kube-sche<br> tcp        0      0 127.0.0.1:10251         0.0.0.0:*               LISTEN      23783/kube-schedule<br> $ curl -s <a target="_blank" rel="noopener" href="http://127.0.0.1:10251/metrics">http://127.0.0.1:10251/metrics</a> |head</p>
+<h1 id="HELP-apiserver-audit-event-total-Counter-of-audit-events-generated-and-sent-to-the-audit-backend"><a href="#HELP-apiserver-audit-event-total-Counter-of-audit-events-generated-and-sent-to-the-audit-backend" class="headerlink" title="HELP apiserver_audit_event_total Counter of audit events generated and sent to the audit backend."></a>HELP apiserver_audit_event_total Counter of audit events generated and sent to the audit backend.</h1><h1 id="TYPE-apiserver-audit-event-total-counter"><a href="#TYPE-apiserver-audit-event-total-counter" class="headerlink" title="TYPE apiserver_audit_event_total counter"></a>TYPE apiserver_audit_event_total counter</h1><p>apiserver_audit_event_total 0</p>
+<h1 id="HELP-go-gc-duration-seconds-A-summary-of-the-GC-invocation-durations"><a href="#HELP-go-gc-duration-seconds-A-summary-of-the-GC-invocation-durations" class="headerlink" title="HELP go_gc_duration_seconds A summary of the GC invocation durations."></a>HELP go_gc_duration_seconds A summary of the GC invocation durations.</h1><h1 id="TYPE-go-gc-duration-seconds-summary"><a href="#TYPE-go-gc-duration-seconds-summary" class="headerlink" title="TYPE go_gc_duration_seconds summary"></a>TYPE go_gc_duration_seconds summary</h1><p>go_gc_duration_seconds{quantile=”0”} 9.7715e-05<br> go_gc_duration_seconds{quantile=”0.25”} 0.000107676<br> go_gc_duration_seconds{quantile=”0.5”} 0.00017868<br> go_gc_duration_seconds{quantile=”0.75”} 0.000262444<br> go_gc_duration_seconds{quantile=”1”} 0.001205223</p>
+<h3 id="测试-kube-scheduler-集群的高可用"><a href="#测试-kube-scheduler-集群的高可用" class="headerlink" title="测试 kube-scheduler 集群的高可用"></a>测试 kube-scheduler 集群的高可用</h3><p>随便找一个或两个 master 节点，停掉 kube-scheduler 服务，看其它节点是否获取了 leader 权限（systemd 日志）。</p>
+<p>查看当前的 leader<br> $ kubectl get endpoints kube-scheduler –namespace=kube-system  -o yaml<br> apiVersion: v1<br> kind: Endpoints<br> metadata:<br> annotations:<br> control-plane.alpha.kubernetes.io/leader: ‘{“holderIdentity”:”kube-node3_61f34593-6cc8-11e8-8af7-5254002f288e”,”leaseDurationSeconds”:15,”acquireTime”:”2018-06-10T16:09:56Z”,”renewTime”:”2018-06-10T16:20:54Z”,”leaderTransitions”:1}’<br> creationTimestamp: 2018-06-10T16:07:33Z<br> name: kube-scheduler<br> namespace: kube-system<br> resourceVersion: “4645”<br> selfLink: /api/v1/namespaces/kube-system/endpoints/kube-scheduler<br> uid: 62382d98-6cc8-11e8-96fa-525400ba84c6</p>
+<h2 id="07-1-部署-docker-组件"><a href="#07-1-部署-docker-组件" class="headerlink" title="07-1.部署 docker 组件"></a>07-1.部署 docker 组件</h2><p>docker 是容器的运行环境，管理它的生命周期。kubelet 通过 Container Runtime Interface (CRI) 与 docker 进行交互。</p>
+<h3 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h3><p>参考 <a href="07-0.%E9%83%A8%E7%BD%B2worker%E8%8A%82%E7%82%B9.md">07-0.部署worker节点.md</a></p>
+<h3 id="下载和分发-docker-二进制文件"><a href="#下载和分发-docker-二进制文件" class="headerlink" title="下载和分发 docker 二进制文件"></a>下载和分发 docker 二进制文件</h3><p>到 <a target="_blank" rel="noopener" href="http://mirrors.ustc.edu.cn/docker-ce/linux/static/stable/x86_64/">http://mirrors.ustc.edu.cn/docker-ce/linux/static/stable/x86_64/</a> 页面下载最新发布包：</p>
+<pre><code>wget http://mirrors.ustc.edu.cn/docker-ce/linux/static/stable/x86_64/docker-18.06.1-ce.tgz
+tar -xvf docker-18.06.1-ce.tgz
+</code></pre>
+<p>分发二进制文件到所有 worker 节点：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp docker/docker*  k8s@$&#123;node_ip&#125;:/opt/k8s/bin/
+    ssh k8s@$&#123;node_ip&#125; &quot;chmod +x /opt/k8s/bin/*&quot;
+  done
+</code></pre>
+<h3 id="创建和分发-systemd-unit-文件"><a href="#创建和分发-systemd-unit-文件" class="headerlink" title="创建和分发 systemd unit 文件"></a>创建和分发 systemd unit 文件</h3><pre><code>cat &gt; docker.service &lt;&lt;&quot;EOF&quot;
+[Unit]
+Description=Docker Application Container Engine
+Documentation=http://docs.docker.io
+
+[Service]
+Environment=&quot;PATH=/opt/k8s/bin:/bin:/sbin:/usr/bin:/usr/sbin&quot;
+EnvironmentFile=-/run/flannel/docker
+ExecStart=/opt/k8s/bin/dockerd --log-level=error $DOCKER_NETWORK_OPTIONS
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+Delegate=yes
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+EOF
+</code></pre>
+<ul>
+<li>EOF 前后有双引号，这样 bash 不会替换文档中的变量，如 $DOCKER_NETWORK_OPTIONS；</li>
+<li>dockerd 运行时会调用其它 docker 命令，如 docker-proxy，所以需要将 docker 命令所在的目录加到 PATH 环境变量中；</li>
+<li>flanneld 启动时将网络配置写入 <code>/run/flannel/docker</code> 文件中，dockerd 启动前读取该文件中的环境变量 <code>DOCKER_NETWORK_OPTIONS</code> ，然后设置 docker0 网桥网段；</li>
+<li>如果指定了多个 <code>EnvironmentFile</code> 选项，则必须将 <code>/run/flannel/docker</code> 放在最后(确保 docker0 使用 flanneld 生成的 bip 参数)；</li>
+<li>docker 需要以 root 用于运行；</li>
+<li>docker 从 1.13 版本开始，可能将 <strong>iptables FORWARD chain的默认策略设置为DROP</strong>，从而导致 ping 其它 Node 上的 Pod IP 失败，遇到这种情况时，需要手动设置策略为 <code>ACCEPT</code>：</li>
+</ul>
+<pre><code>    $ sudo iptables -P FORWARD ACCEPT
+
+并且把以下命令写入 `/etc/rc.local` 文件中，防止节点重启**iptables FORWARD chain的默认策略又还原为DROP**
+
+
+    /sbin/iptables -P FORWARD ACCEPT
+</code></pre>
+<p>完整 unit 见 <a target="_blank" rel="noopener" href="https://github.com/opsnull/follow-me-install-kubernetes-cluster/blob/master/systemd/docker.service">docker.service</a></p>
+<p>分发 systemd unit 文件到所有 worker 机器:</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    scp docker.service root@$&#123;node_ip&#125;:/etc/systemd/system/
+  done
+</code></pre>
+<h3 id="配置和分发-docker-配置文件"><a href="#配置和分发-docker-配置文件" class="headerlink" title="配置和分发 docker 配置文件"></a>配置和分发 docker 配置文件</h3><p>使用国内的仓库镜像服务器以加快 pull image 的速度，同时增加下载的并发数 (需要重启 dockerd 生效)：</p>
+<pre><code>cat &gt; docker-daemon.json &lt;&lt;EOF
+&#123;&quot;insecure-registries&quot;:[&quot;192.168.86.8:5000&quot;,&quot;registry.xxx.com&quot;],
+    &quot;registry-mirrors&quot;: [&quot;https://jk4bb75a.mirror.aliyuncs.com&quot;, &quot;https://docker.mirrors.ustc.edu.cn&quot;],
+    &quot;max-concurrent-downloads&quot;: 20
+&#125;
+EOF
+</code></pre>
+<p>分发 docker 配置文件到所有 work 节点：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p  /etc/docker/&quot;
+    scp docker-daemon.json root@$&#123;node_ip&#125;:/etc/docker/daemon.json
+  done
+</code></pre>
+<h3 id="启动-docker-服务"><a href="#启动-docker-服务" class="headerlink" title="启动 docker 服务"></a>启动 docker 服务</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;systemctl stop firewalld &amp;&amp; systemctl disable firewalld&quot;
+    ssh root@$&#123;node_ip&#125; &quot;/usr/sbin/iptables -F &amp;&amp; /usr/sbin/iptables -X &amp;&amp; /usr/sbin/iptables -F -t nat &amp;&amp; /usr/sbin/iptables -X -t nat&quot;
+    ssh root@$&#123;node_ip&#125; &quot;/usr/sbin/iptables -P FORWARD ACCEPT&quot;
+    ssh root@$&#123;node_ip&#125; &quot;systemctl daemon-reload &amp;&amp; systemctl enable docker &amp;&amp; systemctl restart docker&quot;
+    ssh root@$&#123;node_ip&#125; &#39;for intf in /sys/devices/virtual/net/docker0/brif/*; do echo 1 &gt; $intf/hairpin_mode; done&#39;
+    ssh root@$&#123;node_ip&#125; &quot;sudo sysctl -p /etc/sysctl.d/kubernetes.conf&quot;
+  done
+
+
+
+source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+     ssh root@$&#123;node_ip&#125; &quot;systemctl restart docker&quot;
+  done
+</code></pre>
+<ul>
+<li>关闭 firewalld(centos7)/ufw(ubuntu16.04)，否则可能会重复创建 iptables 规则；</li>
+<li>清理旧的 iptables rules 和 chains 规则；</li>
+<li>开启 docker0 网桥下虚拟网卡的 hairpin 模式;</li>
+</ul>
+<h3 id="检查服务运行状态-1"><a href="#检查服务运行状态-1" class="headerlink" title="检查服务运行状态"></a>检查服务运行状态</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh k8s@$&#123;node_ip&#125; &quot;systemctl status docker|grep Active&quot;
+  done
+</code></pre>
+<p>确保状态为 <code>active (running)</code>，否则查看日志，确认原因：</p>
+<pre><code>$ journalctl -u docker
+</code></pre>
+<h4 id="检查-docker0-网桥"><a href="#检查-docker0-网桥" class="headerlink" title="检查 docker0 网桥"></a>检查 docker0 网桥</h4><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh k8s@$&#123;node_ip&#125; &quot;/usr/sbin/ip addr show flannel.1 &amp;&amp; /usr/sbin/ip addr show docker0&quot;
+  done
+</code></pre>
+<p>确认各 work 节点的 docker0 网桥和 flannel.1 接口的 IP 处于同一个网段中(如下 172.30.39.0 和 172.30.39.1)：</p>
+<pre><code>3: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN group default
+    link/ether ce:2f:d6:53:e5:f3 brd ff:ff:ff:ff:ff:ff
+    inet 172.30.39.0/32 scope global flannel.1
+      valid_lft forever preferred_lft forever
+    inet6 fe80::cc2f:d6ff:fe53:e5f3/64 scope link
+      valid_lft forever preferred_lft forever
+4: docker0: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state DOWN group default
+    link/ether 02:42:bf:65:16:5c brd ff:ff:ff:ff:ff:ff
+    inet 172.30.39.1/24 brd 172.30.39.255 scope global docker0
+      valid_lft forever preferred_lft forever
+</code></pre>
+<h2 id="07-2-部署-kubelet-组件"><a href="#07-2-部署-kubelet-组件" class="headerlink" title="07-2.部署 kubelet 组件"></a>07-2.部署 kubelet 组件</h2><p>kublet 运行在每个 worker 节点上，接收 kube-apiserver 发送的请求，管理 Pod 容器，执行交互式命令，如 exec、run、logs 等。</p>
+<p>kublet 启动时自动向 kube-apiserver 注册节点信息，内置的 cadvisor 统计和监控节点的资源使用情况。</p>
+<p>为确保安全，本文档只开启接收 https 请求的安全端口，对请求进行认证和授权，拒绝未授权的访问(如 apiserver、heapster)。</p>
+<h3 id="创建-kubelet-bootstrap-kubeconfig-文件"><a href="#创建-kubelet-bootstrap-kubeconfig-文件" class="headerlink" title="创建 kubelet bootstrap kubeconfig 文件"></a>创建 kubelet bootstrap kubeconfig 文件</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_name in $&#123;NODE_NAMES[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_name&#125;&quot;
+
+    # 创建 token
+    export BOOTSTRAP_TOKEN=$(kubeadm token create \
+      --description kubelet-bootstrap-token \
+      --groups system:bootstrappers:$&#123;node_name&#125; \
+      --kubeconfig ~/.kube/config)
+
+    # 设置集群参数
+    kubectl config set-cluster kubernetes \
+      --certificate-authority=/etc/kubernetes/cert/ca.pem \
+      --embed-certs=true \
+      --server=$&#123;KUBE_APISERVER&#125; \
+      --kubeconfig=kubelet-bootstrap-$&#123;node_name&#125;.kubeconfig
+
+    # 设置客户端认证参数
+    kubectl config set-credentials kubelet-bootstrap \
+      --token=$&#123;BOOTSTRAP_TOKEN&#125; \
+      --kubeconfig=kubelet-bootstrap-$&#123;node_name&#125;.kubeconfig
+
+    # 设置上下文参数
+    kubectl config set-context default \
+      --cluster=kubernetes \
+      --user=kubelet-bootstrap \
+      --kubeconfig=kubelet-bootstrap-$&#123;node_name&#125;.kubeconfig
+
+    # 设置默认上下文
+    kubectl config use-context default --kubeconfig=kubelet-bootstrap-$&#123;node_name&#125;.kubeconfig
+  done
+</code></pre>
+<ul>
+<li>证书中写入 Token 而非证书，证书后续由 controller-manager 创建。</li>
+</ul>
+<p>查看 kubeadm 为各节点创建的 token：</p>
+<pre><code>$ kubeadm token list --kubeconfig ~/.kube/config
+TOKEN                     TTL       EXPIRES                     USAGES                   DESCRIPTION               EXTRA GROUPS
+k0s2bj.7nvw1zi1nalyz4gz   23h       2018-06-14T15:14:31+08:00   authentication,signing   kubelet-bootstrap-token   system:bootstrappers:kube-node1
+mkus5s.vilnjk3kutei600l   23h       2018-06-14T15:14:32+08:00   authentication,signing   kubelet-bootstrap-token   system:bootstrappers:kube-node3
+zkiem5.0m4xhw0jc8r466nk   23h       2018-06-14T15:14:32+08:00   authentication,signing   kubelet-bootstrap-token   system:bootstrappers:kube-node2
+</code></pre>
+<ul>
+<li>创建的 token 有效期为 1 天，超期后将不能再被使用，且会被 kube-controller-manager 的 tokencleaner 清理(如果启用该 controller 的话)；</li>
+<li>kube-apiserver 接收 kubelet 的 bootstrap token 后，将请求的 user 设置为 system:bootstrap:<token id="">，group 设置为 system:bootstrappers；</token></li>
+</ul>
+<p>各 token 关联的 Secret：</p>
+<pre><code>$ kubectl get secrets  -n kube-system
+NAME                     TYPE                                  DATA      AGE
+bootstrap-token-k0s2bj   bootstrap.kubernetes.io/token         7         1m
+bootstrap-token-mkus5s   bootstrap.kubernetes.io/token         7         1m
+bootstrap-token-zkiem5   bootstrap.kubernetes.io/token         7         1m
+default-token-99st7      kubernetes.io/service-account-token   3         2d
+</code></pre>
+<h2 id="分发-bootstrap-kubeconfig-文件到所有-worker-节点"><a href="#分发-bootstrap-kubeconfig-文件到所有-worker-节点" class="headerlink" title="分发 bootstrap kubeconfig 文件到所有 worker 节点"></a>分发 bootstrap kubeconfig 文件到所有 worker 节点</h2><pre><code>source /opt/k8s/bin/environment.sh
+for node_name in $&#123;NODE_NAMES[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_name&#125;&quot;
+    scp kubelet-bootstrap-$&#123;node_name&#125;.kubeconfig k8s@$&#123;node_name&#125;:/etc/kubernetes/kubelet-bootstrap.kubeconfig
+  done
+</code></pre>
+<h2 id="创建和分发-kubelet-参数配置文件"><a href="#创建和分发-kubelet-参数配置文件" class="headerlink" title="创建和分发 kubelet 参数配置文件"></a>创建和分发 kubelet 参数配置文件</h2><p>从 v1.10 开始，kubelet <strong>部分参数</strong>需在配置文件中配置，<code>kubelet --help</code> 会提示：</p>
+<pre><code>DEPRECATED: This parameter should be set via the config file specified by the Kubelet&#39;s --config flag
+</code></pre>
+<p>创建 kubelet 参数配置模板文件：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+cat &gt; kubelet.config.json.template &lt;&lt;EOF
+&#123;
+  &quot;kind&quot;: &quot;KubeletConfiguration&quot;,
+  &quot;apiVersion&quot;: &quot;kubelet.config.k8s.io/v1beta1&quot;,
+  &quot;authentication&quot;: &#123;
+    &quot;x509&quot;: &#123;
+      &quot;clientCAFile&quot;: &quot;/etc/kubernetes/cert/ca.pem&quot;
+    &#125;,
+    &quot;webhook&quot;: &#123;
+      &quot;enabled&quot;: true,
+      &quot;cacheTTL&quot;: &quot;2m0s&quot;
+    &#125;,
+    &quot;anonymous&quot;: &#123;
+      &quot;enabled&quot;: false
+    &#125;
+  &#125;,
+  &quot;authorization&quot;: &#123;
+    &quot;mode&quot;: &quot;Webhook&quot;,
+    &quot;webhook&quot;: &#123;
+      &quot;cacheAuthorizedTTL&quot;: &quot;5m0s&quot;,
+      &quot;cacheUnauthorizedTTL&quot;: &quot;30s&quot;
+    &#125;
+  &#125;,
+  &quot;address&quot;: &quot;##NODE_IP##&quot;,
+  &quot;port&quot;: 10250,
+  &quot;readOnlyPort&quot;: 0,
+  &quot;cgroupDriver&quot;: &quot;cgroupfs&quot;,
+  &quot;hairpinMode&quot;: &quot;promiscuous-bridge&quot;,
+  &quot;serializeImagePulls&quot;: false,
+  &quot;featureGates&quot;: &#123;
+    &quot;RotateKubeletClientCertificate&quot;: true,
+    &quot;RotateKubeletServerCertificate&quot;: true
+  &#125;,
+  &quot;clusterDomain&quot;: &quot;$&#123;CLUSTER_DNS_DOMAIN&#125;&quot;,
+  &quot;clusterDNS&quot;: [&quot;$&#123;CLUSTER_DNS_SVC_IP&#125;&quot;]
+&#125;
+EOF
+</code></pre>
+<ul>
+<li>address：API 监听地址，不能为 127.0.0.1，否则 kube-apiserver、heapster 等不能调用 kubelet 的 API；</li>
+<li>readOnlyPort=0：关闭只读端口(默认 10255)，等效为未指定；</li>
+<li>authentication.anonymous.enabled：设置为 false，不允许匿名访问 10250 端口；</li>
+<li>authentication.x509.clientCAFile：指定签名客户端证书的 CA 证书，开启 HTTP 证书认证；</li>
+<li>authentication.webhook.enabled=true：开启 HTTPs bearer token 认证；</li>
+<li>对于未通过 x509 证书和 webhook 认证的请求(kube-apiserver 或其他客户端)，将被拒绝，提示 Unauthorized；</li>
+<li>authroization.mode=Webhook：kubelet 使用 SubjectAccessReview API 查询 kube-apiserver 某 user、group 是否具有操作资源的权限(RBAC)；</li>
+<li>featureGates.RotateKubeletClientCertificate、featureGates.RotateKubeletServerCertificate：自动 rotate 证书，证书的有效期取决于 kube-controller-manager 的 –experimental-cluster-signing-duration 参数；</li>
+<li>需要 root 账户运行；</li>
+</ul>
+<p>为各节点创建和分发 kubelet 配置文件：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do 
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    sed -e &quot;s/##NODE_IP##/$&#123;node_ip&#125;/&quot; kubelet.config.json.template &gt; kubelet.config-$&#123;node_ip&#125;.json
+    scp kubelet.config-$&#123;node_ip&#125;.json root@$&#123;node_ip&#125;:/etc/kubernetes/kubelet.config.json
+  done
+</code></pre>
+<p>替换后的 kubelet.config.json 文件： <a target="_blank" rel="noopener" href="https://github.com/opsnull/follow-me-install-kubernetes-cluster/blob/master/systemd/kubelet.config.json">kubelet.config.json</a></p>
+<h2 id="创建和分发-kubelet-systemd-unit-文件"><a href="#创建和分发-kubelet-systemd-unit-文件" class="headerlink" title="创建和分发 kubelet systemd unit 文件"></a>创建和分发 kubelet systemd unit 文件</h2><p>创建 kubelet systemd unit 文件模板：</p>
+<pre><code>cat &gt; kubelet.service.template &lt;&lt;EOF
+[Unit]
+Description=Kubernetes Kubelet
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+After=docker.service
+Requires=docker.service
+
+[Service]
+WorkingDirectory=/var/lib/kubelet
+ExecStart=/opt/k8s/bin/kubelet \\
+  --bootstrap-kubeconfig=/etc/kubernetes/kubelet-bootstrap.kubeconfig \\
+  --cert-dir=/etc/kubernetes/cert \\
+  --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \\
+  --config=/etc/kubernetes/kubelet.config.json \\
+  --hostname-override=##NODE_NAME## \\
+  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \\
+  --allow-privileged=true \\
+  --alsologtostderr=true \\
+  --logtostderr=false \\
+  --log-dir=/var/log/kubernetes \\
+  --v=2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+</code></pre>
+<ul>
+<li>如果设置了 <code>--hostname-override</code> 选项，则 <code>kube-proxy</code> 也需要设置该选项，否则会出现找不到 Node 的情况；</li>
+<li><code>--bootstrap-kubeconfig</code>：指向 bootstrap kubeconfig 文件，kubelet 使用该文件中的用户名和 token 向 kube-apiserver 发送 TLS Bootstrapping 请求；</li>
+<li>K8S approve kubelet 的 csr 请求后，在 <code>--cert-dir</code> 目录创建证书和私钥文件，然后写入 <code>--kubeconfig</code> 文件；</li>
+</ul>
+<p>替换后的 unit 文件：<a target="_blank" rel="noopener" href="https://github.com/opsnull/follow-me-install-kubernetes-cluster/blob/master/systemd/kubelet.service">kubelet.service</a></p>
+<p>为各节点创建和分发 kubelet systemd unit 文件：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_name in $&#123;NODE_NAMES[@]&#125;
+  do 
+    echo &quot;&gt;&gt;&gt; $&#123;node_name&#125;&quot;
+    sed -e &quot;s/##NODE_NAME##/$&#123;node_name&#125;/&quot; kubelet.service.template &gt; kubelet-$&#123;node_name&#125;.service
+    scp kubelet-$&#123;node_name&#125;.service root@$&#123;node_name&#125;:/etc/systemd/system/kubelet.service
+  done
+</code></pre>
+<h2 id="Bootstrap-Token-Auth-和授予权限"><a href="#Bootstrap-Token-Auth-和授予权限" class="headerlink" title="Bootstrap Token Auth 和授予权限"></a>Bootstrap Token Auth 和授予权限</h2><p>kublet 启动时查找配置的 –kubeletconfig 文件是否存在，如果不存在则使用 –bootstrap-kubeconfig 向 kube-apiserver 发送证书签名请求 (CSR)。</p>
+<p>kube-apiserver 收到 CSR 请求后，对其中的 Token 进行认证（事先使用 kubeadm 创建的 token），认证通过后将请求的 user 设置为 system:bootstrap:<token id="">，group 设置为 system:bootstrappers，这一过程称为 Bootstrap Token Auth。</token></p>
+<p>默认情况下，这个 user 和 group 没有创建 CSR 的权限:q，kubelet 启动失败，错误日志如下：</p>
+<pre><code>$ sudo journalctl -u kubelet -a |grep -A 2 &#39;certificatesigningrequests&#39;
+May 06 06:42:36 kube-node1 kubelet[26986]: F0506 06:42:36.314378   26986 server.go:233] failed to run Kubelet: cannot create certificate signing request: certificatesigningrequests.certificates.k8s.io is forbidden: User &quot;system:bootstrap:lemy40&quot; cannot create certificatesigningrequests.certificates.k8s.io at the cluster scope
+May 06 06:42:36 kube-node1 systemd[1]: kubelet.service: Main process exited, code=exited, status=255/n/a
+May 06 06:42:36 kube-node1 systemd[1]: kubelet.service: Failed with result &#39;exit-code&#39;.
+</code></pre>
+<p>解决办法是：创建一个 clusterrolebinding，将 group system:bootstrappers 和 clusterrole system:node-bootstrapper 绑定：</p>
+<pre><code>$ kubectl create clusterrolebinding kubelet-bootstrap --clusterrole=system:node-bootstrapper --group=system:bootstrappers
+</code></pre>
+<h2 id="启动-kubelet-服务"><a href="#启动-kubelet-服务" class="headerlink" title="启动 kubelet 服务"></a>启动 kubelet 服务</h2><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;ETCD_NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p /var/lib/kubelet&quot;
+    ssh root@$&#123;node_ip&#125; &quot;/usr/sbin/swapoff -a&quot;
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p /var/log/kubernetes &amp;&amp; chown -R k8s /var/log/kubernetes&quot;
+    ssh root@$&#123;node_ip&#125; &quot;systemctl daemon-reload &amp;&amp; systemctl enable kubelet &amp;&amp; systemctl restart kubelet&quot;
+  done
+</code></pre>
+<ul>
+<li>关闭 swap 分区，否则 kubelet 会启动失败；</li>
+<li>必须先创建工作和日志目录；</li>
+</ul>
+<p>source /opt/k8s/bin/environment.sh<br> for node_ip in ${NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> ssh root@${node_ip} “systemctl restart kubelet &amp;&amp; systemctl status kubelet|grep Active:”<br> done</p>
+<pre><code>$ journalctl -u kubelet |tail
+Jun 13 16:05:40 kube-node2 kubelet[22343]: I0613 16:05:40.388242   22343 feature_gate.go:226] feature gates: &amp;&#123;&#123;&#125; map[RotateKubeletServerCertificate:true RotateKubeletClientCertificate:true]&#125;
+Jun 13 16:05:40 kube-node2 kubelet[22343]: I0613 16:05:40.394342   22343 mount_linux.go:211] Detected OS with systemd
+Jun 13 16:05:40 kube-node2 kubelet[22343]: W0613 16:05:40.394494   22343 cni.go:171] Unable to update cni config: No networks found in /etc/cni/net.d
+Jun 13 16:05:40 kube-node2 kubelet[22343]: I0613 16:05:40.399508   22343 server.go:376] Version: v1.10.4
+Jun 13 16:05:40 kube-node2 kubelet[22343]: I0613 16:05:40.399583   22343 feature_gate.go:226] feature gates: &amp;&#123;&#123;&#125; map[RotateKubeletServerCertificate:true RotateKubeletClientCertificate:true]&#125;
+Jun 13 16:05:40 kube-node2 kubelet[22343]: I0613 16:05:40.399736   22343 plugins.go:89] No cloud provider specified.
+Jun 13 16:05:40 kube-node2 kubelet[22343]: I0613 16:05:40.399752   22343 server.go:492] No cloud provider specified: &quot;&quot; from the config file: &quot;&quot;
+Jun 13 16:05:40 kube-node2 kubelet[22343]: I0613 16:05:40.399777   22343 bootstrap.go:58] Using bootstrap kubeconfig to generate TLS client cert, key and kubeconfig file
+Jun 13 16:05:40 kube-node2 kubelet[22343]: I0613 16:05:40.446068   22343 csr.go:105] csr for this node already exists, reusing
+Jun 13 16:05:40 kube-node2 kubelet[22343]: I0613 16:05:40.453761   22343 csr.go:113] csr for this node is still valid
+</code></pre>
+<p>kubelet 启动后使用 –bootstrap-kubeconfig 向 kube-apiserver 发送 CSR 请求，当这个 CSR 被 approve 后，kube-controller-manager 为 kubelet 创建 TLS 客户端证书、私钥和 –kubeletconfig 文件。</p>
+<p>注意：kube-controller-manager 需要配置 <code>--cluster-signing-cert-file</code> 和 <code>--cluster-signing-key-file</code> 参数，才会为 TLS Bootstrap 创建证书和私钥。</p>
+<pre><code>$ kubectl get csr
+NAME                                                   AGE       REQUESTOR                 CONDITION
+node-csr-QzuuQiuUfcSdp3j5W4B2UOuvQ_n9aTNHAlrLzVFiqrk   43s       system:bootstrap:zkiem5   Pending
+node-csr-oVbPmU-ikVknpynwu0Ckz_MvkAO_F1j0hmbcDa__sGA   27s       system:bootstrap:mkus5s   Pending
+node-csr-u0E1-ugxgotO_9FiGXo8DkD6a7-ew8sX2qPE6KPS2IY   13m       system:bootstrap:k0s2bj   Pending
+
+$ kubectl get nodes
+No resources found.
+</code></pre>
+<ul>
+<li>三个 work 节点的 csr 均处于 pending 状态；</li>
+</ul>
+<h2 id="approve-kubelet-CSR-请求"><a href="#approve-kubelet-CSR-请求" class="headerlink" title="approve kubelet CSR 请求"></a>approve kubelet CSR 请求</h2><p>可以手动或自动 approve CSR 请求。推荐使用自动的方式，因为从 v1.8 版本开始，可以自动轮转approve csr 后生成的证书。</p>
+<h3 id="手动-approve-CSR-请求"><a href="#手动-approve-CSR-请求" class="headerlink" title="手动 approve CSR 请求"></a>手动 approve CSR 请求</h3><p>查看 CSR 列表：</p>
+<pre><code>$ kubectl get csr
+NAME                                                   AGE       REQUESTOR                 CONDITION
+node-csr-QzuuQiuUfcSdp3j5W4B2UOuvQ_n9aTNHAlrLzVFiqrk   43s       system:bootstrap:zkiem5   Pending
+node-csr-oVbPmU-ikVknpynwu0Ckz_MvkAO_F1j0hmbcDa__sGA   27s       system:bootstrap:mkus5s   Pending
+node-csr-u0E1-ugxgotO_9FiGXo8DkD6a7-ew8sX2qPE6KPS2IY   13m       system:bootstrap:k0s2bj   Pending
+</code></pre>
+<p>approve CSR：</p>
+<pre><code>$ kubectl certificate approve node-csr-QzuuQiuUfcSdp3j5W4B2UOuvQ_n9aTNHAlrLzVFiqrk
+certificatesigningrequest.certificates.k8s.io &quot;node-csr-QzuuQiuUfcSdp3j5W4B2UOuvQ_n9aTNHAlrLzVFiqrk&quot; approved
+</code></pre>
+<p>查看 Approve 结果：</p>
+<pre><code>$ kubectl describe  csr node-csr-QzuuQiuUfcSdp3j5W4B2UOuvQ_n9aTNHAlrLzVFiqrk
+Name:               node-csr-QzuuQiuUfcSdp3j5W4B2UOuvQ_n9aTNHAlrLzVFiqrk
+Labels:             &lt;none&gt;
+Annotations:        &lt;none&gt;
+CreationTimestamp:  Wed, 13 Jun 2018 16:05:04 +0800
+Requesting User:    system:bootstrap:zkiem5
+Status:             Approved
+Subject:
+         Common Name:    system:node:kube-node2
+         Serial Number:
+         Organization:   system:nodes
+Events:  &lt;none&gt;
+</code></pre>
+<ul>
+<li><code>Requesting User</code>：请求 CSR 的用户，kube-apiserver 对它进行认证和授权；</li>
+<li><code>Subject</code>：请求签名的证书信息；</li>
+<li>证书的 CN 是 system:node:kube-node2， Organization 是 system:nodes，kube-apiserver 的 Node 授权模式会授予该证书的相关权限；</li>
+</ul>
+<h3 id="自动-approve-CSR-请求"><a href="#自动-approve-CSR-请求" class="headerlink" title="自动 approve CSR 请求"></a>自动 approve CSR 请求</h3><p>创建三个 ClusterRoleBinding，分别用于自动 approve client、renew client、renew server 证书：</p>
+<pre><code>cat &gt; csr-crb.yaml &lt;&lt;EOF
+ # Approve all CSRs for the group &quot;system:bootstrappers&quot;
+ kind: ClusterRoleBinding
+ apiVersion: rbac.authorization.k8s.io/v1
+ metadata:
+   name: auto-approve-csrs-for-group
+ subjects:
+ - kind: Group
+   name: system:bootstrappers
+   apiGroup: rbac.authorization.k8s.io
+ roleRef:
+   kind: ClusterRole
+   name: system:certificates.k8s.io:certificatesigningrequests:nodeclient
+   apiGroup: rbac.authorization.k8s.io
+---
+ # To let a node of the group &quot;system:nodes&quot; renew its own credentials
+ kind: ClusterRoleBinding
+ apiVersion: rbac.authorization.k8s.io/v1
+ metadata:
+   name: node-client-cert-renewal
+ subjects:
+ - kind: Group
+   name: system:nodes
+   apiGroup: rbac.authorization.k8s.io
+ roleRef:
+   kind: ClusterRole
+   name: system:certificates.k8s.io:certificatesigningrequests:selfnodeclient
+   apiGroup: rbac.authorization.k8s.io
+---
+# A ClusterRole which instructs the CSR approver to approve a node requesting a
+# serving cert matching its client cert.
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: approve-node-server-renewal-csr
+rules:
+- apiGroups: [&quot;certificates.k8s.io&quot;]
+  resources: [&quot;certificatesigningrequests/selfnodeserver&quot;]
+  verbs: [&quot;create&quot;]
+---
+ # To let a node of the group &quot;system:nodes&quot; renew its own server credentials
+ kind: ClusterRoleBinding
+ apiVersion: rbac.authorization.k8s.io/v1
+ metadata:
+   name: node-server-cert-renewal
+ subjects:
+ - kind: Group
+   name: system:nodes
+   apiGroup: rbac.authorization.k8s.io
+ roleRef:
+   kind: ClusterRole
+   name: approve-node-server-renewal-csr
+   apiGroup: rbac.authorization.k8s.io
+EOF
+</code></pre>
+<ul>
+<li>auto-approve-csrs-for-group：自动 approve node 的第一次 CSR； 注意第一次 CSR 时，请求的 Group 为 system:bootstrappers；</li>
+<li>node-client-cert-renewal：自动 approve node 后续过期的 client 证书，自动生成的证书 Group 为 system:nodes;</li>
+<li>node-server-cert-renewal：自动 approve node 后续过期的 server 证书，自动生成的证书 Group 为 system:nodes;</li>
+</ul>
+<p>生效配置：</p>
+<pre><code>$ kubectl apply -f csr-crb.yaml
+</code></pre>
+<h2 id="查看-kublet-的情况"><a href="#查看-kublet-的情况" class="headerlink" title="查看 kublet 的情况"></a>查看 kublet 的情况</h2><p>等待一段时间(1-10 分钟)，三个节点的 CSR 都被自动 approve：</p>
+<pre><code>$ kubectl get csr
+NAME                                                   AGE       REQUESTOR                 CONDITION
+csr-98h25                                              6m        system:node:kube-node2    Approved,Issued
+csr-lb5c9                                              7m        system:node:kube-node3    Approved,Issued
+csr-m2hn4                                              14m       system:node:kube-node1    Approved,Issued平时
+node-csr-7q7i0q4MF_K2TSEJj16At4CJFLlJkHIqei6nMIAaJCU   28m       system:bootstrap:k0s2bj   Approved,Issued
+node-csr-ND77wk2P8k2lHBtgBaObiyYw0uz1Um7g2pRvveMF-c4   35m       system:bootstrap:mkus5s   Approved,Issued
+node-csr-Nysmrw55nnM48NKwEJuiuCGmZoxouK4N8jiEHBtLQso   6m        system:bootstrap:zkiem5   Approved,Issued
+node-csr-QzuuQiuUfcSdp3j5W4B2UOuvQ_n9aTNHAlrLzVFiqrk   1h        system:bootstrap:zkiem5   Approved,Issued
+node-csr-oVbPmU-ikVknpynwu0Ckz_MvkAO_F1j0hmbcDa__sGA   1h        system:bootstrap:mkus5s   Approved,Issued
+node-csr-u0E1-ugxgotO_9FiGXo8DkD6a7-ew8sX2qPE6KPS2IY   1h        system:bootstrap:k0s2bj   Approved,Issued
+</code></pre>
+<p>所有节点均 ready：</p>
+<pre><code>$ kubectl get nodes
+NAME         STATUS    ROLES     AGE       VERSION
+kube-node1   Ready     &lt;none&gt;    18m       v1.10.4
+kube-node2   Ready     &lt;none&gt;    10m       v1.10.4
+kube-node3   Ready     &lt;none&gt;    11m       v1.10.4
+</code></pre>
+<p>kube-controller-manager 为各 node 生成了 kubeconfig 文件和公私钥：</p>
+<pre><code>$ ls -l /etc/kubernetes/kubelet.kubeconfig
+-rw------- 1 root root 2293 Jun 13 17:07 /etc/kubernetes/kubelet.kubeconfig
+
+$ ls -l /etc/kubernetes/cert/|grep kubelet
+-rw-r--r-- 1 root root 1046 Jun 13 17:07 kubelet-client.crt
+-rw------- 1 root root  227 Jun 13 17:07 kubelet-client.key
+-rw------- 1 root root 1334 Jun 13 17:07 kubelet-server-2018-06-13-17-07-45.pem
+lrwxrwxrwx 1 root root   58 Jun 13 17:07 kubelet-server-current.pem -&gt; /etc/kubernetes/cert/kubelet-server-2018-06-13-17-07-45.pem
+</code></pre>
+<ul>
+<li>kubelet-server 证书会周期轮转；</li>
+</ul>
+<h2 id="kubelet-提供的-API-接口"><a href="#kubelet-提供的-API-接口" class="headerlink" title="kubelet 提供的 API 接口"></a>kubelet 提供的 API 接口</h2><p>kublet 启动后监听多个端口，用于接收 kube-apiserver 或其它组件发送的请求：</p>
+<pre><code>$ sudo netstat -lnpt|grep kubelet
+tcp        0      0 172.27.129.111:4194     0.0.0.0:*               LISTEN      2490/kubelet
+tcp        0      0 127.0.0.1:10248         0.0.0.0:*               LISTEN      2490/kubelet
+tcp        0      0 172.27.129.111:10250    0.0.0.0:*               LISTEN      2490/kubelet
+</code></pre>
+<ul>
+<li>4194: cadvisor http 服务；</li>
+<li>10248: healthz http 服务；</li>
+<li>10250: https API 服务；注意：未开启只读端口 10255；</li>
+</ul>
+<p>例如执行 <code>kubectl ec -it nginx-ds-5rmws -- sh</code> 命令时，kube-apiserver 会向 kubelet 发送如下请求：</p>
+<pre><code>POST /exec/default/nginx-ds-5rmws/my-nginx?command=sh&amp;input=1&amp;output=1&amp;tty=1
+</code></pre>
+<p>kubelet 接收 10250 端口的 https 请求：</p>
+<ul>
+<li>/pods、/runningpods</li>
+<li>/metrics、/metrics/cadvisor、/metrics/probes</li>
+<li>/spec</li>
+<li>/stats、/stats/container</li>
+<li>/logs</li>
+<li>/run/、”/exec/“, “/attach/“, “/portForward/“, “/containerLogs/“ 等管理；</li>
+</ul>
+<p>详情参考：<a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/server/server.go#L434:3">https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/server/server.go#L434:3</a></p>
+<p>由于关闭了匿名认证，同时开启了 webhook 授权，所有访问 10250 端口 https API 的请求都需要被认证和授权。</p>
+<p>预定义的 ClusterRole system:kubelet-api-admin 授予访问 kubelet 所有 API 的权限：</p>
+<pre><code>$ kubectl describe clusterrole system:kubelet-api-admin
+Name:         system:kubelet-api-admin
+Labels:       kubernetes.io/bootstrapping=rbac-defaults
+Annotations:  rbac.authorization.kubernetes.io/autoupdate=true
+PolicyRule:
+  Resources      Non-Resource URLs  Resource Names  Verbs
+  ---------      -----------------  --------------  -----
+  nodes          []                 []              [get list watch proxy]
+  nodes/log      []                 []              [*]
+  nodes/metrics  []                 []              [*]
+  nodes/proxy    []                 []              [*]
+  nodes/spec     []                 []              [*]
+  nodes/stats    []                 []              [*]
+</code></pre>
+<h2 id="kublet-api-认证和授权"><a href="#kublet-api-认证和授权" class="headerlink" title="kublet api 认证和授权"></a>kublet api 认证和授权</h2><p>kublet 配置了如下认证参数：</p>
+<ul>
+<li>authentication.anonymous.enabled：设置为 false，不允许匿名访问 10250 端口；</li>
+<li>authentication.x509.clientCAFile：指定签名客户端证书的 CA 证书，开启 HTTPs 证书认证；</li>
+<li>authentication.webhook.enabled=true：开启 HTTPs bearer token 认证；</li>
+</ul>
+<p>同时配置了如下授权参数：</p>
+<ul>
+<li>authroization.mode=Webhook：开启 RBAC 授权；</li>
+</ul>
+<p>kubelet 收到请求后，使用 clientCAFile 对证书签名进行认证，或者查询 bearer token 是否有效。如果两者都没通过，则拒绝请求，提示 Unauthorized：</p>
+<pre><code>$ curl -s --cacert /etc/kubernetes/cert/ca.pem https://192.168.86.156:10250/metrics
+Unauthorized
+
+$ curl -s --cacert /etc/kubernetes/cert/ca.pem -H &quot;Authorization: Bearer 123456&quot; https://172.27.129.111:10250/metrics
+Unauthorized
+</code></pre>
+<p>通过认证后，kubelet 使用 SubjectAccessReview API 向 kube-apiserver 发送请求，查询证书或 token 对应的 user、group 是否有操作资源的权限(RBAC)；</p>
+<p>证书认证和授权：</p>
+<pre><code>$ # 权限不足的证书；
+$ curl -s --cacert /etc/kubernetes/cert/ca.pem --cert /etc/kubernetes/cert/kube-controller-manager.pem --key /etc/kubernetes/cert/kube-controller-manager-key.pem https://172.27.129.111:10250/metrics
+Forbidden (user=system:kube-controller-manager, verb=get, resource=nodes, subresource=metrics)
+
+$ # 使用部署 kubectl 命令行工具时创建的、具有最高权限的 admin 证书；
+$ curl -s --cacert /etc/kubernetes/cert/ca.pem --cert ./admin.pem --key ./admin-key.pem https://192.168.86.156:10250/metrics|head
+# HELP apiserver_client_certificate_expiration_seconds Distribution of the remaining lifetime on the certificate used to authenticate a request.
+# TYPE apiserver_client_certificate_expiration_seconds histogram
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;0&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;21600&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;43200&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;86400&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;172800&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;345600&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;604800&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;2.592e+06&quot;&#125; 0
+</code></pre>
+<ul>
+<li><code>--cacert</code>、<code>--cert</code>、<code>--key</code> 的参数值必须是文件路径，如上面的 <code>./admin.pem</code> 不能省略 <code>./</code>，否则返回 <code>401 Unauthorized</code>；</li>
+</ul>
+<p>bear token 认证和授权：</p>
+<p>创建一个 ServiceAccount，将它和 ClusterRole system:kubelet-api-admin 绑定，从而具有调用 kubelet API 的权限：</p>
+<pre><code>kubectl create sa kubelet-api-test
+kubectl create clusterrolebinding kubelet-api-test --clusterrole=system:kubelet-api-admin --serviceaccount=default:kubelet-api-test
+SECRET=$(kubectl get secrets | grep kubelet-api-test | awk &#39;&#123;print $1&#125;&#39;)
+TOKEN=$(kubectl describe secret $&#123;SECRET&#125; | grep -E &#39;^token&#39; | awk &#39;&#123;print $2&#125;&#39;)
+echo $&#123;TOKEN&#125;
+
+$ curl -s --cacert /etc/kubernetes/cert/ca.pem -H &quot;Authorization: Bearer $&#123;TOKEN&#125;&quot; https://172.27.129.111:10250/metrics|head
+# HELP apiserver_client_certificate_expiration_seconds Distribution of the remaining lifetime on the certificate used to authenticate a request.
+# TYPE apiserver_client_certificate_expiration_seconds histogram
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;0&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;21600&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;43200&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;86400&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;172800&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;345600&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;604800&quot;&#125; 0
+apiserver_client_certificate_expiration_seconds_bucket&#123;le=&quot;2.592e+06&quot;&#125; 0
+</code></pre>
+<h3 id="cadvisor-和-metrics"><a href="#cadvisor-和-metrics" class="headerlink" title="cadvisor 和 metrics"></a>cadvisor 和 metrics</h3><p>cadvisor 统计所在节点各容器的资源(CPU、内存、磁盘、网卡)使用情况，分别在自己的 http web 页面(4194 端口)和 10250 以 promehteus metrics 的形式输出。</p>
+<p>浏览器访问 <a target="_blank" rel="noopener" href="http://172.27.129.105:4194/containers/">http://172.27.129.105:4194/containers/</a> 可以查看到 cadvisor 的监控页面：</p>
+<p><img src="/jadepeng/images/cadvisor-home.png" alt="cadvisor-home"></p>
+<p>浏览器访问 <a target="_blank" rel="noopener" href="https://172.27.129.80:10250/metrics">https://172.27.129.80:10250/metrics</a> 和 <a target="_blank" rel="noopener" href="https://172.27.129.80:10250/metrics/cadvisor">https://172.27.129.80:10250/metrics/cadvisor</a> 分别返回 kublet 和 cadvisor 的 metrics。</p>
+<p><img src="/jadepeng/images/cadvisor-metrics.png" alt="cadvisor-metrics"></p>
+<p>注意：</p>
+<ul>
+<li>kublet.config.json 设置 authentication.anonymous.enabled 为 false，不允许匿名证书访问 10250 的 https 服务；</li>
+<li>参考<a href="A.%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%BF%E9%97%AEkube-apiserver%E5%AE%89%E5%85%A8%E7%AB%AF%E5%8F%A3.md">A.浏览器访问kube-apiserver安全端口.md</a>，创建和导入相关证书，然后访问上面的 10250 端口；</li>
+</ul>
+<h2 id="获取-kublet-的配置"><a href="#获取-kublet-的配置" class="headerlink" title="获取 kublet 的配置"></a>获取 kublet 的配置</h2><p>从 kube-apiserver 获取各 node 的配置：</p>
+<p>curl -sSL –cacert /etc/kubernetes/cert/ca.pem –cert ./admin.pem –key ./admin-key.pem <a target="_blank" rel="noopener" href="https://192.168.86.214:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy">https://192.168.86.214:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy</a></p>
+<pre><code>$ source /opt/k8s/bin/environment.sh
+$ # 使用部署 kubectl 命令行工具时创建的、具有最高权限的 admin 证书；
+$ curl -sSL --cacert /etc/kubernetes/cert/ca.pem --cert ./admin.pem --key ./admin-key.pem $&#123;KUBE_APISERVER&#125;/api/v1/nodes/docker86-155/proxy/configz | jq \
+  &#39;.kubeletconfig|.kind=&quot;KubeletConfiguration&quot;|.apiVersion=&quot;kubelet.config.k8s.io/v1beta1&quot;&#39;
+&#123;
+  &quot;syncFrequency&quot;: &quot;1m0s&quot;,
+  &quot;fileCheckFrequency&quot;: &quot;20s&quot;,
+  &quot;httpCheckFrequency&quot;: &quot;20s&quot;,
+  &quot;address&quot;: &quot;172.27.129.80&quot;,
+  &quot;port&quot;: 10250,
+  &quot;readOnlyPort&quot;: 10255,
+  &quot;authentication&quot;: &#123;
+    &quot;x509&quot;: &#123;&#125;,
+    &quot;webhook&quot;: &#123;
+      &quot;enabled&quot;: false,
+      &quot;cacheTTL&quot;: &quot;2m0s&quot;
+    &#125;,
+    &quot;anonymous&quot;: &#123;
+      &quot;enabled&quot;: true
+    &#125;
+  &#125;,
+  &quot;authorization&quot;: &#123;
+    &quot;mode&quot;: &quot;AlwaysAllow&quot;,
+    &quot;webhook&quot;: &#123;
+      &quot;cacheAuthorizedTTL&quot;: &quot;5m0s&quot;,
+      &quot;cacheUnauthorizedTTL&quot;: &quot;30s&quot;
+    &#125;
+  &#125;,
+  &quot;registryPullQPS&quot;: 5,
+  &quot;registryBurst&quot;: 10,
+  &quot;eventRecordQPS&quot;: 5,
+  &quot;eventBurst&quot;: 10,
+  &quot;enableDebuggingHandlers&quot;: true,
+  &quot;healthzPort&quot;: 10248,
+  &quot;healthzBindAddress&quot;: &quot;127.0.0.1&quot;,
+  &quot;oomScoreAdj&quot;: -999,
+  &quot;clusterDomain&quot;: &quot;cluster.local.&quot;,
+  &quot;clusterDNS&quot;: [
+    &quot;10.254.0.2&quot;
+  ],
+  &quot;streamingConnectionIdleTimeout&quot;: &quot;4h0m0s&quot;,
+  &quot;nodeStatusUpdateFrequency&quot;: &quot;10s&quot;,
+  &quot;imageMinimumGCAge&quot;: &quot;2m0s&quot;,
+  &quot;imageGCHighThresholdPercent&quot;: 85,
+  &quot;imageGCLowThresholdPercent&quot;: 80,
+  &quot;volumeStatsAggPeriod&quot;: &quot;1m0s&quot;,
+  &quot;cgroupsPerQOS&quot;: true,
+  &quot;cgroupDriver&quot;: &quot;cgroupfs&quot;,
+  &quot;cpuManagerPolicy&quot;: &quot;none&quot;,
+  &quot;cpuManagerReconcilePeriod&quot;: &quot;10s&quot;,
+  &quot;runtimeRequestTimeout&quot;: &quot;2m0s&quot;,
+  &quot;hairpinMode&quot;: &quot;promiscuous-bridge&quot;,
+  &quot;maxPods&quot;: 110,
+  &quot;podPidsLimit&quot;: -1,
+  &quot;resolvConf&quot;: &quot;/etc/resolv.conf&quot;,
+  &quot;cpuCFSQuota&quot;: true,
+  &quot;maxOpenFiles&quot;: 1000000,
+  &quot;contentType&quot;: &quot;application/vnd.kubernetes.protobuf&quot;,
+  &quot;kubeAPIQPS&quot;: 5,
+  &quot;kubeAPIBurst&quot;: 10,
+  &quot;serializeImagePulls&quot;: false,
+  &quot;evictionHard&quot;: &#123;
+    &quot;imagefs.available&quot;: &quot;15%&quot;,
+    &quot;memory.available&quot;: &quot;100Mi&quot;,
+    &quot;nodefs.available&quot;: &quot;10%&quot;,
+    &quot;nodefs.inodesFree&quot;: &quot;5%&quot;
+  &#125;,
+  &quot;evictionPressureTransitionPeriod&quot;: &quot;5m0s&quot;,
+  &quot;enableControllerAttachDetach&quot;: true,
+  &quot;makeIPTablesUtilChains&quot;: true,
+  &quot;iptablesMasqueradeBit&quot;: 14,
+  &quot;iptablesDropBit&quot;: 15,
+  &quot;featureGates&quot;: &#123;
+    &quot;RotateKubeletClientCertificate&quot;: true,
+    &quot;RotateKubeletServerCertificate&quot;: true
+  &#125;,
+  &quot;failSwapOn&quot;: true,
+  &quot;containerLogMaxSize&quot;: &quot;10Mi&quot;,
+  &quot;containerLogMaxFiles&quot;: 5,
+  &quot;enforceNodeAllocatable&quot;: [
+    &quot;pods&quot;
+  ],
+  &quot;kind&quot;: &quot;KubeletConfiguration&quot;,
+  &quot;apiVersion&quot;: &quot;kubelet.config.k8s.io/v1beta1&quot;
+&#125;
+</code></pre>
+<p>或者参考代码中的注释：<a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/apis/kubeletconfig/v1beta1/types.go">https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/apis/kubeletconfig/v1beta1/types.go</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>kubelet 认证和授权：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet-authentication-authorization/">https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet-authentication-authorization/</a></li>
+</ol>
+<p>source /opt/k8s/bin/environment.sh<br> for node_ip in ${NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> ssh root@${node_ip} “systemctl daemon-reload &amp;&amp; systemctl enable kubelet &amp;&amp; systemctl restart kubelet”<br> done</p>
+<p>source /opt/k8s/bin/environment.sh</p>
+<p>for node_ip in ${ETCD_NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> ssh root@${node_ip} “mkdir -p /var/lib/kube-proxy”<br> ssh root@${node_ip} “mkdir -p /var/log/kubernetes &amp;&amp; chown -R k8s /var/log/kubernetes”<br> ssh root@${node_ip} “systemctl daemon-reload &amp;&amp; systemctl enable kube-proxy &amp;&amp; systemctl restart kube-proxy”<br> done</p>
+<p>source /opt/k8s/bin/environment.sh</p>
+<p>for node_ip in ${NODE_IPS[@]}<br> do<br> echo “&gt;&gt;&gt; ${node_ip}”<br> scp /usr/local/bin/pull-google-container root@${node_ip}:/usr/local/bin/<br> ssh root@${node_ip} “/usr/local/bin/pull-google-container k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.0”<br> done</p>
+<p>192.168.86.18 192.168.86.21 192.168.86.91 192.168.86.9</p>
+<p>cat &lt;&lt;EOF | kubectl apply -f -<br> kind: ClusterRoleBinding<br> apiVersion: rbac.authorization.k8s.io/v1beta1<br> metadata:<br> name: heapster-kubelet-api<br> roleRef:<br> apiGroup: rbac.authorization.k8s.io<br> kind: ClusterRole<br> name: system:kubelet-api-admin<br> subjects:</p>
+<ul>
+<li>kind: ServiceAccount  </li>
+</ul>
+<p>name: heapster  </p>
+<p>namespace: kube-system  </p>
+<p>EOF</p>
+<h2 id="07-3-部署-kube-proxy-组件"><a href="#07-3-部署-kube-proxy-组件" class="headerlink" title="07-3.部署 kube-proxy 组件"></a>07-3.部署 kube-proxy 组件</h2><p>kube-proxy 运行在所有 worker 节点上，，它监听 apiserver 中 service 和 Endpoint 的变化情况，创建路由规则来进行服务负载均衡。</p>
+<p>本文档讲解部署 kube-proxy 的部署，使用 ipvs 模式。</p>
+<h3 id="下载和分发-kube-proxy-二进制文件"><a href="#下载和分发-kube-proxy-二进制文件" class="headerlink" title="下载和分发 kube-proxy 二进制文件"></a>下载和分发 kube-proxy 二进制文件</h3><p>参考 <a href="06-0.%E9%83%A8%E7%BD%B2master%E8%8A%82%E7%82%B9.md">06-0.部署master节点.md</a></p>
+<h3 id="安装依赖包-1"><a href="#安装依赖包-1" class="headerlink" title="安装依赖包"></a>安装依赖包</h3><p>各节点需要安装 <code>ipvsadm</code> 和 <code>ipset</code> 命令，加载 <code>ip_vs</code> 内核模块。</p>
+<p>参考 <a href="07-0.%E9%83%A8%E7%BD%B2worker%E8%8A%82%E7%82%B9.md">07-0.部署worker节点.md</a></p>
+<h3 id="创建-kube-proxy-证书"><a href="#创建-kube-proxy-证书" class="headerlink" title="创建 kube-proxy 证书"></a>创建 kube-proxy 证书</h3><p>创建证书签名请求：</p>
+<pre><code>cat &gt; kube-proxy-csr.json &lt;&lt;EOF
+&#123;
+  &quot;CN&quot;: &quot;system:kube-proxy&quot;,
+  &quot;key&quot;: &#123;
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  &#125;,
+  &quot;names&quot;: [
+    &#123;
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;BeiJing&quot;,
+      &quot;L&quot;: &quot;BeiJing&quot;,
+      &quot;O&quot;: &quot;k8s&quot;,
+      &quot;OU&quot;: &quot;4Paradigm&quot;
+    &#125;
+  ]
+&#125;
+EOF
+</code></pre>
+<ul>
+<li>CN：指定该证书的 User 为 <code>system:kube-proxy</code>；</li>
+<li>预定义的 RoleBinding <code>system:node-proxier</code> 将User <code>system:kube-proxy</code> 与 Role <code>system:node-proxier</code> 绑定，该 Role 授予了调用 <code>kube-apiserver</code> Proxy 相关 API 的权限；</li>
+<li>该证书只会被 kube-proxy 当做 client 证书使用，所以 hosts 字段为空；</li>
+</ul>
+<p>生成证书和私钥：</p>
+<pre><code>cfssl gencert -ca=/etc/kubernetes/cert/ca.pem \
+  -ca-key=/etc/kubernetes/cert/ca-key.pem \
+  -config=/etc/kubernetes/cert/ca-config.json \
+  -profile=kubernetes  kube-proxy-csr.json | cfssljson -bare kube-proxy
+</code></pre>
+<h2 id="创建和分发-kubeconfig-文件-2"><a href="#创建和分发-kubeconfig-文件-2" class="headerlink" title="创建和分发 kubeconfig 文件"></a>创建和分发 kubeconfig 文件</h2><pre><code>source /opt/k8s/bin/environment.sh
+kubectl config set-cluster kubernetes \
+  --certificate-authority=/etc/kubernetes/cert/ca.pem \
+  --embed-certs=true \
+  --server=$&#123;KUBE_APISERVER&#125; \
+  --kubeconfig=kube-proxy.kubeconfig
+
+kubectl config set-credentials kube-proxy \
+  --client-certificate=kube-proxy.pem \
+  --client-key=kube-proxy-key.pem \
+  --embed-certs=true \
+  --kubeconfig=kube-proxy.kubeconfig
+
+kubectl config set-context default \
+  --cluster=kubernetes \
+  --user=kube-proxy \
+  --kubeconfig=kube-proxy.kubeconfig
+
+kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
+</code></pre>
+<ul>
+<li><code>--embed-certs=true</code>：将 ca.pem 和 admin.pem 证书内容嵌入到生成的 kubectl-proxy.kubeconfig 文件中(不加时，写入的是证书文件路径)；</li>
+</ul>
+<p>分发 kubeconfig 文件：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_name in $&#123;NODE_NAMES[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_name&#125;&quot;
+    scp kube-proxy.kubeconfig k8s@$&#123;node_name&#125;:/etc/kubernetes/
+  done
+</code></pre>
+<h2 id="创建-kube-proxy-配置文件"><a href="#创建-kube-proxy-配置文件" class="headerlink" title="创建 kube-proxy 配置文件"></a>创建 kube-proxy 配置文件</h2><p>从 v1.10 开始，kube-proxy <strong>部分参数</strong>可以配置文件中配置。可以使用 <code>--write-config-to</code> 选项生成该配置文件，或者参考 kubeproxyconfig 的类型定义源文件 ：<a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/pkg/proxy/apis/kubeproxyconfig/types.go">https://github.com/kubernetes/kubernetes/blob/master/pkg/proxy/apis/kubeproxyconfig/types.go</a></p>
+<p>创建 kube-proxy config 文件模板：</p>
+<pre><code>cat &gt;kube-proxy.config.yaml.template &lt;&lt;EOF
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+bindAddress: ##NODE_IP##
+clientConnection:
+  kubeconfig: /etc/kubernetes/kube-proxy.kubeconfig
+clusterCIDR: $&#123;CLUSTER_CIDR&#125;
+healthzBindAddress: ##NODE_IP##:10256
+hostnameOverride: ##NODE_NAME##
+kind: KubeProxyConfiguration
+metricsBindAddress: ##NODE_IP##:10249
+mode: &quot;ipvs&quot;
+EOF
+</code></pre>
+<ul>
+<li><code>bindAddress</code>: 监听地址；</li>
+<li><code>clientConnection.kubeconfig</code>: 连接 apiserver 的 kubeconfig 文件；</li>
+<li><code>clusterCIDR</code>: kube-proxy 根据 <code>--cluster-cidr</code> 判断集群内部和外部流量，指定 <code>--cluster-cidr</code> 或 <code>--masquerade-all</code> 选项后 kube-proxy 才会对访问 Service IP 的请求做 SNAT；</li>
+<li><code>hostnameOverride</code>: 参数值必须与 kubelet 的值一致，否则 kube-proxy 启动后会找不到该 Node，从而不会创建任何 ipvs 规则；</li>
+<li><code>mode</code>: 使用 ipvs 模式；</li>
+</ul>
+<p>为各节点创建和分发 kube-proxy 配置文件：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for (( i=0; i &lt; 7; i++ ))
+  do 
+    echo &quot;&gt;&gt;&gt; $&#123;NODE_NAMES[i]&#125;&quot;
+    sed -e &quot;s/##NODE_NAME##/$&#123;NODE_NAMES[i]&#125;/&quot; -e &quot;s/##NODE_IP##/$&#123;NODE_IPS[i]&#125;/&quot; kube-proxy.config.yaml.template &gt; kube-proxy-$&#123;NODE_NAMES[i]&#125;.config.yaml
+    scp kube-proxy-$&#123;NODE_NAMES[i]&#125;.config.yaml root@$&#123;NODE_NAMES[i]&#125;:/etc/kubernetes/kube-proxy.config.yaml
+  done
+</code></pre>
+<p>替换后的 kube-proxy.config.yaml 文件：<a target="_blank" rel="noopener" href="https://github.com/opsnull/follow-me-install-kubernetes-cluster/blob/master/systemd/kube-proxy.config.yaml">kube-proxy.config.yaml</a></p>
+<h2 id="创建和分发-kube-proxy-systemd-unit-文件"><a href="#创建和分发-kube-proxy-systemd-unit-文件" class="headerlink" title="创建和分发 kube-proxy systemd unit 文件"></a>创建和分发 kube-proxy systemd unit 文件</h2><pre><code>source /opt/k8s/bin/environment.sh
+cat &gt; kube-proxy.service &lt;&lt;EOF
+[Unit]
+Description=Kubernetes Kube-Proxy Server
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+After=network.target
+
+[Service]
+WorkingDirectory=/var/lib/kube-proxy
+ExecStart=/opt/k8s/bin/kube-proxy \\
+  --config=/etc/kubernetes/kube-proxy.config.yaml \\
+  --alsologtostderr=true \\
+  --logtostderr=false \\
+  --log-dir=/var/log/kubernetes \\
+  --v=2
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+EOF
+</code></pre>
+<p>替换后的 unit 文件：<a target="_blank" rel="noopener" href="https://github.com/opsnull/follow-me-install-kubernetes-cluster/blob/master/systemd/kube-proxy.service">kube-proxy.service</a></p>
+<p>分发 kube-proxy systemd unit 文件：</p>
+<pre><code>source /opt/k8s/bin/environment.sh
+for node_name in $&#123;NODE_NAMES[@]&#125;
+  do 
+    echo &quot;&gt;&gt;&gt; $&#123;node_name&#125;&quot;
+    scp kube-proxy.service root@$&#123;node_name&#125;:/etc/systemd/system/
+  done
+</code></pre>
+<h3 id="启动-kube-proxy-服务"><a href="#启动-kube-proxy-服务" class="headerlink" title="启动 kube-proxy 服务"></a>启动 kube-proxy 服务</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p /var/lib/kube-proxy&quot;
+    ssh root@$&#123;node_ip&#125; &quot;mkdir -p /var/log/kubernetes &amp;&amp; chown -R k8s /var/log/kubernetes&quot;
+    ssh root@$&#123;node_ip&#125; &quot;systemctl daemon-reload &amp;&amp; systemctl enable kube-proxy &amp;&amp; systemctl restart kube-proxy&quot;
+  done
+</code></pre>
+<ul>
+<li>必须先创建工作和日志目录；</li>
+</ul>
+<h3 id="检查启动结果-2"><a href="#检查启动结果-2" class="headerlink" title="检查启动结果"></a>检查启动结果</h3><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh k8s@$&#123;node_ip&#125; &quot;systemctl status kube-proxy|grep Active&quot;
+  done
+</code></pre>
+<p>确保状态为 <code>active (running)</code>，否则查看日志，确认原因：</p>
+<pre><code>journalctl -u kube-proxy
+</code></pre>
+<h2 id="查看监听端口和-metrics"><a href="#查看监听端口和-metrics" class="headerlink" title="查看监听端口和 metrics"></a>查看监听端口和 metrics</h2><pre><code>[k8s@kube-node1 ~]$ sudo netstat -lnpt|grep kube-prox
+tcp        0      0 172.27.129.105:10249    0.0.0.0:*               LISTEN      16847/kube-proxy
+tcp        0      0 172.27.129.105:10256    0.0.0.0:*               LISTEN      16847/kube-proxy
+</code></pre>
+<ul>
+<li>10249：http prometheus metrics port;</li>
+<li>10256：http healthz port;</li>
+</ul>
+<h2 id="查看-ipvs-路由规则"><a href="#查看-ipvs-路由规则" class="headerlink" title="查看 ipvs 路由规则"></a>查看 ipvs 路由规则</h2><pre><code>source /opt/k8s/bin/environment.sh
+for node_ip in $&#123;NODE_IPS[@]&#125;
+  do
+    echo &quot;&gt;&gt;&gt; $&#123;node_ip&#125;&quot;
+    ssh root@$&#123;node_ip&#125; &quot;/usr/sbin/ipvsadm -ln&quot;
+  done
+</code></pre>
+<p>预期输出：</p>
+<pre><code>&gt;&gt;&gt; 172.27.129.105
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -&gt; RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  10.254.0.1:443 rr persistent 10800
+  -&gt; 172.27.129.105:6443          Masq    1      0          0
+&gt;&gt;&gt; 172.27.129.111
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -&gt; RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  10.254.0.1:443 rr persistent 10800
+  -&gt; 172.27.129.105:6443          Masq    1      0          0
+&gt;&gt;&gt; 172.27.129.112
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -&gt; RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  10.254.0.1:443 rr persistent 10800
+  -&gt; 172.27.129.105:6443          Masq    1      0          0
+</code></pre>
+<p>可见将所有到 kubernetes cluster ip 443 端口的请求都转发到 kube-apiserver 的 6443 端口；</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/09/28/jqpeng-XNginx%20%20-%20nginx%20%E9%9B%86%E7%BE%A4%E5%8F%AF%E8%A7%86%E5%8C%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2018/09/28/jqpeng-XNginx%20%20-%20nginx%20%E9%9B%86%E7%BE%A4%E5%8F%AF%E8%A7%86%E5%8C%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7/" class="post-title-link" itemprop="url">XNginx  - nginx 集群可视化管理工具</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-09-28 17:30:00" itemprop="dateCreated datePublished" datetime="2018-09-28T17:30:00+08:00">2018-09-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/xnginx.html">XNginx  - nginx 集群可视化管理工具</a></p>
+<p>之前团队的nginx管理，都是运维同学每次去修改配置文件，然后重启，非常不方便，一直想找一个可以方便管理nginx集群的工具，翻遍web，未寻到可用之物，于是自己设计开发了一个。</p>
+<h2 id="效果预览"><a href="#效果预览" class="headerlink" title="效果预览"></a>效果预览</h2><ol>
+<li>集群group管理界面</li>
+</ol>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116402607.png" alt="Xnginx pic1"></p>
+<p>可以管理group的节点，配置文件，修改后可以一键重启所有节点，且配置文件出错时会提示错误，不会影响线上服务。</p>
+<p>2.集群Node节点管理</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116456272.png" alt="集群节点"></p>
+<p>3 .集群Node节点日志查看</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116799984.png" alt="集群日志管理"></p>
+<ol>
+<li>生成的配置文件预览</li>
+</ol>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116495120.png" alt="配置文件"></p>
+<ol>
+<li>vhost管理</li>
+</ol>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/pic/28/1538116669140.png" alt="Vhost管理"></p>
+<h2 id="设计思路"><a href="#设计思路" class="headerlink" title="设计思路"></a>设计思路</h2><p>数据结构：<br> 一个nginxGroup，拥有多个NginxNode，共享同一份配置文件。</p>
+<p>分布式架构：Manager节点+agent节点+web管理<br> 每个nginx机器部署一个agent，agent启动后自动注册到manager，通过web可以设置agent所属group，以及管理group的配置文件。</p>
+<p>配置文件变更后，manager生成配置文件，分发给存活的agent，检验OK后，控制agent重启nginx。</p>
+<h2 id="关键技术点"><a href="#关键技术点" class="headerlink" title="关键技术点"></a>关键技术点</h2><h3 id="分布式管理"><a href="#分布式管理" class="headerlink" title="分布式管理"></a>分布式管理</h3><p>一般分布式可以借助zookeeper等注册中心来实现，作为java项目，其实使用EurekaServer就可以了：</p>
+<p>manager加入eureka依赖：</p>
+<pre><code>    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-starter&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-starter-netflix-eureka-server&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+</code></pre>
+<p>然后在入口程序添加 @EnableEurekaServer</p>
+<p>agent 添加注册配置：</p>
+<pre><code>eureka:instance:    prefer-ip-address: trueclient:    service-url:        defaultZone: http://admin:admin@ip:3002/eureka/
+</code></pre>
+<p>manager 节点获取存活的agent，可以通过EurekaServerContextHolder来获取注册的agent，同时可以通过定时任务自动发现新节点。</p>
+<pre><code>public class NginxNodeDiscover &#123;
+
+    private static final String AGENT_NAME = &quot;XNGINXAGENT&quot;;
+
+    private PeerAwareInstanceRegistry getRegistry() &#123;
+        return getServerContext().getRegistry();
+    &#125;
+
+    private EurekaServerContext getServerContext() &#123;
+        return EurekaServerContextHolder.getInstance().getServerContext();
+    &#125;
+
+    @Autowired
+    NginxNodeRepository nginxNodeRepository;
+
+    @Scheduled(fixedRate = 60000)
+    public void discoverNginxNode() &#123;
+        List&lt;String&gt; nodes = getAliveAgents();
+        nodes.stream().forEach(node-&gt;&#123;
+            if(!nginxNodeRepository.findByAgent(node).isPresent())&#123;
+                NginxNode nginxNode = new NginxNode();
+                nginxNode.setAgent(node);
+                nginxNode.setName(node);
+                nginxNodeRepository.save(nginxNode);
+            &#125;
+        &#125;);
+    &#125;
+
+    public List&lt;String&gt; getAliveAgents() &#123;
+        List&lt;String&gt; instances = new ArrayList&lt;&gt;();
+        List&lt;Application&gt; sortedApplications = getRegistry().getSortedApplications();
+        Optional&lt;Application&gt; targetApp = sortedApplications.stream().filter(a-&gt;a.getName().equals(AGENT_NAME)).findFirst();
+        if(targetApp.isPresent())&#123;
+            Application app = targetApp.get();
+            for (InstanceInfo info : app.getInstances()) &#123;
+                instances.add(info.getHomePageUrl());
+            &#125;
+        &#125;
+        return instances;
+    &#125;
+&#125;
+</code></pre>
+<h3 id="RPC调用"><a href="#RPC调用" class="headerlink" title="RPC调用"></a>RPC调用</h3><p>manager 需要控制agent，按最简单的方案，agent提供rest服务，从Eureka获取地址后直接调用就可以了，另外可以借助feign来方便调用。</p>
+<p>定义接口：</p>
+<pre><code>public interface NginxAgentManager &#123;
+
+    @RequestLine(&quot;GET /nginx/start&quot;)
+     RuntimeBuilder.RuntimeResult start() ;
+
+    @RequestLine(&quot;GET /nginx/status&quot;)
+     RuntimeBuilder.RuntimeResult status() ;
+
+    @RequestLine(&quot;GET /nginx/reload&quot;)
+     RuntimeBuilder.RuntimeResult reload() ;
+
+    @RequestLine(&quot;GET /nginx/stop&quot;)
+     RuntimeBuilder.RuntimeResult stop();
+
+    @RequestLine(&quot;GET /nginx/testConfiguration&quot;)
+     RuntimeBuilder.RuntimeResult testConfiguration();
+
+    @RequestLine(&quot;GET /nginx/kill&quot;)
+     RuntimeBuilder.RuntimeResult kill() ;
+
+    @RequestLine(&quot;GET /nginx/restart&quot;)
+     RuntimeBuilder.RuntimeResult restart() ;
+
+    @RequestLine(&quot;GET /nginx/info&quot;)
+     NginxInfo info();
+
+    @RequestLine(&quot;GET /nginx/os&quot;)
+     OperationalSystemInfo os() ;
+
+    @RequestLine(&quot;GET /nginx/accesslogs/&#123;lines&#125;&quot;)
+    List&lt;NginxLoggerVM&gt; getAccesslogs(@Param(&quot;lines&quot;) int lines);
+
+    @RequestLine(&quot;GET /nginx/errorlogs/&#123;lines&#125;&quot;)
+    List&lt;NginxLoggerVM&gt; getErrorLogs(@Param(&quot;lines&quot;) int lines);
+
+&#125;
+</code></pre>
+<p>agent 实现功能：</p>
+<pre><code>@RestController
+@RequestMapping(&quot;/nginx&quot;)
+public class NginxResource &#123;
+
+   ...
+
+    @PostMapping(&quot;/update&quot;)
+    @Timed
+    public String  update(@RequestBody NginxConf conf)&#123;
+        if(conf.getSslDirectives()!=null)&#123;
+            for(SslDirective sslDirective : conf.getSslDirectives())&#123;
+                nginxControl.conf(sslDirective.getCommonName(),sslDirective.getContent());
+            &#125;
+        &#125;
+        return updateConfig(conf.getConf());
+    &#125;
+
+    @GetMapping(&quot;/accesslogs/&#123;lines&#125;&quot;)
+    @Timed
+    public List&lt;NginxLoggerVM&gt; getAccesslogs(@PathVariable Integer lines) &#123;
+        return nginxControl.getAccessLogs(lines);
+    &#125;
+
+
+&#125;
+</code></pre>
+<p>manager 调用;</p>
+<p>先生成一个Proxy实例，其中nodeurl是agent节点的url地址</p>
+<pre><code>    public NginxAgentManager getAgentManager(String nodeUrl)&#123;
+        return Feign.builder()
+            .options(new Request.Options(1000, 3500))
+            .retryer(new Retryer.Default(5000, 5000, 3))
+            .requestInterceptor(new HeaderRequestInterceptor())
+            .encoder(new GsonEncoder())
+            .decoder(new GsonDecoder())
+            .target(NginxAgentManager.class, nodeUrl);
+    &#125;
+</code></pre>
+<p>然后调用就简单了，比如要启动group：</p>
+<pre><code>public void start(String groupId)&#123;
+        operateGroup(groupId,((conf, node) -&gt; &#123;
+            NginxAgentManager manager = getAgentManager(node.getAgent());
+
+            String result = manager.update(conf);
+            if(!result.equals(&quot;success&quot;))&#123;
+                throw new XNginxException(&quot;node &quot;+ node.getAgent()+&quot; update config file failed!&quot;);
+            &#125;
+
+            RuntimeBuilder.RuntimeResult runtimeResult =   manager.start();
+            if(!runtimeResult.isSuccess())&#123;
+                throw new XNginxException(&quot;node &quot;+ node.getAgent()+&quot; start failed,&quot;+runtimeResult.getOutput());
+            &#125;
+        &#125;));
+    &#125;
+
+    public void operateGroup(String groupId,BiConsumer&lt;NginxConf,NginxNode&gt; action)&#123;
+
+        List&lt;String&gt; alivedNodes = nodeDiscover.getAliveAgents();
+        if(alivedNodes.size() == 0)&#123;
+            throw new XNginxException(&quot;no alived agent!&quot;);
+        &#125;
+        List&lt;NginxNode&gt; nginxNodes = nodeRepository.findAllByGroupId(groupId);
+        if(nginxNodes.size() ==0)&#123;
+            throw new XNginxException(&quot;the group has no nginx Nodes!&quot;);
+        &#125;
+
+        NginxConf conf = nginxConfigService.genConfig(groupId);
+
+        for(NginxNode node : nginxNodes)&#123;
+
+            if(!alivedNodes.contains(node.getAgent()))&#123;
+                continue;
+            &#125;
+
+            action.accept(conf, node);
+       &#125;
+    &#125;
+</code></pre>
+<h3 id="Nginx-配置管理"><a href="#Nginx-配置管理" class="headerlink" title="Nginx 配置管理"></a>Nginx 配置管理</h3><p>nginx的核心是各种Directive（指令），最核心的是vhost和Location。</p>
+<p>我们先来定义VHOST：</p>
+<pre><code>public class VirtualHostDirective implements Directive &#123;
+private Integer port = 80;private String aliases;private boolean enableSSL;private SslDirective sslCertificate;private SslDirective sslCertificateKey;private List&lt;LocationDirective&gt; locations;
+private String root;private  String index;private String access_log;
+&#125;
+</code></pre>
+<p>其中核心的LocationDirective，设计思路是passAddress存储location的目标地址，可以是url，也可以是upstream，通过type来区分，同时如果有upstream，则通过proxy来设置负载信息。</p>
+<pre><code>public class LocationDirective &#123;
+public static final String PROXY = &quot;PROXY&quot;;public static final String UWSGI = &quot;UWSGI&quot;;public static final String FASTCGI = &quot;FASTCGI&quot;;public static final String COMMON = &quot;STATIC&quot;;
+private String path;
+private String type = COMMON;
+private ProxyDirective proxy;
+private List&lt;String&gt; rewrites;
+private String advanced;
+private String passAddress;&#125;
+</code></pre>
+<p>再来看ProxyDirective，通过balance来区分是普通的url还是upstream，如果是upstream，servers存储负载的服务器。</p>
+<pre><code>public class ProxyDirective implements Directive &#123;
+public static final String BALANCE_UPSTREAM = &quot;upstream&quot;;public static final String BALANCE_URL = &quot;url&quot;;
+
+private String name;
+private String strategy;
+/** *  Upstream balance type : upsteam,url */private String balance = BALANCE_UPSTREAM;
+private List&lt;UpstreamDirectiveServer&gt; servers;&#125;
+</code></pre>
+<h3 id="历史数据导入"><a href="#历史数据导入" class="headerlink" title="历史数据导入"></a>历史数据导入</h3><p>已经有了配置信息，可以通过解析导入系统，解析就是常规的文本解析，这里不再赘述。</p>
+<p>核心思想就是通过匹配大括号，将配置文件分成block，然后通过正则等提取信息,比如下面的代码拆分出server{…}</p>
+<pre><code>private List&lt;String&gt; blocks() &#123;
+        List&lt;String&gt; blocks = new ArrayList&lt;&gt;();
+        List&lt;String&gt; lines = Arrays.asList(fileContent.split(&quot;\n&quot;));
+
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+        AtomicInteger currentLine = new AtomicInteger(1);
+        Integer indexStart = 0;
+        Integer serverStartIndex = 0;
+        for (String line : lines) &#123;
+            if (line.contains(&quot;&#123;&quot;)) &#123;
+                atomicInteger.getAndIncrement();
+                if (line.contains(&quot;server&quot;)) &#123;
+                    indexStart = currentLine.get() - 1;
+                    serverStartIndex = atomicInteger.get() - 1;
+                &#125;
+            &#125; else if (line.contains(&quot;&#125;&quot;)) &#123;
+                atomicInteger.getAndDecrement();
+                if (atomicInteger.get() == serverStartIndex) &#123;
+                    if (lines.get(indexStart).trim().startsWith(&quot;server&quot;)) &#123;
+                        blocks.add(StringUtils.join(lines.subList(indexStart, currentLine.get()), &quot;\n&quot;));
+                    &#125;
+                &#125;
+            &#125;
+            currentLine.getAndIncrement();
+        &#125;
+        return blocks;
+    &#125;
+</code></pre>
+<h3 id="配置文件生成"><a href="#配置文件生成" class="headerlink" title="配置文件生成"></a>配置文件生成</h3><p>配置文件生成，一般是通过模板引擎，这里也不例外，使用了Velocity库。</p>
+<pre><code>    public static StringWriter mergeFileTemplate(String pTemplatePath, Map&lt;String, Object&gt; pDto) &#123;
+        if (StringUtils.isEmpty(pTemplatePath)) &#123;
+            throw new NullPointerException(&quot;????????????&quot;);
+        &#125;
+        StringWriter writer = new StringWriter();
+        Template template;
+        try &#123;
+            template = ve.getTemplate(pTemplatePath);
+        &#125; catch (Exception e) &#123;
+            throw new RuntimeException(&quot;????????&quot;, e);
+        &#125;
+        VelocityContext context = VelocityHelper.convertDto2VelocityContext(pDto);
+        try &#123;
+            template.merge(context, writer);
+        &#125; catch (Exception e) &#123;
+            throw new RuntimeException(&quot;????????&quot;, e);
+        &#125;
+        return writer;
+    &#125;
+</code></pre>
+<p>定义模板：</p>
+<pre><code>#if($&#123;config.user&#125;)user $&#123;config.user&#125;;#end
+#if($&#123;config.workerProcesses&#125;== 0 )
+worker_processes auto;
+#else
+worker_processes  $&#123;config.workerProcesses&#125;;
+#end
+pid        /opt/xnginx/settings/nginx.pid;
+
+events &#123;
+    multi_accept off;
+    worker_connections $&#123;config.workerConnections&#125;;
+&#125;
+
+...
+</code></pre>
+<p>生成配置文件;</p>
+<pre><code>    public static StringWriter buildNginxConfString(ServerConfig serverConfig, List&lt;VirtualHostDirective&gt; hostDirectiveList, List&lt;ProxyDirective&gt; proxyDirectiveList) &#123;
+        Map&lt;String,Object&gt; map = new HashMap&lt;&gt;();
+        map.put(&quot;config&quot;,serverConfig);
+        map.put(&quot;upstreams&quot;, proxyDirectiveList);
+        map.put(&quot;hosts&quot;,hostDirectiveList);
+        return VelocityHelper.mergeFileTemplate(NGINX_CONF_VM, map);
+    &#125;
+</code></pre>
+<h3 id="管理web"><a href="#管理web" class="headerlink" title="管理web"></a>管理web</h3><p>管理web基于<a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/angular-ng-alain.html">ng-alain框架</a>，typescript+angular mvvm开发起来，和后端没有本质区别</p>
+<p>开发相对简单，这里不赘述。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>目前只实现了基本的管理功能，后续可根据需要再继续补充完善，比如支持业务、负责人等信息管理维护。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/08/27/jqpeng-APM%20%E5%8E%9F%E7%90%86%E4%B8%8E%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2018/08/27/jqpeng-APM%20%E5%8E%9F%E7%90%86%E4%B8%8E%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B/" class="post-title-link" itemprop="url">APM 原理与框架选型</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-27 15:59:00" itemprop="dateCreated datePublished" datetime="2018-08-27T15:59:00+08:00">2018-08-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/apm.html">APM 原理与框架选型</a></p>
+<p>发些存稿:)</p>
+<h2 id="0-APM简介"><a href="#0-APM简介" class="headerlink" title="0. APM简介"></a>0. APM简介</h2><p>随着微服务架构的流行，一次请求往往需要涉及到多个服务，因此服务性能监控和排查就变得更复杂：</p>
+<ul>
+<li>不同的服务可能由不同的团队开发、甚至可能使用不同的编程语言来实现</li>
+<li>服务有可能布在了几千台服务器，横跨多个不同的数据中心</li>
+</ul>
+<p>因此，就需要一些可以帮助理解系统行为、用于分析性能问题的工具，以便发生故障的时候，能够快速定位和解决问题，这就是APM系统，全称是（<strong>A</strong>pplication <strong>P</strong>erformance <strong>M</strong>onitor，当然也有叫 <strong>A</strong>pplication <strong>P</strong>erformance <strong>M</strong>anagement tools）</p>
+<p>AMP最早是谷歌公开的论文提到的 <a target="_blank" rel="noopener" href="http://bigbully.github.io/Dapper-translation">Google Dapper</a>。Dapper是Google生产环境下的分布式跟踪系统，自从Dapper发展成为一流的监控系统之后，给google的开发者和运维团队帮了大忙，所以谷歌公开论文分享了Dapper。</p>
+<h2 id="1-谷歌Dapper介绍"><a href="#1-谷歌Dapper介绍" class="headerlink" title="1. 谷歌Dapper介绍"></a>1. 谷歌Dapper介绍</h2><h3 id="1-1-Dapper的挑战"><a href="#1-1-Dapper的挑战" class="headerlink" title="1.1 Dapper的挑战"></a>1.1 <strong>Dapper的挑战</strong></h3><p>在google的首页页面，提交一个查询请求后，会经历什么：</p>
+<ul>
+<li>可能对上百台查询服务器发起了一个Web查询，每一个查询都有自己的Index</li>
+<li>这个查询可能会被发送到多个的子系统，这些子系统分别用来处理广告、进行拼写检查或是查找一些像图片、视频或新闻这样的特殊结果</li>
+<li>根据每个子系统的查询结果进行筛选，得到最终结果，最后汇总到页面上</li>
+</ul>
+<p>总结一下：</p>
+<ul>
+<li>一次全局搜索有可能调用上千台服务器，涉及各种服务。</li>
+<li>用户对搜索的耗时是很敏感的，而任何一个子系统的低效都导致导致最终的搜索耗时</li>
+</ul>
+<p>如果一次查询耗时不正常，工程师怎么来排查到底是由哪个服务调用造成的？</p>
+<ul>
+<li>首先，这个工程师可能无法准确的定位到这次全局搜索是调用了哪些服务，因为新的服务、乃至服务上的某个片段，都有可能在任何时间上过线或修改过，有可能是面向用户功能，也有可能是一些例如针对性能或安全认证方面的功能改进</li>
+<li>其次，你不能苛求这个工程师对所有参与这次全局搜索的服务都了如指掌，每一个服务都有可能是由不同的团队开发或维护的</li>
+<li>再次，这些暴露出来的服务或服务器有可能同时还被其他客户端使用着，所以这次全局搜索的性能问题甚至有可能是由其他应用造成的</li>
+</ul>
+<p>从上面可以看出Dapper需要：</p>
+<ul>
+<li>无所不在的部署，无所不在的重要性不言而喻，因为在使用跟踪系统的进行监控时，即便只有一小部分没被监控到，那么人们对这个系统是不是值得信任都会产生巨大的质疑</li>
+<li>持续的监控</li>
+</ul>
+<h3 id="1-2-Dapper的三个具体设计目标"><a href="#1-2-Dapper的三个具体设计目标" class="headerlink" title="1.2 Dapper的三个具体设计目标"></a>1.2 Dapper的三个具体设计目标</h3><ol>
+<li><strong>性能消耗低</strong><br> APM组件服务的影响应该做到足够小。<strong>服务调用埋点本身会带来性能损耗，这就需要调用跟踪的低损耗，实际中还会通过配置采样率的方式，选择一部分请求去分析请求路径</strong>。在一些高度优化过的服务，即使一点点损耗也会很容易察觉到，而且有可能迫使在线服务的部署团队不得不将跟踪系统关停。</li>
+<li><strong>应用透明</strong>，也就是<strong>代码的侵入性小</strong><br> <strong>即也作为业务组件，应当尽可能少入侵或者无入侵其他业务系统，对于使用方透明，减少开发人员的负担</strong>。<br> 对于应用的程序员来说，是不需要知道有跟踪系统这回事的。如果一个跟踪系统想生效，就必须需要依赖应用的开发者主动配合，那么这个跟踪系统也太脆弱了，往往由于跟踪系统在应用中植入代码的bug或疏忽导致应用出问题，这样才是无法满足对跟踪系统“无所不在的部署”这个需求。</li>
+<li><strong>可扩展性</strong><br> <strong>一个优秀的调用跟踪系统必须支持分布式部署，具备良好的可扩展性。能够支持的组件越多当然越好</strong>。或者提供便捷的插件开发API，对于一些没有监控到的组件，应用开发者也可以自行扩展。</li>
+<li><strong>数据的分析</strong><br> <strong>数据的分析要快 ，分析的维度尽可能多</strong>。跟踪系统能提供足够快的信息反馈，就可以对生产环境下的异常状况做出快速反应。<strong>分析的全面，能够避免二次开发</strong>。</li>
+</ol>
+<h3 id="1-3-Dapper的分布式跟踪原理"><a href="#1-3-Dapper的分布式跟踪原理" class="headerlink" title="1.3 Dapper的分布式跟踪原理"></a>1.3 Dapper的分布式跟踪原理</h3><p>先来看一次请求调用示例：</p>
+<ol>
+<li>包括：前端（A），两个中间层（B和C），以及两个后端（D和E）</li>
+<li>当用户发起一个请求时，首先到达前端A服务，然后分别对B服务和C服务进行RPC调用；</li>
+<li>B服务处理完给A做出响应，但是C服务还需要和后端的D服务和E服务交互之后再返还给A服务，最后由A服务来响应用户的请求；</li>
+</ol>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535337727679.png" alt="Dapper的分布式跟踪"></p>
+<p>Dapper是如何来跟踪记录这次请求呢？</p>
+<h4 id="1-3-1-跟踪树和span"><a href="#1-3-1-跟踪树和span" class="headerlink" title="1.3.1  跟踪树和span"></a>1.3.1  <strong>跟踪树和span</strong></h4><p>Span是dapper的<strong>基本工作单元</strong>，一次链路调用（可以是RPC，DB等没有特定的限制）创建一个span，通过一个64位ID标识它；同时附加（Annotation）作为payload负载信息，用于记录性能等数据。</p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535338174615.png" alt="5个span在Dapper跟踪树种短暂的关联关系"></p>
+<p>上图说明了span在一次大的跟踪过程中是什么样的。<strong>Dapper记录了span名称，以及每个span的ID和父ID，以重建在一次追踪过程中不同span之间的关系</strong>。如果一个span没有父ID被称为root span。<strong>所有span都挂在一个特定的跟踪上，也共用一个跟踪id</strong>。</p>
+<p>再来看下<strong>Span的细节</strong>：</p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535338251754.png" alt="一个单独的span的细节图"></p>
+<p><strong>Span数据结构</strong>：</p>
+<pre><code>type Span struct &#123;
+    TraceID    int64 // 用于标示一次完整的请求id
+    Name       string
+    ID         int64 // 当前这次调用span_id
+    ParentID   int64 // 上层服务的调用span_id  最上层服务parent_id为null
+    Annotation []Annotation // 用于标记的时间戳
+    Debug      bool
+&#125;
+</code></pre>
+<h4 id="1-3-2-TraceID"><a href="#1-3-2-TraceID" class="headerlink" title="1.3.2 TraceID"></a>1.3.2 TraceID</h4><p>类似于 <strong>树结构的Span集合</strong>，表示一次完整的跟踪，从请求到服务器开始，服务器返回response结束，跟踪每次rpc调用的耗时，存在唯一标识trace_id。比如：你运行的分布式大数据存储一次Trace就由你的一次请求组成。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/6/4/163c9bee3a9d029a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="Trace"></p>
+<p>每种颜色的note标注了一个span，一条链路通过TraceId唯一标识，Span标识发起的请求信息。<strong>树节点是整个架构的基本单元，而每一个节点又是对span的引用</strong>。节点之间的连线表示的span和它的父span直接的关系。虽然span在日志文件中只是简单的代表span的开始和结束时间，他们在整个树形结构中却是相对独立的。</p>
+<h4 id="1-3-3-Annotation"><a href="#1-3-3-Annotation" class="headerlink" title="1.3.3 Annotation"></a>1.3.3 Annotation</h4><p>Dapper允许应用程序开发人员在Dapper跟踪的过程中添加额外的信息，以监控更高级别的系统行为，或帮助调试问题。这就是Annotation：</p>
+<p><strong>Annotation</strong>，用来记录请求特定事件相关信息（例如时间），<strong>一个span中会有多个annotation注解描述</strong>。通常包含四个注解信息：</p>
+<blockquote>
+<p>(1) <strong>cs</strong>：Client Start，表示客户端发起请求<br> (2) <strong>sr</strong>：Server Receive，表示服务端收到请求<br> (3) <strong>ss</strong>：Server Send，表示服务端完成处理，并将结果发送给客户端<br> (4) <strong>cr</strong>：Client Received，表示客户端获取到服务端返回信息</p>
+</blockquote>
+<p><strong>Annotation数据结构</strong>：</p>
+<pre><code>type Annotation struct &#123;
+    Timestamp int64
+    Value     string
+    Host      Endpoint
+    Duration  int32
+&#125;
+</code></pre>
+<h4 id="1-3-4-采样率"><a href="#1-3-4-采样率" class="headerlink" title="1.3.4 采样率"></a>1.3.4 采样率</h4><p>低损耗的是Dapper的一个关键的设计目标，因为如果这个工具价值未被证实但又对性能有影响的话，你可以理解服务运营人员为什么不愿意部署它。</p>
+<p>另外，某些类型的Web服务对植入带来的性能损耗确实非常敏感。</p>
+<p>因此，除了把Dapper的收集工作对基本组件的性能损耗限制的尽可能小之外，Dapper支持设置采样率来减少性能损耗，同时支持<strong>可变采样</strong>。</p>
+<h2 id="2-APM组件选型"><a href="#2-APM组件选型" class="headerlink" title="2. APM组件选型"></a>2. APM组件选型</h2><p>市面上的全链路监控理论模型大多都是借鉴Google Dapper论文，重点关注以下三种APM组件：</p>
+<blockquote>
+<ol>
+<li>**<a href="https://link.juejin.im/?target=http://zipkin.io/">Zipkin</a>**：由Twitter公司开源，开放源代码分布式的跟踪系统，用于收集服务的定时数据，以解决微服务架构中的延迟问题，包括：数据的收集、存储、查找和展现。</li>
+<li>**<a href="https://link.juejin.im/?target=https://github.com/naver/pinpoint">Pinpoint</a>**：一款对Java编写的大规模分布式系统的APM工具，由韩国人开源的分布式跟踪组件。</li>
+<li>**<a href="https://link.juejin.im/?target=http://skywalking.org/">Skywalking</a>**：国产的优秀APM组件，是一个对JAVA分布式应用程序集群的业务运行情况进行追踪、告警和分析的系统。</li>
+</ol>
+</blockquote>
+<h3 id="2-1-对比项"><a href="#2-1-对比项" class="headerlink" title="2.1 对比项"></a>2.1 对比项</h3><p>主要对比项：</p>
+<ol>
+<li><strong>探针的性能</strong><br> 主要是agent对服务的吞吐量、CPU和内存的影响。微服务的规模和动态性使得数据收集的成本大幅度提高。</li>
+<li><strong>collector的可扩展性</strong><br> 能够水平扩展以便支持大规模服务器集群。</li>
+<li><strong>全面的调用链路数据分析</strong><br> 提供代码级别的可见性以便轻松定位失败点和瓶颈。</li>
+<li><strong>对于开发透明，容易开关</strong><br> 添加新功能而无需修改代码，容易启用或者禁用。</li>
+<li><strong>完整的调用链应用拓扑</strong><br> 自动检测应用拓扑，帮助你搞清楚应用的架构</li>
+</ol>
+<h3 id="2-2-探针的性能"><a href="#2-2-探针的性能" class="headerlink" title="2.2 探针的性能"></a>2.2 探针的性能</h3><p>比较关注探针的性能，毕竟APM定位还是工具，如果启用了链路监控组建后，直接导致吞吐量降低过半，那也是不能接受的。对skywalking、zipkin、pinpoint进行了压测，并与基线（未使用探针）的情况进行了对比。</p>
+<p>选用了一个常见的基于Spring的应用程序，他包含Spring Boot, Spring MVC，redis客户端，mysql。 监控这个应用程序，每个trace，探针会抓取5个span(1 Tomcat, 1 SpringMVC, 2 Jedis, 1 Mysql)。这边基本和 <a href="https://link.juejin.im/?target=https://link.juejin.im?target=https%253A%252F%252Fskywalkingtest.github.io%252FAgent-Benchmarks%252FREADME_zh.html">skywalkingtest</a> 的测试应用差不多。</p>
+<p>模拟了三种并发用户：500，750，1000。使用jmeter测试，每个线程发送30个请求，设置思考时间为10ms。使用的采样率为1，即100%，这边与生产可能有差别。pinpoint默认的采样率为20，即50%，通过设置agent的配置文件改为100%。zipkin默认也是1。组合起来，一共有12种。下面看下汇总表：</p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339573733.png" alt="探针性能"></p>
+<p>从上表可以看出，在三种链路监控组件中，<strong>skywalking的探针对吞吐量的影响最小，zipkin的吞吐量居中。pinpoint的探针对吞吐量的影响较为明显</strong>，在500并发用户时，测试服务的吞吐量从1385降低到774，影响很大。然后再看下CPU和memory的影响，在内部服务器进行的压测，对CPU和memory的影响都差不多在10%之内。</p>
+<h3 id="2-3-collector的可扩展性"><a href="#2-3-collector的可扩展性" class="headerlink" title="2.3 collector的可扩展性"></a>2.3 collector的可扩展性</h3><p>collector的可扩展性，使得能够水平扩展以便支持大规模服务器集群。</p>
+<ol>
+<li><strong>zipkin</strong><br> 开发zipkin-Server（其实就是提供的开箱即用包），zipkin-agent与zipkin-Server通过http或者mq进行通信，<strong>http通信会对正常的访问造成影响，所以还是推荐基于mq异步方式通信</strong>，zipkin-Server通过订阅具体的topic进行消费。这个当然是可以扩展的，<strong>多个zipkin-Server实例进行异步消费mq中的监控信息</strong>。</li>
+<li><strong>skywalking</strong><br> skywalking的collector支持两种部署方式：<strong>单机和集群模式。collector与agent之间的通信使用了gRPC</strong>。</li>
+<li><strong>pinpoint</strong><br> 同样，pinpoint也是支持集群和单机部署的。<strong>pinpoint agent通过thrift通信框架，发送链路信息到collector</strong>。</li>
+</ol>
+<h3 id="2-4-全面的调用链路数据分析"><a href="#2-4-全面的调用链路数据分析" class="headerlink" title="2.4 全面的调用链路数据分析"></a>2.4 全面的调用链路数据分析</h3><p>全面的调用链路数据分析，提供代码级别的可见性以便轻松定位失败点和瓶颈。</p>
+<p><strong>zipkin</strong></p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339676013.png" alt="zipkin"><br><strong>zipkin的链路监控粒度相对没有那么细</strong>，从上图可以看到调用链中具体到接口级别，再进一步的调用信息并未涉及。</p>
+<p><strong>skywalking</strong></p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339690665.png" alt="skywalking"></p>
+<pre><code>**skywalking 还支持20+的中间件、框架、类库**，比如：主流的dubbo、Okhttp，还有DB和消息中间件。上图skywalking链路调用分析截取的比较简单，网关调用user服务，**由于支持众多的中间件，所以skywalking链路调用分析比zipkin完备些**。
+</code></pre>
+<p><strong>pinpoint</strong></p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339702378.png" alt="pinpoint"><br> pinpoint应该是这三种APM组件中，<strong>数据分析最为完备的组件</strong>。提供代码级别的可见性以便轻松定位失败点和瓶颈，上图可以看到对于执行的sql语句，都进行了记录。还可以配置报警规则等，设置每个应用对应的负责人，根据配置的规则报警，支持的中间件和框架也比较完备。</p>
+<h3 id="2-5-对于开发透明，容易开关"><a href="#2-5-对于开发透明，容易开关" class="headerlink" title="2.5  对于开发透明，容易开关"></a>2.5  对于开发透明，容易开关</h3><p>对于开发透明，容易开关，添加新功能而无需修改代码，容易启用或者禁用。我们期望功能可以不修改代码就工作并希望得到代码级别的可见性。</p>
+<p>对于这一点，<strong>Zipkin 使用修改过的类库和它自己的容器(Finagle)来提供分布式事务跟踪的功能</strong>。但是，它要求在需要时修改代码。<strong>skywalking和pinpoint都是基于字节码增强的方式，开发人员不需要修改代码，并且可以收集到更多精确的数据因为有字节码中的更多信息</strong>。</p>
+<h3 id="2-6-完整的调用链应用拓扑"><a href="#2-6-完整的调用链应用拓扑" class="headerlink" title="2.6  完整的调用链应用拓扑"></a>2.6  完整的调用链应用拓扑</h3><p>自动检测应用拓扑，帮助你搞清楚应用的架构。</p>
+<p>zipkin链路拓扑：<br><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339925728.png" alt="zipkin链路拓扑"></p>
+<p>skywalking链路拓扑：</p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339959895.png" alt="skywalking链路拓扑"></p>
+<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339973274.png" alt="pinpoint"></p>
+<p>三个组件都能实现完整的调用链应用拓扑。相对来说：</p>
+<ul>
+<li>pinpoint界面显示的更加丰富，具体到调用的DB名</li>
+<li>zipkin的拓扑局限于服务于服务之间</li>
+</ul>
+<h3 id="2-7-社区支持"><a href="#2-7-社区支持" class="headerlink" title="2.7  社区支持"></a>2.7  社区支持</h3><p>Zipkin 由 Twitter 开发，可以算得上是明星团队，而 pinpoint的Naver 的团队只是一个默默无闻的小团队，skywalking是国内的明星项目，目前属于apache孵化项目，社区活跃。</p>
+<h3 id="2-8-总结"><a href="#2-8-总结" class="headerlink" title="2.8  总结"></a>2.8  总结</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>zipkin</th>
+<th>pinpoint</th>
+<th>skywalking</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>探针性能</td>
+<td>中</td>
+<td>低</td>
+<td><strong>高</strong></td>
+</tr>
+<tr>
+<td>collector扩展性</td>
+<td><strong>高</strong></td>
+<td>中</td>
+<td><strong>高</strong></td>
+</tr>
+<tr>
+<td>调用链路数据分析</td>
+<td>低</td>
+<td><strong>高</strong></td>
+<td>中</td>
+</tr>
+<tr>
+<td>对开发透明性</td>
+<td>中</td>
+<td><strong>高</strong></td>
+<td><strong>高</strong></td>
+</tr>
+<tr>
+<td>调用链应用拓扑</td>
+<td>中</td>
+<td><strong>高</strong></td>
+<td>中</td>
+</tr>
+<tr>
+<td>社区支持</td>
+<td><strong>高</strong></td>
+<td>中</td>
+<td><strong>高</strong></td>
+</tr>
+</tbody></table>
+<p>相对来说，skywalking更占优，因此团队采用skywalking作为APM工具。</p>
+<h2 id="3-参考内容"><a href="#3-参考内容" class="headerlink" title="3. 参考内容"></a>3. 参考内容</h2><p>本文主要内容参考下文：<br><a target="_blank" rel="noopener" href="https://juejin.im/post/5a7a9e0af265da4e914b46f1">https://juejin.im/post/5a7a9e0af265da4e914b46f1</a><br><a target="_blank" rel="noopener" href="http://bigbully.github.io/Dapper-translation/">http://bigbully.github.io/Dapper-translation/</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
@@ -2509,19 +4674,19 @@ function decrypt(result) &#123;
       <div class="site-state-item site-state-posts">
           <a href="/jadepeng/archives/">
         
-          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-count">97</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/jadepeng/categories/">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/jadepeng/tags/">
           
-        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-count">83</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -2562,13 +4727,13 @@ function decrypt(result) &#123;
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">644k</span>
+    <span title="站点总字数">642k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">9:45</span>
+    <span title="站点阅读时长">9:44</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>

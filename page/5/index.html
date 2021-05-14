@@ -187,931 +187,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/11/22/jqpeng-fastText%E8%AE%AD%E7%BB%83word2vec%E5%B9%B6%E7%94%A8%E4%BA%8E%E8%AE%AD%E7%BB%83%E4%BB%BB%E5%8A%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2019/11/22/jqpeng-fastText%E8%AE%AD%E7%BB%83word2vec%E5%B9%B6%E7%94%A8%E4%BA%8E%E8%AE%AD%E7%BB%83%E4%BB%BB%E5%8A%A1/" class="post-title-link" itemprop="url">fastText训练word2vec并用于训练任务</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-11-22 15:45:00" itemprop="dateCreated datePublished" datetime="2019-11-22T15:45:00+08:00">2019-11-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/fastText.html">fastText训练word2vec并用于训练任务</a></p>
-<p>最近测试OpenNRE，没有GPU服务器，bert的跑不动，于是考虑用word2vec，捡起fasttext</p>
-<h2 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h2><p>先clone代码</p>
-<pre><code>git clone https://github.com/facebookresearch/fastText.git
-</code></pre>
-<p>然后make编译：</p>
-<pre><code>make
-</code></pre>
-<p>编译后，将生成的fastText移到bin</p>
-<pre><code>cp fasttext /usr/local/bin/
-</code></pre>
-<h2 id="训练word2vec"><a href="#训练word2vec" class="headerlink" title="训练word2vec"></a>训练word2vec</h2><p>先讲语料分好词，比如保存到sent_train.txt，文件内容是中文分词后的内容:</p>
-<pre><code>楚穆王 十二年 : （ 丁未 ， 公元前 614 年 ） ， 在位 12 年 的 楚穆王 死 ， 死后 葬 在 楚 郢 之西 。
-</code></pre>
-<p>开始调用fasttext训练：</p>
-<pre><code>fasttext skipgram -input sent_train.txt -output ./result
-</code></pre>
-<p>很快就跑完了，跑完后，可以看到生成两个文件：</p>
-<pre><code># ll result.*
--rw-r--r-- 1 root root 876945058 Nov 21 09:29 result.bin
--rw-r--r-- 1 root root  82656362 Nov 21 09:29 result.vec
-</code></pre>
-<p>来看下vec文件，可以看到是100维的向量</p>
-<pre><code># head result.vec 
-94161 100
-， 0.030437 0.12177 -0.1367 0.11101 -0.49543 0.49908 0.033441 -0.025445 -0.036312 -0.081132 -0.082666 0.27204 -0.2367 -0.23424 -0.30124 -0.029666 -0.23803 -0.083255 -0.03177 -0.23129 0.33953 -0.095728 0.023824 -0.33981 -0.048715 -0.22876 0.24215 -0.094075 -0.077224 0.097473 -0.012714 -0.16661 -0.5156 -0.12635 -0.34265 -0.13444 -0.25535 -0.29832 0.14624 -0.24779 0.25403 0.17662 0.070345 -0.15927 0.3449 0.11372 0.22504 0.15652 0.19013 -0.029641 -0.1761 0.018512 -0.19782 -0.15607 0.39958 0.31343 0.30654 0.062457 -0.045659 -0.008893 0.11445 0.035771 0.048592 0.17336 0.15742 -0.085562 -0.12398 0.25767 -0.087141 -0.10011 -0.14832 0.11072 0.0037114 0.18156 -0.32666 -0.081212 0.1102 -0.035646 0.09467 0.014385 0.11191 -0.14713 -0.0052515 -0.006049 0.3735 -0.13804 0.12271 -0.050977 -0.019325 -0.034865 0.019665 -0.16755 0.034194 0.074825 0.16173 -0.20006 -0.03904 -0.18061 0.040119 -0.22622 
-&lt;/s&gt; -0.23353 0.071758 -0.26913 -0.14217 -0.1736 0.22807 -0.11152 -0.047725 0.19557 0.13388 -0.21704 0.39025 -0.30286 0.16748 -0.18748 0.11423 -0.19393 -0.10635 -0.12826 -0.3244 0.27615 -0.25832 -0.17595 -0.12634 -0.094196 -0.19782 0.14435 -0.059313 -0.24001 -0.13996 -0.09501 -0.26155 -0.35677 0.059324 -0.23963 -0.20722 -0.37483 -0.11253 0.021369 -0.15571 0.059181 0.33843 -0.058266 -0.12393 0.17777 -0.032558 0.17864 0.28223 0.058037 0.13108 -0.31817 0.081199 -0.05605 -0.029366 0.30827 0.3208 0.070286 0.062643 0.0040956 -0.080481 0.0064075 -0.087952 0.19877 0.33604 0.28209 0.073563 -0.097628 0.035748 -0.20385 -0.28676 -0.12122 0.10025 -0.05521 0.22991 -0.326 0.062162 0.090364 -0.20831 0.3678 -0.00043566 0.059466 -0.068502 -0.072635 0.08424 0.56188 -0.2588 0.15091 -0.15923 -0.12595 0.086243 0.08293 -0.37854 0.055448 0.11274 0.19559 -0.17132 -0.0858 -0.072667 -0.10356 0.1394 
-。 -0.097674 0.13847 -0.25706 0.057651 -0.29097 0.23529 -0.022163 -0.046278 0.18153 0.15302 -0.25117 0.30537 -0.22519 0.072574 -0.20933 -0.012315 -0.098127 -0.13748 -0.10589 -0.24647 0.38788 -0.077517 -0.24665 -0.1512 -0.17301 -0.13699 0.15931 -0.050389 -0.20344 -0.10393 -0.086151 -0.12502 -0.51355 -0.078194 -0.32112 -0.25169 -0.55924 -0.083918 0.13193 -0.12648 0.030666 0.37635 -0.0068401 -0.082757 0.35918 0.099755 0.048127 0.14651 -0.078756 0.16794 -0.35228 0.096068 -0.083268 -0.16416 0.30675 0.2112 -0.0034745 0.06171 0.015094 0.035436 0.13429 -0.036958 0.052708 0.39273 0.15883 0.015595 -0.014254 0.025274 -0.061765 -0.20447 -0.11626 0.12291 -0.13875 0.28874 -0.46607 -0.0064296 0.09502 -0.19274 0.32262 -0.077533 0.058291 -0.11019 -0.23094 -0.023817 0.59467 -0.31411 0.13071 -0.064146 -0.10452 -0.014019 0.28547 -0.3112 -0.019938 0.073268 0.2858 -0.087934 -0.0038124 -0.032765 -0.086257 0.07277 
-的 -0.32055 0.26205 -0.12693 0.036473 -0.48332 0.37801 0.043741 0.063979 0.17719 -0.0034521 -0.28247 0.4286 -0.11431 0.02168 -0.2469 -0.34261 -0.29886 -0.11997 -0.068971 -0.084678 0.36461 -0.089133 -0.056445 -0.15533 0.00017123 0.1496 0.24858 0.12394 -0.23362 -0.26373 0.037876 -0.20656 -0.48941 0.093864 -0.21763 -0.35464 -0.31409 -0.10626 0.064067 -0.21431 0.028025 0.27952 -0.1368 -0.30315 0.39894 0.23021 0.19465 0.12281 0.22508 -0.14596 -0.31362 -0.035584 0.076387 -0.28307 0.32819 0.21772 0.2417 0.23587 -0.097756 -0.18368 -0.027078 -0.15416 0.095119 -0.16597 0.096744 0.20759 0.083306 0.24435 -0.055484 -0.17169 -0.031104 0.13582 0.15192 0.066508 -0.19847 -0.28637 0.027218 -0.030856 0.36561 -0.13589 0.26368 -0.13762 -0.21137 -0.24706 0.46078 -0.31472 0.080658 0.23818 -0.060492 0.18232 0.19158 -0.16032 0.14793 0.021469 0.22363 -0.20411 0.07628 -0.096523 -0.11407 -0.35992 
-</code></pre>
-<h2 id="转换为pytorch可加载格式"><a href="#转换为pytorch可加载格式" class="headerlink" title="转换为pytorch可加载格式"></a>转换为pytorch可加载格式</h2><p>为了方便训练使用，需要转换下：</p>
-<pre><code>import pickle as pkl
-import numpy as np
-import os
-import json
-
-def create_wordVec(vec_file，word2id,vec):
-    word_map = &#123;&#125;
-    word_map[&#39;PAD&#39;] = len(word_map)
-    word_map[&#39;UNK&#39;] = len(word_map)
-    word_embed = []
-    for line in open(vec_file):
-        content = line.strip().split()
-        if len(content) != 100 + 1:
-            continue
-        word_map[content[0]] = len(word_map)
-        word_embed.append(np.asarray(content[1:], dtype=np.float32))
-    word_embed = np.array(word_embed)
-    np.save(vec,word_embed)
-    with open(word2id, &#39;w+&#39;, encoding=&#39;utf-8&#39;) as fw:
-      fw.write(json.dumps(word_map, ensure_ascii=False))
-
-create_wordVec(&#39;result.vec&#39;,&#39;word2id.json&#39;,&#39;word2vec.npy&#39;)
-</code></pre>
-<h2 id="训练模型"><a href="#训练模型" class="headerlink" title="训练模型"></a>训练模型</h2><p>参考opennre的cnn分类代码：</p>
-<pre><code>import torch
-import numpy as np
-import json
-import opennre
-from opennre import encoder, model, framework
-
-print(&#39;load word2vec ...&#39;)
-ckpt = &#39;ckpt/semeval_cnn_softmax.pth.tar&#39;
-wordi2d = json.load(open(&#39;pretrain/glove/word2id.json&#39;))
-word2vec = np.load(&#39;pretrain/glove/word2vec.npy&#39;)
-rel2id = json.load(open(&#39;benchmark/ccks/ccks_rel2id.txt&#39;))
-print(&#39;create model ...&#39;)
-sentence_encoder = opennre.encoder.CNNEncoder(token2id=wordi2d,
-                                             max_length=100,
-                                             word_size=100,
-                                             position_size=5,
-                                             hidden_size=230,
-                                             blank_padding=True,
-                                             kernel_size=3,
-                                             padding_size=1,
-                                             word2vec=word2vec,
-                                             dropout=0.5)
-model = opennre.model.SoftmaxNN(sentence_encoder, len(rel2id), rel2id)
-framework = opennre.framework.SentenceRE(
-    train_path=&#39;benchmark/ccks/ccks_train.txt&#39;,
-    val_path=&#39;benchmark/ccks/ccks_dev.txt&#39;,
-    test_path=&#39;benchmark/ccks/ccks_dev.txt&#39;,
-    model=model,
-    ckpt=ckpt,
-    batch_size=32,
-    max_epoch=100,
-    lr=0.1,
-    weight_decay=1e-5,
-    opt=&#39;sgd&#39;)
-# Train
-#framework.train_model(metric=&#39;micro_f1&#39;)
-# Test
-print(&#39;load model ...&#39;)
-
-framework.load_state_dict(torch.load(ckpt)[&#39;state_dict&#39;])
-framework.train_model(metric=&#39;micro_f1&#39;)
-result = framework.eval_model(framework.test_loader)
-print(&#39;Accuracy on test set: &#123;&#125;&#39;.format(result[&#39;acc&#39;]))
-print(&#39;Micro Precision: &#123;&#125;&#39;.format(result[&#39;micro_p&#39;]))
-print(&#39;Micro Recall: &#123;&#125;&#39;.format(result[&#39;micro_r&#39;]))
-print(&#39;Micro F1: &#123;&#125;&#39;.format(result[&#39;micro_f1&#39;]))
-</code></pre>
-<hr>
-<blockquote>
-<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/10/21/jqpeng-NLP%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7brat%20%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2019/10/21/jqpeng-NLP%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7brat%20%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E/" class="post-title-link" itemprop="url">NLP标注工具brat 配置文件说明</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-10-21 16:10:00" itemprop="dateCreated datePublished" datetime="2019-10-21T16:10:00+08:00">2019-10-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>10k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/brat-config.html">NLP标注工具brat 配置文件说明</a></p>
-<h2 id="快速搭建brat"><a href="#快速搭建brat" class="headerlink" title="快速搭建brat"></a>快速搭建brat</h2><p>通过docker：</p>
-<pre><code>docker run --name=brat -d -p 38080:80 -e BRAT_USERNAME=brat -e BRAT_PASSWORD=brat -e BRAT_EMAIL=brat@example.com cassj/brat
-</code></pre>
-<p>启动会拉取镜像，耐心等待，然后打开IP:38080,使用brat，brat登录</p>
-<h2 id="braf-的四类配置文件"><a href="#braf-的四类配置文件" class="headerlink" title="braf 的四类配置文件"></a>braf 的四类配置文件</h2><p>the configuration of an annotation project is controlled by four files:</p>
-<ul>
-<li>annotation.conf: 标记类型 configuration</li>
-<li>visual.conf: annotation显示配置</li>
-<li>tools.conf: annotation工具配置</li>
-<li>kb_shortcuts.conf: 键盘快捷键 keyboard shortcut tool configuration</li>
-</ul>
-<h2 id="annotation-conf"><a href="#annotation-conf" class="headerlink" title="annotation.conf"></a>annotation.conf</h2><p>标记配置文件</p>
-<pre><code># 实体类型
-[entities]
-# 每行一个实体类型  
-Protein
-Simple_chemical
-Complex
-Organism
-
-# 事件
-[events]
-
-# 事件名称  参数名称：参数类型
-Gene_expression Theme:Protein
-Binding Theme+:Protein
-Positive_regulation Theme:&lt;EVENT&gt;|Protein, Cause?:&lt;EVENT&gt;|Protein
-Negative_regulation Theme:&lt;EVENT&gt;|Protein, Cause?:&lt;EVENT&gt;|Protein
-
-# 关系
-[relations]
-
-# 关系名称 关系的属性，syntax ARG:TYPE (where ARG are, by convention, Arg1 and Arg2)
-Part-of Arg1:Protein, Arg2:Complex
-Member-of Arg1:Protein, Arg2:Complex
-
-# TODO: Should these really be called &quot;Equivalent&quot; instead of &quot;Equiv&quot;?
-Equiv Arg1:Protein, Arg2:Protein, &lt;REL-TYPE&gt;:symmetric-transitive
-Equiv Arg1:Simple_chemical, Arg2:Simple_chemical, &lt;REL-TYPE&gt;:symmetric-transitive
-Equiv Arg1:Organism, Arg2:Organism, &lt;REL-TYPE&gt;:symmetric-transitive
-
-# 属性定义
-[attributes]
-
-# 名称  参数
-Negation        Arg:&lt;EVENT&gt;
-Confidence        Arg:&lt;EVENT&gt;, Value:Possible|Likely|Certain
-</code></pre>
-<h2 id="Visual-configuration-visual-conf"><a href="#Visual-configuration-visual-conf" class="headerlink" title="Visual configuration (visual.conf)"></a>Visual configuration (visual.conf)</h2><p>可视化configuration包含两部分</p>
-<ul>
-<li>[labels]</li>
-<li>[drawing]</li>
-</ul>
-<p>The [labels] 定义标记类型UI上如何显示：</p>
-<pre><code>Simple_chemical | Simple chemical | Chemical
-标记类型  |   全称  |  显示文字
-</code></pre>
-<p>使用”|”隔开，第一部分是里定义的</p>
-<p>The [drawing] 用于定义显示样式，比如定义标记的颜色等</p>
-<pre><code>[labels]
-
-
-Simple_chemical | Simple chemical | Chemical
-Protein | Protein
-Complex | Complex
-Organism | Organism
-
-Gene_expression | Gene expression | Expression | Expr
-Binding | Binding
-Regulation | Regulation
-Positive_regulation | Positive regulation | +Regulation
-Negative_regulation | Negative regulation | -Regulation
-Phosphorylation | Phosphorylation | Phos
-
-
-Equiv | Equiv
-
-Theme  | Theme
-Cause  | Cause
-Participant | Participant
-
-[drawing]
-
-
-SPAN_DEFAULT    fgColor:black, bgColor:lightgreen, borderColor:darken
-ARC_DEFAULT    color:black, arrowHead:triangle-5
-ATTRIBUTE_DEFAULT    glyph:*
-
-Protein    bgColor:#7fa2ff
-Simple_chemical    bgColor:#8fcfff
-Complex    bgColor:#8f97ff
-Organism    bgColor:#ffccaa
-
-Positive_regulation    bgColor:#e0ff00
-Regulation    bgColor:#ffff00
-Negative_regulation    bgColor:#ffe000
-
-Cause    color:#007700
-Equiv    dashArray:3-3, arrowHead:none
-
-Negation    box:crossed, glyph:&lt;NONE&gt;, dashArray:&lt;NONE&gt;
-Confidence    dashArray:3-6|3-3|-, glyph:&lt;NONE&gt;
-</code></pre>
-<h2 id="工具栏配置-tools-conf"><a href="#工具栏配置-tools-conf" class="headerlink" title="工具栏配置 (tools.conf)"></a>工具栏配置 (tools.conf)</h2><p>The annotation tool configuration file, tools.conf, is divided into the following sections:</p>
-<ul>
-<li>[options]</li>
-<li>[search]</li>
-<li>[normalization]</li>
-<li>[annotators]</li>
-<li>[disambiguators]</li>
-</ul>
-<p>These sections are all optional: an empty file is a vali</p>
-<h3 id="Option-configuration-options-section"><a href="#Option-configuration-options-section" class="headerlink" title="Option configuration ([options] section)"></a>Option configuration ([options] section)</h3><p>[options] 用来配置服务端如何处理分词、分局、验证、日志等:</p>
-<ul>
-<li><code>Tokens tokenizer:VALUE</code>, where <code>VALUE</code>=<ul>
-<li><code>whitespace</code>: split by whitespace characters in source text (only)</li>
-<li><code>ptblike</code>: emulate Penn Treebank tokenization</li>
-<li><code>mecab</code>: perform Japanese tokenization using MeCab</li>
-</ul>
-</li>
-<li><code>Sentences splitter:VALUE</code>, where <code>VALUE</code>=<ul>
-<li><code>regex</code>: regular expression-based sentence splitting</li>
-<li><code>newline</code>: split by newline characters in source text (only)</li>
-</ul>
-</li>
-<li><code>Validation validate:VALUE</code>, where <code>VALUE</code>=<ul>
-<li><code>all</code>: perform full validation</li>
-<li><code>none</code>: don’t perform any validation</li>
-</ul>
-</li>
-<li><code>Annotation-log logfile:VALUE</code>, where <code>VALUE</code>=<ul>
-<li><code>&lt;NONE&gt;</code>: no annotation logging</li>
-<li><code>NAME</code>: log into file NAME (e.g. “/home/brat/work/annotation.log”)</li>
-</ul>
-</li>
-</ul>
-<p>For example, the following [options] section gives the default brat configuration before v1.3:</p>
-<p>|</p>
-<table>
-<thead>
-<tr>
-<th>[options]</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Tokens</td>
-<td>tokenizer:whitespace</td>
-</tr>
-<tr>
-<td>Sentences</td>
-<td>splitter:regex</td>
-</tr>
-<tr>
-<td>Validation</td>
-<td>validate:none</td>
-</tr>
-<tr>
-<td>Annotation-log</td>
-<td>logfile:<none></none></td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th></th>
-</tr>
-</thead>
-</table>
-<p>The following [options] section enables Japanese tokenization using MeCab, sentence splitting only by newlines, full validation, and annotation logging into the given file. (In setting <code>Annotation-log logfile</code>, remember to make sure the web server has appropriate write permissions to the file.)</p>
-<p>|</p>
-<table>
-<thead>
-<tr>
-<th>[options]</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Tokens</td>
-<td>tokenizer:mecab</td>
-</tr>
-<tr>
-<td>Sentences</td>
-<td>splitter:newline</td>
-</tr>
-<tr>
-<td>Validation</td>
-<td>validate:all</td>
-</tr>
-<tr>
-<td>Annotation-log</td>
-<td>logfile:/home/brat/work/annotation.log</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th></th>
-</tr>
-</thead>
-</table>
-<h3 id="Normalization-DB-configuration-normalization-section"><a href="#Normalization-DB-configuration-normalization-section" class="headerlink" title="Normalization DB configuration ([normalization] section)"></a>Normalization DB configuration ([normalization] section)</h3><p>The [normalization] section defines the normalization resources that are available. For information on setting up normalization DBs, see the <a target="_blank" rel="noopener" href="https://brat.nlplab.org/normalization.html">brat normalization documentation</a>.</p>
-<p>Each line in the [normalization] section has the following syntax:</p>
-<pre><code>    DBNAME     DB:DBPATH, &lt;URL&gt;:HOMEURL, &lt;URLBASE&gt;:ENTRYURL
-</code></pre>
-<p>Here, <code>DB</code>, <code>&lt;URL&gt;</code>, <code>&lt;URLBASE&gt;</code> and <code>&lt;PATH&gt;</code> are literal strings (they should appear as written here), while “DBNAME”, “DBPATH”, “HOMEURL” and “ENTRYURL” should be replaced with specific values appropriate for the database being configured:</p>
-<ul>
-<li><code>DBNAME</code>: sets the database name (e.g. “Wiki”, “GO”). The name can be otherwise freely selected, but should not contain characters other than alphanumeric (“a”-“z”, “A”-“Z”, “0”-“9”), hyphen (“-“) and underscore (“_“). This name will be used both in the brat UI and in the <a target="_blank" rel="noopener" href="https://brat.nlplab.org/configuration.html#norm-standoff">annotation file</a> to identify the DB.</li>
-<li><code>DBPATH</code> (optional): provides the file system path to the normalization DB data on the server, relative to the brat server root. If <code>DBPATH</code> isn’t set, the system assumes the DB can be found in the default location under the given <code>DBNAME</code>.</li>
-<li><code>HOMEURL</code>: sets the URL for the home page of the normalization resource (e.g. “<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/">http://en.wikipedia.org/wiki/</a>“). Used both to identify the resource more specifically than <code>DBNAME</code> and to provide a link in the <a target="_blank" rel="noopener" href="https://brat.nlplab.org/configuration.html#norm-annotation">annotation UI</a> for accessing the resource.</li>
-<li><code>URLBASE</code> (optional): sets a URL template (e.g. “<a target="_blank" rel="noopener" href="http://en.wikipedia.org/?curid=%25s">http://en.wikipedia.org/?curid=%s</a>“) that can be filled in to generate a direct link in the <a target="_blank" rel="noopener" href="https://brat.nlplab.org/configuration.html#norm-annotation">annotation UI</a> to an entry in the normalization resource. The value should contain the characters “%s” as a placeholder that will be replaced with the ID of the entry.</li>
-</ul>
-<p>The following example shows examples of configured normalization DBs.</p>
-<p>|</p>
-<table>
-<thead>
-<tr>
-<th>[normalization]</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Wiki</td>
-<td>DB:dbs/wiki, <url>:<a href="http://en.wikipedia.org" target="_blank">http://en.wikipedia.org</a>, <urlbase>:<a href="http://en.wikipedia.org/?curid=%25s" target="_blank">http://en.wikipedia.org/?curid=%s</a></urlbase></url></td>
-</tr>
-<tr>
-<td>UniProt</td>
-<td><url>:<a href="http://www.uniprot.org/" target="_blank">http://www.uniprot.org/</a>, <urlbase>:<a href="http://www.uniprot.org/uniprot/%25s" target="_blank">http://www.uniprot.org/uniprot/%s</a></urlbase></url></td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th></th>
-</tr>
-</thead>
-</table>
-<p>The first line sets configuration for a database called “Wiki”, found as “dbs/wiki” in the brat server directory, and the second for a DB called “UniProt”, found in the default location for a DB with this name.</p>
-<h3 id="搜索配置-search-section"><a href="#搜索配置-search-section" class="headerlink" title="搜索配置 ([search] section)"></a>搜索配置 ([search] section)</h3><p>The [search] 用来配置在线搜索，这样选中一个词语后，可以点击搜索链接进行搜索。</p>
-<p><img src="https://brat.nlplab.org/img/search-config-1.png"></p>
-<p>Each line in the [search] section contains the name used in the user interface for the search service, and a single key:value pair. The key should have the special value “<url>“ and its value should be the URL URL of the search service with the string to query for replaced by&nbsp;”%s”.</url></p>
-<p>The following example shows a simple [search] section.</p>
-<p>|</p>
-<table>
-<thead>
-<tr>
-<th>[search]</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Google</td>
-<td><url>:<a href="http://www.google.com/search?q=%25s" target="_blank">http://www.google.com/search?q=%s</a></url></td>
-</tr>
-<tr>
-<td>Wikipedia</td>
-<td><url>:<a href="http://en.wikipedia.org/wiki/%25s" target="_blank">http://en.wikipedia.org/wiki/%s</a></url></td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th></th>
-</tr>
-</thead>
-</table>
-<p>When selecting a span or editing an annotation, these search options will then be shown in the brat annotation dialog.</p>
-<h3 id="Annotation-tool-configuration-annotators-section"><a href="#Annotation-tool-configuration-annotators-section" class="headerlink" title="Annotation tool configuration ([annotators] section)"></a>Annotation tool configuration ([annotators] section)</h3><p>The [annotators] section defines automatic annotation services that can be invoked from brat.</p>
-<p>Each line in the [annotators] section contains a unique name for the service and key:value pairs defining the way it is presented in the user interface and the URL of the web service for the tool. Values should be given for “tool”, “model” and “<url>“ (the first two are used for the user interface only).</url></p>
-<p>The following example shows a simple [annotators] section.</p>
-<p>|</p>
-<table>
-<thead>
-<tr>
-<th>[annotators]</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>SNER-CoNLL</td>
-<td>tool:Stanford_NER, model:CoNLL, <url>:<a href="http://example.com:80/tagger/" target="_blank">http://example.com:80/tagger/</a></url></td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th></th>
-</tr>
-</thead>
-</table>
-<h3 id="Disambiguation-tool-configuration-disambiguators-section"><a href="#Disambiguation-tool-configuration-disambiguators-section" class="headerlink" title="Disambiguation tool configuration ([disambiguators] section)"></a>Disambiguation tool configuration ([disambiguators] section)</h3><p>The [disambiguators] section defines automatic semantic class (annotation type) disambiguation services that can be invoked from brat.</p>
-<p>Each line in the [disambiguators] section contains a unique name for the service and key:value pairs defining the way it is presented in the user interface and the URL of the web service for the tool. Values should be given for “tool”, “model” and “<url>“ (the first two are used for the user interface only).</url></p>
-<p>The following example shows a simple [disambiguators] section.</p>
-<p>|</p>
-<table>
-<thead>
-<tr>
-<th>[disambiguators]</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>simsem-MUC</td>
-<td>tool:simsem, model:MUC, <url>:<a href="http://example.com:80/simsem/%25s" target="_blank">http://example.com:80/simsem/%s</a></url></td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th></th>
-</tr>
-</thead>
-</table>
-<p>As for search, the string to query for is identified by “%s” in the URL.</p>
-<p>来看一个demo:</p>
-<pre><code>[options]
-
-# Possible values for validate:
-# - all: perform full validation
-# - none: don&#39;t perform any validation
-Validation    validate:all
-
-# Possible values for tokenizer
-# - ptblike: emulate Penn Treebank tokenization
-# - mecab: perform Japanese tokenization using MeCab
-# - whitespace: split by whitespace characters in source text (only) 
-Tokens       tokenizer:whitespace
-
-# Possible values for splitter:
-# - regex  : regular expression-based sentence splitting
-# - newline: split by newline characters in source text (only)
-Sentences    splitter:newline
-
-# Possible values for logfile:
-# - &lt;NONE&gt; : no annotation logging
-# - NAME : log into file NAME (e.g. &quot;/home/brat/annotation.log&quot;)
-Annotation-log logfile:&lt;NONE&gt;
-
-[search]
-
-# Search option configuration. Configured queries will be available in
-# text span annotation dialogs. When selected on the UI, these open
-# the given URL (&quot;&lt;URL&gt;&quot;) with the string &quot;%s&quot; replaced with the
-# selected text span.
-
-Google       &lt;URL&gt;:http://www.google.com/search?q=%s
-Wikipedia    &lt;URL&gt;:http://en.wikipedia.org/wiki/Special:Search?search=%s
-UniProt      &lt;URL&gt;:http://www.uniprot.org/uniprot/?sort=score&amp;query=%s
-EntrezGene   &lt;URL&gt;:http://www.ncbi.nlm.nih.gov/gene?term=%s
-GeneOntology &lt;URL&gt;:http://amigo.geneontology.org/cgi-bin/amigo/search.cgi?search_query=%s&amp;action=new-search&amp;search_constraint=term
-ALC          &lt;URL&gt;:http://eow.alc.co.jp/%s
-
-[annotators]
-
-# Automatic annotation service configuration. The values of &quot;tool&quot; and
-# &quot;model&quot; are required for the UI, and &quot;&lt;URL&gt;&quot; should be filled with
-# the URL of the web service. See the brat documentation for more
-# information.
-
-# Examples:
-# Random              tool:Random, model:Random, &lt;URL&gt;:http://localhost:47111/
-# Stanford-CoNLL-MUC  tool:Stanford_NER, model:CoNLL+MUC, &lt;URL&gt;:http://127.0.0.1:47111/
-# NERtagger-GENIA     tool:NERtagger, model:GENIA, &lt;URL&gt;:http://example.com:8080/tagger/
-
-[disambiguators]
-
-# Automatic semantic disambiguation service configuration. The values
-# of &quot;tool&quot; and &quot;model&quot; are required for the UI, and &quot;&lt;URL&gt;&quot; should be
-# filled with the URL of the web service. See the brat documentation
-# for more information.
-
-# Example:
-# simsem-GENIA    tool:simsem, model:GENIA, &lt;URL&gt;:http://example.com:8080/tagger/%s
-
-[normalization]
-
-# Configuration for normalization against external resources. The
-# resource name (first field of each line) should match that of a
-# normalization DB on the brat server (see tools/norm_db_init.py),
-# &quot;&lt;URL&gt;&quot; should be filled with the URL of the resource (preferably
-# one providing a serach interface), and &quot;&lt;URLBASE&gt;&quot; should be a
-# string containing &quot;%s&quot; that, when replacing &quot;%s&quot; with an ID in
-# the external resource, becomes a link to a page representing
-# the entry corresponding to the ID in that resource.
-
-# Example
-#UniProt    &lt;URL&gt;:http://www.uniprot.org/, &lt;URLBASE&gt;:http://www.uniprot.org/uniprot/%s
-#GO    &lt;URL&gt;:http://www.geneontology.org/, &lt;URLBASE&gt;:http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO:%s
-#FMA    &lt;URL&gt;:http://fme.biostr.washington.edu/FME/index.html, &lt;URLBASE&gt;:http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=FMA&amp;termId=FMA:%s
-</code></pre>
-<h2 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h2><p>选中标记后，键盘上按快捷键，可以快速切换选项</p>
-<pre><code>P       Protein
-S Simple_chemical
-X Complex
-O Organism
-
-C Cause
-T Theme
-</code></pre>
-<hr>
-<blockquote>
-<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/09/17/jqpeng-%E6%95%99%E7%A8%8B%20%E2%80%94%E2%80%94%20%E5%A6%82%E4%BD%95%E5%9C%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BA%94%E7%94%A8%E9%9B%86%E6%88%90superset/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2019/09/17/jqpeng-%E6%95%99%E7%A8%8B%20%E2%80%94%E2%80%94%20%E5%A6%82%E4%BD%95%E5%9C%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BA%94%E7%94%A8%E9%9B%86%E6%88%90superset/" class="post-title-link" itemprop="url">教程 —— 如何在自己的应用集成superset</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-09-17 20:01:00" itemprop="dateCreated datePublished" datetime="2019-09-17T20:01:00+08:00">2019-09-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/intergate-superset.html">教程 —— 如何在自己的应用集成superset</a></p>
-<p>Superset 是apache的一个孵化项目，定位为一款现代的，准商用BI系统</p>
-<h2 id="superset"><a href="#superset" class="headerlink" title="superset"></a>superset</h2><blockquote>
-<p>Apache Superset  (incubating) is a modern, enterprise-ready business intelligence web application</p>
-</blockquote>
-<p>Superset 是apache的一个孵化项目，定位为一款现代的，准商用BI系统。</p>
-<p>Superset（Caravel）是由Airbnb（知名在线房屋短租公司）开源的数据分析与可视化平台（曾用名Caravel、Panoramix），该工具主要特点是可自助分析、自定义仪表盘、分析结果可视化（导出）、用户/角色权限控制，还集成了一个SQL编辑器，可以进行SQL编辑查询等。</p>
-<p>通过superset，可以制作漂亮的统计图表。</p>
-<h3 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h3><p><img src="https://superset.incubator.apache.org/_images/bank_dash.png" alt="_images/bank_dash.png"></p>
-<hr>
-<p><img src="https://superset.incubator.apache.org/_images/explore.png" alt="_images/explore.png"></p>
-<hr>
-<p><img src="https://superset.incubator.apache.org/_images/sqllab.png" alt="_images/sqllab.png"></p>
-<hr>
-<p><img src="https://superset.incubator.apache.org/_images/deckgl_dash.png" alt="_images/deckgl_dash.png"></p>
-<h2 id="superset安装"><a href="#superset安装" class="headerlink" title="superset安装"></a>superset安装</h2><p>我们这里直接使用docker</p>
-<pre><code>git clone https://github.com/apache/incubator-superset/
-cd incubator-superset/contrib/docker
-# prefix with SUPERSET_LOAD_EXAMPLES=yes to load examples:
-docker-compose run --rm superset ./docker-init.sh
-# you can run this command everytime you need to start superset now:
-docker-compose up
-</code></pre>
-<p>等构建完成后，访问 <a target="_blank" rel="noopener" href="http://localhost:8088/">http://localhost:8088</a> 即可。</p>
-<p>想要在自己的应用集成，首先要解决认证</p>
-<h2 id="superset-认证分析"><a href="#superset-认证分析" class="headerlink" title="superset 认证分析"></a>superset 认证分析</h2><p>superset基于flask-appbuilder开发，security基于flask_appbuilder.security，翻阅其代码，</p>
-<p>找到入口： <code>superset/__init__.py</code>:</p>
-<pre><code>custom_sm = app.config.get(&#39;CUSTOM_SECURITY_MANAGER&#39;) or SupersetSecurityManager
-if not issubclass(custom_sm, SupersetSecurityManager):
-    raise Exception(
-        &quot;&quot;&quot;Your CUSTOM_SECURITY_MANAGER must now extend SupersetSecurityManager,
-         not FAB&#39;s security manager.
-         See [4565] in UPDATING.md&quot;&quot;&quot;)
-
-appbuilder = AppBuilder(
-    app,
-    db.session,
-    base_template=&#39;superset/base.html&#39;,
-    indexview=MyIndexView,
-    security_manager_class=custom_sm,
-    update_perms=get_update_perms_flag(),
-)
-
-security_manager = appbuilder.sm
-</code></pre>
-<p>默认使用<code>SupersetSecurityManager</code>,继承自<code>SecurityManager</code>：</p>
-<pre><code>class SupersetSecurityManager(SecurityManager):
-
-    def get_schema_perm(self, database, schema):
-        if schema:
-            return &#39;[&#123;&#125;].[&#123;&#125;]&#39;.format(database, schema)
-
-    def can_access(self, permission_name, view_name):
-        &quot;&quot;&quot;Protecting from has_access failing from missing perms/view&quot;&quot;&quot;
-        user = g.user
-        if user.is_anonymous:
-            return self.is_item_public(permission_name, view_name)
-        return self._has_view_access(user, permission_name, view_name)        ...
-</code></pre>
-<p>我们再来看SecurityManager及父类，发现，登录是通过auth_view来控制的，默认是AUTH_DB，也就是AuthDBView。</p>
-<pre><code>&quot;&quot;&quot; Override if you want your own Authentication LDAP view &quot;&quot;&quot;
-      authdbview = AuthDBView      if self.auth_type == AUTH_DB:
-            self.user_view = self.userdbmodelview
-            self.auth_view = self.authdbview()
- @property
-    def get_url_for_login(self):
-        return url_for(&#39;%s.%s&#39; % (self.sm.auth_view.endpoint, &#39;login&#39;))
-</code></pre>
-<p>再来看authdbview：</p>
-<pre><code>class AuthDBView(AuthView):
-    login_template = &#39;appbuilder/general/security/login_db.html&#39;
-
-    @expose(&#39;/login/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
-    def login(self):
-        if g.user is not None and g.user.is_authenticated:
-            return redirect(self.appbuilder.get_url_for_index)
-        form = LoginForm_db()
-        if form.validate_on_submit():
-            user = self.appbuilder.sm.auth_user_db(form.username.data, form.password.data)
-            if not user:
-                flash(as_unicode(self.invalid_login_message), &#39;warning&#39;)
-                return redirect(self.appbuilder.get_url_for_login)
-            login_user(user, remember=False)
-            return redirect(self.appbuilder.get_url_for_index)
-        return self.render_template(self.login_template,
-                               title=self.title,
-                               form=form,
-                               appbuilder=self.appbuilder)
-</code></pre>
-<p>对外提供’/login/‘接口，读取HTTP POST里的用户名，密码，然后调用auth_user_db验证，验证通过调用login_user生成认证信息。</p>
-<p>因此，我们可以自定义AuthDBView，改为从我们自己的应用认证即可。</p>
-<h2 id="使用jwt来验证superset"><a href="#使用jwt来验证superset" class="headerlink" title="使用jwt来验证superset"></a>使用jwt来验证superset</h2><p>自定义CustomAuthDBView，继承自AuthDBView，登录时可以通过cookie或者url参数传入jwt token，然后验证通过的话，自动登录，。</p>
-<pre><code>import jwt
-import json
-class CustomAuthDBView(AuthDBView):
-    login_template = &#39;appbuilder/general/security/login_db.html&#39;
-
-    @expose(&#39;/login/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
-    def login(self):
-        token = request.args.get(&#39;token&#39;)
-        if not token:
-            token = request.cookies.get(&#39;access_token&#39;)
-        if token is not None:
-            jwt_payload = jwt.decode(token,&#39;secret&#39;,algorithms=[&#39;RS256&#39;])
-            user_name = jwt_payload.get(&quot;user_name&quot;)
-            user = self.appbuilder.sm.find_user(username=user_name)
-            if not user:
-               role_admin = self.appbuilder.sm.find_role(&#39;Admin&#39;)
-               user = self.appbuilder.sm.add_user(user_name, user_name, &#39;aimind&#39;, user_name + &quot;@aimind.com&quot;, role_admin, password = &quot;aimind&quot; + user_name)
-            if user:
-                login_user(user, remember=False)
-                redirect_url = request.args.get(&#39;redirect&#39;)
-                if not redirect_url:
-                    redirect_url = self.appbuilder.get_url_for_index
-                return redirect(redirect_url)
-            else:
-                return super(CustomAuthDBView,self).login()
-        else:
-            flash(&#39;Unable to auto login&#39;, &#39;warning&#39;)
-            return super(CustomAuthDBView,self).login()
-</code></pre>
-<p>如果用户不存在，通过self.appbuilder.sm.add_user自动添加用户。</p>
-<p>然后再引入这个CustomAuthDBView，</p>
-<pre><code>class CustomSecurityManager(SupersetSecurityManager):
-    authdbview = CustomAuthDBView
-</code></pre>
-<p>最后，再引入这个CustomSecurityManager,在superset_config.py 里增加：</p>
-<pre><code>from aimind_security import CustomSecurityManager
-CUSTOM_SECURITY_MANAGER = CustomSecurityManager
-</code></pre>
-<h2 id="在应用里集成superset"><a href="#在应用里集成superset" class="headerlink" title="在应用里集成superset"></a>在应用里集成superset</h2><p>集成就简单了，访问，’SUPER_SET_URL/login/?token=jwt_token’ 即可，可以通过iframe无缝集成。</p>
-<hr>
-<blockquote>
-<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/09/12/jqpeng-%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%8E%A8%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5(3)%20--%20jena%E8%87%AA%E5%AE%9A%E4%B9%89builtin/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1145,7 +220,7 @@ CUSTOM_SECURITY_MANAGER = CustomSecurityManager
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1516,7 +591,7 @@ CUSTOM_SECURITY_MANAGER = CustomSecurityManager
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1667,7 +742,7 @@ CMD [ &quot;/bin/bash&quot; ]
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2019,7 +1094,7 @@ List rules = Rule.parseRules( rulesSrc );
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2400,7 +1475,7 @@ System.out.println(&quot; - &quot; + i.next());
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2879,7 +1954,7 @@ com.github.dockerjava.api.model.Statistics@55a88417[read=2019-09-02T12:20:14.534
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -3130,7 +2205,7 @@ com.github.dockerjava.api.model.Statistics@55a88417[read=2019-09-02T12:20:14.534
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:01:23" itemprop="dateModified" datetime="2021-05-14T18:01:23+08:00">2021-05-14</time>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -3396,6 +2471,639 @@ ASK  &#123; ?x foaf:name  &quot;Alice&quot; ;
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/08/08/jqpeng-Docker%E5%90%AF%E7%94%A8TLS%E8%BF%9B%E8%A1%8C%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2019/08/08/jqpeng-Docker%E5%90%AF%E7%94%A8TLS%E8%BF%9B%E8%A1%8C%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">Docker启用TLS进行安全配置</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-08 20:08:00" itemprop="dateCreated datePublished" datetime="2019-08-08T20:08:00+08:00">2019-08-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/docker-tls.html">Docker启用TLS进行安全配置</a></p>
+<p>之前开启了docker的2375 Remote API，接到公司安全部门的要求，需要启用授权，翻了下官方文档</p>
+<p><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/security/https/">Protect the Docker daemon socket</a></p>
+<h2 id="启用TLS"><a href="#启用TLS" class="headerlink" title="启用TLS"></a>启用TLS</h2><p>在docker服务器，生成CA私有和公共密钥</p>
+<pre><code>$ openssl genrsa -aes256 -out ca-key.pem 4096
+Generating RSA private key, 4096 bit long modulus
+............................................................................................................................................................................................++
+........++
+e is 65537 (0x10001)
+Enter pass phrase for ca-key.pem:
+Verifying - Enter pass phrase for ca-key.pem:
+
+$ openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem
+Enter pass phrase for ca-key.pem:
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter &#39;.&#39;, the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:
+State or Province Name (full name) [Some-State]:Queensland
+Locality Name (eg, city) []:Brisbane
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:Docker Inc
+Organizational Unit Name (eg, section) []:Sales
+Common Name (e.g. server FQDN or YOUR name) []:$HOST
+Email Address []:Sven@home.org.au
+</code></pre>
+<p>有了CA后，可以创建一个服务器密钥和证书签名请求(CSR)</p>
+<blockquote>
+<p>$HOST 是你的服务器ip</p>
+</blockquote>
+<pre><code>$ openssl genrsa -out server-key.pem 4096
+Generating RSA private key, 4096 bit long modulus
+.....................................................................++
+.................................................................................................++
+e is 65537 (0x10001)
+
+$ openssl req -subj &quot;/CN=$HOST&quot; -sha256 -new -key server-key.pem -out server.csr
+</code></pre>
+<p>接着，用CA来签署公共密钥:</p>
+<pre><code>$ echo subjectAltName = DNS:$HOST,IP:$HOST:127.0.0.1 &gt;&gt; extfile.cnf
+
+ $ echo extendedKeyUsage = serverAuth &gt;&gt; extfile.cnf
+ 
+</code></pre>
+<p>生成key：</p>
+<pre><code>$ openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem \
+  -CAcreateserial -out server-cert.pem -extfile extfile.cnf
+Signature ok
+subject=/CN=your.host.com
+Getting CA Private Key
+Enter pass phrase for ca-key.pem:
+</code></pre>
+<p>创建客户端密钥和证书签名请求:</p>
+<pre><code>$ openssl genrsa -out key.pem 4096
+Generating RSA private key, 4096 bit long modulus
+.........................................................++
+................++
+e is 65537 (0x10001)
+
+$ openssl req -subj &#39;/CN=client&#39; -new -key key.pem -out client.csr
+</code></pre>
+<p>修改<code>extfile.cnf</code>：</p>
+<pre><code>echo extendedKeyUsage = clientAuth &gt; extfile-client.cnf
+</code></pre>
+<p>生成签名私钥：</p>
+<pre><code>$ openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem \
+  -CAcreateserial -out cert.pem -extfile extfile-client.cnf
+Signature ok
+subject=/CN=client
+Getting CA Private Key
+Enter pass phrase for ca-key.pem:
+</code></pre>
+<p>将Docker服务停止，然后修改docker服务文件</p>
+<pre><code>[Unit]
+Description=Docker Application Container Engine
+Documentation=http://docs.docker.io
+
+[Service]
+Environment=&quot;PATH=/opt/kube/bin:/bin:/sbin:/usr/bin:/usr/sbin&quot;
+ExecStart=/opt/kube/bin/dockerd  --tlsverify --tlscacert=/root/docker/ca.pem --tlscert=/root/docker/server-cert.pem --tlskey=/root/docker/server-key.pem -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375
+ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+Delegate=yes
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<p>然后重启服务</p>
+<pre><code>systemctl daemon-reload
+systemctl restart docker.service 
+
+
+
+重启后查看服务状态：
+
+systemctl status docker.service
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/etc/systemd/system/docker.service; enabled; vendor preset: enabled)
+   Active: active (running) since Thu 2019-08-08 19:22:26 CST; 1 min ago
+</code></pre>
+<p>已经生效。</p>
+<p>使用证书连接：</p>
+<p>复制<code>ca.pem</code>,<code>cert.pem</code>,<code>key.pem</code>三个文件到客户端</p>
+<p><code>docker --tlsverify --tlscacert=ca.pem --tlscert=cert.pem --tlskey=key.pem -H=$HOST:2375 version</code>连接即可</p>
+<h2 id="docker-java-启用TLS"><a href="#docker-java-启用TLS" class="headerlink" title="docker-java 启用TLS"></a>docker-java 启用TLS</h2><p>项目里使用docker的java客户端<code>docker-java</code>调用docker，为了支持TLS，在创建客户端时，需要增加TLS设置。</p>
+<p>首先将<code>ca.pem cert.pem key.pem </code>这三个文件拷贝到本地，例如<code>E:\\docker\\&quot;</code>,</p>
+<p>然后<code>DefaultDockerClientConfig</code>里<code>withDockerTlsVerify</code>设为true，并设置<code>certpath</code>为刚拷贝的目录。</p>
+<pre><code>DefaultDockerClientConfig.Builder builder =
+                DefaultDockerClientConfig.createDefaultConfigBuilder()
+                    .withDockerHost(&quot;tcp://&quot; + server + &quot;:2375&quot;)
+                    .withApiVersion(&quot;1.30&quot;);
+            if (containerConfiguration.getDockerTlsVerify()) &#123;
+                builder = builder.withDockerTlsVerify(true)
+                    .withDockerCertPath(&quot;E:\\docker\\&quot;);
+            &#125;return  DockerClientBuilder.getInstance(builder.build()).build()        
+</code></pre>
+<p>大工搞定。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/05/28/jqpeng-mongodb%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AECRUD%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2019/05/28/jqpeng-mongodb%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AECRUD%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">mongodb海量数据CRUD优化</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-28 19:47:00" itemprop="dateCreated datePublished" datetime="2019-05-28T19:47:00+08:00">2019-05-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/java-mongo-crud.html">mongodb海量数据CRUD优化</a></p>
+<h2 id="1-批量保存优化"><a href="#1-批量保存优化" class="headerlink" title="1. 批量保存优化"></a>1. 批量保存优化</h2><p>避免一条一条查询，采用<code>bulkWrite</code>, 基于<code>ReplaceOneModel</code>，启用<code>upsert</code>:</p>
+<pre><code> public void batchSave(List&lt;?&gt; spoTriples, KgInstance kgInstance) &#123;
+        MongoConverter converter = mongoTemplate.getConverter();
+        List&lt;ReplaceOneModel&lt;Document&gt;&gt; bulkOperationList = spoTriples.stream()
+                .map(thing -&gt; &#123;
+                    org.bson.Document dbDoc = new org.bson.Document();
+                    converter.write(thing, dbDoc);
+                    ReplaceOneModel&lt;org.bson.Document&gt; replaceOneModel = new ReplaceOneModel(
+                            Filters.eq(UNDERSCORE_ID, dbDoc.get(UNDERSCORE_ID)), 
+                            dbDoc,
+                            new UpdateOptions().upsert(true));
+                    return replaceOneModel;
+                &#125;)
+                .collect(Collectors.toList());
+        mongoTemplate.getCollection(getCollection(kgInstance)).bulkWrite(bulkOperationList);
+    &#125;
+</code></pre>
+<h2 id="2-分页优化"><a href="#2-分页优化" class="headerlink" title="2. 分页优化"></a>2. 分页优化</h2><p>经常用于查询的字段，需要确保建立了索引。</p>
+<p>对于包含多个键的查询，可以创建符合索引。</p>
+<h3 id="2-1-避免不必要的count"><a href="#2-1-避免不必要的count" class="headerlink" title="2.1 避免不必要的count"></a>2.1 避免不必要的count</h3><p>查询时，走索引，速度并不慢，但是如果返回分页<code>Page&lt;?&gt;</code>，需要查询<code>totalcount</code>，当单表数据过大时，count会比较耗时，但是设想意向，你真的需要准确的数字吗？</p>
+<p>在google、百度等搜索引擎搜索关键词时，只会给你有限的几个结果，因此，我们也不必给出准确的数字，设定一个阈值，比如1万，当我们发现总量大于1万时，返回1万，前端显示大于1万条即可。</p>
+<p>原理也很鉴定啊，我们skip掉<code>MAX_PAGE_COUNT</code>，看是否还有数据，如果有就说明总量大于<code>MAX_PAGE_COUNT</code>，返回<code>MAX_PAGE_COUNT</code>即可，否则，计算真正的count。</p>
+<pre><code>int MAX_PAGE_COUNT = 10000;
+
+
+/**
+     * 当总数大于阈值时，不再计算总数
+     *
+     * @param mongoTemplate
+     * @param query
+     * @param collectionName
+     * @return
+     */
+    private long count(MongoTemplate mongoTemplate, Query query, String collectionName) &#123;
+        query = query.with(PageRequest.of(MAX_PAGE_COUNT, 1));
+        if (mongoTemplate.find(query, Thing.class, collectionName).size() &gt; 0) &#123;
+            return MAX_PAGE_COUNT;
+        &#125;
+        return mongoTemplate.count(query, collectionName);
+    &#125;
+</code></pre>
+<p>前端显示：</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-28/1559041614698.png" alt="大于10000"></p>
+<h3 id="2-2-避免过多的skip"><a href="#2-2-避免过多的skip" class="headerlink" title="2.2 避免过多的skip"></a>2.2 避免过多的skip</h3><p>分页不过避免需要先跳过一些数据，这个过程是需要消耗时间的，可以通过一个小技巧避免跳过。</p>
+<p>比如，显示列表时，排序为按最后修改时间倒序，每页显示100条，现在要显示第100页。<br> 按照正常的做法，需要跳过<code>99*100</code>条数据，非常大的代价。换一个角度思考，因为数据是有序的，因此第100页的数据的最后修改时间是小于第99页最小的修改时间，查询时加上这个条件，就可以直接取符合条件的前100条即可。</p>
+<h2 id="3-全量导出优化"><a href="#3-全量导出优化" class="headerlink" title="3. 全量导出优化"></a>3. 全量导出优化</h2><h3 id="3-1-去掉不需要的字段"><a href="#3-1-去掉不需要的字段" class="headerlink" title="3.1 去掉不需要的字段"></a>3.1 去掉不需要的字段</h3><p>查询时，指定真正有用的字段，这样可以有效减少数据传输量，加快查询效率。<br> 例如：</p>
+<pre><code>         Query query = new Query();
+        query.fields().include(&quot;_id&quot;).include(&quot;name&quot;).include(&quot;hot&quot;).include(&quot;alias&quot;);
+</code></pre>
+<h3 id="3-2-避免使用findAll或者分页查询，改用stream"><a href="#3-2-避免使用findAll或者分页查询，改用stream" class="headerlink" title="3.2 避免使用findAll或者分页查询，改用stream"></a>3.2 避免使用findAll或者分页查询，改用stream</h3><p>全量导出有两个误区，一是直接<code>findAll</code>,当数据量过大时，很容易导致服务器<code>OutofMermory</code>，就算没有OOM，也会对服务器造成极大的负载，影响兄弟服务。另外，FindAll一次性加载数据到内存，整个速度也会比较慢，需要等待所有数据进入内存后才能开始处理。</p>
+<p>另外一个误区是，分页查询，依次处理。分页查询可以有效减少服务器负担，不失为一种可行的方法。但是就和上面分页说的那样，分页到后面的时候，需要skip掉前面的数据，存在无用功。稍微好一点的做法就是按照之前说的，将skip转换为condtion，这种方式效率OK，但不推荐，存在代码冗余。</p>
+<pre><code>            Page&lt;Thing&gt; dataList = entityDao.findAllByPage(kgDataStoreService.getKgCollectionByKgInstance(kg), page);
+            Map&lt;String, Individual&gt; thingId2Resource = new ConcurrentHashMap&lt;&gt;();
+
+            appendThingsToModel(model, concept2OntClass, hot, alias, dataList, thingId2Resource);
+
+            while (dataList.hasNext()) &#123;
+                page = PageRequest.of(page.getPageNumber() + 1, page.getPageSize());
+                dataList = entityDao.findAllByPage(kgDataStoreService.getKgCollectionByKgInstance(kg), page);
+                appendThingsToModel(model, concept2OntClass, hot, alias, dataList, thingId2Resource);
+            &#125;
+</code></pre>
+<p>更推荐的做法是，采用mongoTemplate的steam方法,返回<code>CloseableIterator</code>迭代器，读一条数据处理一条数据，实现高效处理：</p>
+<pre><code>@Overridepublic &lt;T&gt; CloseableIterator&lt;T&gt; stream(final Query query, final Class&lt;T&gt; entityType, final String collectionName) &#123;    return doStream(query, entityType, collectionName, entityType);&#125;
+</code></pre>
+<p>改用方法后，代码可以更简化高效：</p>
+<pre><code>  CloseableIterator&lt;Thing&gt; dataList = kgDataStoreService.getSimpleInfoIterator(kg);
+
+            // 实体导入
+            // Page&lt;Thing&gt; dataList = entityDao.findAllByPage(kgDataStoreService.getKgCollectionByKgInstance(kg), page);
+            Map&lt;String, Individual&gt; thingId2Resource = new ConcurrentHashMap&lt;&gt;();
+
+            appendThingsToModel(model, concept2OntClass, hot, alias, dataList, thingId2Resource);
+</code></pre>
+<p>待续。。。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/05/24/jqpeng-%E5%A4%9A%E8%AF%AD%E8%A8%80%E4%B8%9A%E5%8A%A1%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Sentry%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2019/05/24/jqpeng-%E5%A4%9A%E8%AF%AD%E8%A8%80%E4%B8%9A%E5%8A%A1%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Sentry%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">多语言业务错误日志收集监控工具Sentry 安装与使用</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-24 16:04:00" itemprop="dateCreated datePublished" datetime="2019-05-24T16:04:00+08:00">2019-05-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/sentry.html">多语言业务错误日志收集监控工具Sentry 安装与使用</a></p>
+<p>Sentry 是一个实时事件日志记录和汇集的平台。其专注于错误监控以及提取一切事后处理所需信息而不依赖于麻烦的用户反馈。</p>
+<p>Sentry是一个日志平台, 它分为客户端和服务端，客户端(目前客户端有Python, PHP,C#, Ruby等多种语言)就嵌入在你的应用程序中间，程序出现异常就向服务端发送消息，服务端将消息记录到数据库中并提供一个web节目方便查看。Sentry由python编写，源码开放，性能卓越，易于扩展，目前著名的用户有Disqus, Path, mozilla, Pinterest等。</p>
+<h2 id="通过docker安装"><a href="#通过docker安装" class="headerlink" title="通过docker安装"></a>通过docker安装</h2><p>官方提供了 On-Premise 安装方式</p>
+<pre><code>git clone https://github.com/getsentry/onpremise
+cd onpremise
+</code></pre>
+<p>然后创建volume，持久化存储</p>
+<pre><code>docker volume create --name=sentry-data &amp;&amp; docker volume create --name=sentry-postgres
+</code></pre>
+<p>创建环境变量配置文件：</p>
+<pre><code>cp -n .env.example .env - create env config file
+</code></pre>
+<p>docker-compose build镜像，这一步会拉取官方镜像和redis等依赖，耐心等待    ：</p>
+<pre><code>docker-compose build - Build and tag the Docker services
+</code></pre>
+<p>创建secret-key，执行后得到一个key，添加到.env中的SENTRY_SECRET_KEY</p>
+<pre><code>docker-compose run --rm web config generate-secret-key 
+</code></pre>
+<p>创建DB和初始化用户,等待创建数据库和</p>
+<pre><code>docker-compose run --rm web upgrade
+Created internal Sentry project (slug=internal, id=1)
+
+Would you like to create a user account now? [Y/n]: y
+Email: 
+Password: 
+Repeat for confirmation: 
+Should this user be a superuser? [y/N]: y
+Added to organization: sentry
+Running migrations for sentry.nodestore:
+ - Migrating forwards to 0001_initial.
+</code></pre>
+<p>最后-d启动，启动成功后可以访问<a target="_blank" rel="noopener" href="http://server-ip:9000/">http://server-ip:9000</a></p>
+<pre><code>docker-compose up -d 
+</code></pre>
+<p>访问：</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558680516195.png" alt="sentry"></p>
+<h2 id="创建项目并集成"><a href="#创建项目并集成" class="headerlink" title="创建项目并集成"></a>创建项目并集成</h2><p>先创建一个project，支持多种语言，我们创建一个java的</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558680561117.png" alt="create project"></p>
+<h3 id="DSN（Client-Keys）"><a href="#DSN（Client-Keys）" class="headerlink" title="DSN（Client Keys）"></a>DSN（Client Keys）</h3><p>DSN格式为：</p>
+<p>DSN=”<a href="https://public:private@host:port/project\_id&quot;">https://public:private@host:port/project\_id&quot;</a></p>
+<p>可以在项目的setting-Client Keys（DSN）里查看。</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558684229783.png" alt="DSK"></p>
+<p>然后根据格式拼成DSN即可。</p>
+<h3 id="java项目集成"><a href="#java项目集成" class="headerlink" title="java项目集成"></a>java项目集成</h3><p>有多种集成方式：</p>
+<h4 id="基本集成方式"><a href="#基本集成方式" class="headerlink" title="基本集成方式"></a>基本集成方式</h4><p>添加maven引用：</p>
+<pre><code>    &lt;dependency&gt;    &lt;groupId&gt;io.sentry&lt;/groupId&gt;    &lt;artifactId&gt;sentry&lt;/artifactId&gt;    &lt;version&gt;1.7.16&lt;/version&gt;&lt;/dependency&gt;
+</code></pre>
+<p>然后在全局异常处理里集成：</p>
+<pre><code> String dsn = &quot;http://&lt;SENTRY_PUBLIC_KEY&gt;:&lt;SENTRY_PRIVATE_KEY&gt;@host:port/&lt;PROJECT_ID&gt;&quot;;
+ Sentry.init(dsn);
+</code></pre>
+<p>在有异常的地方：</p>
+<pre><code>      try &#123;
+            unsafeMethod();
+        &#125; catch (Exception e) &#123;
+            // This sends an exception event to Sentry using the statically stored instance
+            // that was created in the ``main`` method.
+            Sentry.capture(e);
+        &#125;
+</code></pre>
+<h4 id="logback集成"><a href="#logback集成" class="headerlink" title="logback集成"></a>logback集成</h4><p>logback配置：</p>
+<pre><code>&lt;configuration&gt;
+
+  &lt;appender name=&quot;Console&quot; class=&quot;ch.qos.logback.core.ConsoleAppender&quot;&gt;
+    &lt;encoder&gt;
+      &lt;pattern&gt;%d&#123;HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;36&#125; - %msg%n&lt;/pattern&gt;
+    &lt;/encoder&gt;
+  &lt;/appender&gt;
+
+  &lt;appender name=&quot;Sentry&quot; class=&quot;io.sentry.logback.SentryAppender&quot;&gt;
+    &lt;filter class=&quot;ch.qos.logback.classic.filter.ThresholdFilter&quot;&gt;
+      &lt;level&gt;WARN&lt;/level&gt;
+    &lt;/filter&gt;
+  &lt;/appender&gt;
+
+  &lt;root level=&quot;DEBUG&quot;&gt;
+    &lt;appender-ref ref=&quot;Console&quot; /&gt;
+    &lt;appender-ref ref=&quot;Sentry&quot;/&gt;
+  &lt;/root&gt;
+
+&lt;/configuration&gt;
+</code></pre>
+<h4 id="spring-boot集成"><a href="#spring-boot集成" class="headerlink" title="spring-boot集成"></a>spring-boot集成</h4><p>先添加引用：</p>
+<pre><code>        &lt;dependency&gt;        &lt;groupId&gt;io.sentry&lt;/groupId&gt;        &lt;artifactId&gt;sentry-spring&lt;/artifactId&gt;        &lt;version&gt;1.7.16&lt;/version&gt;    &lt;/dependency&gt;
+</code></pre>
+<p>在Application里集成：</p>
+<pre><code>import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+
+@Controller
+@EnableAutoConfiguration
+@SpringBootApplication
+public class Application &#123;
+    /*
+    Register a HandlerExceptionResolver that sends all exceptions to Sentry
+    and then defers all handling to the other HandlerExceptionResolvers.
+    You should only register this is you are not using a logging integration,
+    otherwise you may double report exceptions.
+     */
+    @Bean
+    public HandlerExceptionResolver sentryExceptionResolver() &#123;
+        return new io.sentry.spring.SentryExceptionResolver();
+    &#125;
+
+    /*
+    Register a ServletContextInitializer that installs the SentryServletRequestListener
+    so that Sentry events contain HTTP request information.
+    This should only be necessary in Spring Boot applications. &quot;Classic&quot; Spring
+    should automatically load the `io.sentry.servlet.SentryServletContainerInitializer`.
+     */
+    @Bean
+    public ServletContextInitializer sentryServletContextInitializer() &#123;
+        return new io.sentry.spring.SentryServletContextInitializer();
+    &#125;
+
+    @RequestMapping(&quot;/&quot;)
+    @ResponseBody
+    String home() &#123;
+        int x = 1 / 0;
+
+        return &quot;Hello World!&quot;;
+    &#125;
+
+    public static void main(String[] args) &#123;
+        SpringApplication.run(Application.class, args);
+    &#125;
+&#125;
+</code></pre>
+<h3 id="前端项目集成"><a href="#前端项目集成" class="headerlink" title="前端项目集成"></a>前端项目集成</h3><p>前端集成更简单，引用sentry的js，然后init即可</p>
+<pre><code>&lt;script src=&quot;https://browser.sentry-cdn.com/5.1.0/bundle.min.js&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+Sentry.init(&#123; dsn: &#39;dsn&#39; &#125;);
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a> 您的支持是对博主最大的鼓励，感谢您的认真阅读。 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
@@ -3467,19 +3175,19 @@ ASK  &#123; ?x foaf:name  &quot;Alice&quot; ;
       <div class="site-state-item site-state-posts">
           <a href="/jadepeng/archives/">
         
-          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-count">97</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/jadepeng/categories/">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/jadepeng/tags/">
           
-        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-count">83</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -3520,13 +3228,13 @@ ASK  &#123; ?x foaf:name  &quot;Alice&quot; ;
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">644k</span>
+    <span title="站点总字数">642k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">9:45</span>
+    <span title="站点阅读时长">9:44</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
