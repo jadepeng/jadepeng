@@ -341,18 +341,18 @@ JHipster提供了丰富的配置，可以用来指定生成代码时的策略，
         force .jhipster\FeedbackRecord.json
         force .jhipster\File.json
         force .jhipster\Chunk.json
-        force src\main\java\com\company\datahub\domain\File.java
-        force src\main\java\com\company\datahub\web\rest\FileResource.java
-        force src\main\java\com\company\datahub\repository\FileRepository.java
-        force src\main\java\com\company\datahub\service\FileService.java
-        force src\main\java\com\company\datahub\service\impl\FileServiceImpl.java
-        force src\main\java\com\company\datahub\service\dto\FileDTO.java
-        force src\main\java\com\company\datahub\service\mapper\EntityMapper.java
-        force src\main\java\com\company\datahub\service\mapper\FileMapper.java
-        force src\test\java\com\company\datahub\web\rest\FileResourceIT.java
-        force src\test\java\com\company\datahub\domain\FileTest.java
-        force src\test\java\com\company\datahub\service\dto\FileDTOTest.java
-        force src\test\java\com\company\datahub\service\mapper\FileMapperTest.java
+        force src\main\java\com\company\blog\domain\File.java
+        force src\main\java\com\company\blog\web\rest\FileResource.java
+        force src\main\java\com\company\blog\repository\FileRepository.java
+        force src\main\java\com\company\blog\service\FileService.java
+        force src\main\java\com\company\blog\service\impl\FileServiceImpl.java
+        force src\main\java\com\company\blog\service\dto\FileDTO.java
+        force src\main\java\com\company\blog\service\mapper\EntityMapper.java
+        force src\main\java\com\company\blog\service\mapper\FileMapper.java
+        force src\test\java\com\company\blog\web\rest\FileResourceIT.java
+        force src\test\java\com\company\blog\domain\FileTest.java
+        force src\test\java\com\company\blog\service\dto\FileDTOTest.java
+        force src\test\java\com\company\blog\service\mapper\FileMapperTest.java
         force src\main\webapp\app\shared\model\file.model.ts
         force src\main\webapp\app\entities\file\file-details.vue
         force src\main\webapp\app\entities\file\file-details.component.ts
@@ -372,17 +372,17 @@ JHipster提供了丰富的配置，可以用来指定生成代码时的策略，
         force src\main\webapp\i18n\zh-cn\global.json
         force src\main\webapp\i18n\en\file.json
         force src\main\webapp\i18n\en\global.json
-        force src\main\java\com\company\datahub\domain\Chunk.java
-        force src\main\java\com\company\datahub\web\rest\ChunkResource.java
-        force src\main\java\com\company\datahub\repository\ChunkRepository.java
-        force src\main\java\com\company\datahub\service\ChunkService.java
-        force src\main\java\com\company\datahub\service\impl\ChunkServiceImpl.java
-        force src\main\java\com\company\datahub\service\dto\ChunkDTO.java
-        force src\main\java\com\company\datahub\service\mapper\ChunkMapper.java
-        force src\test\java\com\company\datahub\web\rest\ChunkResourceIT.java
-        force src\test\java\com\company\datahub\domain\ChunkTest.java
-        force src\test\java\com\company\datahub\service\dto\ChunkDTOTest.java
-        force src\test\java\com\company\datahub\service\mapper\ChunkMapperTest.java
+        force src\main\java\com\company\blog\domain\Chunk.java
+        force src\main\java\com\company\blog\web\rest\ChunkResource.java
+        force src\main\java\com\company\blog\repository\ChunkRepository.java
+        force src\main\java\com\company\blog\service\ChunkService.java
+        force src\main\java\com\company\blog\service\impl\ChunkServiceImpl.java
+        force src\main\java\com\company\blog\service\dto\ChunkDTO.java
+        force src\main\java\com\company\blog\service\mapper\ChunkMapper.java
+        force src\test\java\com\company\blog\web\rest\ChunkResourceIT.java
+        force src\test\java\com\company\blog\domain\ChunkTest.java
+        force src\test\java\com\company\blog\service\dto\ChunkDTOTest.java
+        force src\test\java\com\company\blog\service\mapper\ChunkMapperTest.java
         force src\main\webapp\app\shared\model\chunk.model.ts
         force src\main\webapp\app\entities\chunk\chunk-details.vue
         force src\main\webapp\app\entities\chunk\chunk-details.component.ts
@@ -397,20 +397,20 @@ JHipster提供了丰富的配置，可以用来指定生成代码时的策略，
         force src\test\javascript\spec\app\entities\chunk\chunk-update.component.spec.ts
         force src\main\webapp\i18n\zh-cn\chunk.json
         force src\main\webapp\i18n\en\chunk.json
-       create src\main\java\com\company\datahub\domain\FeedbackRecord.java
-       create src\main\java\com\company\datahub\web\rest\FeedbackRecordResource.java
-       create src\main\java\com\company\datahub\repository\FeedbackRecordRepository.java
-       create src\main\java\com\company\datahub\service\FeedbackRecordService.java
-       create src\main\java\com\company\datahub\service\impl\FeedbackRecordServiceImpl.java
-       create src\main\java\com\company\datahub\service\dto\FeedbackRecordDTO.java
-       create src\main\java\com\company\datahub\service\mapper\FeedbackRecordMapper.java
-       create src\test\java\com\company\datahub\web\rest\FeedbackRecordResourceIT.java
-       create src\test\java\com\company\datahub\domain\FeedbackRecordTest.java
-       create src\test\java\com\company\datahub\service\dto\FeedbackRecordDTOTest.java
-       create src\test\java\com\company\datahub\service\mapper\FeedbackRecordMapperTest.java
-       create src\main\java\com\company\datahub\domain\enumeration\FeedbackType.java
-       create src\main\java\com\company\datahub\domain\enumeration\FeedbackStatus.java
-       create src\main\java\com\company\datahub\domain\enumeration\FeedbackCloseType.java
+       create src\main\java\com\company\blog\domain\FeedbackRecord.java
+       create src\main\java\com\company\blog\web\rest\FeedbackRecordResource.java
+       create src\main\java\com\company\blog\repository\FeedbackRecordRepository.java
+       create src\main\java\com\company\blog\service\FeedbackRecordService.java
+       create src\main\java\com\company\blog\service\impl\FeedbackRecordServiceImpl.java
+       create src\main\java\com\company\blog\service\dto\FeedbackRecordDTO.java
+       create src\main\java\com\company\blog\service\mapper\FeedbackRecordMapper.java
+       create src\test\java\com\company\blog\web\rest\FeedbackRecordResourceIT.java
+       create src\test\java\com\company\blog\domain\FeedbackRecordTest.java
+       create src\test\java\com\company\blog\service\dto\FeedbackRecordDTOTest.java
+       create src\test\java\com\company\blog\service\mapper\FeedbackRecordMapperTest.java
+       create src\main\java\com\company\blog\domain\enumeration\FeedbackType.java
+       create src\main\java\com\company\blog\domain\enumeration\FeedbackStatus.java
+       create src\main\java\com\company\blog\domain\enumeration\FeedbackCloseType.java
        create src\main\webapp\app\shared\model\feedback-record.model.ts
        create src\main\webapp\app\entities\feedback-record\feedback-record-details.vue
        create src\main\webapp\app\entities\feedback-record\feedback-record-details.component.ts
@@ -469,11 +469,11 @@ JHipster提供了丰富的配置，可以用来指定生成代码时的策略，
 
 
     
-    package com.company.datahub.domain;
+    package com.company.blog.domain;
     
-    import com.company.datahub.domain.enumeration.FeedbackCloseType;
-    import com.company.datahub.domain.enumeration.FeedbackStatus;
-    import com.company.datahub.domain.enumeration.FeedbackType;
+    import com.company.blog.domain.enumeration.FeedbackCloseType;
+    import com.company.blog.domain.enumeration.FeedbackStatus;
+    import com.company.blog.domain.enumeration.FeedbackType;
     import java.io.Serializable;
     import java.time.Instant;
     import javax.persistence.*;
@@ -690,7 +690,7 @@ JHipster提供了丰富的配置，可以用来指定生成代码时的策略，
 
     
     /**
-     * Service Interface for managing {@link com.company.datahub.domain.FeedbackRecord}.
+     * Service Interface for managing {@link com.company.blog.domain.FeedbackRecord}.
      */
     public interface FeedbackRecordService {
         /**
@@ -738,7 +738,7 @@ JHipster提供了丰富的配置，可以用来指定生成代码时的策略，
 
 
     /**
-     * REST controller for managing {@link com.company.datahub.domain.FeedbackRecord}.
+     * REST controller for managing {@link com.company.blog.domain.FeedbackRecord}.
      */
     @RestController
     @RequestMapping("/api")
