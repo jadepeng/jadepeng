@@ -187,6 +187,243 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/05/24/jqpeng-%E5%A4%9A%E8%AF%AD%E8%A8%80%E4%B8%9A%E5%8A%A1%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Sentry%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2019/05/24/jqpeng-%E5%A4%9A%E8%AF%AD%E8%A8%80%E4%B8%9A%E5%8A%A1%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Sentry%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">多语言业务错误日志收集监控工具Sentry 安装与使用</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-24 16:04:00" itemprop="dateCreated datePublished" datetime="2019-05-24T16:04:00+08:00">2019-05-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/sentry.html">多语言业务错误日志收集监控工具Sentry 安装与使用</a></p>
+<p>Sentry 是一个实时事件日志记录和汇集的平台。其专注于错误监控以及提取一切事后处理所需信息而不依赖于麻烦的用户反馈。</p>
+<p>Sentry是一个日志平台, 它分为客户端和服务端，客户端(目前客户端有Python, PHP,C#, Ruby等多种语言)就嵌入在你的应用程序中间，程序出现异常就向服务端发送消息，服务端将消息记录到数据库中并提供一个web节目方便查看。Sentry由python编写，源码开放，性能卓越，易于扩展，目前著名的用户有Disqus, Path, mozilla, Pinterest等。</p>
+<h2 id="通过docker安装"><a href="#通过docker安装" class="headerlink" title="通过docker安装"></a>通过docker安装</h2><p>官方提供了 On-Premise 安装方式</p>
+<pre><code>git clone https://github.com/getsentry/onpremise
+cd onpremise
+</code></pre>
+<p>然后创建volume，持久化存储</p>
+<pre><code>docker volume create --name=sentry-data &amp;&amp; docker volume create --name=sentry-postgres
+</code></pre>
+<p>创建环境变量配置文件：</p>
+<pre><code>cp -n .env.example .env - create env config file
+</code></pre>
+<p>docker-compose build镜像，这一步会拉取官方镜像和redis等依赖，耐心等待    ：</p>
+<pre><code>docker-compose build - Build and tag the Docker services
+</code></pre>
+<p>创建secret-key，执行后得到一个key，添加到.env中的SENTRY_SECRET_KEY</p>
+<pre><code>docker-compose run --rm web config generate-secret-key 
+</code></pre>
+<p>创建DB和初始化用户,等待创建数据库和</p>
+<pre><code>docker-compose run --rm web upgrade
+Created internal Sentry project (slug=internal, id=1)
+
+Would you like to create a user account now? [Y/n]: y
+Email: 
+Password: 
+Repeat for confirmation: 
+Should this user be a superuser? [y/N]: y
+Added to organization: sentry
+Running migrations for sentry.nodestore:
+ - Migrating forwards to 0001_initial.
+</code></pre>
+<p>最后-d启动，启动成功后可以访问<a target="_blank" rel="noopener" href="http://server-ip:9000/">http://server-ip:9000</a></p>
+<pre><code>docker-compose up -d 
+</code></pre>
+<p>访问：</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558680516195.png" alt="sentry"></p>
+<h2 id="创建项目并集成"><a href="#创建项目并集成" class="headerlink" title="创建项目并集成"></a>创建项目并集成</h2><p>先创建一个project，支持多种语言，我们创建一个java的</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558680561117.png" alt="create project"></p>
+<h3 id="DSN（Client-Keys）"><a href="#DSN（Client-Keys）" class="headerlink" title="DSN（Client Keys）"></a>DSN（Client Keys）</h3><p>DSN格式为：</p>
+<p>DSN=”<a href="https://public:private@host:port/project\_id&quot;">https://public:private@host:port/project\_id&quot;</a></p>
+<p>可以在项目的setting-Client Keys（DSN）里查看。</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558684229783.png" alt="DSK"></p>
+<p>然后根据格式拼成DSN即可。</p>
+<h3 id="java项目集成"><a href="#java项目集成" class="headerlink" title="java项目集成"></a>java项目集成</h3><p>有多种集成方式：</p>
+<h4 id="基本集成方式"><a href="#基本集成方式" class="headerlink" title="基本集成方式"></a>基本集成方式</h4><p>添加maven引用：</p>
+<pre><code>    &lt;dependency&gt;    &lt;groupId&gt;io.sentry&lt;/groupId&gt;    &lt;artifactId&gt;sentry&lt;/artifactId&gt;    &lt;version&gt;1.7.16&lt;/version&gt;&lt;/dependency&gt;
+</code></pre>
+<p>然后在全局异常处理里集成：</p>
+<pre><code> String dsn = &quot;http://&lt;SENTRY_PUBLIC_KEY&gt;:&lt;SENTRY_PRIVATE_KEY&gt;@host:port/&lt;PROJECT_ID&gt;&quot;;
+ Sentry.init(dsn);
+</code></pre>
+<p>在有异常的地方：</p>
+<pre><code>      try &#123;
+            unsafeMethod();
+        &#125; catch (Exception e) &#123;
+            // This sends an exception event to Sentry using the statically stored instance
+            // that was created in the ``main`` method.
+            Sentry.capture(e);
+        &#125;
+</code></pre>
+<h4 id="logback集成"><a href="#logback集成" class="headerlink" title="logback集成"></a>logback集成</h4><p>logback配置：</p>
+<pre><code>&lt;configuration&gt;
+
+  &lt;appender name=&quot;Console&quot; class=&quot;ch.qos.logback.core.ConsoleAppender&quot;&gt;
+    &lt;encoder&gt;
+      &lt;pattern&gt;%d&#123;HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;36&#125; - %msg%n&lt;/pattern&gt;
+    &lt;/encoder&gt;
+  &lt;/appender&gt;
+
+  &lt;appender name=&quot;Sentry&quot; class=&quot;io.sentry.logback.SentryAppender&quot;&gt;
+    &lt;filter class=&quot;ch.qos.logback.classic.filter.ThresholdFilter&quot;&gt;
+      &lt;level&gt;WARN&lt;/level&gt;
+    &lt;/filter&gt;
+  &lt;/appender&gt;
+
+  &lt;root level=&quot;DEBUG&quot;&gt;
+    &lt;appender-ref ref=&quot;Console&quot; /&gt;
+    &lt;appender-ref ref=&quot;Sentry&quot;/&gt;
+  &lt;/root&gt;
+
+&lt;/configuration&gt;
+</code></pre>
+<h4 id="spring-boot集成"><a href="#spring-boot集成" class="headerlink" title="spring-boot集成"></a>spring-boot集成</h4><p>先添加引用：</p>
+<pre><code>        &lt;dependency&gt;        &lt;groupId&gt;io.sentry&lt;/groupId&gt;        &lt;artifactId&gt;sentry-spring&lt;/artifactId&gt;        &lt;version&gt;1.7.16&lt;/version&gt;    &lt;/dependency&gt;
+</code></pre>
+<p>在Application里集成：</p>
+<pre><code>import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+
+@Controller
+@EnableAutoConfiguration
+@SpringBootApplication
+public class Application &#123;
+    /*
+    Register a HandlerExceptionResolver that sends all exceptions to Sentry
+    and then defers all handling to the other HandlerExceptionResolvers.
+    You should only register this is you are not using a logging integration,
+    otherwise you may double report exceptions.
+     */
+    @Bean
+    public HandlerExceptionResolver sentryExceptionResolver() &#123;
+        return new io.sentry.spring.SentryExceptionResolver();
+    &#125;
+
+    /*
+    Register a ServletContextInitializer that installs the SentryServletRequestListener
+    so that Sentry events contain HTTP request information.
+    This should only be necessary in Spring Boot applications. &quot;Classic&quot; Spring
+    should automatically load the `io.sentry.servlet.SentryServletContainerInitializer`.
+     */
+    @Bean
+    public ServletContextInitializer sentryServletContextInitializer() &#123;
+        return new io.sentry.spring.SentryServletContextInitializer();
+    &#125;
+
+    @RequestMapping(&quot;/&quot;)
+    @ResponseBody
+    String home() &#123;
+        int x = 1 / 0;
+
+        return &quot;Hello World!&quot;;
+    &#125;
+
+    public static void main(String[] args) &#123;
+        SpringApplication.run(Application.class, args);
+    &#125;
+&#125;
+</code></pre>
+<h3 id="前端项目集成"><a href="#前端项目集成" class="headerlink" title="前端项目集成"></a>前端项目集成</h3><p>前端集成更简单，引用sentry的js，然后init即可</p>
+<pre><code>&lt;script src=&quot;https://browser.sentry-cdn.com/5.1.0/bundle.min.js&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+Sentry.init(&#123; dsn: &#39;dsn&#39; &#125;);
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a> 您的支持是对博主最大的鼓励，感谢您的认真阅读。 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/05/08/jqpeng-VS%20Code%20Remote%EF%BC%8C%E5%9C%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E5%BC%80%E5%8F%91%E7%A8%8B%E5%BA%8F%EF%BC%8C%E5%BC%80%E5%90%AF%E5%85%A8%E6%96%B0%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -220,7 +457,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -420,7 +657,7 @@ and check to make sure that only the key(s) you wanted were added.
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -516,7 +753,7 @@ and check to make sure that only the key(s) you wanted were added.
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -977,7 +1214,7 @@ if r.tracer != nil &#123;    state := new(State)    state.Pipeline.Time = r.star
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1144,7 +1381,7 @@ docker.close();
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1365,7 +1602,7 @@ export DOCKER_CONFIG=/home/user/.docker
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1505,7 +1742,7 @@ RUN usermod -u 1000 www-data; \a2enmod rewrite; \chown -R www-data:www-data /var
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1842,7 +2079,7 @@ function decrypt(result) &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -3970,7 +4207,7 @@ TCP  10.254.0.1:443 rr persistent 10800
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -4334,275 +4571,6 @@ events &#123;
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2018/08/27/jqpeng-APM%20%E5%8E%9F%E7%90%86%E4%B8%8E%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2018/08/27/jqpeng-APM%20%E5%8E%9F%E7%90%86%E4%B8%8E%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B/" class="post-title-link" itemprop="url">APM 原理与框架选型</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-08-27 15:59:00" itemprop="dateCreated datePublished" datetime="2018-08-27T15:59:00+08:00">2018-08-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/apm.html">APM 原理与框架选型</a></p>
-<p>发些存稿:)</p>
-<h2 id="0-APM简介"><a href="#0-APM简介" class="headerlink" title="0. APM简介"></a>0. APM简介</h2><p>随着微服务架构的流行，一次请求往往需要涉及到多个服务，因此服务性能监控和排查就变得更复杂：</p>
-<ul>
-<li>不同的服务可能由不同的团队开发、甚至可能使用不同的编程语言来实现</li>
-<li>服务有可能布在了几千台服务器，横跨多个不同的数据中心</li>
-</ul>
-<p>因此，就需要一些可以帮助理解系统行为、用于分析性能问题的工具，以便发生故障的时候，能够快速定位和解决问题，这就是APM系统，全称是（<strong>A</strong>pplication <strong>P</strong>erformance <strong>M</strong>onitor，当然也有叫 <strong>A</strong>pplication <strong>P</strong>erformance <strong>M</strong>anagement tools）</p>
-<p>AMP最早是谷歌公开的论文提到的 <a target="_blank" rel="noopener" href="http://bigbully.github.io/Dapper-translation">Google Dapper</a>。Dapper是Google生产环境下的分布式跟踪系统，自从Dapper发展成为一流的监控系统之后，给google的开发者和运维团队帮了大忙，所以谷歌公开论文分享了Dapper。</p>
-<h2 id="1-谷歌Dapper介绍"><a href="#1-谷歌Dapper介绍" class="headerlink" title="1. 谷歌Dapper介绍"></a>1. 谷歌Dapper介绍</h2><h3 id="1-1-Dapper的挑战"><a href="#1-1-Dapper的挑战" class="headerlink" title="1.1 Dapper的挑战"></a>1.1 <strong>Dapper的挑战</strong></h3><p>在google的首页页面，提交一个查询请求后，会经历什么：</p>
-<ul>
-<li>可能对上百台查询服务器发起了一个Web查询，每一个查询都有自己的Index</li>
-<li>这个查询可能会被发送到多个的子系统，这些子系统分别用来处理广告、进行拼写检查或是查找一些像图片、视频或新闻这样的特殊结果</li>
-<li>根据每个子系统的查询结果进行筛选，得到最终结果，最后汇总到页面上</li>
-</ul>
-<p>总结一下：</p>
-<ul>
-<li>一次全局搜索有可能调用上千台服务器，涉及各种服务。</li>
-<li>用户对搜索的耗时是很敏感的，而任何一个子系统的低效都导致导致最终的搜索耗时</li>
-</ul>
-<p>如果一次查询耗时不正常，工程师怎么来排查到底是由哪个服务调用造成的？</p>
-<ul>
-<li>首先，这个工程师可能无法准确的定位到这次全局搜索是调用了哪些服务，因为新的服务、乃至服务上的某个片段，都有可能在任何时间上过线或修改过，有可能是面向用户功能，也有可能是一些例如针对性能或安全认证方面的功能改进</li>
-<li>其次，你不能苛求这个工程师对所有参与这次全局搜索的服务都了如指掌，每一个服务都有可能是由不同的团队开发或维护的</li>
-<li>再次，这些暴露出来的服务或服务器有可能同时还被其他客户端使用着，所以这次全局搜索的性能问题甚至有可能是由其他应用造成的</li>
-</ul>
-<p>从上面可以看出Dapper需要：</p>
-<ul>
-<li>无所不在的部署，无所不在的重要性不言而喻，因为在使用跟踪系统的进行监控时，即便只有一小部分没被监控到，那么人们对这个系统是不是值得信任都会产生巨大的质疑</li>
-<li>持续的监控</li>
-</ul>
-<h3 id="1-2-Dapper的三个具体设计目标"><a href="#1-2-Dapper的三个具体设计目标" class="headerlink" title="1.2 Dapper的三个具体设计目标"></a>1.2 Dapper的三个具体设计目标</h3><ol>
-<li><strong>性能消耗低</strong><br> APM组件服务的影响应该做到足够小。<strong>服务调用埋点本身会带来性能损耗，这就需要调用跟踪的低损耗，实际中还会通过配置采样率的方式，选择一部分请求去分析请求路径</strong>。在一些高度优化过的服务，即使一点点损耗也会很容易察觉到，而且有可能迫使在线服务的部署团队不得不将跟踪系统关停。</li>
-<li><strong>应用透明</strong>，也就是<strong>代码的侵入性小</strong><br> <strong>即也作为业务组件，应当尽可能少入侵或者无入侵其他业务系统，对于使用方透明，减少开发人员的负担</strong>。<br> 对于应用的程序员来说，是不需要知道有跟踪系统这回事的。如果一个跟踪系统想生效，就必须需要依赖应用的开发者主动配合，那么这个跟踪系统也太脆弱了，往往由于跟踪系统在应用中植入代码的bug或疏忽导致应用出问题，这样才是无法满足对跟踪系统“无所不在的部署”这个需求。</li>
-<li><strong>可扩展性</strong><br> <strong>一个优秀的调用跟踪系统必须支持分布式部署，具备良好的可扩展性。能够支持的组件越多当然越好</strong>。或者提供便捷的插件开发API，对于一些没有监控到的组件，应用开发者也可以自行扩展。</li>
-<li><strong>数据的分析</strong><br> <strong>数据的分析要快 ，分析的维度尽可能多</strong>。跟踪系统能提供足够快的信息反馈，就可以对生产环境下的异常状况做出快速反应。<strong>分析的全面，能够避免二次开发</strong>。</li>
-</ol>
-<h3 id="1-3-Dapper的分布式跟踪原理"><a href="#1-3-Dapper的分布式跟踪原理" class="headerlink" title="1.3 Dapper的分布式跟踪原理"></a>1.3 Dapper的分布式跟踪原理</h3><p>先来看一次请求调用示例：</p>
-<ol>
-<li>包括：前端（A），两个中间层（B和C），以及两个后端（D和E）</li>
-<li>当用户发起一个请求时，首先到达前端A服务，然后分别对B服务和C服务进行RPC调用；</li>
-<li>B服务处理完给A做出响应，但是C服务还需要和后端的D服务和E服务交互之后再返还给A服务，最后由A服务来响应用户的请求；</li>
-</ol>
-<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535337727679.png" alt="Dapper的分布式跟踪"></p>
-<p>Dapper是如何来跟踪记录这次请求呢？</p>
-<h4 id="1-3-1-跟踪树和span"><a href="#1-3-1-跟踪树和span" class="headerlink" title="1.3.1  跟踪树和span"></a>1.3.1  <strong>跟踪树和span</strong></h4><p>Span是dapper的<strong>基本工作单元</strong>，一次链路调用（可以是RPC，DB等没有特定的限制）创建一个span，通过一个64位ID标识它；同时附加（Annotation）作为payload负载信息，用于记录性能等数据。</p>
-<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535338174615.png" alt="5个span在Dapper跟踪树种短暂的关联关系"></p>
-<p>上图说明了span在一次大的跟踪过程中是什么样的。<strong>Dapper记录了span名称，以及每个span的ID和父ID，以重建在一次追踪过程中不同span之间的关系</strong>。如果一个span没有父ID被称为root span。<strong>所有span都挂在一个特定的跟踪上，也共用一个跟踪id</strong>。</p>
-<p>再来看下<strong>Span的细节</strong>：</p>
-<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535338251754.png" alt="一个单独的span的细节图"></p>
-<p><strong>Span数据结构</strong>：</p>
-<pre><code>type Span struct &#123;
-    TraceID    int64 // 用于标示一次完整的请求id
-    Name       string
-    ID         int64 // 当前这次调用span_id
-    ParentID   int64 // 上层服务的调用span_id  最上层服务parent_id为null
-    Annotation []Annotation // 用于标记的时间戳
-    Debug      bool
-&#125;
-</code></pre>
-<h4 id="1-3-2-TraceID"><a href="#1-3-2-TraceID" class="headerlink" title="1.3.2 TraceID"></a>1.3.2 TraceID</h4><p>类似于 <strong>树结构的Span集合</strong>，表示一次完整的跟踪，从请求到服务器开始，服务器返回response结束，跟踪每次rpc调用的耗时，存在唯一标识trace_id。比如：你运行的分布式大数据存储一次Trace就由你的一次请求组成。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2018/6/4/163c9bee3a9d029a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="Trace"></p>
-<p>每种颜色的note标注了一个span，一条链路通过TraceId唯一标识，Span标识发起的请求信息。<strong>树节点是整个架构的基本单元，而每一个节点又是对span的引用</strong>。节点之间的连线表示的span和它的父span直接的关系。虽然span在日志文件中只是简单的代表span的开始和结束时间，他们在整个树形结构中却是相对独立的。</p>
-<h4 id="1-3-3-Annotation"><a href="#1-3-3-Annotation" class="headerlink" title="1.3.3 Annotation"></a>1.3.3 Annotation</h4><p>Dapper允许应用程序开发人员在Dapper跟踪的过程中添加额外的信息，以监控更高级别的系统行为，或帮助调试问题。这就是Annotation：</p>
-<p><strong>Annotation</strong>，用来记录请求特定事件相关信息（例如时间），<strong>一个span中会有多个annotation注解描述</strong>。通常包含四个注解信息：</p>
-<blockquote>
-<p>(1) <strong>cs</strong>：Client Start，表示客户端发起请求<br> (2) <strong>sr</strong>：Server Receive，表示服务端收到请求<br> (3) <strong>ss</strong>：Server Send，表示服务端完成处理，并将结果发送给客户端<br> (4) <strong>cr</strong>：Client Received，表示客户端获取到服务端返回信息</p>
-</blockquote>
-<p><strong>Annotation数据结构</strong>：</p>
-<pre><code>type Annotation struct &#123;
-    Timestamp int64
-    Value     string
-    Host      Endpoint
-    Duration  int32
-&#125;
-</code></pre>
-<h4 id="1-3-4-采样率"><a href="#1-3-4-采样率" class="headerlink" title="1.3.4 采样率"></a>1.3.4 采样率</h4><p>低损耗的是Dapper的一个关键的设计目标，因为如果这个工具价值未被证实但又对性能有影响的话，你可以理解服务运营人员为什么不愿意部署它。</p>
-<p>另外，某些类型的Web服务对植入带来的性能损耗确实非常敏感。</p>
-<p>因此，除了把Dapper的收集工作对基本组件的性能损耗限制的尽可能小之外，Dapper支持设置采样率来减少性能损耗，同时支持<strong>可变采样</strong>。</p>
-<h2 id="2-APM组件选型"><a href="#2-APM组件选型" class="headerlink" title="2. APM组件选型"></a>2. APM组件选型</h2><p>市面上的全链路监控理论模型大多都是借鉴Google Dapper论文，重点关注以下三种APM组件：</p>
-<blockquote>
-<ol>
-<li>**<a href="https://link.juejin.im/?target=http://zipkin.io/">Zipkin</a>**：由Twitter公司开源，开放源代码分布式的跟踪系统，用于收集服务的定时数据，以解决微服务架构中的延迟问题，包括：数据的收集、存储、查找和展现。</li>
-<li>**<a href="https://link.juejin.im/?target=https://github.com/naver/pinpoint">Pinpoint</a>**：一款对Java编写的大规模分布式系统的APM工具，由韩国人开源的分布式跟踪组件。</li>
-<li>**<a href="https://link.juejin.im/?target=http://skywalking.org/">Skywalking</a>**：国产的优秀APM组件，是一个对JAVA分布式应用程序集群的业务运行情况进行追踪、告警和分析的系统。</li>
-</ol>
-</blockquote>
-<h3 id="2-1-对比项"><a href="#2-1-对比项" class="headerlink" title="2.1 对比项"></a>2.1 对比项</h3><p>主要对比项：</p>
-<ol>
-<li><strong>探针的性能</strong><br> 主要是agent对服务的吞吐量、CPU和内存的影响。微服务的规模和动态性使得数据收集的成本大幅度提高。</li>
-<li><strong>collector的可扩展性</strong><br> 能够水平扩展以便支持大规模服务器集群。</li>
-<li><strong>全面的调用链路数据分析</strong><br> 提供代码级别的可见性以便轻松定位失败点和瓶颈。</li>
-<li><strong>对于开发透明，容易开关</strong><br> 添加新功能而无需修改代码，容易启用或者禁用。</li>
-<li><strong>完整的调用链应用拓扑</strong><br> 自动检测应用拓扑，帮助你搞清楚应用的架构</li>
-</ol>
-<h3 id="2-2-探针的性能"><a href="#2-2-探针的性能" class="headerlink" title="2.2 探针的性能"></a>2.2 探针的性能</h3><p>比较关注探针的性能，毕竟APM定位还是工具，如果启用了链路监控组建后，直接导致吞吐量降低过半，那也是不能接受的。对skywalking、zipkin、pinpoint进行了压测，并与基线（未使用探针）的情况进行了对比。</p>
-<p>选用了一个常见的基于Spring的应用程序，他包含Spring Boot, Spring MVC，redis客户端，mysql。 监控这个应用程序，每个trace，探针会抓取5个span(1 Tomcat, 1 SpringMVC, 2 Jedis, 1 Mysql)。这边基本和 <a href="https://link.juejin.im/?target=https://link.juejin.im?target=https%253A%252F%252Fskywalkingtest.github.io%252FAgent-Benchmarks%252FREADME_zh.html">skywalkingtest</a> 的测试应用差不多。</p>
-<p>模拟了三种并发用户：500，750，1000。使用jmeter测试，每个线程发送30个请求，设置思考时间为10ms。使用的采样率为1，即100%，这边与生产可能有差别。pinpoint默认的采样率为20，即50%，通过设置agent的配置文件改为100%。zipkin默认也是1。组合起来，一共有12种。下面看下汇总表：</p>
-<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339573733.png" alt="探针性能"></p>
-<p>从上表可以看出，在三种链路监控组件中，<strong>skywalking的探针对吞吐量的影响最小，zipkin的吞吐量居中。pinpoint的探针对吞吐量的影响较为明显</strong>，在500并发用户时，测试服务的吞吐量从1385降低到774，影响很大。然后再看下CPU和memory的影响，在内部服务器进行的压测，对CPU和memory的影响都差不多在10%之内。</p>
-<h3 id="2-3-collector的可扩展性"><a href="#2-3-collector的可扩展性" class="headerlink" title="2.3 collector的可扩展性"></a>2.3 collector的可扩展性</h3><p>collector的可扩展性，使得能够水平扩展以便支持大规模服务器集群。</p>
-<ol>
-<li><strong>zipkin</strong><br> 开发zipkin-Server（其实就是提供的开箱即用包），zipkin-agent与zipkin-Server通过http或者mq进行通信，<strong>http通信会对正常的访问造成影响，所以还是推荐基于mq异步方式通信</strong>，zipkin-Server通过订阅具体的topic进行消费。这个当然是可以扩展的，<strong>多个zipkin-Server实例进行异步消费mq中的监控信息</strong>。</li>
-<li><strong>skywalking</strong><br> skywalking的collector支持两种部署方式：<strong>单机和集群模式。collector与agent之间的通信使用了gRPC</strong>。</li>
-<li><strong>pinpoint</strong><br> 同样，pinpoint也是支持集群和单机部署的。<strong>pinpoint agent通过thrift通信框架，发送链路信息到collector</strong>。</li>
-</ol>
-<h3 id="2-4-全面的调用链路数据分析"><a href="#2-4-全面的调用链路数据分析" class="headerlink" title="2.4 全面的调用链路数据分析"></a>2.4 全面的调用链路数据分析</h3><p>全面的调用链路数据分析，提供代码级别的可见性以便轻松定位失败点和瓶颈。</p>
-<p><strong>zipkin</strong></p>
-<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339676013.png" alt="zipkin"><br><strong>zipkin的链路监控粒度相对没有那么细</strong>，从上图可以看到调用链中具体到接口级别，再进一步的调用信息并未涉及。</p>
-<p><strong>skywalking</strong></p>
-<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339690665.png" alt="skywalking"></p>
-<pre><code>**skywalking 还支持20+的中间件、框架、类库**，比如：主流的dubbo、Okhttp，还有DB和消息中间件。上图skywalking链路调用分析截取的比较简单，网关调用user服务，**由于支持众多的中间件，所以skywalking链路调用分析比zipkin完备些**。
-</code></pre>
-<p><strong>pinpoint</strong></p>
-<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339702378.png" alt="pinpoint"><br> pinpoint应该是这三种APM组件中，<strong>数据分析最为完备的组件</strong>。提供代码级别的可见性以便轻松定位失败点和瓶颈，上图可以看到对于执行的sql语句，都进行了记录。还可以配置报警规则等，设置每个应用对应的负责人，根据配置的规则报警，支持的中间件和框架也比较完备。</p>
-<h3 id="2-5-对于开发透明，容易开关"><a href="#2-5-对于开发透明，容易开关" class="headerlink" title="2.5  对于开发透明，容易开关"></a>2.5  对于开发透明，容易开关</h3><p>对于开发透明，容易开关，添加新功能而无需修改代码，容易启用或者禁用。我们期望功能可以不修改代码就工作并希望得到代码级别的可见性。</p>
-<p>对于这一点，<strong>Zipkin 使用修改过的类库和它自己的容器(Finagle)来提供分布式事务跟踪的功能</strong>。但是，它要求在需要时修改代码。<strong>skywalking和pinpoint都是基于字节码增强的方式，开发人员不需要修改代码，并且可以收集到更多精确的数据因为有字节码中的更多信息</strong>。</p>
-<h3 id="2-6-完整的调用链应用拓扑"><a href="#2-6-完整的调用链应用拓扑" class="headerlink" title="2.6  完整的调用链应用拓扑"></a>2.6  完整的调用链应用拓扑</h3><p>自动检测应用拓扑，帮助你搞清楚应用的架构。</p>
-<p>zipkin链路拓扑：<br><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339925728.png" alt="zipkin链路拓扑"></p>
-<p>skywalking链路拓扑：</p>
-<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339959895.png" alt="skywalking链路拓扑"></p>
-<p><img src="https://gitee.com/jadepeng/blogpic/raw/master/pic/27/1535339973274.png" alt="pinpoint"></p>
-<p>三个组件都能实现完整的调用链应用拓扑。相对来说：</p>
-<ul>
-<li>pinpoint界面显示的更加丰富，具体到调用的DB名</li>
-<li>zipkin的拓扑局限于服务于服务之间</li>
-</ul>
-<h3 id="2-7-社区支持"><a href="#2-7-社区支持" class="headerlink" title="2.7  社区支持"></a>2.7  社区支持</h3><p>Zipkin 由 Twitter 开发，可以算得上是明星团队，而 pinpoint的Naver 的团队只是一个默默无闻的小团队，skywalking是国内的明星项目，目前属于apache孵化项目，社区活跃。</p>
-<h3 id="2-8-总结"><a href="#2-8-总结" class="headerlink" title="2.8  总结"></a>2.8  总结</h3><table>
-<thead>
-<tr>
-<th></th>
-<th>zipkin</th>
-<th>pinpoint</th>
-<th>skywalking</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>探针性能</td>
-<td>中</td>
-<td>低</td>
-<td><strong>高</strong></td>
-</tr>
-<tr>
-<td>collector扩展性</td>
-<td><strong>高</strong></td>
-<td>中</td>
-<td><strong>高</strong></td>
-</tr>
-<tr>
-<td>调用链路数据分析</td>
-<td>低</td>
-<td><strong>高</strong></td>
-<td>中</td>
-</tr>
-<tr>
-<td>对开发透明性</td>
-<td>中</td>
-<td><strong>高</strong></td>
-<td><strong>高</strong></td>
-</tr>
-<tr>
-<td>调用链应用拓扑</td>
-<td>中</td>
-<td><strong>高</strong></td>
-<td>中</td>
-</tr>
-<tr>
-<td>社区支持</td>
-<td><strong>高</strong></td>
-<td>中</td>
-<td><strong>高</strong></td>
-</tr>
-</tbody></table>
-<p>相对来说，skywalking更占优，因此团队采用skywalking作为APM工具。</p>
-<h2 id="3-参考内容"><a href="#3-参考内容" class="headerlink" title="3. 参考内容"></a>3. 参考内容</h2><p>本文主要内容参考下文：<br><a target="_blank" rel="noopener" href="https://juejin.im/post/5a7a9e0af265da4e914b46f1">https://juejin.im/post/5a7a9e0af265da4e914b46f1</a><br><a target="_blank" rel="noopener" href="http://bigbully.github.io/Dapper-translation/">http://bigbully.github.io/Dapper-translation/</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -4674,7 +4642,7 @@ events &#123;
       <div class="site-state-item site-state-posts">
           <a href="/jadepeng/archives/">
         
-          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-count">98</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -4727,13 +4695,13 @@ events &#123;
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">642k</span>
+    <span title="站点总字数">668k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">9:44</span>
+    <span title="站点阅读时长">10:08</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>

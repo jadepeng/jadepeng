@@ -187,6 +187,234 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/09/17/jqpeng-%E6%95%99%E7%A8%8B%20%E2%80%94%E2%80%94%20%E5%A6%82%E4%BD%95%E5%9C%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BA%94%E7%94%A8%E9%9B%86%E6%88%90superset/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2019/09/17/jqpeng-%E6%95%99%E7%A8%8B%20%E2%80%94%E2%80%94%20%E5%A6%82%E4%BD%95%E5%9C%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BA%94%E7%94%A8%E9%9B%86%E6%88%90superset/" class="post-title-link" itemprop="url">教程 —— 如何在自己的应用集成superset</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-17 20:01:00" itemprop="dateCreated datePublished" datetime="2019-09-17T20:01:00+08:00">2019-09-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/intergate-superset.html">教程 —— 如何在自己的应用集成superset</a></p>
+<p>Superset 是apache的一个孵化项目，定位为一款现代的，准商用BI系统</p>
+<h2 id="superset"><a href="#superset" class="headerlink" title="superset"></a>superset</h2><blockquote>
+<p>Apache Superset  (incubating) is a modern, enterprise-ready business intelligence web application</p>
+</blockquote>
+<p>Superset 是apache的一个孵化项目，定位为一款现代的，准商用BI系统。</p>
+<p>Superset（Caravel）是由Airbnb（知名在线房屋短租公司）开源的数据分析与可视化平台（曾用名Caravel、Panoramix），该工具主要特点是可自助分析、自定义仪表盘、分析结果可视化（导出）、用户/角色权限控制，还集成了一个SQL编辑器，可以进行SQL编辑查询等。</p>
+<p>通过superset，可以制作漂亮的统计图表。</p>
+<h3 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h3><p><img src="https://superset.incubator.apache.org/_images/bank_dash.png" alt="_images/bank_dash.png"></p>
+<hr>
+<p><img src="https://superset.incubator.apache.org/_images/explore.png" alt="_images/explore.png"></p>
+<hr>
+<p><img src="https://superset.incubator.apache.org/_images/sqllab.png" alt="_images/sqllab.png"></p>
+<hr>
+<p><img src="https://superset.incubator.apache.org/_images/deckgl_dash.png" alt="_images/deckgl_dash.png"></p>
+<h2 id="superset安装"><a href="#superset安装" class="headerlink" title="superset安装"></a>superset安装</h2><p>我们这里直接使用docker</p>
+<pre><code>git clone https://github.com/apache/incubator-superset/
+cd incubator-superset/contrib/docker
+# prefix with SUPERSET_LOAD_EXAMPLES=yes to load examples:
+docker-compose run --rm superset ./docker-init.sh
+# you can run this command everytime you need to start superset now:
+docker-compose up
+</code></pre>
+<p>等构建完成后，访问 <a target="_blank" rel="noopener" href="http://localhost:8088/">http://localhost:8088</a> 即可。</p>
+<p>想要在自己的应用集成，首先要解决认证</p>
+<h2 id="superset-认证分析"><a href="#superset-认证分析" class="headerlink" title="superset 认证分析"></a>superset 认证分析</h2><p>superset基于flask-appbuilder开发，security基于flask_appbuilder.security，翻阅其代码，</p>
+<p>找到入口： <code>superset/__init__.py</code>:</p>
+<pre><code>custom_sm = app.config.get(&#39;CUSTOM_SECURITY_MANAGER&#39;) or SupersetSecurityManager
+if not issubclass(custom_sm, SupersetSecurityManager):
+    raise Exception(
+        &quot;&quot;&quot;Your CUSTOM_SECURITY_MANAGER must now extend SupersetSecurityManager,
+         not FAB&#39;s security manager.
+         See [4565] in UPDATING.md&quot;&quot;&quot;)
+
+appbuilder = AppBuilder(
+    app,
+    db.session,
+    base_template=&#39;superset/base.html&#39;,
+    indexview=MyIndexView,
+    security_manager_class=custom_sm,
+    update_perms=get_update_perms_flag(),
+)
+
+security_manager = appbuilder.sm
+</code></pre>
+<p>默认使用<code>SupersetSecurityManager</code>,继承自<code>SecurityManager</code>：</p>
+<pre><code>class SupersetSecurityManager(SecurityManager):
+
+    def get_schema_perm(self, database, schema):
+        if schema:
+            return &#39;[&#123;&#125;].[&#123;&#125;]&#39;.format(database, schema)
+
+    def can_access(self, permission_name, view_name):
+        &quot;&quot;&quot;Protecting from has_access failing from missing perms/view&quot;&quot;&quot;
+        user = g.user
+        if user.is_anonymous:
+            return self.is_item_public(permission_name, view_name)
+        return self._has_view_access(user, permission_name, view_name)        ...
+</code></pre>
+<p>我们再来看SecurityManager及父类，发现，登录是通过auth_view来控制的，默认是AUTH_DB，也就是AuthDBView。</p>
+<pre><code>&quot;&quot;&quot; Override if you want your own Authentication LDAP view &quot;&quot;&quot;
+      authdbview = AuthDBView      if self.auth_type == AUTH_DB:
+            self.user_view = self.userdbmodelview
+            self.auth_view = self.authdbview()
+ @property
+    def get_url_for_login(self):
+        return url_for(&#39;%s.%s&#39; % (self.sm.auth_view.endpoint, &#39;login&#39;))
+</code></pre>
+<p>再来看authdbview：</p>
+<pre><code>class AuthDBView(AuthView):
+    login_template = &#39;appbuilder/general/security/login_db.html&#39;
+
+    @expose(&#39;/login/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
+    def login(self):
+        if g.user is not None and g.user.is_authenticated:
+            return redirect(self.appbuilder.get_url_for_index)
+        form = LoginForm_db()
+        if form.validate_on_submit():
+            user = self.appbuilder.sm.auth_user_db(form.username.data, form.password.data)
+            if not user:
+                flash(as_unicode(self.invalid_login_message), &#39;warning&#39;)
+                return redirect(self.appbuilder.get_url_for_login)
+            login_user(user, remember=False)
+            return redirect(self.appbuilder.get_url_for_index)
+        return self.render_template(self.login_template,
+                               title=self.title,
+                               form=form,
+                               appbuilder=self.appbuilder)
+</code></pre>
+<p>对外提供’/login/‘接口，读取HTTP POST里的用户名，密码，然后调用auth_user_db验证，验证通过调用login_user生成认证信息。</p>
+<p>因此，我们可以自定义AuthDBView，改为从我们自己的应用认证即可。</p>
+<h2 id="使用jwt来验证superset"><a href="#使用jwt来验证superset" class="headerlink" title="使用jwt来验证superset"></a>使用jwt来验证superset</h2><p>自定义CustomAuthDBView，继承自AuthDBView，登录时可以通过cookie或者url参数传入jwt token，然后验证通过的话，自动登录，。</p>
+<pre><code>import jwt
+import json
+class CustomAuthDBView(AuthDBView):
+    login_template = &#39;appbuilder/general/security/login_db.html&#39;
+
+    @expose(&#39;/login/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
+    def login(self):
+        token = request.args.get(&#39;token&#39;)
+        if not token:
+            token = request.cookies.get(&#39;access_token&#39;)
+        if token is not None:
+            jwt_payload = jwt.decode(token,&#39;secret&#39;,algorithms=[&#39;RS256&#39;])
+            user_name = jwt_payload.get(&quot;user_name&quot;)
+            user = self.appbuilder.sm.find_user(username=user_name)
+            if not user:
+               role_admin = self.appbuilder.sm.find_role(&#39;Admin&#39;)
+               user = self.appbuilder.sm.add_user(user_name, user_name, &#39;aimind&#39;, user_name + &quot;@aimind.com&quot;, role_admin, password = &quot;aimind&quot; + user_name)
+            if user:
+                login_user(user, remember=False)
+                redirect_url = request.args.get(&#39;redirect&#39;)
+                if not redirect_url:
+                    redirect_url = self.appbuilder.get_url_for_index
+                return redirect(redirect_url)
+            else:
+                return super(CustomAuthDBView,self).login()
+        else:
+            flash(&#39;Unable to auto login&#39;, &#39;warning&#39;)
+            return super(CustomAuthDBView,self).login()
+</code></pre>
+<p>如果用户不存在，通过self.appbuilder.sm.add_user自动添加用户。</p>
+<p>然后再引入这个CustomAuthDBView，</p>
+<pre><code>class CustomSecurityManager(SupersetSecurityManager):
+    authdbview = CustomAuthDBView
+</code></pre>
+<p>最后，再引入这个CustomSecurityManager,在superset_config.py 里增加：</p>
+<pre><code>from aimind_security import CustomSecurityManager
+CUSTOM_SECURITY_MANAGER = CustomSecurityManager
+</code></pre>
+<h2 id="在应用里集成superset"><a href="#在应用里集成superset" class="headerlink" title="在应用里集成superset"></a>在应用里集成superset</h2><p>集成就简单了，访问，’SUPER_SET_URL/login/?token=jwt_token’ 即可，可以通过iframe无缝集成。</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/09/12/jqpeng-%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%8E%A8%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5(3)%20--%20jena%E8%87%AA%E5%AE%9A%E4%B9%89builtin/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -220,7 +448,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -591,7 +819,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -742,7 +970,7 @@ CMD [ &quot;/bin/bash&quot; ]
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1094,7 +1322,7 @@ List rules = Rule.parseRules( rulesSrc );
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1475,7 +1703,7 @@ System.out.println(&quot; - &quot; + i.next());
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1954,7 +2182,7 @@ com.github.dockerjava.api.model.Statistics@55a88417[read=2019-09-02T12:20:14.534
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2205,7 +2433,7 @@ com.github.dockerjava.api.model.Statistics@55a88417[read=2019-09-02T12:20:14.534
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2508,7 +2736,7 @@ ASK  &#123; ?x foaf:name  &quot;Alice&quot; ;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2731,7 +2959,7 @@ systemctl status docker.service
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2867,243 +3095,6 @@ systemctl status docker.service
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/05/24/jqpeng-%E5%A4%9A%E8%AF%AD%E8%A8%80%E4%B8%9A%E5%8A%A1%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Sentry%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2019/05/24/jqpeng-%E5%A4%9A%E8%AF%AD%E8%A8%80%E4%B8%9A%E5%8A%A1%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Sentry%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">多语言业务错误日志收集监控工具Sentry 安装与使用</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-24 16:04:00" itemprop="dateCreated datePublished" datetime="2019-05-24T16:04:00+08:00">2019-05-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/sentry.html">多语言业务错误日志收集监控工具Sentry 安装与使用</a></p>
-<p>Sentry 是一个实时事件日志记录和汇集的平台。其专注于错误监控以及提取一切事后处理所需信息而不依赖于麻烦的用户反馈。</p>
-<p>Sentry是一个日志平台, 它分为客户端和服务端，客户端(目前客户端有Python, PHP,C#, Ruby等多种语言)就嵌入在你的应用程序中间，程序出现异常就向服务端发送消息，服务端将消息记录到数据库中并提供一个web节目方便查看。Sentry由python编写，源码开放，性能卓越，易于扩展，目前著名的用户有Disqus, Path, mozilla, Pinterest等。</p>
-<h2 id="通过docker安装"><a href="#通过docker安装" class="headerlink" title="通过docker安装"></a>通过docker安装</h2><p>官方提供了 On-Premise 安装方式</p>
-<pre><code>git clone https://github.com/getsentry/onpremise
-cd onpremise
-</code></pre>
-<p>然后创建volume，持久化存储</p>
-<pre><code>docker volume create --name=sentry-data &amp;&amp; docker volume create --name=sentry-postgres
-</code></pre>
-<p>创建环境变量配置文件：</p>
-<pre><code>cp -n .env.example .env - create env config file
-</code></pre>
-<p>docker-compose build镜像，这一步会拉取官方镜像和redis等依赖，耐心等待    ：</p>
-<pre><code>docker-compose build - Build and tag the Docker services
-</code></pre>
-<p>创建secret-key，执行后得到一个key，添加到.env中的SENTRY_SECRET_KEY</p>
-<pre><code>docker-compose run --rm web config generate-secret-key 
-</code></pre>
-<p>创建DB和初始化用户,等待创建数据库和</p>
-<pre><code>docker-compose run --rm web upgrade
-Created internal Sentry project (slug=internal, id=1)
-
-Would you like to create a user account now? [Y/n]: y
-Email: 
-Password: 
-Repeat for confirmation: 
-Should this user be a superuser? [y/N]: y
-Added to organization: sentry
-Running migrations for sentry.nodestore:
- - Migrating forwards to 0001_initial.
-</code></pre>
-<p>最后-d启动，启动成功后可以访问<a target="_blank" rel="noopener" href="http://server-ip:9000/">http://server-ip:9000</a></p>
-<pre><code>docker-compose up -d 
-</code></pre>
-<p>访问：</p>
-<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558680516195.png" alt="sentry"></p>
-<h2 id="创建项目并集成"><a href="#创建项目并集成" class="headerlink" title="创建项目并集成"></a>创建项目并集成</h2><p>先创建一个project，支持多种语言，我们创建一个java的</p>
-<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558680561117.png" alt="create project"></p>
-<h3 id="DSN（Client-Keys）"><a href="#DSN（Client-Keys）" class="headerlink" title="DSN（Client Keys）"></a>DSN（Client Keys）</h3><p>DSN格式为：</p>
-<p>DSN=”<a href="https://public:private@host:port/project\_id&quot;">https://public:private@host:port/project\_id&quot;</a></p>
-<p>可以在项目的setting-Client Keys（DSN）里查看。</p>
-<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2019/5-24/1558684229783.png" alt="DSK"></p>
-<p>然后根据格式拼成DSN即可。</p>
-<h3 id="java项目集成"><a href="#java项目集成" class="headerlink" title="java项目集成"></a>java项目集成</h3><p>有多种集成方式：</p>
-<h4 id="基本集成方式"><a href="#基本集成方式" class="headerlink" title="基本集成方式"></a>基本集成方式</h4><p>添加maven引用：</p>
-<pre><code>    &lt;dependency&gt;    &lt;groupId&gt;io.sentry&lt;/groupId&gt;    &lt;artifactId&gt;sentry&lt;/artifactId&gt;    &lt;version&gt;1.7.16&lt;/version&gt;&lt;/dependency&gt;
-</code></pre>
-<p>然后在全局异常处理里集成：</p>
-<pre><code> String dsn = &quot;http://&lt;SENTRY_PUBLIC_KEY&gt;:&lt;SENTRY_PRIVATE_KEY&gt;@host:port/&lt;PROJECT_ID&gt;&quot;;
- Sentry.init(dsn);
-</code></pre>
-<p>在有异常的地方：</p>
-<pre><code>      try &#123;
-            unsafeMethod();
-        &#125; catch (Exception e) &#123;
-            // This sends an exception event to Sentry using the statically stored instance
-            // that was created in the ``main`` method.
-            Sentry.capture(e);
-        &#125;
-</code></pre>
-<h4 id="logback集成"><a href="#logback集成" class="headerlink" title="logback集成"></a>logback集成</h4><p>logback配置：</p>
-<pre><code>&lt;configuration&gt;
-
-  &lt;appender name=&quot;Console&quot; class=&quot;ch.qos.logback.core.ConsoleAppender&quot;&gt;
-    &lt;encoder&gt;
-      &lt;pattern&gt;%d&#123;HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;36&#125; - %msg%n&lt;/pattern&gt;
-    &lt;/encoder&gt;
-  &lt;/appender&gt;
-
-  &lt;appender name=&quot;Sentry&quot; class=&quot;io.sentry.logback.SentryAppender&quot;&gt;
-    &lt;filter class=&quot;ch.qos.logback.classic.filter.ThresholdFilter&quot;&gt;
-      &lt;level&gt;WARN&lt;/level&gt;
-    &lt;/filter&gt;
-  &lt;/appender&gt;
-
-  &lt;root level=&quot;DEBUG&quot;&gt;
-    &lt;appender-ref ref=&quot;Console&quot; /&gt;
-    &lt;appender-ref ref=&quot;Sentry&quot;/&gt;
-  &lt;/root&gt;
-
-&lt;/configuration&gt;
-</code></pre>
-<h4 id="spring-boot集成"><a href="#spring-boot集成" class="headerlink" title="spring-boot集成"></a>spring-boot集成</h4><p>先添加引用：</p>
-<pre><code>        &lt;dependency&gt;        &lt;groupId&gt;io.sentry&lt;/groupId&gt;        &lt;artifactId&gt;sentry-spring&lt;/artifactId&gt;        &lt;version&gt;1.7.16&lt;/version&gt;    &lt;/dependency&gt;
-</code></pre>
-<p>在Application里集成：</p>
-<pre><code>import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.ServletContextInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-
-@Controller
-@EnableAutoConfiguration
-@SpringBootApplication
-public class Application &#123;
-    /*
-    Register a HandlerExceptionResolver that sends all exceptions to Sentry
-    and then defers all handling to the other HandlerExceptionResolvers.
-    You should only register this is you are not using a logging integration,
-    otherwise you may double report exceptions.
-     */
-    @Bean
-    public HandlerExceptionResolver sentryExceptionResolver() &#123;
-        return new io.sentry.spring.SentryExceptionResolver();
-    &#125;
-
-    /*
-    Register a ServletContextInitializer that installs the SentryServletRequestListener
-    so that Sentry events contain HTTP request information.
-    This should only be necessary in Spring Boot applications. &quot;Classic&quot; Spring
-    should automatically load the `io.sentry.servlet.SentryServletContainerInitializer`.
-     */
-    @Bean
-    public ServletContextInitializer sentryServletContextInitializer() &#123;
-        return new io.sentry.spring.SentryServletContextInitializer();
-    &#125;
-
-    @RequestMapping(&quot;/&quot;)
-    @ResponseBody
-    String home() &#123;
-        int x = 1 / 0;
-
-        return &quot;Hello World!&quot;;
-    &#125;
-
-    public static void main(String[] args) &#123;
-        SpringApplication.run(Application.class, args);
-    &#125;
-&#125;
-</code></pre>
-<h3 id="前端项目集成"><a href="#前端项目集成" class="headerlink" title="前端项目集成"></a>前端项目集成</h3><p>前端集成更简单，引用sentry的js，然后init即可</p>
-<pre><code>&lt;script src=&quot;https://browser.sentry-cdn.com/5.1.0/bundle.min.js&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
-Sentry.init(&#123; dsn: &#39;dsn&#39; &#125;);
-</code></pre>
-<hr>
-<blockquote>
-<p>作者：Jadepeng 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a> 您的支持是对博主最大的鼓励，感谢您的认真阅读。 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -3175,7 +3166,7 @@ Sentry.init(&#123; dsn: &#39;dsn&#39; &#125;);
       <div class="site-state-item site-state-posts">
           <a href="/jadepeng/archives/">
         
-          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-count">98</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -3228,13 +3219,13 @@ Sentry.init(&#123; dsn: &#39;dsn&#39; &#125;);
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">642k</span>
+    <span title="站点总字数">668k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">9:44</span>
+    <span title="站点阅读时长">10:08</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>

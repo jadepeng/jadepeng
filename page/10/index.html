@@ -187,6 +187,645 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/04/13/jqpeng-RPC%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2017/04/13/jqpeng-RPC%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">RPC框架原理与实现</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-04-13 16:04:00" itemprop="dateCreated datePublished" datetime="2017-04-13T16:04:00+08:00">2017-04-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>16k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>15 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/java-rpc.html">RPC框架原理与实现</a></p>
+<p>RPC，全称 Remote Procedure Call（远程过程调用），即调用远程计算机上的服务，就像调用本地服务一样。那么RPC的原理是什么呢？了解一个技术最好的思路就是寻找一个该类型麻雀虽小五脏俱全的开源项目，不负所期，找到一个<a target="_blank" rel="noopener" href="http://git.oschina.net/huangyong/rpc">轻量级分布式 RPC 框架</a>，本文从这个项目入手来解读RPC的原理及其实现。</p>
+<p>其实说到RPC，大家应该不会陌生才是，以往流行的Web Service就是一种RPC，一般来说RPC 可基于 HTTP 或 TCP 协议，因为Web Service 基于HTTP，所以具有良好的跨平台性，但由于HTTP是应用层协议，相比TCP性能有所损耗。</p>
+<p>与本地调用不一样，远程调用需要通过网络层传输，因此涉及到的一个问题就是序列化，不同的序列化方式影响调用性能，流行的序列化包括Protobuf、Kryo、Hessian、Jackson、Thrift。</p>
+<p>下面，让我们来一关如何从零开始实现分布式RPC框架。</p>
+<h2 id="RPC框架组件"><a href="#RPC框架组件" class="headerlink" title="RPC框架组件"></a>RPC框架组件</h2><p>建设一个框架，一个系统，首先要做的就是分析需要哪些组件，他们的关系是什么？</p>
+<p>简单分析下，一个RPC框架需要包括：</p>
+<ul>
+<li>APP ：应用端，调用服务</li>
+<li>Server 服务容器，对外提供服务</li>
+<li>Service Registry 服务注册表</li>
+</ul>
+<blockquote>
+<p>我们需要将服务部署在分布式环境下的不同节点上，通过服务注册的方式，让客户端来自动发现当前可用的服务，并调用这些服务。这需要一种服务注册表（Service Registry）的组件，让它来注册分布式环境下所有的服务地址（包括：主机名与端口号）。</p>
+</blockquote>
+<p><img src="https://ooo.0o0.ooo/2017/04/13/58ef302271951.jpg" alt="RPC框架图" title="RPC"><br> 每台 Server 上可发布多个 Service，这些 Service 共用一个 host 与 port，在分布式环境下会提供 Server 共同对外提供 Service。此外，为防止 Service Registry 出现单点故障，因此需要将其搭建为集群环境。</p>
+<h2 id="RPC框架实现"><a href="#RPC框架实现" class="headerlink" title="RPC框架实现"></a>RPC框架实现</h2><h3 id="定义服务"><a href="#定义服务" class="headerlink" title="定义服务"></a>定义服务</h3><p>首先定义服务接口，接口可以单独放在一个jar包中</p>
+<pre><code>public interface HelloService &#123;
+String hello(String name);
+String hello(Person person);
+&#125;
+</code></pre>
+<h3 id="实现接口"><a href="#实现接口" class="headerlink" title="实现接口"></a>实现接口</h3><p>然后，增加一种实现</p>
+<pre><code>@RpcService(HelloService.class)
+public class HelloServiceImpl implements HelloService &#123;
+
+    @Override
+    public String hello(String name) &#123;
+        return &quot;Hello! &quot; + name;
+    &#125;
+
+    @Override
+    public String hello(Person person) &#123;
+        return &quot;Hello! &quot; + person.getFirstName() + &quot; &quot; + person.getLastName();
+    &#125;
+&#125;
+</code></pre>
+<p>这里的RpcService注解，定义在服务接口的实现类上，可以让框架通过这个注解找到服务实现类。</p>
+<p>更进一步，如果哪天服务版本升级了，但是历史服务还有人在使用，怎么办？解决方案就是服务需要分版本，按版本调用。</p>
+<pre><code>@RpcService(value = HelloService.class, version = &quot;sample.hello2&quot;)
+public class HelloServiceImpl2 implements HelloService &#123;
+
+    @Override
+    public String hello(String name) &#123;
+        return &quot;你好! &quot; + name;
+    &#125;
+
+    @Override
+    public String hello(Person person) &#123;
+        return &quot;你好! &quot; + person.getFirstName() + &quot; &quot; + person.getLastName();
+    &#125;
+&#125;
+</code></pre>
+<p>再来看下 RPC 服务注解</p>
+<pre><code>/**
+ * RPC 服务注解（标注在服务实现类上）
+ */
+@Target(&#123;ElementType.TYPE&#125;)
+@Retention(RetentionPolicy.RUNTIME)
+@Component
+public @interface RpcService &#123;
+
+    /**
+     * 服务接口类
+     */
+    Class&lt;?&gt; value();
+
+    /**
+     * 服务版本号
+     */
+    String version() default &quot;&quot;;
+&#125;
+</code></pre>
+<h3 id="服务端实现"><a href="#服务端实现" class="headerlink" title="服务端实现"></a>服务端实现</h3><p>Server端主要基于Netty（一个NIO框架）+Spring</p>
+<p>回到开头讲的，RPC关键点之一就是传输序列化，简单来说就是客户端调用service时，需要构建一个请求，然后将这个请求序列化传输到服务端，服务端完成调用后，再将结果 序列化后返回，简单画一下：</p>
+<p><img src="https://ooo.0o0.ooo/2017/04/13/58ef300978eca.jpg" alt="RPC请求" title="RPC"></p>
+<h4 id="定义Request"><a href="#定义Request" class="headerlink" title="定义Request"></a>定义Request</h4><pre><code>public class RpcRequest &#123;
+
+    private String requestId;
+    private String interfaceName;
+    private String serviceVersion;
+    private String methodName;
+    private Class&lt;?&gt;[] parameterTypes;
+    private Object[] parameters;
+
+&#125;
+</code></pre>
+<h4 id="定义RpcResponse"><a href="#定义RpcResponse" class="headerlink" title="定义RpcResponse"></a>定义RpcResponse</h4><pre><code>public class RpcResponse &#123;
+
+    private String requestId;
+    private Exception exception;
+    private Object result;
+
+&#125;
+</code></pre>
+<h4 id="Encoder与Decoder"><a href="#Encoder与Decoder" class="headerlink" title="Encoder与Decoder"></a>Encoder与Decoder</h4><p>因为项目基于Netty，所以按Netty那一套搞就行，核心是SerializationUtil，这个根据需要可以采用不同的序列化框架，比如pb。</p>
+<pre><code>public class RpcEncoder extends MessageToByteEncoder &#123;
+
+    private Class&lt;?&gt; genericClass;
+
+    public RpcEncoder(Class&lt;?&gt; genericClass) &#123;
+        this.genericClass = genericClass;
+    &#125;
+
+    @Override
+    public void encode(ChannelHandlerContext ctx, Object in, ByteBuf out) throws Exception &#123;
+        if (genericClass.isInstance(in)) &#123;
+            byte[] data = SerializationUtil.serialize(in);
+            out.writeInt(data.length);
+            out.writeBytes(data);
+        &#125;
+    &#125;
+&#125;
+
+
+
+public class RpcDecoder extends ByteToMessageDecoder &#123;
+
+    private Class&lt;?&gt; genericClass;
+
+    public RpcDecoder(Class&lt;?&gt; genericClass) &#123;
+        this.genericClass = genericClass;
+    &#125;
+
+    @Override
+    public void decode(ChannelHandlerContext ctx, ByteBuf in, List&lt;Object&gt; out) throws Exception &#123;
+        if (in.readableBytes() &lt; 4) &#123;
+            return;
+        &#125;
+        in.markReaderIndex();
+        int dataLength = in.readInt();
+        if (in.readableBytes() &lt; dataLength) &#123;
+            in.resetReaderIndex();
+            return;
+        &#125;
+        byte[] data = new byte[dataLength];
+        in.readBytes(data);
+        out.add(SerializationUtil.deserialize(data, genericClass));
+    &#125;
+&#125;
+</code></pre>
+<h4 id="扫描服务"><a href="#扫描服务" class="headerlink" title="扫描服务"></a>扫描服务</h4><p>服务端采用Spring，并且服务加了RpcService注解，所以服务器启动的时候扫描一下带RpcService的就行</p>
+<p>下面的代码实现了将服务找出来，并放到handlerMap里，这样，调用服务的时候就可以根据服务名称从Map里找到服务对象，知道了服务对象和服务方法，就能直接调用了。</p>
+<pre><code>    private Map&lt;String, Object&gt; handlerMap = new HashMap&lt;&gt;();
+
+    public void setApplicationContext(ApplicationContext ctx) throws BeansException &#123;
+        // 扫描带有 RpcService 注解的类并初始化 handlerMap 对象
+        Map&lt;String, Object&gt; serviceBeanMap = ctx.getBeansWithAnnotation(RpcService.class);
+        if (MapUtils.isNotEmpty(serviceBeanMap)) &#123;
+            for (Object serviceBean : serviceBeanMap.values()) &#123;
+                RpcService rpcService = serviceBean.getClass().getAnnotation(RpcService.class);
+                String serviceName = rpcService.value().getName();
+                String serviceVersion = rpcService.version();
+                if (StringUtil.isNotEmpty(serviceVersion)) &#123;
+                    serviceName += &quot;-&quot; + serviceVersion;
+                &#125;
+                handlerMap.put(serviceName, serviceBean);
+            &#125;
+        &#125;
+    &#125;
+</code></pre>
+<h4 id="启动服务器"><a href="#启动服务器" class="headerlink" title="启动服务器"></a>启动服务器</h4><p>按照Netty服务器标准代码，启动服务，注意Encoder和Decoder</p>
+<pre><code> @Override
+    public void afterPropertiesSet() throws Exception &#123;
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        try &#123;
+            // 创建并初始化 Netty 服务端 Bootstrap 对象
+            ServerBootstrap bootstrap = new ServerBootstrap();
+            bootstrap.group(bossGroup, workerGroup);
+            bootstrap.channel(NioServerSocketChannel.class);
+            bootstrap.childHandler(new ChannelInitializer&lt;SocketChannel&gt;() &#123;
+                @Override
+                public void initChannel(SocketChannel channel) throws Exception &#123;
+                    ChannelPipeline pipeline = channel.pipeline();
+                    pipeline.addLast(new RpcDecoder(RpcRequest.class)); // 解码 RPC 请求
+                    pipeline.addLast(new RpcEncoder(RpcResponse.class)); // 编码 RPC 响应
+                    pipeline.addLast(new RpcServerHandler(handlerMap)); // 处理 RPC 请求
+                &#125;
+            &#125;);
+            bootstrap.option(ChannelOption.SO_BACKLOG, 1024);
+            bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
+            // 获取 RPC 服务器的 IP 地址与端口号
+            String[] addressArray = StringUtil.split(serviceAddress, &quot;:&quot;);
+            String ip = addressArray[0];
+            int port = Integer.parseInt(addressArray[1]);
+            // 启动 RPC 服务器
+            ChannelFuture future = bootstrap.bind(ip, port).sync();
+            // 注册 RPC 服务地址
+            if (serviceRegistry != null) &#123;
+                for (String interfaceName : handlerMap.keySet()) &#123;
+                    serviceRegistry.register(interfaceName, serviceAddress);
+                    LOGGER.debug(&quot;register service: &#123;&#125; =&gt; &#123;&#125;&quot;, interfaceName, serviceAddress);
+                &#125;
+            &#125;
+            LOGGER.debug(&quot;server started on port &#123;&#125;&quot;, port);
+            // 关闭 RPC 服务器
+            future.channel().closeFuture().sync();
+        &#125; finally &#123;
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+        &#125;
+    &#125;
+</code></pre>
+<h4 id="处理请求"><a href="#处理请求" class="headerlink" title="处理请求"></a>处理请求</h4><p>RpcServerHandler负责处理请求，熟悉Netty的应该知道，继承SimpleChannelInboundHandler，在channelRead0函数里处理即可，注意，因为pipline里前面已经解码为RpcRequest对象了，所以在这里可以直接使用。</p>
+<pre><code>    public class RpcServerHandler extends SimpleChannelInboundHandler&lt;RpcRequest&gt; &#123;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RpcServerHandler.class);
+
+    private final Map&lt;String, Object&gt; handlerMap;
+
+    public RpcServerHandler(Map&lt;String, Object&gt; handlerMap) &#123;
+        this.handlerMap = handlerMap;
+    &#125;
+
+    @Override
+    public void channelRead0(final ChannelHandlerContext ctx, RpcRequest request) throws Exception &#123;
+        // 创建并初始化 RPC 响应对象
+        RpcResponse response = new RpcResponse();
+        response.setRequestId(request.getRequestId());
+        try &#123;
+            Object result = handle(request);
+            response.setResult(result);
+        &#125; catch (Exception e) &#123;
+            LOGGER.error(&quot;handle result failure&quot;, e);
+            response.setException(e);
+        &#125;
+        // 写入 RPC 响应对象并自动关闭连接
+        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+    &#125;
+&#125;
+</code></pre>
+<p>框架没什么说的，核心是怎么handle，无非就是从Reques里获取到服务名称和版本号，然后从handlerMap里寻找服务对象，然后调用方法。</p>
+<blockquote>
+<p>已知方法名和Class，可以通过反射进行调用，但是反射性能较低，可以使用cglib里的FastClass来执行invoke，详情参见<a target="_blank" rel="noopener" href="http://blog.jobbole.com/105423/">说说 cglib 动态代理</a></p>
+</blockquote>
+<pre><code>    private Object handle(RpcRequest request) throws Exception &#123;
+        // 获取服务对象
+        String serviceName = request.getInterfaceName();
+        String serviceVersion = request.getServiceVersion();
+        if (StringUtil.isNotEmpty(serviceVersion)) &#123;
+            serviceName += &quot;-&quot; + serviceVersion;
+        &#125;
+        Object serviceBean = handlerMap.get(serviceName);
+        if (serviceBean == null) &#123;
+            throw new RuntimeException(String.format(&quot;can not find service bean by key: %s&quot;, serviceName));
+        &#125;
+        // 获取反射调用所需的参数
+        Class&lt;?&gt; serviceClass = serviceBean.getClass();
+        String methodName = request.getMethodName();
+        Class&lt;?&gt;[] parameterTypes = request.getParameterTypes();
+        Object[] parameters = request.getParameters();
+        // 执行反射调用
+//        Method method = serviceClass.getMethod(methodName, parameterTypes);
+//        method.setAccessible(true);
+//        return method.invoke(serviceBean, parameters);
+        // 使用 CGLib 执行反射调用
+        FastClass serviceFastClass = FastClass.create(serviceClass);
+        FastMethod serviceFastMethod = serviceFastClass.getMethod(methodName, parameterTypes);
+        return serviceFastMethod.invoke(serviceBean, parameters);
+    &#125;
+</code></pre>
+<h4 id="服务发现与注册"><a href="#服务发现与注册" class="headerlink" title="服务发现与注册"></a>服务发现与注册</h4><p>在分布式系统里，服务的自动发现与注册是标配功能，一般来说都是使用集中配置中心，开源届有Zookeeper、etcd等实现。这里，使用zk作为配置中心。</p>
+<p>服务发现与注册的核心是，服务启动时，将服务名称和服务地址写入到配置中心，客户端调用的时候，先从集中配置中心读取所要调用服务的服务器地址，如果有多个，随机挑选一个（当然随机的话会存在负载不均衡问题），连接服务器并调用。</p>
+<blockquote>
+<p>个人认为较好的实现方式是，服务层面加一个HA层，客户端直接调用HA，HA负责负载Service。</p>
+</blockquote>
+<p>回到代码解读，这里使用的zookeeper，我们来看怎么实现。</p>
+<p>先是定义接口：</p>
+<pre><code>public interface ServiceRegistry &#123;
+
+    /**
+     * 注册服务名称与服务地址
+     *
+     * @param serviceName    服务名称
+     * @param serviceAddress 服务地址
+     */
+    void register(String serviceName, String serviceAddress);
+&#125;
+
+public interface ServiceDiscovery &#123;
+
+    /**
+     * 根据服务名称查找服务地址
+     *
+     * @param serviceName 服务名称
+     * @return 服务地址
+     */
+    String discover(String serviceName);
+&#125;
+</code></pre>
+<p>再看谈实现，zk有两种类型的节点，永久节点和临时节点，这种特性非常适合做服务发现与注册。<br> 试想：</p>
+<ul>
+<li>新启动一台Server，自动注册到ZK，写一个临时节点，客户端调用的时候就能读取到这个节点</li>
+<li>一台Server挂了，临时节点失效，客户端调用的时候就读取不到这个节点，自然不会调用</li>
+<li>当服务调用量太大，可以新启动服务，服务小的时候再停掉</li>
+</ul>
+<p>不再赘述，看代码：</p>
+<pre><code>public class ZooKeeperServiceRegistry implements ServiceRegistry &#123;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperServiceRegistry.class);
+
+    private final ZkClient zkClient;
+
+    public ZooKeeperServiceRegistry(String zkAddress) &#123;
+        // 创建 ZooKeeper 客户端
+        zkClient = new ZkClient(zkAddress, Constant.ZK_SESSION_TIMEOUT, Constant.ZK_CONNECTION_TIMEOUT);
+        LOGGER.debug(&quot;connect zookeeper&quot;);
+    &#125;
+
+    @Override
+    public void register(String serviceName, String serviceAddress) &#123;
+        // 创建 registry 节点（持久）
+        String registryPath = Constant.ZK_REGISTRY_PATH;
+        if (!zkClient.exists(registryPath)) &#123;
+            zkClient.createPersistent(registryPath);
+            LOGGER.debug(&quot;create registry node: &#123;&#125;&quot;, registryPath);
+        &#125;
+        // 创建 service 节点（持久）
+        String servicePath = registryPath + &quot;/&quot; + serviceName;
+        if (!zkClient.exists(servicePath)) &#123;
+            zkClient.createPersistent(servicePath);
+            LOGGER.debug(&quot;create service node: &#123;&#125;&quot;, servicePath);
+        &#125;
+        // 创建 address 节点（临时）
+        String addressPath = servicePath + &quot;/address-&quot;;
+        String addressNode = zkClient.createEphemeralSequential(addressPath, serviceAddress);
+        LOGGER.debug(&quot;create address node: &#123;&#125;&quot;, addressNode);
+    &#125;
+&#125;
+</code></pre>
+<p>原理就是创建了一个临时节点存储服务地址</p>
+<p>再来看服务发现：</p>
+<pre><code>public class ZooKeeperServiceDiscovery implements ServiceDiscovery &#123;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperServiceDiscovery.class);
+
+    private String zkAddress;
+
+    public ZooKeeperServiceDiscovery(String zkAddress) &#123;
+        this.zkAddress = zkAddress;
+    &#125;
+
+    @Override
+    public String discover(String name) &#123;
+        // 创建 ZooKeeper 客户端
+        ZkClient zkClient = new ZkClient(zkAddress, Constant.ZK_SESSION_TIMEOUT, Constant.ZK_CONNECTION_TIMEOUT);
+        LOGGER.debug(&quot;connect zookeeper&quot;);
+        try &#123;
+            // 获取 service 节点
+            String servicePath = Constant.ZK_REGISTRY_PATH + &quot;/&quot; + name;
+            if (!zkClient.exists(servicePath)) &#123;
+                throw new RuntimeException(String.format(&quot;can not find any service node on path: %s&quot;, servicePath));
+            &#125;
+            List&lt;String&gt; addressList = zkClient.getChildren(servicePath);
+            if (CollectionUtil.isEmpty(addressList)) &#123;
+                throw new RuntimeException(String.format(&quot;can not find any address node on path: %s&quot;, servicePath));
+            &#125;
+            // 获取 address 节点
+            String address;
+            int size = addressList.size();
+            if (size == 1) &#123;
+                // 若只有一个地址，则获取该地址
+                address = addressList.get(0);
+                LOGGER.debug(&quot;get only address node: &#123;&#125;&quot;, address);
+            &#125; else &#123;
+                // 若存在多个地址，则随机获取一个地址
+                address = addressList.get(ThreadLocalRandom.current().nextInt(size));
+                LOGGER.debug(&quot;get random address node: &#123;&#125;&quot;, address);
+            &#125;
+            // 获取 address 节点的值
+            String addressPath = servicePath + &quot;/&quot; + address;
+            return zkClient.readData(addressPath);
+        &#125; finally &#123;
+            zkClient.close();
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<h3 id="客户端实现"><a href="#客户端实现" class="headerlink" title="客户端实现"></a>客户端实现</h3><h4 id="服务代理"><a href="#服务代理" class="headerlink" title="服务代理"></a>服务代理</h4><p>可以先查看(<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi/p/java-proxy.html">http://www.cnblogs.com/xiaoqi/p/java-proxy.html</a>)了解java的动态代理。</p>
+<p>使用 Java 提供的动态代理技术实现 RPC 代理（当然也可以使用 CGLib 来实现），具体代码如下：</p>
+<pre><code>public class RpcProxy &#123;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RpcProxy.class);
+
+    private String serviceAddress;
+
+    private ServiceDiscovery serviceDiscovery;
+
+    public RpcProxy(String serviceAddress) &#123;
+        this.serviceAddress = serviceAddress;
+    &#125;
+
+    public RpcProxy(ServiceDiscovery serviceDiscovery) &#123;
+        this.serviceDiscovery = serviceDiscovery;
+    &#125;
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;T&gt; T create(final Class&lt;?&gt; interfaceClass) &#123;
+        return create(interfaceClass, &quot;&quot;);
+    &#125;
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;T&gt; T create(final Class&lt;?&gt; interfaceClass, final String serviceVersion) &#123;
+        // 创建动态代理对象
+        return (T) Proxy.newProxyInstance(
+                interfaceClass.getClassLoader(),
+                new Class&lt;?&gt;[]&#123;interfaceClass&#125;,
+                new InvocationHandler() &#123;
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;
+                        // 创建 RPC 请求对象并设置请求属性
+                        RpcRequest request = new RpcRequest();
+                        request.setRequestId(UUID.randomUUID().toString());
+                        request.setInterfaceName(method.getDeclaringClass().getName());
+                        request.setServiceVersion(serviceVersion);
+                        request.setMethodName(method.getName());
+                        request.setParameterTypes(method.getParameterTypes());
+                        request.setParameters(args);
+                        // 获取 RPC 服务地址
+                        if (serviceDiscovery != null) &#123;
+                            String serviceName = interfaceClass.getName();
+                            if (StringUtil.isNotEmpty(serviceVersion)) &#123;
+                                serviceName += &quot;-&quot; + serviceVersion;
+                            &#125;
+                            serviceAddress = serviceDiscovery.discover(serviceName);
+                            LOGGER.debug(&quot;discover service: &#123;&#125; =&gt; &#123;&#125;&quot;, serviceName, serviceAddress);
+                        &#125;
+                        if (StringUtil.isEmpty(serviceAddress)) &#123;
+                            throw new RuntimeException(&quot;server address is empty&quot;);
+                        &#125;
+                        // 从 RPC 服务地址中解析主机名与端口号
+                        String[] array = StringUtil.split(serviceAddress, &quot;:&quot;);
+                        String host = array[0];
+                        int port = Integer.parseInt(array[1]);
+                        // 创建 RPC 客户端对象并发送 RPC 请求
+                        RpcClient client = new RpcClient(host, port);
+                        long time = System.currentTimeMillis();
+                        RpcResponse response = client.send(request);
+                        LOGGER.debug(&quot;time: &#123;&#125;ms&quot;, System.currentTimeMillis() - time);
+                        if (response == null) &#123;
+                            throw new RuntimeException(&quot;response is null&quot;);
+                        &#125;
+                        // 返回 RPC 响应结果
+                        if (response.hasException()) &#123;
+                            throw response.getException();
+                        &#125; else &#123;
+                            return response.getResult();
+                        &#125;
+                    &#125;
+                &#125;
+        );
+    &#125;
+&#125;
+</code></pre>
+<h4 id="RPC客户端"><a href="#RPC客户端" class="headerlink" title="RPC客户端"></a>RPC客户端</h4><p>使用RpcClient类实现 RPC 客户端，只需扩展 Netty 提供的SimpleChannelInboundHandler抽象类即可，代码如下：</p>
+<pre><code>public class RpcClient extends SimpleChannelInboundHandler&lt;RpcResponse&gt; &#123;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RpcClient.class);
+
+    private final String host;
+    private final int port;
+
+    private RpcResponse response;
+
+    public RpcClient(String host, int port) &#123;
+        this.host = host;
+        this.port = port;
+    &#125;
+
+    @Override
+    public void channelRead0(ChannelHandlerContext ctx, RpcResponse response) throws Exception &#123;
+        this.response = response;
+    &#125;
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception &#123;
+        LOGGER.error(&quot;api caught exception&quot;, cause);
+        ctx.close();
+    &#125;
+
+    public RpcResponse send(RpcRequest request) throws Exception &#123;
+        EventLoopGroup group = new NioEventLoopGroup();
+        try &#123;
+            // 创建并初始化 Netty 客户端 Bootstrap 对象
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(group);
+            bootstrap.channel(NioSocketChannel.class);
+            bootstrap.handler(new ChannelInitializer&lt;SocketChannel&gt;() &#123;
+                @Override
+                public void initChannel(SocketChannel channel) throws Exception &#123;
+                    ChannelPipeline pipeline = channel.pipeline();
+                    pipeline.addLast(new RpcEncoder(RpcRequest.class)); // 编码 RPC 请求
+                    pipeline.addLast(new RpcDecoder(RpcResponse.class)); // 解码 RPC 响应
+                    pipeline.addLast(RpcClient.this); // 处理 RPC 响应
+                &#125;
+            &#125;);
+            bootstrap.option(ChannelOption.TCP_NODELAY, true);
+            // 连接 RPC 服务器
+            ChannelFuture future = bootstrap.connect(host, port).sync();
+            // 写入 RPC 请求数据并关闭连接
+            Channel channel = future.channel();
+            channel.writeAndFlush(request).sync();
+            channel.closeFuture().sync();
+            // 返回 RPC 响应对象
+            return response;
+        &#125; finally &#123;
+            group.shutdownGracefully();
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<h4 id="服务测试"><a href="#服务测试" class="headerlink" title="服务测试"></a>服务测试</h4><pre><code>public class HelloClient &#123;
+
+    public static void main(String[] args) throws Exception &#123;
+        ApplicationContext context = new ClassPathXmlApplicationContext(&quot;spring.xml&quot;);
+        RpcProxy rpcProxy = context.getBean(RpcProxy.class);
+
+        HelloService helloService = rpcProxy.create(HelloService.class);
+        String result = helloService.hello(&quot;World&quot;);
+        System.out.println(result);
+
+        HelloService helloService2 = rpcProxy.create(HelloService.class, &quot;sample.hello2&quot;);
+        String result2 = helloService2.hello(&quot;世界&quot;);
+        System.out.println(result2);
+
+        System.exit(0);
+    &#125;
+&#125;
+</code></pre>
+<p>输出结果</p>
+<pre><code>connect zookeeper
+get only address node: address-0000000001
+discover service: com.xxx.rpc.sample.api.HelloService =&gt; 127.0.0.1:8000
+time: 569ms
+Hello! World
+connect zookeeper
+get only address node: address-0000000001
+discover service: com.xxx.rpc.sample.api.HelloService-sample.hello2 =&gt; 127.0.0.1:8000
+time: 36ms
+你好! 世界
+</code></pre>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2017/03/22/jqpeng-%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B8%BB%E7%AE%A1%E4%B9%8B%E8%B7%AF%EF%BC%881%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -220,7 +859,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -462,7 +1101,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -714,7 +1353,7 @@ func sqrt(x float64) string &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -872,7 +1511,7 @@ func sqrt(x float64) string &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1196,7 +1835,7 @@ output &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1318,7 +1957,7 @@ output &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1480,7 +2119,7 @@ server.join();
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1695,7 +2334,7 @@ Process finished with exit code 0
       <div class="site-state-item site-state-posts">
           <a href="/jadepeng/archives/">
         
-          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-count">98</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1748,13 +2387,13 @@ Process finished with exit code 0
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">642k</span>
+    <span title="站点总字数">668k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">9:44</span>
+    <span title="站点阅读时长">10:08</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>

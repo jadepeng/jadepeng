@@ -187,6 +187,146 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/08/27/jqpeng-%E8%AE%B0%E4%B8%80%E6%AC%A1keepalived%E5%92%8CVIP%E5%AF%BC%E8%87%B4%E7%9A%84%E6%95%85%E9%9A%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2020/08/27/jqpeng-%E8%AE%B0%E4%B8%80%E6%AC%A1keepalived%E5%92%8CVIP%E5%AF%BC%E8%87%B4%E7%9A%84%E6%95%85%E9%9A%9C/" class="post-title-link" itemprop="url">记一次keepalived和VIP导致的故障</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-27 10:33:00" itemprop="dateCreated datePublished" datetime="2020-08-27T10:33:00+08:00">2020-08-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/keepalived.html">记一次keepalived和VIP导致的故障</a></p>
+<h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>nginx服务器采用的keepalived+vip实现的双活，最近由于一台服务器有问题，更换了一台nginx：</p>
+<p>操作：</p>
+<ul>
+<li>停止有问题服务器keepalived和nginx</li>
+<li>新服务器部署keepalived和nginx</li>
+</ul>
+<p>更换后一切正常，但是过了几个小时，出现大面积的不能访问。</p>
+<h2 id="keepalived-升级"><a href="#keepalived-升级" class="headerlink" title="keepalived 升级"></a>keepalived 升级</h2><p>检查nginx正常，重启keepalived后OK，怀疑可能是keepalived的问题，于是编译安装最新的keepalived：</p>
+<pre><code>curl --progress http://keepalived.org/software/keepalived-1.2.15.tar.gz | tar xz
+cd keepalived-1.2.15
+./configure --prefix=/usr/local/keepalived-1.2.15
+make
+sudo make install
+</code></pre>
+<p>升级后，一切正常,。</p>
+<h2 id="再出故障，最终定位"><a href="#再出故障，最终定位" class="headerlink" title="再出故障，最终定位"></a>再出故障，最终定位</h2><p>一晚过去无异常，第二天又出现部分域名不能访问，检查服务一切正常，因此怀疑是VIP导致的问题，检查之前有问题服务器的ip：</p>
+<pre><code>ip addr
+</code></pre>
+<p>果不其然：</p>
+<pre><code>2: eno1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 90:b1:1c:2a:92:e4 brd ff:ff:ff:ff:ff:ff
+    inet 172.31.161.42/32 scope global eno1
+       valid_lft forever preferred_lft forever
+    inet 172.31.161.41/32 scope global eno1
+       valid_lft forever preferred_lft forever
+    inet 172.31.161.38/24 brd 172.31.161.255 scope global eno1
+       valid_lft forever preferred_lft forever
+    inet 172.31.161.42/0 scope global eno1::1
+       valid_lft forever preferred_lft forever
+3: eno2: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu
+</code></pre>
+<p>41,42 是我们设置的VIP，竟然还在这个有问题服务器的网卡上，这就导致一个机房内，有2台服务器绑定相同的vip。</p>
+<p>解决方案, 通过<code>ip addr delete</code>删除绑定的vip</p>
+<pre><code>ip addr delete 172.31.161.42/32 dev eno1
+ip addr delete 172.31.161.41/32 dev eno1
+ip addr delete 172.31.161.41/0 dev eno1
+</code></pre>
+<p>顺道介绍如何给网卡绑定vip：</p>
+<pre><code>ip addr add 172.31.161.41/32 dev eno1
+</code></pre>
+<h2 id="溯源与问题总结"><a href="#溯源与问题总结" class="headerlink" title="溯源与问题总结"></a>溯源与问题总结</h2><p>问题的根源在于，keepalived为网卡停止后，keepalived为网卡绑定的VIP并没有移除，导致多台机器出现同样的ip。</p>
+<p>切记： <code>停止keepalived，vip不会自动删除，需要手动清理</code></p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/08/25/jqpeng-%E7%BD%91%E6%98%93%E4%BA%91%E9%9F%B3%E4%B9%90%E6%97%A0%E7%89%88%E6%9D%83%E9%9F%B3%E4%B9%90%E8%A1%A5%E5%85%A8%E5%B7%A5%E5%85%B7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -220,7 +360,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -474,7 +614,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -630,7 +770,7 @@ public class WebMvcConfig implements WebMvcConfigurer &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -800,7 +940,7 @@ peter.addEdge(&quot;created&quot;, lop, T.id, 12, &quot;weight&quot;, 0.2f);
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1440,7 +1580,7 @@ HugeGraph典型应用场景包括深度关系探索、关联分析、路径搜�
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1585,7 +1725,7 @@ HugeGraph典型应用场景包括深度关系探索、关联分析、路径搜�
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1762,7 +1902,7 @@ module.exports = &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1866,7 +2006,7 @@ module.exports = &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2119,7 +2259,7 @@ declare module &quot;vue/types/vue&quot; &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2234,461 +2374,6 @@ template.save(tmp); // throws OptimisticLockingFailureException                 
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/04/09/jqpeng-java%E5%BA%94%E7%94%A8%E8%AF%8A%E6%96%AD%E5%92%8C%E5%9C%A8%E7%BA%BFdebug%E5%88%A9%E5%99%A8bistoury%E4%BB%8B%E7%BB%8D%E4%B8%8E%E5%9C%A8K8S%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2020/04/09/jqpeng-java%E5%BA%94%E7%94%A8%E8%AF%8A%E6%96%AD%E5%92%8C%E5%9C%A8%E7%BA%BFdebug%E5%88%A9%E5%99%A8bistoury%E4%BB%8B%E7%BB%8D%E4%B8%8E%E5%9C%A8K8S%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">java应用诊断和在线debug利器bistoury介绍与在K8S环境使用</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-09 20:31:00" itemprop="dateCreated datePublished" datetime="2020-04-09T20:31:00+08:00">2020-04-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>12k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>11 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/Bistoury.html">java应用诊断和在线debug利器bistoury介绍与在K8S环境使用</a></p>
-<hr>
-<h2 id="Bistoury介绍"><a href="#Bistoury介绍" class="headerlink" title="Bistoury介绍"></a>Bistoury介绍</h2><p><code>Bistoury</code> 是去哪儿网开源的一个对应用透明，无侵入的java应用诊断工具，用于提升开发人员的诊断效率和能力，可以让开发人员无需登录机器或修改系统，就可以从日志、内存、线程、类信息、调试、机器和系统属性等各个方面对应用进行诊断，提升开发人员诊断问题的效率和能力。</p>
-<p><code>Bistoury</code> 集成了Alibaba开源的<a target="_blank" rel="noopener" href="https://github.com/alibaba/arthas">arthas</a>和唯品会开源的<a target="_blank" rel="noopener" href="https://github.com/vipshop/vjtools">vjtools</a>，因此arthas和vjtools相关功能都可以在<code>Bistoury</code>中使用。<br> Arthas和vjtools通过命令行或类似的方式使用，Bistoury在保留命令行界面的基础上，还对很多命令提供了图形化界面，方面用户使用。</p>
-<p><code>Bistoury</code> 英文解释是外科手术刀，含义也就不言而喻了。</p>
-<h2 id="Screenshots"><a href="#Screenshots" class="headerlink" title="Screenshots"></a>Screenshots</h2><p>通过命令行界面查看日志，使用arthas和vjtools的各项功能<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/console.png" alt="console"></p>
-<p>在线debug，在线应用调试神器<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/debug_panel.png" alt="debug"></p>
-<p>线程级cpu监控，帮助你掌握线程级cpu使用率<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/jstack.png" alt="jstack_dump"></p>
-<p>在web界面查看JVM运行信息，以及各种其它信息<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/jvm.png" alt="jvm"></p>
-<p>动态给方法添加监控<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/monitor.png" alt="monitor"></p>
-<p>线程dump<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/thread_dump.png" alt="thread_dump"></p>
-<h2 id="Bistoury架构分析"><a href="#Bistoury架构分析" class="headerlink" title="Bistoury架构分析"></a>Bistoury架构分析</h2><p>Bistoury核心组件包含agent，proxy，ui：</p>
-<ul>
-<li>agent ： 与需要诊断的应用部署到一起，负责具体的诊断命令执行，通过域名连接proxy</li>
-<li>proxy：agent的代理，agent启动时会通过ws和proxy连接注册，proxy可以部署多个，推荐使用域名负载</li>
-<li>ui：ui提供图形化和命令行界面，接收从用户传来的命令，传递命令给proxy，接收从proxy传来的结果并展示给用户。</li>
-</ul>
-<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586431812716.png"></p>
-<p>一次命令执行的数据流向为 ui -&gt; proxy -&gt; agent -&gt; proxy -&gt; ui</p>
-<p>具体分析一下：</p>
-<ul>
-<li>proxy 先启动，将自己地址注册到zk</li>
-<li>agent通过域名访问proxy，随机分配到一个proxy，在proxy注册自己</li>
-<li>UI 访问一个具体的应用时，通过zk拿到所有的proxy，然后依次检查app对应的agent是否在该proxy，如果在，web网页连接这个proxy</li>
-<li>web上输入一个命令:web-&gt;proxy-&gt;agent-&gt;proxy-&gt;ui</li>
-</ul>
-<p>具体参见 <a target="_blank" rel="noopener" href="https://github.com/qunarcorp/bistoury/blob/master/docs/cn/design/design.md">https://github.com/qunarcorp/bistoury/blob/master/docs/cn/design/design.md</a></p>
-<p>bistoury原理分析： <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/f7202e490156">https://www.jianshu.com/p/f7202e490156</a></p>
-<p>总结下就是使用类似skywalking那样的agent技术，来监测和协助运行在JVM上的程序。</p>
-<h2 id="Bistoury快速开始"><a href="#Bistoury快速开始" class="headerlink" title="Bistoury快速开始"></a>Bistoury快速开始</h2><p>官方有一个快速开始文档： <a target="_blank" rel="noopener" href="https://github.com/qunarcorp/bistoury/blob/master/docs/cn/quick_start.md">https://github.com/qunarcorp/bistoury/blob/master/docs/cn/quick_start.md</a></p>
-<p>可以下载release包快速启动，就可以体验了。</p>
-<p>首先我们将快速启动包 bistoury-quick-start.tar.gz 拷贝到想要安装的位置。</p>
-<p>然后解压启动包：</p>
-<pre><code>tar -zxvf bistoury-quick-start.tar.gz
-cd bistoury
-</code></pre>
-<p>最后是启动 Bistoury，因为 Bistoury 会用到 jstack 等操作，为了保证所有功能可用，需要使用和待诊断 JAVA 应用相同的用户启动。</p>
-<p>假设应用进程 id 为 1024</p>
-<ul>
-<li>如果应用以本人用户启动，可以直接运行</li>
-</ul>
-<pre><code>./quick_start.sh -p 1024 start
-</code></pre>
-<ul>
-<li>如果应用以其它帐号启动，比如 tomcat，需要指定一下用户然后运行</li>
-</ul>
-<pre><code>sudo -u tomcat ./quick_start.sh -p 1024 start
-</code></pre>
-<ul>
-<li>停止运行</li>
-</ul>
-<pre><code>./quick_start.sh stop
-</code></pre>
-<h2 id="Bistoury-在docker运行"><a href="#Bistoury-在docker运行" class="headerlink" title="Bistoury 在docker运行"></a>Bistoury 在docker运行</h2><p>官方的git仓库里，有一个docker分支，翻阅后找到相关文档。</p>
-<p>官方的快速启动命令：</p>
-<pre><code>#!/bin/bash
-#创建网络
-echo &quot;start create network&quot;
-docker network create --subnet=172.19.0.0/16 bistoury
-#mysql 镜像
-echo &quot;start run mysql image&quot;
-docker run --name mysql -p 3307:3306 -e MYSQL_ROOT_PASSWORD=root -d -i --net bistoury --ip 172.19.0.7  registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-db
-#zk 镜像
-echo &quot;start run zk image&quot;
-docker run -d -p 2181:2181 -it --net bistoury --ip 172.19.0.2 registry.cn-hangzhou.aliyuncs.com/bistoury/zk:latest
-sleep 30
-#proxy 镜像
-echo &quot;start run proxy module&quot;
-docker run -d -p 9880:9880 -p 9881:9881 -p 9090:9090 -i --net bistoury --ip 172.19.0.3 registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-proxy --real-ip $1 --zk-address 172.19.0.2:2181 --proxy-jdbc-url jdbc:mysql://172.19.0.7:3306/bistoury
-#ui 镜像
-echo &quot;start run ui module&quot;
-docker run -p 9091:9091  -it -d --net bistoury --ip 172.19.0.4 registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-ui --zk-address 172.19.0.2:2181 --ui-jdbc-url jdbc:mysql://172.19.0.7:3306/bistoury
-#boot 镜像
-echo &quot;start run demo application&quot;
-docker  run -it -d  -p 8686:8686 -i --net bistoury --ip 172.19.0.5 registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-demo --proxy-host $1:9090
-docker  run -it -d  -p 8687:8686 -i --net bistoury --ip 172.19.0.6 registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-demo --proxy-host $1:9090
-</code></pre>
-<p>上面的命令不能直接运行，<code>$1</code>是需要替换成当前服务器IP，然后再运行就OK了。</p>
-<h2 id="Bistoury-在生产环境运行"><a href="#Bistoury-在生产环境运行" class="headerlink" title="Bistoury 在生产环境运行"></a>Bistoury 在生产环境运行</h2><p>官方推荐部署方式：</p>
-<ul>
-<li>ui 独立部署，推荐部署在多台机器，并提供独立的域名</li>
-<li>proxy 独立部署，推荐部署在多台机器，并提供独立的域名</li>
-<li>agent 需要和应用部署在同一台机器上。推荐在测试环境全环境自动部署，线上环境提供单机一键部署，以及应用下所有机器一键部署</li>
-<li>独立的应用中心，管理所有功能内部应用和机器信息，这是一个和 Bistoury 相独立的系统，Bistoury 从中拿到不断更新的应用和机器信息</li>
-</ul>
-<p>这里有个关键的点，应用中心，Bistoury内置了一个简单的应用中心，Bistoury里代码对应bistoury-application，ui和proxy都通过这个工程获取应用信息，官方默认实现了一个mysql版本的：</p>
-<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586433126733.png" alt="application"></p>
-<p>使用mysql的缺点是，你需要ui界面里手动维护应用以及应用的服务器，做个demo还OK，生产环境肯定不行。更优雅的方式是，用户系统应该在启动时自动注册到注册中心上，汇报自己的应用、机器信息（ip、域名等）、端口等信息。当然这个对大部分微服务架构来说，注册中心是标配的，因此实现一套bistoury-application-api接口即可。</p>
-<h2 id="bistoury-application-k8s-Bistoury-on-K8S"><a href="#bistoury-application-k8s-Bistoury-on-K8S" class="headerlink" title="bistoury-application-k8s(Bistoury on K8S)"></a>bistoury-application-k8s(Bistoury on K8S)</h2><p>我们项目组所有的应用都部署在K8S环境，因此要实现一个<code>bistoury-application-k8s</code>。</p>
-<p>拷贝<code>bistoury-application-mysql</code>项目，建立<code>bistoury-application-k8s</code></p>
-<p>简单对应下：</p>
-<ul>
-<li>一个应用对应一个deployment，对应一个application</li>
-<li>一个deployment里有n个pod，对应applicationServer</li>
-</ul>
-<p>所以，我们只需要调用调用K8S API 获取deployment和pod即可。</p>
-<p>首先引入相关jar包：</p>
-<pre><code>   &lt;dependency&gt;
-            &lt;groupId&gt;io.kubernetes&lt;/groupId&gt;
-            &lt;artifactId&gt;client-java&lt;/artifactId&gt;
-            &lt;version&gt;8.0.0&lt;/version&gt;
-            &lt;scope&gt;compile&lt;/scope&gt;
-        &lt;/dependency&gt;
-</code></pre>
-<p>初始化ApiClient</p>
-<pre><code>            ApiClient defaultClient = Configuration.getDefaultApiClient();
-            defaultClient.setBasePath(k8sApiServer);
-            ApiKeyAuth BearerToken = (ApiKeyAuth) defaultClient.getAuthentication(&quot;BearerToken&quot;);
-            BearerToken.setApiKey(k8sToken);
-            BearerToken.setApiKeyPrefix(&quot;Bearer&quot;);
-            defaultClient.setVerifyingSsl(false);
-</code></pre>
-<h3 id="获取deployment"><a href="#获取deployment" class="headerlink" title="获取deployment"></a>获取deployment</h3><p>区分下是获取所有namespace，还是获取指定的namespace</p>
-<pre><code>   private List&lt;V1Deployment&gt; getDeployments() throws ApiException &#123;
-        AppsV1Api appsV1Api = new AppsV1Api(k8SConfiguration.getApiClient());
-        return k8SConfiguration.isAllNamespace()
-                ? appsV1Api.listDeploymentForAllNamespaces(false, null, null, null, 0, null, null, 120, false).getItems()
-                : getNamespacesDeployments(k8SConfiguration.getAllowedNamespace());
-    &#125;
-
-    List&lt;V1Deployment&gt; getNamespacesDeployments(List&lt;String&gt; namespaces) &#123;
-        AppsV1Api appsV1Api = new AppsV1Api(k8SConfiguration.getApiClient());
-        List&lt;V1Deployment&gt; deploymentList = new ArrayList&lt;&gt;();
-        for (String nameSpace : namespaces) &#123;
-            try &#123;
-                deploymentList.addAll(appsV1Api.listNamespacedDeployment(nameSpace, null, null, null, null, null, 0, null, 120, false).getItems());
-            &#125; catch (ApiException e) &#123;
-                logger.error(&quot;get &quot; + nameSpace + &quot;&#39;s deployment error&quot;, e);
-            &#125;
-        &#125;
-        return deploymentList;
-    &#125;
-</code></pre>
-<p>转换为application：</p>
-<pre><code>    private List&lt;Application&gt; getApplications(List&lt;V1Deployment&gt; applist) &#123;
-        return applist.stream().map(this::getApplication).collect(Collectors.toList());
-    &#125;
-
-    private Application getApplication(V1Deployment deployment) &#123;
-        Application application = new Application();
-        application.setCreateTime(deployment.getMetadata().getCreationTimestamp().toDate());
-        application.setCreator(deployment.getMetadata().getName());
-        application.setGroupCode(deployment.getMetadata().getNamespace());
-        application.setName(deployment.getMetadata().getName());
-        application.setStatus(1);
-        application.setCode(getAppCode(deployment.getMetadata().getNamespace(), deployment.getMetadata().getName()));
-        return application;
-    &#125;
-</code></pre>
-<h3 id="获取pod"><a href="#获取pod" class="headerlink" title="获取pod"></a>获取pod</h3><p>获取pod相对麻烦点，需要先获取到V1Deployment，拿到部署的lableSelector，然后根据lableSelector选择pod：</p>
-<pre><code> public List&lt;AppServer&gt; getAppServerByAppCode(final String appCode) &#123;
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(appCode), &quot;app code cannot be null or empty&quot;);
-
-        try &#123;
-            V1Deployment deployment = getDeployMent(appCode);
-            String nameSpace = appCode.split(APPCODE_SPLITTER)[0];
-            Map&lt;String, String&gt; labelMap = Objects.requireNonNull(deployment.getSpec()).getSelector().getMatchLabels();
-            StringBuilder lableSelector = new StringBuilder();
-            labelMap.entrySet().stream().forEach(e -&gt; &#123;
-                if (lableSelector.length() &gt; 0) &#123;
-                    lableSelector.append(&quot;,&quot;);
-                &#125;
-                lableSelector.append(e.getKey()).append(&quot;=&quot;).append(e.getValue());
-            &#125;);
-
-            CoreV1Api coreV1Api = new CoreV1Api(k8SConfiguration.getApiClient());
-            V1PodList podList = coreV1Api.listNamespacedPod(nameSpace, null, false, null,
-                    null, lableSelector.toString(), 200, null, 600, false);
-
-            return podList.getItems().stream().map(pod -&gt; &#123;
-                AppServer server = new AppServer();
-                server.setAppCode(appCode);
-                server.setHost(pod.getMetadata().getName());
-                server.setIp(pod.getStatus().getPodIP());
-                server.setLogDir(k8SConfiguration.getAppLogPath());
-                server.setAutoJMapHistoEnable(true);
-                server.setAutoJStackEnable(true);
-                server.setPort(8080);
-                return server;
-            &#125;).collect(Collectors.toList());
-
-        &#125; catch (ApiException e) &#123;
-            logger.error(&quot;get deployment&#39;s pod  error&quot;, e);
-        &#125;
-
-        return null;
-
-    &#125;
-</code></pre>
-<p>最后，修改ui和proxy工程，将原来的mysql替换为k8s：</p>
-<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434230879.png" alt="修改pom"></p>
-<h2 id="应用引入bistoury-agent"><a href="#应用引入bistoury-agent" class="headerlink" title="应用引入bistoury agent"></a>应用引入bistoury agent</h2><p>这块相对比较容易：</p>
-<p>在需要调试的应用的Dockerfile里增加：</p>
-<pre><code>COPY  --from=hub.xfyun.cn/abkdev/bistoury-agent:2.0.11  /home/q/bistoury  /opt/bistoury
-</code></pre>
-<p>然后修改应用的启动脚本，在最前面增加：</p>
-<pre><code>BISTOURY_APP_LIB_CLASS=&quot;org.springframework.web.servlet.DispatcherServlet&quot;
-
-# default proxy
-PROXY=&quot;bistoury-bistoury-proxy.incubation:9090&quot;
-AGENT_JAVA_HOME=&quot;/usr/local/openjdk-8/&quot;
-
-# env
-if [[ -n $PROXY_HOST ]]; then
-    PROXY=$PROXY_HOST
-fi
-
-TEMP=`getopt -o : --long proxy-host:,app-class:,agent-java-home: -- &quot;$@&quot;`
-
-eval set -- &quot;$TEMP&quot;
-
-while true; do
-  case &quot;$1&quot; in
-    --proxy-host )
-      PROXY=&quot;$2&quot;; shift 2 ;;
-    --app-class )
-      BISTOURY_APP_LIB_CLASS=&quot;$2&quot;; shift 2 ;;
-    --agent-java-home )
-      AGENT_JAVA_HOME=&quot;$2&quot;; shift 2 ;;
-    * ) break ;;
-  esac
-done
-
-
-echo &quot;proxy host: &quot;$PROXY_HOST
-echo &quot;app class: &quot;$BISTOURY_APP_LIB_CLASS
-echo &quot;agent java home: &quot;$AGENT_JAVA_HOME
-</code></pre>
-<p>在最后面增加：</p>
-<pre><code>APP_PID=`$AGENT_JAVA_HOME/bin/jps -l|awk &#39;&#123;if($2!=&quot;sun.tools.jps.Jps&quot;)&#123;print $1 ;&#123;exit&#125;&#125; &#125;&#39;`
-
-echo &quot;app pid: &quot;$APP_PID
-
-/opt/bistoury/agent/bin/bistoury-agent.sh -j $AGENT_JAVA_HOME -p $APP_PID -c $BISTOURY_APP_LIB_CLASS -s $PROXY -f start
-</code></pre>
-<h2 id="集成测试"><a href="#集成测试" class="headerlink" title="集成测试"></a>集成测试</h2><p>部署一个测试应用 agent-debug-demo，部署到jx namespace：</p>
-<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434610449.png" alt=" agent-debug-demo"></p>
-<pre><code>&#123;
-  &quot;kind&quot;: &quot;Deployment&quot;,
-  &quot;apiVersion&quot;: &quot;extensions/v1beta1&quot;,
-  &quot;metadata&quot;: &#123;
-    &quot;name&quot;: &quot;agent-debug-demo&quot;,
-    &quot;namespace&quot;: &quot;jx&quot;,
-    &quot;annotations&quot;: &#123;
-      &quot;deployment.kubernetes.io/revision&quot;: &quot;2&quot;
-    &#125;
-  &#125;,
-  &quot;spec&quot;: &#123;
-    &quot;replicas&quot;: 1,
-    &quot;selector&quot;: &#123;
-      &quot;matchLabels&quot;: &#123;
-        &quot;app&quot;: &quot;agent-debug-demo&quot;,
-        &quot;draft&quot;: &quot;draft-app&quot;
-      &#125;
-    &#125;,
-    &quot;template&quot;: &#123;
-      &quot;metadata&quot;: &#123;
-        &quot;creationTimestamp&quot;: null,
-        &quot;labels&quot;: &#123;
-          &quot;app&quot;: &quot;agent-debug-demo&quot;,
-          &quot;draft&quot;: &quot;draft-app&quot;
-        &#125;
-      &#125;,
-      &quot;spec&quot;: &#123;
-        &quot;containers&quot;: [
-          &#123;
-            &quot;name&quot;: &quot;springboot-rest-demo&quot;,
-            &quot;image&quot;: &quot;hub.xxx.cn/abkdev/springboot-rest-demo:dev-113&quot;,
-            &quot;ports&quot;: [
-              &#123;
-                &quot;containerPort&quot;: 8080,
-                &quot;protocol&quot;: &quot;TCP&quot;
-              &#125;
-            ],
-            &quot;env&quot;: [
-              &#123;
-                &quot;name&quot;: &quot;SPRING_PROFILES_ACTIVE&quot;,
-                &quot;value&quot;: &quot;dev&quot;
-              &#125;,
-              &#123;
-                &quot;name&quot;: &quot;PROXY_HOST&quot;,
-                &quot;value&quot;: &quot;$PROXY_HOST:9090&quot;
-              &#125;
-            ],
-            &quot;resources&quot;: &#123;&#125;,
-            &quot;terminationMessagePath&quot;: &quot;/dev/termination-log&quot;,
-            &quot;terminationMessagePolicy&quot;: &quot;File&quot;,
-            &quot;imagePullPolicy&quot;: &quot;IfNotPresent&quot;
-          &#125;
-        ],
-        &quot;restartPolicy&quot;: &quot;Always&quot;,
-        &quot;terminationGracePeriodSeconds&quot;: 10,
-        &quot;dnsPolicy&quot;: &quot;ClusterFirst&quot;,
-        &quot;securityContext&quot;: &#123;&#125;,
-        &quot;schedulerName&quot;: &quot;default-scheduler&quot;
-      &#125;
-    &#125;,
-    &quot;strategy&quot;: &#123;
-      &quot;type&quot;: &quot;RollingUpdate&quot;,
-      &quot;rollingUpdate&quot;: &#123;
-        &quot;maxUnavailable&quot;: 1,
-        &quot;maxSurge&quot;: 1
-      &#125;
-    &#125;,
-    &quot;revisionHistoryLimit&quot;: 2147483647,
-    &quot;progressDeadlineSeconds&quot;: 2147483647
-  &#125;,
-  &quot;status&quot;: &#123;
-    &quot;observedGeneration&quot;: 2,
-    &quot;replicas&quot;: 1,
-    &quot;updatedReplicas&quot;: 1,
-    &quot;unavailableReplicas&quot;: 1,
-    &quot;conditions&quot;: [
-      &#123;
-        &quot;type&quot;: &quot;Available&quot;,
-        &quot;status&quot;: &quot;True&quot;,
-        &quot;lastUpdateTime&quot;: &quot;2020-04-09T01:32:42Z&quot;,
-        &quot;lastTransitionTime&quot;: &quot;2020-04-09T01:32:42Z&quot;,
-        &quot;reason&quot;: &quot;MinimumReplicasAvailable&quot;,
-        &quot;message&quot;: &quot;Deployment has minimum availability.&quot;
-      &#125;
-    ]
-  &#125;
-&#125;
-</code></pre>
-<p>部署后：</p>
-<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434889358.png" alt="K8S Dashboard"></p>
-<p>打开ui，查看：</p>
-<p>应用名称显示为： namespace名称-部署名称</p>
-<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434848921.png" alt="bistoury"></p>
-<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434991429.png" alt="ThreadDump"></p>
-<p>在线调试：</p>
-<p>先选择应用：</p>
-<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586435034455.png" alt="选择应用"></p>
-<p>点击Debug，然后选择需要调试的类，</p>
-<p>测试工程源代码为：</p>
-<pre><code>@SpringBootApplication
-@Controller
-public class RestPrometheusApplication &#123;
-@Autowiredprivate MeterRegistry registry;
-@Autowiredprivate Environment env;
-@GetMapping(path = &quot;/&quot;, produces = &quot;application/json&quot;)@ResponseBodypublic Map&lt;String, Object&gt; landingPage() &#123;    Counter.builder(&quot;mymetric&quot;).tag(&quot;foo&quot;, &quot;bar&quot;).register(registry).increment();    String profile = &quot;default&quot;;    if(env.getActiveProfiles().length &gt; 0)&#123;        profile = env.getActiveProfiles()[0];    &#125;
-    return singletonMap(&quot;hello&quot;, &quot;&quot;+ profile);&#125;
-public static void main(String[] args) &#123;    SpringApplication.run(RestPrometheusApplication.class, args);&#125;
-
-&#125;
-</code></pre>
-<p>因此，我们输入RestPrometheusApplication筛选：</p>
-<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586435105776.png" alt="选择Class"></p>
-<p>然后点击调试，可以看到，反编译出来了源代码：</p>
-<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586435149849.png" alt="在线debug1"></p>
-<p>在landingPage最后一行加一个端点，然后点击添加端点，最后访问该POD对应的服务,该pod对应的ip是170.22.149.37，因此我们访问：</p>
-<pre><code>curl http://170.22.149.37:8080
-&#123;&quot;hello&quot;:&quot;dev&quot;&#125;
-</code></pre>
-<p>再回到UI，可以看到成员变量，局部变量和调用堆栈等信息。</p>
-<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586435287216.png" alt="在线debug2"></p>
-<p>well down！</p>
-<hr>
-<blockquote>
-<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2760,7 +2445,7 @@ public static void main(String[] args) &#123;    SpringApplication.run(RestProme
       <div class="site-state-item site-state-posts">
           <a href="/jadepeng/archives/">
         
-          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-count">98</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2813,13 +2498,13 @@ public static void main(String[] args) &#123;    SpringApplication.run(RestProme
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">642k</span>
+    <span title="站点总字数">668k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">9:44</span>
+    <span title="站点阅读时长">10:08</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>

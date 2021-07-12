@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/jadepeng/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/jadepeng/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/jadepeng/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/jadepeng/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/jadepeng/css/main.css">
+
+
+<link rel="stylesheet" href="/jadepeng/lib/font-awesome/css/all.min.css">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.iflyresearch.com","root":"/jadepeng/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="为什么要有索引gremlin 其实是一个逐级过滤的运行机制，比如下面的一个简单的gremlin查询语句： 1g.V().hasLabel(&quot;label&quot;).has(&quot;prop&quot;,&quot;value&quot;)  运行原理就是：  找出所有的顶点V 然后过滤出label为label的数据 然后过滤出prop&#x3D;value的数据  当数据量很大时，这个代价非">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hugegraph 索引与查询优化分析">
+<meta property="og:url" content="http://blog.iflyresearch.com/2021/07/12/hugegraph-index/index.html">
+<meta property="og:site_name" content="JadePeng的技术笔记本">
+<meta property="og:description" content="为什么要有索引gremlin 其实是一个逐级过滤的运行机制，比如下面的一个简单的gremlin查询语句： 1g.V().hasLabel(&quot;label&quot;).has(&quot;prop&quot;,&quot;value&quot;)  运行原理就是：  找出所有的顶点V 然后过滤出label为label的数据 然后过滤出prop&#x3D;value的数据  当数据量很大时，这个代价非">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-12T13:00:00.000Z">
+<meta property="article:modified_time" content="2021-07-12T13:28:27.708Z">
+<meta property="article:author" content="JadePeng">
+<meta property="article:tag" content="hugegraph">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.iflyresearch.com/2021/07/12/hugegraph-index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>hugegraph 索引与查询优化分析 | JadePeng的技术笔记本</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/jadepeng/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">JadePeng的技术笔记本</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱学习爱分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/jadepeng/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-博客">
+
+    <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" rel="section"><i class="fa fa-th fa-fw"></i>博客</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/jadepeng/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/jadepeng/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/jadepeng/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2021/07/12/hugegraph-index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          hugegraph 索引与查询优化分析
+        </h1>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-12 21:00:00 / 修改时间：21:28:27" itemprop="dateCreated datePublished" datetime="2021-07-12T21:00:00+08:00">2021-07-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>26k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>24 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="为什么要有索引"><a href="#为什么要有索引" class="headerlink" title="为什么要有索引"></a>为什么要有索引</h2><p><code>gremlin</code> 其实是一个逐级过滤的运行机制，比如下面的一个简单的gremlin查询语句：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">g.V().hasLabel(&quot;label&quot;).has(&quot;prop&quot;,&quot;value&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>运行原理就是：</p>
+<ul>
+<li>找出所有的顶点V</li>
+<li>然后过滤出label为label的数据</li>
+<li>然后过滤出prop=value的数据</li>
+</ul>
+<p>当数据量很大时，这个代价非常大，因此需要做查询优化。</p>
+<p><code>hugegraph</code> 的优化方案是，<code>HugeGraphStepStrategy</code> 中将has条件提取出来，然后走索引优化，减少读取的数据量。</p>
+<p><code>TraversalUtil.extractHasContainer</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">extractHasContainer</span><span class="params">(HugeGraphStep&lt;?, ?&gt; newStep,</span></span></span><br><span class="line"><span class="function"><span class="params">                                          Traversal.Admin&lt;?, ?&gt; traversal)</span> </span>&#123;</span><br><span class="line">       Step&lt;?, ?&gt; step = newStep;</span><br><span class="line">       <span class="keyword">do</span> &#123;</span><br><span class="line">           step = step.getNextStep();</span><br><span class="line">           <span class="keyword">if</span> (step <span class="keyword">instanceof</span> HasStep) &#123;</span><br><span class="line">               HasContainerHolder holder = (HasContainerHolder) step;</span><br><span class="line">               <span class="keyword">for</span> (HasContainer has : holder.getHasContainers()) &#123;</span><br><span class="line">                   <span class="keyword">if</span> (!GraphStep.processHasContainerIds(newStep, has)) &#123;</span><br><span class="line">                       newStep.addHasContainer(has);</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">               TraversalHelper.copyLabels(step, step.getPreviousStep(), <span class="keyword">false</span>);</span><br><span class="line">               traversal.removeStep(step);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125; <span class="keyword">while</span> (step <span class="keyword">instanceof</span> HasStep || step <span class="keyword">instanceof</span> NoOpBarrierStep);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="hugegraph索引介绍"><a href="#hugegraph索引介绍" class="headerlink" title="hugegraph索引介绍"></a>hugegraph索引介绍</h2><p><code>hugegraph</code> 通过<code>IndexLabel</code> 来定义索引类型，描述索引的约束信息。</p>
+<ul>
+<li><p>indexType: 建立的索引类型，目前支持五种，即 Secondary、Range、Search、Shard 和 Unique。</p>
+<ul>
+<li><p>Secondary 支持精确匹配的二级索引，允许建立联合索引，联合索引支持索引前缀搜索</p>
+<ul>
+<li><p>  单个属性，支持相等查询，比如：person顶点的city属性的二级索引，可以用<code>g.V().has(&quot;city&quot;, &quot;北京&quot;)</code>查询”city属性值是北京”的全部顶点</p>
+</li>
+<li><p>联合索引，支持前缀查询和相等查询，比如：person顶点的city和street属性的联合索引，可以用<code>g.V().has (&quot;city&quot;, &quot;北京&quot;).has(&#39;street&#39;, &#39;中关村街道&#39;)</code>查询”city属性值是北京且street属性值是中关村”的全部顶点，或者<code>g.V() .has(&quot;city&quot;, &quot;北京&quot;)</code>查询”city属性值是北京”的全部顶点</p>
+<blockquote>
+<p>secondary index的查询都是基于”是”或者”相等”的查询条件，不支持”部分匹配”</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>Range 支持数值类型的范围查询</p>
+<ul>
+<li>  必须是单个数字或者日期属性，比如：person顶点的age属性的范围索引，可以用<code>g.V().has(&quot;age&quot;, P.gt(18))</code>查询”age属性值大于18”的顶点。除了<code>P.gt()</code>以外，还支持<code>P.gte()</code>, <code>P.lte()</code>, <code>P.lt()</code>, <code>P.eq()</code>, <code>P.between()</code>, <code>P.inside()</code>和<code>P.outside()</code>等</li>
+</ul>
+</li>
+<li><p>Search 支持全文检索的索引</p>
+<ul>
+<li><p>必须是单个文本属性，比如：person顶点的address属性的全文索引，可以用<code>g.V().has(&quot;address&quot;, Text .contains(&#39;大厦&#39;)</code>查询”address属性中包含大厦”的全部顶点</p>
+<blockquote>
+<p>search index的查询是基于”是”或者”包含”的查询条件</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>Shard 支持前缀匹配 + 数字范围查询的索引</p>
+<ul>
+<li><p>  N个属性的分片索引，支持前缀相等情况下的范围查询，比如：person顶点的city和age属性的分片索引，可以用<code>g.V().has (&quot;city&quot;, &quot;北京&quot;).has(&quot;age&quot;, P.between(18, 30))</code>查询”city属性是北京且年龄大于等于18小于30”的全部顶点</p>
+</li>
+<li><p>  shard index N个属性全是文本属性时，等价于secondary index</p>
+</li>
+<li><p>shard index只有单个数字或者日期属性时，等价于range index</p>
+<blockquote>
+<p>shard index可以有任意数字或者日期属性，但是查询时最多只能提供一个范围查找条件，且该范围查找条件的属性的前缀属性都是相等查询条件</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>Unique 支持属性值唯一性约束，即可以限定属性的值不重复，允许联合索引，但不支持查询</p>
+<ul>
+<li>  单个或者多个属性的唯一性索引，不可用来查询，只可对属性的值进行限定，当出现重复值时将报错</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>摘录自 <a target="_blank" rel="noopener" href="https://hugegraph.github.io/hugegraph-doc/clients/hugegraph-client.html">https://hugegraph.github.io/hugegraph-doc/clients/hugegraph-client.html</a></p>
+</blockquote>
+<p><code>Secondary</code> 和 <code>Range</code>是最常用的索引。</p>
+<h2 id="索引存储原理"><a href="#索引存储原理" class="headerlink" title="索引存储原理"></a>索引存储原理</h2><p>我们通过源代码来分析索引存储过程。 核心代码在<code>GraphIndexTransaction.updateIndex</code>函数里：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Update index(user properties) of vertex or edge</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> ilId      the id of index label</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> element   the properties owner</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> removed   remove or add index</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">updateIndex</span><span class="params">(Id ilId, HugeElement element, <span class="keyword">boolean</span> removed)</span> </span>&#123;</span><br><span class="line">        SchemaTransaction schema = <span class="keyword">this</span>.params().schemaTransaction();</span><br><span class="line">        IndexLabel indexLabel = schema.getIndexLabel(ilId);</span><br><span class="line">        E.checkArgument(indexLabel != <span class="keyword">null</span>,</span><br><span class="line">                        <span class="string">&quot;Not exist index label with id &#x27;%s&#x27;&quot;</span>, ilId);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Collect property values of index fields</span></span><br><span class="line">        List&lt;Object&gt; allPropValues = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">int</span> fieldsNum = indexLabel.indexFields().size();</span><br><span class="line">        <span class="keyword">int</span> firstNullField = fieldsNum;</span><br><span class="line">        <span class="keyword">for</span> (Id fieldId : indexLabel.indexFields()) &#123;</span><br><span class="line">            HugeProperty&lt;Object&gt; property = element.getProperty(fieldId);</span><br><span class="line">            <span class="keyword">if</span> (property == <span class="keyword">null</span>) &#123;</span><br><span class="line">                E.checkState(hasNullableProp(element, fieldId),</span><br><span class="line">                             <span class="string">&quot;Non-null property &#x27;%s&#x27; is null for &#x27;%s&#x27;&quot;</span>,</span><br><span class="line">                             <span class="keyword">this</span>.graph().propertyKey(fieldId) , element);</span><br><span class="line">                <span class="keyword">if</span> (firstNullField == fieldsNum) &#123;</span><br><span class="line">                    firstNullField = allPropValues.size();</span><br><span class="line">                &#125;</span><br><span class="line">                allPropValues.add(INDEX_SYM_NULL);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                E.checkArgument(!INDEX_SYM_NULL.equals(property.value()),</span><br><span class="line">                                <span class="string">&quot;Illegal value of index property: &#x27;%s&#x27;&quot;</span>,</span><br><span class="line">                                INDEX_SYM_NULL);</span><br><span class="line">                allPropValues.add(property.value());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (firstNullField == <span class="number">0</span> &amp;&amp; !indexLabel.indexType().isUnique()) &#123;</span><br><span class="line">            <span class="comment">// The property value of first index field is null</span></span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Not build index for record with nullable field (except unique index)</span></span><br><span class="line">        List&lt;Object&gt; propValues = allPropValues.subList(<span class="number">0</span>, firstNullField);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Expired time</span></span><br><span class="line">        <span class="keyword">long</span> expiredTime = element.expiredTime();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Update index for each index type</span></span><br><span class="line">        <span class="keyword">switch</span> (indexLabel.indexType()) &#123;</span><br><span class="line">            <span class="keyword">case</span> RANGE_INT:</span><br><span class="line">            <span class="keyword">case</span> RANGE_FLOAT:</span><br><span class="line">            <span class="keyword">case</span> RANGE_LONG:</span><br><span class="line">            <span class="keyword">case</span> RANGE_DOUBLE:</span><br><span class="line">                E.checkState(propValues.size() == <span class="number">1</span>,</span><br><span class="line">                             <span class="string">&quot;Expect only one property in range index&quot;</span>);</span><br><span class="line">                Object value = NumericUtil.convertToNumber(propValues.get(<span class="number">0</span>));</span><br><span class="line">                <span class="keyword">this</span>.updateIndex(indexLabel, value, element.id(),</span><br><span class="line">                                 expiredTime, removed);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> SEARCH:</span><br><span class="line">                E.checkState(propValues.size() == <span class="number">1</span>,</span><br><span class="line">                             <span class="string">&quot;Expect only one property in search index&quot;</span>);</span><br><span class="line">                value = propValues.get(<span class="number">0</span>);</span><br><span class="line">                Set&lt;String&gt; words = <span class="keyword">this</span>.segmentWords(value.toString());</span><br><span class="line">                <span class="keyword">for</span> (String word : words) &#123;</span><br><span class="line">                    <span class="keyword">this</span>.updateIndex(indexLabel, word, element.id(),</span><br><span class="line">                                     expiredTime, removed);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> SECONDARY:</span><br><span class="line">                <span class="comment">// Secondary index maybe include multi prefix index</span></span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>, n = propValues.size(); i &lt; n; i++) &#123;</span><br><span class="line">                    List&lt;Object&gt; prefixValues = propValues.subList(<span class="number">0</span>, i + <span class="number">1</span>);</span><br><span class="line">                    <span class="comment">// prefixValues is list or set , should create index for</span></span><br><span class="line">                    <span class="comment">// each item</span></span><br><span class="line">                    <span class="keyword">if</span>(prefixValues.get(<span class="number">0</span>) <span class="keyword">instanceof</span> Collection) &#123;</span><br><span class="line">                        <span class="keyword">for</span> (Object propValue :</span><br><span class="line">                                (Collection&lt;Object&gt;) prefixValues.get(<span class="number">0</span>)) &#123;</span><br><span class="line">                            value = escapeIndexValueIfNeeded(propValue.toString());</span><br><span class="line">                            <span class="keyword">this</span>.updateIndex(indexLabel, value, element.id(),</span><br><span class="line">                                             expiredTime, removed);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                        value = ConditionQuery.concatValues(prefixValues);</span><br><span class="line">                        value = escapeIndexValueIfNeeded((String) value);</span><br><span class="line">                        <span class="keyword">this</span>.updateIndex(indexLabel, value, element.id(),</span><br><span class="line">                                         expiredTime, removed);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> SHARD:</span><br><span class="line">                value = ConditionQuery.concatValues(propValues);</span><br><span class="line">                value = escapeIndexValueIfNeeded((String) value);</span><br><span class="line">                <span class="keyword">this</span>.updateIndex(indexLabel, value, element.id(),</span><br><span class="line">                                 expiredTime, removed);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> UNIQUE:</span><br><span class="line">                value = ConditionQuery.concatValues(allPropValues);</span><br><span class="line">                <span class="keyword">assert</span> !value.equals(<span class="string">&quot;&quot;</span>);</span><br><span class="line">                Id id = element.id();</span><br><span class="line">                <span class="comment">// <span class="doctag">TODO:</span> add lock for updating unique index</span></span><br><span class="line">                <span class="keyword">if</span> (!removed &amp;&amp; <span class="keyword">this</span>.existUniqueValue(indexLabel, value, id)) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(String.format(</span><br><span class="line">                              <span class="string">&quot;Unique constraint %s conflict is found for %s&quot;</span>,</span><br><span class="line">                              indexLabel, element));</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">this</span>.updateIndex(indexLabel, value, element.id(),</span><br><span class="line">                                 expiredTime, removed);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> AssertionError(String.format(</span><br><span class="line">                          <span class="string">&quot;Unknown index type &#x27;%s&#x27;&quot;</span>, indexLabel.indexType()));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>参数是索引id，数据HugeElement</li>
+<li>先schema.getIndexLabel(ilId)，根据索引id获取到indexlabel</li>
+<li>然后根据indexlabel中的字段获取element中的属性值</li>
+<li>然后根据switch索引类型，来处理索引。</li>
+</ul>
+<p>当用户的查询语义是：某属性值大于、小于、大于等于、小于等于、等于某个界限，或者属性值属于某个区间时，适合使用范围索引。比如：“年龄”、“价格”、“得分”等取值比较连续的属性。</p>
+<p>范围索引处理方式如下：</p>
+<ul>
+<li>先检查属性值个数是否为1，范围索引不支持组合索引。</li>
+<li>然后updateIndex，保存索引</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">E.checkState(propValues.size() == <span class="number">1</span>,</span><br><span class="line">                      <span class="string">&quot;Expect only one property in range index&quot;</span>);</span><br><span class="line">         Object value = NumericUtil.convertToNumber(propValues.get(<span class="number">0</span>));</span><br><span class="line">         <span class="keyword">this</span>.updateIndex(indexLabel, value, element.id(),</span><br><span class="line">                          expiredTime, removed);</span><br></pre></td></tr></table></figure>
+<p>updateIndex 代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">updateIndex</span><span class="params">(IndexLabel indexLabel, Object propValue,</span></span></span><br><span class="line"><span class="function"><span class="params">                             Id elementId, <span class="keyword">long</span> expiredTime, <span class="keyword">boolean</span> removed)</span> </span>&#123;</span><br><span class="line">        HugeIndex index = <span class="keyword">new</span> HugeIndex(<span class="keyword">this</span>.graph(), indexLabel);</span><br><span class="line">        index.fieldValues(propValue);</span><br><span class="line">        index.elementIds(elementId, expiredTime);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (removed) &#123;</span><br><span class="line">            <span class="keyword">this</span>.doEliminate(<span class="keyword">this</span>.serializer.writeIndex(index));</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.doAppend(<span class="keyword">this</span>.serializer.writeIndex(index));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>构造索引，根据removed来决定是append还是删除。</li>
+<li>通过GraphSerializer序列化索引</li>
+</ul>
+<p>这里我们来探索Serializer是如何做的，比如Binary:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Id id = index.id();</span><br><span class="line">      HugeType type = index.type();</span><br><span class="line">      <span class="keyword">byte</span>[] value = <span class="keyword">null</span>;</span><br><span class="line">      <span class="keyword">if</span> (!type.isNumericIndex() &amp;&amp; indexIdLengthExceedLimit(id)) &#123;</span><br><span class="line">          id = index.hashId();</span><br><span class="line">          <span class="comment">// Save field-values as column value if the key is a hash string</span></span><br><span class="line">          value = StringEncoding.encode(index.fieldValues().toString());</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      entry = newBackendEntry(type, id);</span><br><span class="line">      entry.column(<span class="keyword">this</span>.formatIndexName(index), value);</span><br><span class="line">      entry.subId(index.elementId());</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (index.hasTtl()) &#123;</span><br><span class="line">          entry.ttl(index.ttl());</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>生成一个BackendEntry，id为索引id</li>
+<li>column name 通过formatIndexName生成， value 一般为null</li>
+<li>subId为elementid</li>
+</ul>
+<p>索引的id：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Id <span class="title">formatIndexId</span><span class="params">(HugeType type, Id indexLabelId,</span></span></span><br><span class="line"><span class="function"><span class="params">                                   Object fieldValues)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (type.isStringIndex()) &#123;</span><br><span class="line">            String value = <span class="string">&quot;&quot;</span>;</span><br><span class="line">            <span class="keyword">if</span> (fieldValues <span class="keyword">instanceof</span> Id) &#123;</span><br><span class="line">                value = IdGenerator.asStoredString((Id) fieldValues);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (fieldValues != <span class="keyword">null</span>) &#123;</span><br><span class="line">                value = fieldValues.toString();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">             * Modify order between index label and field-values to put the</span></span><br><span class="line"><span class="comment">             * index label in front(hugegraph-1317)</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            String strIndexLabelId = IdGenerator.asStoredString(indexLabelId);</span><br><span class="line">            <span class="keyword">return</span> SplicingIdGenerator.splicing(strIndexLabelId, value);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">assert</span> type.isRangeIndex();</span><br><span class="line">            <span class="keyword">int</span> length = type.isRange4Index() ? <span class="number">4</span> : <span class="number">8</span>;</span><br><span class="line">            BytesBuffer buffer = BytesBuffer.allocate(<span class="number">4</span> + length);</span><br><span class="line">            buffer.writeInt(SchemaElement.schemaId(indexLabelId));</span><br><span class="line">            <span class="keyword">if</span> (fieldValues != <span class="keyword">null</span>) &#123;</span><br><span class="line">                E.checkState(fieldValues <span class="keyword">instanceof</span> Number,</span><br><span class="line">                             <span class="string">&quot;Field value of range index must be number:&quot;</span> +</span><br><span class="line">                             <span class="string">&quot; %s&quot;</span>, fieldValues.getClass().getSimpleName());</span><br><span class="line">                <span class="keyword">byte</span>[] bytes = number2bytes((Number) fieldValues);</span><br><span class="line">                buffer.write(bytes);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> buffer.asId();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果是rangeindex，id为 SchemaElement.schemaId(indexLabelId) + fieldValues</li>
+<li>如果是字符串索引，id为 indexLabelId:fieldValues 拼接为字符串 （SplicingIdGenerator.splicing(）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">byte</span>[] formatIndexName(HugeIndex index) &#123;</span><br><span class="line">        BytesBuffer buffer;</span><br><span class="line">        Id elemId = index.elementId();</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>.indexWithIdPrefix) &#123;</span><br><span class="line">            <span class="keyword">int</span> idLen = <span class="number">1</span> + elemId.length();</span><br><span class="line">            buffer = BytesBuffer.allocate(idLen);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            Id indexId = index.id();</span><br><span class="line">            HugeType type = index.type();</span><br><span class="line">            <span class="keyword">if</span> (!type.isNumericIndex() &amp;&amp; indexIdLengthExceedLimit(indexId)) &#123;</span><br><span class="line">                indexId = index.hashId();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">int</span> idLen = <span class="number">1</span> + elemId.length() + <span class="number">1</span> + indexId.length();</span><br><span class="line">            buffer = BytesBuffer.allocate(idLen);</span><br><span class="line">            <span class="comment">// Write index-id</span></span><br><span class="line">            buffer.writeIndexId(indexId, type);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Write element-id</span></span><br><span class="line">        buffer.writeId(elemId);</span><br><span class="line">        <span class="comment">// Write expired time if needed</span></span><br><span class="line">        <span class="keyword">if</span> (index.hasTtl()) &#123;</span><br><span class="line">            buffer.writeVLong(index.expiredTime());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> buffer.bytes();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>formatIndexName 决定了column name：</p>
+<ul>
+<li>先写入indexId，也就是上面（formatIndexId）生成的index id</li>
+<li>再写入elemId</li>
+</ul>
+<p>最后写入存储后端时，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insert</span><span class="params">(Session session, BackendEntry entry)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">assert</span> !entry.columns().isEmpty();</span><br><span class="line">       <span class="keyword">for</span> (BackendColumn col : entry.columns()) &#123;</span><br><span class="line">           <span class="keyword">assert</span> entry.belongToMe(col) : entry;</span><br><span class="line">           session.put(<span class="keyword">this</span>.table(), col.name, col.value);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于range 索引，key的前缀是Int的indexLabelId，中间是索引值的bytes，后缀是elementid，因此range索引天然是有序的。</p>
+<p>存储结构：</p>
+<pre><code>index_label_id | field_values | element_ids
+</code></pre>
+<p>对于二级索引，也是：</p>
+<pre><code> indexLabelId | fieldValues | element_ids
+</code></pre>
+<ul>
+<li>  <code>field_values</code>: 属性的值，可以是单个属性，也可以是多个属性拼接而成</li>
+<li>  <code>index_label_id</code>: 索引标签的Id</li>
+<li>  <code>element_ids</code>: 顶点或边的Id</li>
+</ul>
+<h2 id="索引查询过程分析"><a href="#索引查询过程分析" class="headerlink" title="索引查询过程分析"></a>索引查询过程分析</h2><p>查询要从GraphTransaction的query开始分析，针对ConditionQuery条件查询，会调用optimizeQueries优化查询。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> QueryResults&lt;BackendEntry&gt; <span class="title">query</span><span class="params">(Query query)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!(query <span class="keyword">instanceof</span> ConditionQuery)) &#123;</span><br><span class="line">            LOG.debug(<span class="string">&quot;Query&#123;final:&#123;&#125;&#125;&quot;</span>, query);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">super</span>.query(query);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        QueryList&lt;BackendEntry&gt; queries = <span class="keyword">this</span>.optimizeQueries(query,</span><br><span class="line">                                                               <span class="keyword">super</span>::query);</span><br><span class="line">        LOG.debug(<span class="string">&quot;&#123;&#125;&quot;</span>, queries);</span><br><span class="line">        <span class="keyword">return</span> queries.empty() ? QueryResults.empty() :</span><br><span class="line">                                 queries.fetch(<span class="keyword">this</span>.pageSize);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>optimizeQueries 会将condtion query flatten展开（比如in查询，展开成多个查询），然后针对每个cq做查询。</p>
+<p>针对每个cq，会调用indexQuery走索引查询。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> &lt;R&gt; <span class="function">QueryList&lt;R&gt; <span class="title">optimizeQueries</span><span class="params">(Query query,</span></span></span><br><span class="line"><span class="function"><span class="params">                                             QueryResults.Fetcher&lt;R&gt; fetcher)</span> </span>&#123;</span><br><span class="line">        QueryList&lt;R&gt; queries = <span class="keyword">new</span> QueryList&lt;&gt;(query, fetcher);</span><br><span class="line">        <span class="keyword">for</span> (ConditionQuery cq: ConditionQueryFlatten.flatten(</span><br><span class="line">                                (ConditionQuery) query)) &#123;</span><br><span class="line">            <span class="comment">// Optimize by sysprop</span></span><br><span class="line">            Query q = <span class="keyword">this</span>.optimizeQuery(cq);</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">             * <span class="doctag">NOTE:</span> There are two possibilities for this query:</span></span><br><span class="line"><span class="comment">             * 1.sysprop-query, which would not be empty.</span></span><br><span class="line"><span class="comment">             * 2.index-query result(ids after optimization), which may be empty.</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="keyword">if</span> (q == <span class="keyword">null</span>) &#123;</span><br><span class="line">                queries.add(<span class="keyword">this</span>.indexQuery(cq), <span class="keyword">this</span>.batchSize);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!q.empty()) &#123;</span><br><span class="line">                queries.add(q);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> queries;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>索引查询，核心代码在 GraphIndexTransaction.queryIndex</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Watched(prefix = &quot;index&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IdHolderList <span class="title">queryIndex</span><span class="params">(ConditionQuery query)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Index query must have been flattened in Graph tx</span></span><br><span class="line">        query.checkFlattened();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// <span class="doctag">NOTE:</span> Currently we can&#x27;t support filter changes in memory</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.hasUpdate()) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> HugeException(<span class="string">&quot;Can&#x27;t do index query when &quot;</span> +</span><br><span class="line">                                    <span class="string">&quot;there are changes in transaction&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Can&#x27;t query by index and by non-label sysprop at the same time</span></span><br><span class="line">        List&lt;Condition&gt; conds = query.syspropConditions();</span><br><span class="line">        <span class="keyword">if</span> (conds.size() &gt; <span class="number">1</span> ||</span><br><span class="line">            (conds.size() == <span class="number">1</span> &amp;&amp; !query.containsCondition(HugeKeys.LABEL))) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> HugeException(<span class="string">&quot;Can&#x27;t do index query with %s and %s&quot;</span>,</span><br><span class="line">                                    conds, query.userpropConditions());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Query by index</span></span><br><span class="line">        query.optimized(OptimizedType.INDEX);</span><br><span class="line">        <span class="keyword">if</span> (query.allSysprop() &amp;&amp; conds.size() == <span class="number">1</span> &amp;&amp;</span><br><span class="line">            query.containsCondition(HugeKeys.LABEL)) &#123;</span><br><span class="line">            <span class="comment">// Query only by label</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.queryByLabel(query);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// Query by userprops (or userprops + label)</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.queryByUserprop(query);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>会先做一些检查，然后判断是否有属性条件，如果没有则直接查询对应label，否则走queryByUserprop，根据属性值查询结果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Watched(prefix = &quot;index&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> IdHolderList <span class="title">queryByUserprop</span><span class="params">(ConditionQuery query)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Get user applied label or collect all qualified labels with</span></span><br><span class="line">        <span class="comment">// related index labels</span></span><br><span class="line">        Set&lt;MatchedIndex&gt; indexes = <span class="keyword">this</span>.collectMatchedIndexes(query);</span><br><span class="line">        <span class="keyword">if</span> (indexes.isEmpty()) &#123;</span><br><span class="line">            Id label = query.condition(HugeKeys.LABEL);</span><br><span class="line">            <span class="keyword">throw</span> noIndexException(<span class="keyword">this</span>.graph(), query, label);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Value type of Condition not matched</span></span><br><span class="line">        <span class="keyword">boolean</span> paging = query.paging();</span><br><span class="line">        <span class="keyword">if</span> (!validQueryConditionValues(<span class="keyword">this</span>.graph(), query)) &#123;</span><br><span class="line">            <span class="keyword">return</span> IdHolderList.empty(paging);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Do index query</span></span><br><span class="line">        IdHolderList holders = <span class="keyword">new</span> IdHolderList(paging);</span><br><span class="line">        <span class="keyword">for</span> (MatchedIndex index : indexes) &#123;</span><br><span class="line">            <span class="keyword">for</span> (IndexLabel il : index.indexLabels()) &#123;</span><br><span class="line">                validateIndexLabel(il);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (paging &amp;&amp; index.indexLabels().size() &gt; <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> NotSupportException(<span class="string">&quot;joint index query in paging&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (index.containsSearchIndex()) &#123;</span><br><span class="line">                <span class="comment">// Do search-index query</span></span><br><span class="line">                holders.addAll(<span class="keyword">this</span>.doSearchIndex(query, index));</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// Do secondary-index, range-index or shard-index query</span></span><br><span class="line">                IndexQueries queries = index.constructIndexQueries(query);</span><br><span class="line">                <span class="keyword">assert</span> !paging || queries.size() &lt;= <span class="number">1</span>;</span><br><span class="line">                IdHolder holder = <span class="keyword">this</span>.doSingleOrJointIndex(queries);</span><br><span class="line">                holders.add(holder);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">             * <span class="doctag">NOTE:</span> need to skip the offset if offset &gt; 0, but can&#x27;t handle</span></span><br><span class="line"><span class="comment">             * it here because the query may a sub-query after flatten,</span></span><br><span class="line"><span class="comment">             * so the offset will be handle in QueryList.IndexQuery</span></span><br><span class="line"><span class="comment">             *</span></span><br><span class="line"><span class="comment">             * <span class="doctag">TODO:</span> finish early here if records exceeds required limit with</span></span><br><span class="line"><span class="comment">             *       FixedIdHolder.</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> holders;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>queryByUserprop 会先查询出匹配的索引(collectMatchedIndexes)，如果没匹配到索引，就会报错。</p>
+<p>如果匹配到多个索引，依次查询，如果是search索引，走doSearchIndex，反之先constructIndexQueries，然后doSingleOrJointIndex。</p>
+<h3 id="搜索索引"><a href="#搜索索引" class="headerlink" title="搜索索引"></a>搜索索引</h3><p>搜索索引，之所以特殊处理，因为要分词：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Watched(prefix = &quot;index&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> IdHolderList <span class="title">doSearchIndex</span><span class="params">(ConditionQuery query,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       MatchedIndex index)</span> </span>&#123;</span><br><span class="line">        query = <span class="keyword">this</span>.constructSearchQuery(query, index);</span><br><span class="line">        <span class="comment">// Sorted by matched count</span></span><br><span class="line">        IdHolderList holders = <span class="keyword">new</span> SortByCountIdHolderList(query.paging());</span><br><span class="line">        List&lt;ConditionQuery&gt; flatten = ConditionQueryFlatten.flatten(query);</span><br><span class="line">        <span class="keyword">for</span> (ConditionQuery q : flatten) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!q.noLimit() &amp;&amp; flatten.size() &gt; <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="comment">// Increase limit for union operation</span></span><br><span class="line">                increaseLimit(q);</span><br><span class="line">            &#125;</span><br><span class="line">            IndexQueries queries = index.constructIndexQueries(q);</span><br><span class="line">            <span class="keyword">assert</span> !query.paging() || queries.size() &lt;= <span class="number">1</span>;</span><br><span class="line">            IdHolder holder = <span class="keyword">this</span>.doSingleOrJointIndex(queries);</span><br><span class="line">            <span class="comment">// <span class="doctag">NOTE:</span> ids will be merged into one IdHolder if not in paging</span></span><br><span class="line">            holders.add(holder);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> holders;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>先构造查询，然后组合结果</li>
+<li>重点是如何构造查询的</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> ConditionQuery <span class="title">constructSearchQuery</span><span class="params">(ConditionQuery query,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                MatchedIndex index)</span> </span>&#123;</span><br><span class="line">        ConditionQuery originQuery = query;</span><br><span class="line">        Set&lt;Id&gt; indexFields = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">        <span class="comment">// Convert has(key, text) to has(key, textContainsAny(word1, word2))</span></span><br><span class="line">        <span class="keyword">for</span> (IndexLabel il : index.indexLabels()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (il.indexType() != IndexType.SEARCH) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            Id indexField = il.indexField();</span><br><span class="line">            String fieldValue = (String) query.userpropValue(indexField);</span><br><span class="line">            Set&lt;String&gt; words = <span class="keyword">this</span>.segmentWords(fieldValue);</span><br><span class="line">            indexFields.add(indexField);</span><br><span class="line"></span><br><span class="line">            query = query.copy();</span><br><span class="line">            query.unsetCondition(indexField);</span><br><span class="line">            query.query(Condition.textContainsAny(indexField, words));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Register results filter to compare property value and search text</span></span><br><span class="line">        query.registerResultsFilter(elem -&gt; &#123;</span><br><span class="line">            <span class="keyword">for</span> (Condition cond : originQuery.conditions()) &#123;</span><br><span class="line">                Object key = cond.isRelation() ? ((Relation) cond).key() : <span class="keyword">null</span>;</span><br><span class="line">                <span class="keyword">if</span> (key <span class="keyword">instanceof</span> Id &amp;&amp; indexFields.contains(key)) &#123;</span><br><span class="line">                    <span class="comment">// This is an index field of search index</span></span><br><span class="line">                    Id field = (Id) key;</span><br><span class="line">                    <span class="keyword">assert</span> elem != <span class="keyword">null</span>;</span><br><span class="line">                    HugeProperty&lt;?&gt; property = elem.getProperty(field);</span><br><span class="line">                    String propValue = propertyValueToString(property.value());</span><br><span class="line">                    String fieldValue = (String) originQuery.userpropValue(field);</span><br><span class="line">                    <span class="keyword">if</span> (<span class="keyword">this</span>.matchSearchIndexWords(propValue, fieldValue)) &#123;</span><br><span class="line">                        <span class="keyword">continue</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (!cond.test(elem)) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> query;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>先分词</li>
+<li>然后resetquery，Convert has(key, text) to has(key, textContainsAny(word1, word2))</li>
+<li>最后，索引查询可能匹配到多个结果，registerResultsFilter 注册一个结果过滤器，对结果做过滤</li>
+</ul>
+<h3 id="普通索引"><a href="#普通索引" class="headerlink" title="普通索引"></a>普通索引</h3><p>普通索引，也是先构造索引查询：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ublic IndexQueries <span class="title">constructIndexQueries</span><span class="params">(ConditionQuery query)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// Condition query =&gt; Index Queries</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">this</span>.indexLabels().size() == <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 * Query by single index or composite index</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                IndexLabel il = <span class="keyword">this</span>.indexLabels().iterator().next();</span><br><span class="line">                ConditionQuery indexQuery = constructQuery(query, il);</span><br><span class="line">                <span class="keyword">assert</span> indexQuery != <span class="keyword">null</span>;</span><br><span class="line">                <span class="keyword">return</span> IndexQueries.of(il, indexQuery);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 * Query by joint indexes</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                IndexQueries queries = buildJointIndexesQueries(query, <span class="keyword">this</span>);</span><br><span class="line">                <span class="keyword">assert</span> !queries.isEmpty();</span><br><span class="line">                <span class="keyword">return</span> queries;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果只匹配到一个索引，直接走这个索引，最简单的情况，</p>
+<p>如果匹配到多个索引，这个时候要走联合查询了（buildJointIndexesQueries）</p>
+<p>最后，通过doSingleOrJointIndex来获取结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Watched(prefix = &quot;index&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> IdHolder <span class="title">doSingleOrJointIndex</span><span class="params">(IndexQueries queries)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (queries.size() == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.doSingleOrCompositeIndex(queries);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.doJointIndex(queries);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果queries.size &gt; 1，代表要走联合索引。但是一般db一次查询通常直走一个索引，hugegraph也差不多：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Watched(prefix = &quot;index&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> IdHolder <span class="title">doJointIndex</span><span class="params">(IndexQueries queries)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (queries.oomRisk()) &#123;</span><br><span class="line">            LOG.warn(<span class="string">&quot;There is OOM risk if the joint operation is based on a &quot;</span> +</span><br><span class="line">                     <span class="string">&quot;large amount of data, please use single index + filter &quot;</span> +</span><br><span class="line">                     <span class="string">&quot;instead of joint index: &#123;&#125;&quot;</span>, queries.rootQuery());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// All queries are joined with AND</span></span><br><span class="line">        Set&lt;Id&gt; intersectIds = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">boolean</span> filtering = <span class="keyword">false</span>;</span><br><span class="line">        IdHolder resultHolder = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;IndexLabel, ConditionQuery&gt; e : queries.entrySet()) &#123;</span><br><span class="line">            IndexLabel indexLabel = e.getKey();</span><br><span class="line">            ConditionQuery query = e.getValue();</span><br><span class="line">            <span class="keyword">assert</span> !query.paging();</span><br><span class="line">            <span class="keyword">if</span> (!query.noLimit() &amp;&amp; queries.size() &gt; <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="comment">// Unset limit for intersection operation</span></span><br><span class="line">                query.limit(Query.NO_LIMIT);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">             * Try to query by joint indexes:</span></span><br><span class="line"><span class="comment">             * 1 If there is any index exceeded the threshold, transform into</span></span><br><span class="line"><span class="comment">             *   partial index query, then filter after back-table.</span></span><br><span class="line"><span class="comment">             * 1.1 Return the holder of the first index that not exceeded the</span></span><br><span class="line"><span class="comment">             *     threshold if there exists one index, this holder will be used</span></span><br><span class="line"><span class="comment">             *     as the only query condition.</span></span><br><span class="line"><span class="comment">             * 1.2 Return the holder of the first index if all indexes exceeded</span></span><br><span class="line"><span class="comment">             *     the threshold.</span></span><br><span class="line"><span class="comment">             * 2 Else intersect holders for all indexes, and return intersection</span></span><br><span class="line"><span class="comment">             *   ids of all indexes.</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            IdHolder holder = <span class="keyword">this</span>.doIndexQuery(indexLabel, query);</span><br><span class="line">            <span class="keyword">if</span> (resultHolder == <span class="keyword">null</span>) &#123;</span><br><span class="line">                resultHolder = holder;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">assert</span> <span class="keyword">this</span>.indexIntersectThresh &gt; <span class="number">0</span>; <span class="comment">// default value is 1000</span></span><br><span class="line">            Set&lt;Id&gt; ids = ((BatchIdHolder) holder).peekNext(</span><br><span class="line">                          <span class="keyword">this</span>.indexIntersectThresh).ids();</span><br><span class="line">            <span class="keyword">if</span> (ids.size() &gt;= <span class="keyword">this</span>.indexIntersectThresh) &#123;</span><br><span class="line">                <span class="comment">// Transform into filtering</span></span><br><span class="line">                filtering = <span class="keyword">true</span>;</span><br><span class="line">                query.optimized(OptimizedType.INDEX_FILTER);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (filtering) &#123;</span><br><span class="line">                <span class="keyword">assert</span> ids.size() &lt; <span class="keyword">this</span>.indexIntersectThresh;</span><br><span class="line">                resultHolder = holder;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (intersectIds == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    intersectIds = ids;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    CollectionUtil.intersectWithModify(intersectIds, ids);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (intersectIds.isEmpty()) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (filtering) &#123;</span><br><span class="line">            <span class="keyword">return</span> resultHolder;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">assert</span> intersectIds != <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> FixedIdHolder(queries.asJointQuery(), intersectIds);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>依次读取，先读取indexIntersectThresh 个数的匹配索引id，indexIntersectThresh用来控制1次读取索引id的个数，这个默认是1000,</li>
+<li>如果地个数》=indexIntersectThresh，这个时候hugegraph认为匹配结果数太多了，不能直接走索引查询到结果，需要走过滤（OptimizedType.INDEX_FILTER），也就是读取可能的候选结果，然后通过查询条件过滤结果。</li>
+<li>如果有一个索引较小，resultHolder缓存较小索引的</li>
+<li>如果几个索引都小于indexIntersectThresh，这是最理想情况，直接取ids的交集（CollectionUtil.intersectWithModify）</li>
+</ul>
+<p>读取到id后，就是根据id读取结果，过滤结果了。</p>
+<h2 id="如何通过索引读取到匹配的id？"><a href="#如何通过索引读取到匹配的id？" class="headerlink" title="如何通过索引读取到匹配的id？"></a>如何通过索引读取到匹配的id？</h2><p>关键代码在AbstractTransaction：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Watched(prefix = &quot;tx&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> QueryResults&lt;BackendEntry&gt; <span class="title">query</span><span class="params">(Query query)</span> </span>&#123;</span><br><span class="line">        LOG.debug(<span class="string">&quot;Transaction query: &#123;&#125;&quot;</span>, query);</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">         * <span class="doctag">NOTE:</span> it&#x27;s dangerous if an IdQuery/ConditionQuery is empty</span></span><br><span class="line"><span class="comment">         * check if the query is empty and its class is not the Query itself</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">if</span> (query.empty() &amp;&amp; !query.getClass().equals(Query.class)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> BackendException(<span class="string">&quot;Query without any id or condition&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Query squery = <span class="keyword">this</span>.serializer.writeQuery(query);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Do rate limit if needed</span></span><br><span class="line">        RateLimiter rateLimiter = <span class="keyword">this</span>.graph.readRateLimiter();</span><br><span class="line">        <span class="keyword">if</span> (rateLimiter != <span class="keyword">null</span> &amp;&amp; query.resultType().isGraph()) &#123;</span><br><span class="line">            <span class="keyword">double</span> time = rateLimiter.acquire(<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">if</span> (time &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                LOG.debug(<span class="string">&quot;Waited for &#123;&#125;s to query&quot;</span>, time);</span><br><span class="line">            &#125;</span><br><span class="line">            BackendEntryIterator.checkInterrupted();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.beforeRead();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> QueryResults&lt;&gt;(<span class="keyword">this</span>.store.query(squery), query);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.afterRead(); <span class="comment">// <span class="doctag">TODO:</span> not complete the iteration currently</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>逐级往下，核心代码在writeQueryCondition：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   protected Query <span class="function"><span class="title">writeQueryCondition</span>(<span class="params">Query query</span>)</span> &#123;</span><br><span class="line">       HugeType type = query.resultType();</span><br><span class="line">       <span class="keyword">if</span> (!type.isIndex()) &#123;</span><br><span class="line">           <span class="keyword">return</span> query;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       ConditionQuery cq = (ConditionQuery) query;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">if</span> (type.isNumericIndex()) &#123;</span><br><span class="line">           <span class="comment">// Convert range-index/shard-index query to id range query</span></span><br><span class="line">           <span class="keyword">return</span> <span class="built_in">this</span>.writeRangeIndexQuery(cq);</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           assert type.isSearchIndex() || type.isSecondaryIndex() ||</span><br><span class="line">                  type.isUniqueIndex();</span><br><span class="line">           <span class="comment">// Convert secondary-index or search-index query to id query</span></span><br><span class="line">           <span class="keyword">return</span> <span class="built_in">this</span>.writeStringIndexQuery(cq);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果是rangeindex 索引，会转换为scan <code> indexlabelid:start - indexlabelid:end</code> 的查询</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">private Query <span class="function"><span class="title">writeRangeIndexQuery</span>(<span class="params">ConditionQuery query</span>)</span> &#123;</span><br><span class="line">        Id index = query.condition(HugeKeys.INDEX_LABEL_ID);</span><br><span class="line">        E.checkArgument(index != <span class="literal">null</span>, <span class="string">&quot;Please specify the index label&quot;</span>);</span><br><span class="line"></span><br><span class="line">        List&lt;Condition&gt; fields = query.syspropConditions(HugeKeys.FIELD_VALUES);</span><br><span class="line">        E.checkArgument(!fields.isEmpty(),</span><br><span class="line">                        <span class="string">&quot;Please specify the index field values&quot;</span>);</span><br><span class="line"></span><br><span class="line">        HugeType type = query.resultType();</span><br><span class="line">        Id start = <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (query.paging() &amp;&amp; !query.page().isEmpty()) &#123;</span><br><span class="line">            byte[] position = PageState.fromString(query.page()).position();</span><br><span class="line">            start = <span class="keyword">new</span> BinaryId(position, <span class="literal">null</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        RangeConditions range = <span class="keyword">new</span> RangeConditions(fields);</span><br><span class="line">        <span class="keyword">if</span> (range.keyEq() != <span class="literal">null</span>) &#123;</span><br><span class="line">            Id id = formatIndexId(type, index, range.keyEq(), <span class="literal">true</span>);</span><br><span class="line">            <span class="keyword">if</span> (start == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> IdPrefixQuery(query, id);</span><br><span class="line">            &#125;</span><br><span class="line">            E.checkArgument(Bytes.compare(start.asBytes(), id.asBytes()) &gt;= <span class="number">0</span>,</span><br><span class="line">                            <span class="string">&quot;Invalid page out of lower bound&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> IdPrefixQuery(query, start, id);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">Object</span> keyMin = range.keyMin();</span><br><span class="line">        <span class="built_in">Object</span> keyMax = range.keyMax();</span><br><span class="line">        boolean keyMinEq = range.keyMinEq();</span><br><span class="line">        boolean keyMaxEq = range.keyMaxEq();</span><br><span class="line">        <span class="keyword">if</span> (keyMin == <span class="literal">null</span>) &#123;</span><br><span class="line">            E.checkArgument(keyMax != <span class="literal">null</span>,</span><br><span class="line">                            <span class="string">&quot;Please specify at least one condition&quot;</span>);</span><br><span class="line">            <span class="comment">// Set keyMin to min value</span></span><br><span class="line">            keyMin = NumericUtil.minValueOf(keyMax.getClass());</span><br><span class="line">            keyMinEq = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Id min = formatIndexId(type, index, keyMin, <span class="literal">false</span>);</span><br><span class="line">        <span class="keyword">if</span> (!keyMinEq) &#123;</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">             * Increase 1 to keyMin, index GT query is a scan with GT prefix,</span></span><br><span class="line"><span class="comment">             * inclusiveStart=false will also match index started with keyMin</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            increaseOne(min.asBytes());</span><br><span class="line">            keyMinEq = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (start == <span class="literal">null</span>) &#123;</span><br><span class="line">            start = min;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            E.checkArgument(Bytes.compare(start.asBytes(), min.asBytes()) &gt;= <span class="number">0</span>,</span><br><span class="line">                            <span class="string">&quot;Invalid page out of lower bound&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (keyMax == <span class="literal">null</span>) &#123;</span><br><span class="line">            keyMax = NumericUtil.maxValueOf(keyMin.getClass());</span><br><span class="line">            keyMaxEq = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Id max = formatIndexId(type, index, keyMax, <span class="literal">false</span>);</span><br><span class="line">        <span class="keyword">if</span> (keyMaxEq) &#123;</span><br><span class="line">            keyMaxEq = <span class="literal">false</span>;</span><br><span class="line">            increaseOne(max.asBytes());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> IdRangeQuery(query, start, keyMinEq, max, keyMaxEq);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果是其他索引，则转换为前缀匹配查询:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Query <span class="title">writeStringIndexQuery</span><span class="params">(ConditionQuery query)</span> </span>&#123;</span><br><span class="line">        E.checkArgument(query.allSysprop() &amp;&amp;</span><br><span class="line">                        query.conditions().size() == <span class="number">2</span>,</span><br><span class="line">                        <span class="string">&quot;There should be two conditions: &quot;</span> +</span><br><span class="line">                        <span class="string">&quot;INDEX_LABEL_ID and FIELD_VALUES&quot;</span> +</span><br><span class="line">                        <span class="string">&quot;in secondary index query&quot;</span>);</span><br><span class="line"></span><br><span class="line">        Id index = query.condition(HugeKeys.INDEX_LABEL_ID);</span><br><span class="line">        Object key = query.condition(HugeKeys.FIELD_VALUES);</span><br><span class="line"></span><br><span class="line">        E.checkArgument(index != <span class="keyword">null</span>, <span class="string">&quot;Please specify the index label&quot;</span>);</span><br><span class="line">        E.checkArgument(key != <span class="keyword">null</span>, <span class="string">&quot;Please specify the index key&quot;</span>);</span><br><span class="line"></span><br><span class="line">        Id prefix = formatIndexId(query.resultType(), index, key, <span class="keyword">true</span>);</span><br><span class="line">        <span class="keyword">return</span> prefixQuery(query, prefix);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>查询到rocksdb后端的时候：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> BackendColumnIterator <span class="title">queryBy</span><span class="params">(Session session, Query query)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Query all</span></span><br><span class="line">        <span class="keyword">if</span> (query.empty()) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.queryAll(session, query);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Query by prefix</span></span><br><span class="line">        <span class="keyword">if</span> (query <span class="keyword">instanceof</span> IdPrefixQuery) &#123;</span><br><span class="line">            IdPrefixQuery pq = (IdPrefixQuery) query;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.queryByPrefix(session, pq);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Query by range</span></span><br><span class="line">        <span class="keyword">if</span> (query <span class="keyword">instanceof</span> IdRangeQuery) &#123;</span><br><span class="line">            IdRangeQuery rq = (IdRangeQuery) query;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.queryByRange(session, rq);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Query by id</span></span><br><span class="line">        <span class="keyword">if</span> (query.conditions().isEmpty()) &#123;</span><br><span class="line">            <span class="keyword">assert</span> !query.ids().isEmpty();</span><br><span class="line">            <span class="comment">// <span class="doctag">NOTE:</span> this will lead to lazy create rocksdb iterator</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> BackendColumnIteratorWrapper(<span class="keyword">new</span> FlatMapperIterator&lt;&gt;(</span><br><span class="line">                   query.ids().iterator(), id -&gt; <span class="keyword">this</span>.queryById(session, id)</span><br><span class="line">            ));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Query by condition (or condition + id)</span></span><br><span class="line">        ConditionQuery cq = (ConditionQuery) query;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.queryByCond(session, cq);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>前缀查询：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> BackendColumnIterator <span class="title">queryByPrefix</span><span class="params">(Session session,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                  IdPrefixQuery query)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> type = query.inclusiveStart() ?</span><br><span class="line">                   Session.SCAN_GTE_BEGIN : Session.SCAN_GT_BEGIN;</span><br><span class="line">        type |= Session.SCAN_PREFIX_END;</span><br><span class="line">        <span class="keyword">return</span> session.scan(<span class="keyword">this</span>.table(), query.start().asBytes(),</span><br><span class="line">                            query.prefix().asBytes(), type);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>range查询：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> BackendColumnIterator <span class="title">queryByRange</span><span class="params">(Session session,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                 IdRangeQuery query)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] start = query.start().asBytes();</span><br><span class="line">        <span class="keyword">byte</span>[] end = query.end() == <span class="keyword">null</span> ? <span class="keyword">null</span> : query.end().asBytes();</span><br><span class="line">        <span class="keyword">int</span> type = query.inclusiveStart() ?</span><br><span class="line">                   Session.SCAN_GTE_BEGIN : Session.SCAN_GT_BEGIN;</span><br><span class="line">        <span class="keyword">if</span> (end != <span class="keyword">null</span>) &#123;</span><br><span class="line">            type |= query.inclusiveEnd() ?</span><br><span class="line">                    Session.SCAN_LTE_END : Session.SCAN_LT_END;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> session.scan(<span class="keyword">this</span>.table(), start, end, type);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>查询后，在BinarySerializer中，通过readIndex还原为index：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> HugeIndex <span class="title">readIndex</span><span class="params">(HugeGraph graph, ConditionQuery query,</span></span></span><br><span class="line"><span class="function"><span class="params">                              BackendEntry bytesEntry)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (bytesEntry == <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       BinaryBackendEntry entry = <span class="keyword">this</span>.convertEntry(bytesEntry);</span><br><span class="line">       <span class="comment">// <span class="doctag">NOTE:</span> index id without length prefix</span></span><br><span class="line">       <span class="keyword">byte</span>[] bytes = entry.id().asBytes();</span><br><span class="line">       HugeIndex index = HugeIndex.parseIndexId(graph, entry.type(), bytes);</span><br><span class="line"></span><br><span class="line">       Object fieldValues = <span class="keyword">null</span>;</span><br><span class="line">       <span class="keyword">if</span> (!index.type().isRangeIndex()) &#123;</span><br><span class="line">           fieldValues = query.condition(HugeKeys.FIELD_VALUES);</span><br><span class="line">           <span class="keyword">if</span> (!index.fieldValues().equals(fieldValues)) &#123;</span><br><span class="line">               <span class="comment">// Update field-values for hashed or encoded index-id</span></span><br><span class="line">               index.fieldValues(fieldValues);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">this</span>.parseIndexName(graph, query, entry, index, fieldValues);</span><br><span class="line">       <span class="keyword">return</span> index;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>parseIndexId 和parseIndexName 是存储的decode操作，代码类似，一个存，一个读。</p>
+<h2 id="索引与全局排序优化"><a href="#索引与全局排序优化" class="headerlink" title="索引与全局排序优化"></a>索引与全局排序优化</h2><p>这里提一个问题，要对符合条件的结果做全局排序怎么优化？</p>
+<p>比如，我们需要按更新时间(update_time）排序，当没有其他条件时，可以将排序转换为update_time&gt;0 的查询，因为range索引默认是有序的，从小到大（详见上面的存储结构分析）。</p>
+<p>如果要倒序怎么办？</p>
+<ul>
+<li>业务简单时，可以冗余一个字段，比如update_time_desc，取一个固定值-update_time, 这样最新的的数据在前面。</li>
+</ul>
+<p>但是，这种查询，在有其他条件时就无效了，详见doJointIndex，这种情况如何优化了？</p>
+<p>我们下期再聊。</p>
+<hr>
+<p>感谢您的认真阅读。</p>
+<p>如果你觉得有帮助，欢迎点赞支持！</p>
+<p>不定期分享软件开发经验，欢迎关注作者, 一起交流软件开发：</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/jadepeng/tags/hugegraph/" rel="tag"># hugegraph</a>
+          </div>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/jadepeng/2021/04/27/%E5%8D%9A%E5%AE%A2/" rel="prev" title="博客">
+      <i class="fa fa-chevron-left"></i> 博客
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89%E7%B4%A2%E5%BC%95"><span class="nav-number">1.</span> <span class="nav-text">为什么要有索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hugegraph%E7%B4%A2%E5%BC%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">hugegraph索引介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E5%AD%98%E5%82%A8%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">索引存储原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">索引查询过程分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E7%B4%A2%E5%BC%95"><span class="nav-number">4.1.</span> <span class="nav-text">搜索索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95"><span class="nav-number">4.2.</span> <span class="nav-text">普通索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E7%B4%A2%E5%BC%95%E8%AF%BB%E5%8F%96%E5%88%B0%E5%8C%B9%E9%85%8D%E7%9A%84id%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">如何通过索引读取到匹配的id？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E4%B8%8E%E5%85%A8%E5%B1%80%E6%8E%92%E5%BA%8F%E4%BC%98%E5%8C%96"><span class="nav-number">6.</span> <span class="nav-text">索引与全局排序优化</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JadePeng"
+      src="/jadepeng/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">JadePeng</p>
+  <div class="site-description" itemprop="description">JadePeng的技术笔记本</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/jadepeng/archives/">
+        
+          <span class="site-state-item-count">98</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/jadepeng/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/jadepeng/tags/">
+          
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JadePeng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">668k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">10:08</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/jadepeng/lib/anime.min.js"></script>
+  <script src="/jadepeng/lib/velocity/velocity.min.js"></script>
+  <script src="/jadepeng/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/jadepeng/js/utils.js"></script>
+
+<script src="/jadepeng/js/motion.js"></script>
+
+
+<script src="/jadepeng/js/schemes/muse.js"></script>
+
+
+<script src="/jadepeng/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/jadepeng/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/jadepeng/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

@@ -187,6 +187,461 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/04/09/jqpeng-java%E5%BA%94%E7%94%A8%E8%AF%8A%E6%96%AD%E5%92%8C%E5%9C%A8%E7%BA%BFdebug%E5%88%A9%E5%99%A8bistoury%E4%BB%8B%E7%BB%8D%E4%B8%8E%E5%9C%A8K8S%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
+      <meta itemprop="name" content="JadePeng">
+      <meta itemprop="description" content="JadePeng的技术笔记本">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JadePeng的技术笔记本">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jadepeng/2020/04/09/jqpeng-java%E5%BA%94%E7%94%A8%E8%AF%8A%E6%96%AD%E5%92%8C%E5%9C%A8%E7%BA%BFdebug%E5%88%A9%E5%99%A8bistoury%E4%BB%8B%E7%BB%8D%E4%B8%8E%E5%9C%A8K8S%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">java应用诊断和在线debug利器bistoury介绍与在K8S环境使用</a>
+        </h2>
+
+        <div class="post-meta">
+
+         
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-09 20:31:00" itemprop="dateCreated datePublished" datetime="2020-04-09T20:31:00+08:00">2020-04-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/Bistoury.html">java应用诊断和在线debug利器bistoury介绍与在K8S环境使用</a></p>
+<hr>
+<h2 id="Bistoury介绍"><a href="#Bistoury介绍" class="headerlink" title="Bistoury介绍"></a>Bistoury介绍</h2><p><code>Bistoury</code> 是去哪儿网开源的一个对应用透明，无侵入的java应用诊断工具，用于提升开发人员的诊断效率和能力，可以让开发人员无需登录机器或修改系统，就可以从日志、内存、线程、类信息、调试、机器和系统属性等各个方面对应用进行诊断，提升开发人员诊断问题的效率和能力。</p>
+<p><code>Bistoury</code> 集成了Alibaba开源的<a target="_blank" rel="noopener" href="https://github.com/alibaba/arthas">arthas</a>和唯品会开源的<a target="_blank" rel="noopener" href="https://github.com/vipshop/vjtools">vjtools</a>，因此arthas和vjtools相关功能都可以在<code>Bistoury</code>中使用。<br> Arthas和vjtools通过命令行或类似的方式使用，Bistoury在保留命令行界面的基础上，还对很多命令提供了图形化界面，方面用户使用。</p>
+<p><code>Bistoury</code> 英文解释是外科手术刀，含义也就不言而喻了。</p>
+<h2 id="Screenshots"><a href="#Screenshots" class="headerlink" title="Screenshots"></a>Screenshots</h2><p>通过命令行界面查看日志，使用arthas和vjtools的各项功能<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/console.png" alt="console"></p>
+<p>在线debug，在线应用调试神器<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/debug_panel.png" alt="debug"></p>
+<p>线程级cpu监控，帮助你掌握线程级cpu使用率<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/jstack.png" alt="jstack_dump"></p>
+<p>在web界面查看JVM运行信息，以及各种其它信息<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/jvm.png" alt="jvm"></p>
+<p>动态给方法添加监控<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/monitor.png" alt="monitor"></p>
+<p>线程dump<br><img src="https://gitee.com/jadepeng/bistoury/raw/master/docs/image/thread_dump.png" alt="thread_dump"></p>
+<h2 id="Bistoury架构分析"><a href="#Bistoury架构分析" class="headerlink" title="Bistoury架构分析"></a>Bistoury架构分析</h2><p>Bistoury核心组件包含agent，proxy，ui：</p>
+<ul>
+<li>agent ： 与需要诊断的应用部署到一起，负责具体的诊断命令执行，通过域名连接proxy</li>
+<li>proxy：agent的代理，agent启动时会通过ws和proxy连接注册，proxy可以部署多个，推荐使用域名负载</li>
+<li>ui：ui提供图形化和命令行界面，接收从用户传来的命令，传递命令给proxy，接收从proxy传来的结果并展示给用户。</li>
+</ul>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586431812716.png"></p>
+<p>一次命令执行的数据流向为 ui -&gt; proxy -&gt; agent -&gt; proxy -&gt; ui</p>
+<p>具体分析一下：</p>
+<ul>
+<li>proxy 先启动，将自己地址注册到zk</li>
+<li>agent通过域名访问proxy，随机分配到一个proxy，在proxy注册自己</li>
+<li>UI 访问一个具体的应用时，通过zk拿到所有的proxy，然后依次检查app对应的agent是否在该proxy，如果在，web网页连接这个proxy</li>
+<li>web上输入一个命令:web-&gt;proxy-&gt;agent-&gt;proxy-&gt;ui</li>
+</ul>
+<p>具体参见 <a target="_blank" rel="noopener" href="https://github.com/qunarcorp/bistoury/blob/master/docs/cn/design/design.md">https://github.com/qunarcorp/bistoury/blob/master/docs/cn/design/design.md</a></p>
+<p>bistoury原理分析： <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/f7202e490156">https://www.jianshu.com/p/f7202e490156</a></p>
+<p>总结下就是使用类似skywalking那样的agent技术，来监测和协助运行在JVM上的程序。</p>
+<h2 id="Bistoury快速开始"><a href="#Bistoury快速开始" class="headerlink" title="Bistoury快速开始"></a>Bistoury快速开始</h2><p>官方有一个快速开始文档： <a target="_blank" rel="noopener" href="https://github.com/qunarcorp/bistoury/blob/master/docs/cn/quick_start.md">https://github.com/qunarcorp/bistoury/blob/master/docs/cn/quick_start.md</a></p>
+<p>可以下载release包快速启动，就可以体验了。</p>
+<p>首先我们将快速启动包 bistoury-quick-start.tar.gz 拷贝到想要安装的位置。</p>
+<p>然后解压启动包：</p>
+<pre><code>tar -zxvf bistoury-quick-start.tar.gz
+cd bistoury
+</code></pre>
+<p>最后是启动 Bistoury，因为 Bistoury 会用到 jstack 等操作，为了保证所有功能可用，需要使用和待诊断 JAVA 应用相同的用户启动。</p>
+<p>假设应用进程 id 为 1024</p>
+<ul>
+<li>如果应用以本人用户启动，可以直接运行</li>
+</ul>
+<pre><code>./quick_start.sh -p 1024 start
+</code></pre>
+<ul>
+<li>如果应用以其它帐号启动，比如 tomcat，需要指定一下用户然后运行</li>
+</ul>
+<pre><code>sudo -u tomcat ./quick_start.sh -p 1024 start
+</code></pre>
+<ul>
+<li>停止运行</li>
+</ul>
+<pre><code>./quick_start.sh stop
+</code></pre>
+<h2 id="Bistoury-在docker运行"><a href="#Bistoury-在docker运行" class="headerlink" title="Bistoury 在docker运行"></a>Bistoury 在docker运行</h2><p>官方的git仓库里，有一个docker分支，翻阅后找到相关文档。</p>
+<p>官方的快速启动命令：</p>
+<pre><code>#!/bin/bash
+#创建网络
+echo &quot;start create network&quot;
+docker network create --subnet=172.19.0.0/16 bistoury
+#mysql 镜像
+echo &quot;start run mysql image&quot;
+docker run --name mysql -p 3307:3306 -e MYSQL_ROOT_PASSWORD=root -d -i --net bistoury --ip 172.19.0.7  registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-db
+#zk 镜像
+echo &quot;start run zk image&quot;
+docker run -d -p 2181:2181 -it --net bistoury --ip 172.19.0.2 registry.cn-hangzhou.aliyuncs.com/bistoury/zk:latest
+sleep 30
+#proxy 镜像
+echo &quot;start run proxy module&quot;
+docker run -d -p 9880:9880 -p 9881:9881 -p 9090:9090 -i --net bistoury --ip 172.19.0.3 registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-proxy --real-ip $1 --zk-address 172.19.0.2:2181 --proxy-jdbc-url jdbc:mysql://172.19.0.7:3306/bistoury
+#ui 镜像
+echo &quot;start run ui module&quot;
+docker run -p 9091:9091  -it -d --net bistoury --ip 172.19.0.4 registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-ui --zk-address 172.19.0.2:2181 --ui-jdbc-url jdbc:mysql://172.19.0.7:3306/bistoury
+#boot 镜像
+echo &quot;start run demo application&quot;
+docker  run -it -d  -p 8686:8686 -i --net bistoury --ip 172.19.0.5 registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-demo --proxy-host $1:9090
+docker  run -it -d  -p 8687:8686 -i --net bistoury --ip 172.19.0.6 registry.cn-hangzhou.aliyuncs.com/bistoury/bistoury-demo --proxy-host $1:9090
+</code></pre>
+<p>上面的命令不能直接运行，<code>$1</code>是需要替换成当前服务器IP，然后再运行就OK了。</p>
+<h2 id="Bistoury-在生产环境运行"><a href="#Bistoury-在生产环境运行" class="headerlink" title="Bistoury 在生产环境运行"></a>Bistoury 在生产环境运行</h2><p>官方推荐部署方式：</p>
+<ul>
+<li>ui 独立部署，推荐部署在多台机器，并提供独立的域名</li>
+<li>proxy 独立部署，推荐部署在多台机器，并提供独立的域名</li>
+<li>agent 需要和应用部署在同一台机器上。推荐在测试环境全环境自动部署，线上环境提供单机一键部署，以及应用下所有机器一键部署</li>
+<li>独立的应用中心，管理所有功能内部应用和机器信息，这是一个和 Bistoury 相独立的系统，Bistoury 从中拿到不断更新的应用和机器信息</li>
+</ul>
+<p>这里有个关键的点，应用中心，Bistoury内置了一个简单的应用中心，Bistoury里代码对应bistoury-application，ui和proxy都通过这个工程获取应用信息，官方默认实现了一个mysql版本的：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586433126733.png" alt="application"></p>
+<p>使用mysql的缺点是，你需要ui界面里手动维护应用以及应用的服务器，做个demo还OK，生产环境肯定不行。更优雅的方式是，用户系统应该在启动时自动注册到注册中心上，汇报自己的应用、机器信息（ip、域名等）、端口等信息。当然这个对大部分微服务架构来说，注册中心是标配的，因此实现一套bistoury-application-api接口即可。</p>
+<h2 id="bistoury-application-k8s-Bistoury-on-K8S"><a href="#bistoury-application-k8s-Bistoury-on-K8S" class="headerlink" title="bistoury-application-k8s(Bistoury on K8S)"></a>bistoury-application-k8s(Bistoury on K8S)</h2><p>我们项目组所有的应用都部署在K8S环境，因此要实现一个<code>bistoury-application-k8s</code>。</p>
+<p>拷贝<code>bistoury-application-mysql</code>项目，建立<code>bistoury-application-k8s</code></p>
+<p>简单对应下：</p>
+<ul>
+<li>一个应用对应一个deployment，对应一个application</li>
+<li>一个deployment里有n个pod，对应applicationServer</li>
+</ul>
+<p>所以，我们只需要调用调用K8S API 获取deployment和pod即可。</p>
+<p>首先引入相关jar包：</p>
+<pre><code>   &lt;dependency&gt;
+            &lt;groupId&gt;io.kubernetes&lt;/groupId&gt;
+            &lt;artifactId&gt;client-java&lt;/artifactId&gt;
+            &lt;version&gt;8.0.0&lt;/version&gt;
+            &lt;scope&gt;compile&lt;/scope&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>初始化ApiClient</p>
+<pre><code>            ApiClient defaultClient = Configuration.getDefaultApiClient();
+            defaultClient.setBasePath(k8sApiServer);
+            ApiKeyAuth BearerToken = (ApiKeyAuth) defaultClient.getAuthentication(&quot;BearerToken&quot;);
+            BearerToken.setApiKey(k8sToken);
+            BearerToken.setApiKeyPrefix(&quot;Bearer&quot;);
+            defaultClient.setVerifyingSsl(false);
+</code></pre>
+<h3 id="获取deployment"><a href="#获取deployment" class="headerlink" title="获取deployment"></a>获取deployment</h3><p>区分下是获取所有namespace，还是获取指定的namespace</p>
+<pre><code>   private List&lt;V1Deployment&gt; getDeployments() throws ApiException &#123;
+        AppsV1Api appsV1Api = new AppsV1Api(k8SConfiguration.getApiClient());
+        return k8SConfiguration.isAllNamespace()
+                ? appsV1Api.listDeploymentForAllNamespaces(false, null, null, null, 0, null, null, 120, false).getItems()
+                : getNamespacesDeployments(k8SConfiguration.getAllowedNamespace());
+    &#125;
+
+    List&lt;V1Deployment&gt; getNamespacesDeployments(List&lt;String&gt; namespaces) &#123;
+        AppsV1Api appsV1Api = new AppsV1Api(k8SConfiguration.getApiClient());
+        List&lt;V1Deployment&gt; deploymentList = new ArrayList&lt;&gt;();
+        for (String nameSpace : namespaces) &#123;
+            try &#123;
+                deploymentList.addAll(appsV1Api.listNamespacedDeployment(nameSpace, null, null, null, null, null, 0, null, 120, false).getItems());
+            &#125; catch (ApiException e) &#123;
+                logger.error(&quot;get &quot; + nameSpace + &quot;&#39;s deployment error&quot;, e);
+            &#125;
+        &#125;
+        return deploymentList;
+    &#125;
+</code></pre>
+<p>转换为application：</p>
+<pre><code>    private List&lt;Application&gt; getApplications(List&lt;V1Deployment&gt; applist) &#123;
+        return applist.stream().map(this::getApplication).collect(Collectors.toList());
+    &#125;
+
+    private Application getApplication(V1Deployment deployment) &#123;
+        Application application = new Application();
+        application.setCreateTime(deployment.getMetadata().getCreationTimestamp().toDate());
+        application.setCreator(deployment.getMetadata().getName());
+        application.setGroupCode(deployment.getMetadata().getNamespace());
+        application.setName(deployment.getMetadata().getName());
+        application.setStatus(1);
+        application.setCode(getAppCode(deployment.getMetadata().getNamespace(), deployment.getMetadata().getName()));
+        return application;
+    &#125;
+</code></pre>
+<h3 id="获取pod"><a href="#获取pod" class="headerlink" title="获取pod"></a>获取pod</h3><p>获取pod相对麻烦点，需要先获取到V1Deployment，拿到部署的lableSelector，然后根据lableSelector选择pod：</p>
+<pre><code> public List&lt;AppServer&gt; getAppServerByAppCode(final String appCode) &#123;
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(appCode), &quot;app code cannot be null or empty&quot;);
+
+        try &#123;
+            V1Deployment deployment = getDeployMent(appCode);
+            String nameSpace = appCode.split(APPCODE_SPLITTER)[0];
+            Map&lt;String, String&gt; labelMap = Objects.requireNonNull(deployment.getSpec()).getSelector().getMatchLabels();
+            StringBuilder lableSelector = new StringBuilder();
+            labelMap.entrySet().stream().forEach(e -&gt; &#123;
+                if (lableSelector.length() &gt; 0) &#123;
+                    lableSelector.append(&quot;,&quot;);
+                &#125;
+                lableSelector.append(e.getKey()).append(&quot;=&quot;).append(e.getValue());
+            &#125;);
+
+            CoreV1Api coreV1Api = new CoreV1Api(k8SConfiguration.getApiClient());
+            V1PodList podList = coreV1Api.listNamespacedPod(nameSpace, null, false, null,
+                    null, lableSelector.toString(), 200, null, 600, false);
+
+            return podList.getItems().stream().map(pod -&gt; &#123;
+                AppServer server = new AppServer();
+                server.setAppCode(appCode);
+                server.setHost(pod.getMetadata().getName());
+                server.setIp(pod.getStatus().getPodIP());
+                server.setLogDir(k8SConfiguration.getAppLogPath());
+                server.setAutoJMapHistoEnable(true);
+                server.setAutoJStackEnable(true);
+                server.setPort(8080);
+                return server;
+            &#125;).collect(Collectors.toList());
+
+        &#125; catch (ApiException e) &#123;
+            logger.error(&quot;get deployment&#39;s pod  error&quot;, e);
+        &#125;
+
+        return null;
+
+    &#125;
+</code></pre>
+<p>最后，修改ui和proxy工程，将原来的mysql替换为k8s：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434230879.png" alt="修改pom"></p>
+<h2 id="应用引入bistoury-agent"><a href="#应用引入bistoury-agent" class="headerlink" title="应用引入bistoury agent"></a>应用引入bistoury agent</h2><p>这块相对比较容易：</p>
+<p>在需要调试的应用的Dockerfile里增加：</p>
+<pre><code>COPY  --from=hub.xfyun.cn/abkdev/bistoury-agent:2.0.11  /home/q/bistoury  /opt/bistoury
+</code></pre>
+<p>然后修改应用的启动脚本，在最前面增加：</p>
+<pre><code>BISTOURY_APP_LIB_CLASS=&quot;org.springframework.web.servlet.DispatcherServlet&quot;
+
+# default proxy
+PROXY=&quot;bistoury-bistoury-proxy.incubation:9090&quot;
+AGENT_JAVA_HOME=&quot;/usr/local/openjdk-8/&quot;
+
+# env
+if [[ -n $PROXY_HOST ]]; then
+    PROXY=$PROXY_HOST
+fi
+
+TEMP=`getopt -o : --long proxy-host:,app-class:,agent-java-home: -- &quot;$@&quot;`
+
+eval set -- &quot;$TEMP&quot;
+
+while true; do
+  case &quot;$1&quot; in
+    --proxy-host )
+      PROXY=&quot;$2&quot;; shift 2 ;;
+    --app-class )
+      BISTOURY_APP_LIB_CLASS=&quot;$2&quot;; shift 2 ;;
+    --agent-java-home )
+      AGENT_JAVA_HOME=&quot;$2&quot;; shift 2 ;;
+    * ) break ;;
+  esac
+done
+
+
+echo &quot;proxy host: &quot;$PROXY_HOST
+echo &quot;app class: &quot;$BISTOURY_APP_LIB_CLASS
+echo &quot;agent java home: &quot;$AGENT_JAVA_HOME
+</code></pre>
+<p>在最后面增加：</p>
+<pre><code>APP_PID=`$AGENT_JAVA_HOME/bin/jps -l|awk &#39;&#123;if($2!=&quot;sun.tools.jps.Jps&quot;)&#123;print $1 ;&#123;exit&#125;&#125; &#125;&#39;`
+
+echo &quot;app pid: &quot;$APP_PID
+
+/opt/bistoury/agent/bin/bistoury-agent.sh -j $AGENT_JAVA_HOME -p $APP_PID -c $BISTOURY_APP_LIB_CLASS -s $PROXY -f start
+</code></pre>
+<h2 id="集成测试"><a href="#集成测试" class="headerlink" title="集成测试"></a>集成测试</h2><p>部署一个测试应用 agent-debug-demo，部署到jx namespace：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434610449.png" alt=" agent-debug-demo"></p>
+<pre><code>&#123;
+  &quot;kind&quot;: &quot;Deployment&quot;,
+  &quot;apiVersion&quot;: &quot;extensions/v1beta1&quot;,
+  &quot;metadata&quot;: &#123;
+    &quot;name&quot;: &quot;agent-debug-demo&quot;,
+    &quot;namespace&quot;: &quot;jx&quot;,
+    &quot;annotations&quot;: &#123;
+      &quot;deployment.kubernetes.io/revision&quot;: &quot;2&quot;
+    &#125;
+  &#125;,
+  &quot;spec&quot;: &#123;
+    &quot;replicas&quot;: 1,
+    &quot;selector&quot;: &#123;
+      &quot;matchLabels&quot;: &#123;
+        &quot;app&quot;: &quot;agent-debug-demo&quot;,
+        &quot;draft&quot;: &quot;draft-app&quot;
+      &#125;
+    &#125;,
+    &quot;template&quot;: &#123;
+      &quot;metadata&quot;: &#123;
+        &quot;creationTimestamp&quot;: null,
+        &quot;labels&quot;: &#123;
+          &quot;app&quot;: &quot;agent-debug-demo&quot;,
+          &quot;draft&quot;: &quot;draft-app&quot;
+        &#125;
+      &#125;,
+      &quot;spec&quot;: &#123;
+        &quot;containers&quot;: [
+          &#123;
+            &quot;name&quot;: &quot;springboot-rest-demo&quot;,
+            &quot;image&quot;: &quot;hub.xxx.cn/abkdev/springboot-rest-demo:dev-113&quot;,
+            &quot;ports&quot;: [
+              &#123;
+                &quot;containerPort&quot;: 8080,
+                &quot;protocol&quot;: &quot;TCP&quot;
+              &#125;
+            ],
+            &quot;env&quot;: [
+              &#123;
+                &quot;name&quot;: &quot;SPRING_PROFILES_ACTIVE&quot;,
+                &quot;value&quot;: &quot;dev&quot;
+              &#125;,
+              &#123;
+                &quot;name&quot;: &quot;PROXY_HOST&quot;,
+                &quot;value&quot;: &quot;$PROXY_HOST:9090&quot;
+              &#125;
+            ],
+            &quot;resources&quot;: &#123;&#125;,
+            &quot;terminationMessagePath&quot;: &quot;/dev/termination-log&quot;,
+            &quot;terminationMessagePolicy&quot;: &quot;File&quot;,
+            &quot;imagePullPolicy&quot;: &quot;IfNotPresent&quot;
+          &#125;
+        ],
+        &quot;restartPolicy&quot;: &quot;Always&quot;,
+        &quot;terminationGracePeriodSeconds&quot;: 10,
+        &quot;dnsPolicy&quot;: &quot;ClusterFirst&quot;,
+        &quot;securityContext&quot;: &#123;&#125;,
+        &quot;schedulerName&quot;: &quot;default-scheduler&quot;
+      &#125;
+    &#125;,
+    &quot;strategy&quot;: &#123;
+      &quot;type&quot;: &quot;RollingUpdate&quot;,
+      &quot;rollingUpdate&quot;: &#123;
+        &quot;maxUnavailable&quot;: 1,
+        &quot;maxSurge&quot;: 1
+      &#125;
+    &#125;,
+    &quot;revisionHistoryLimit&quot;: 2147483647,
+    &quot;progressDeadlineSeconds&quot;: 2147483647
+  &#125;,
+  &quot;status&quot;: &#123;
+    &quot;observedGeneration&quot;: 2,
+    &quot;replicas&quot;: 1,
+    &quot;updatedReplicas&quot;: 1,
+    &quot;unavailableReplicas&quot;: 1,
+    &quot;conditions&quot;: [
+      &#123;
+        &quot;type&quot;: &quot;Available&quot;,
+        &quot;status&quot;: &quot;True&quot;,
+        &quot;lastUpdateTime&quot;: &quot;2020-04-09T01:32:42Z&quot;,
+        &quot;lastTransitionTime&quot;: &quot;2020-04-09T01:32:42Z&quot;,
+        &quot;reason&quot;: &quot;MinimumReplicasAvailable&quot;,
+        &quot;message&quot;: &quot;Deployment has minimum availability.&quot;
+      &#125;
+    ]
+  &#125;
+&#125;
+</code></pre>
+<p>部署后：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434889358.png" alt="K8S Dashboard"></p>
+<p>打开ui，查看：</p>
+<p>应用名称显示为： namespace名称-部署名称</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434848921.png" alt="bistoury"></p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586434991429.png" alt="ThreadDump"></p>
+<p>在线调试：</p>
+<p>先选择应用：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586435034455.png" alt="选择应用"></p>
+<p>点击Debug，然后选择需要调试的类，</p>
+<p>测试工程源代码为：</p>
+<pre><code>@SpringBootApplication
+@Controller
+public class RestPrometheusApplication &#123;
+@Autowiredprivate MeterRegistry registry;
+@Autowiredprivate Environment env;
+@GetMapping(path = &quot;/&quot;, produces = &quot;application/json&quot;)@ResponseBodypublic Map&lt;String, Object&gt; landingPage() &#123;    Counter.builder(&quot;mymetric&quot;).tag(&quot;foo&quot;, &quot;bar&quot;).register(registry).increment();    String profile = &quot;default&quot;;    if(env.getActiveProfiles().length &gt; 0)&#123;        profile = env.getActiveProfiles()[0];    &#125;
+    return singletonMap(&quot;hello&quot;, &quot;&quot;+ profile);&#125;
+public static void main(String[] args) &#123;    SpringApplication.run(RestPrometheusApplication.class, args);&#125;
+
+&#125;
+</code></pre>
+<p>因此，我们输入RestPrometheusApplication筛选：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586435105776.png" alt="选择Class"></p>
+<p>然后点击调试，可以看到，反编译出来了源代码：</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586435149849.png" alt="在线debug1"></p>
+<p>在landingPage最后一行加一个端点，然后点击添加端点，最后访问该POD对应的服务,该pod对应的ip是170.22.149.37，因此我们访问：</p>
+<pre><code>curl http://170.22.149.37:8080
+&#123;&quot;hello&quot;:&quot;dev&quot;&#125;
+</code></pre>
+<p>再回到UI，可以看到成员变量，局部变量和调用堆栈等信息。</p>
+<p><img src="https://gitee.com/jadepeng/pic/raw/master/pic/2020/4/9/1586435287216.png" alt="在线debug2"></p>
+<p>well down！</p>
+<hr>
+<blockquote>
+<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2020/03/10/jqpeng-%E8%8E%B7%E5%8F%96free-ss%E8%B4%A6%E5%8F%B7%E5%B9%B6%E5%AF%BC%E5%85%A5SSR/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -220,7 +675,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -359,7 +814,7 @@ download(&quot;ssr-list.txt&quot;,JSON.stringify(&#123;&quot;configs&quot; : ssL
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -533,7 +988,7 @@ RUN apk add --update ttf-dejavu &amp;&amp; rm -rf /var/cache/apk/*
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -737,7 +1192,7 @@ ingress.extensions/springboot-rest-demo-gray created
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1292,7 +1747,7 @@ spec:
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1527,7 +1982,7 @@ spec:
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1856,7 +2311,7 @@ public void whenDumpACustomType_thenGenerateCorrectYAML() &#123;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2135,7 +2590,7 @@ curl -i http://drone.YOUR_HOST.cn/api/repos/jqpeng/springboot-rest-demo/builds -
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2334,7 +2789,7 @@ print(&#39;Micro F1: &#123;&#125;&#39;.format(result[&#39;micro_f1&#39;]))
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
+                <time title="修改时间：2021-07-12 21:28:27" itemprop="dateModified" datetime="2021-07-12T21:28:27+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2795,234 +3250,6 @@ T Theme
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.iflyresearch.com/2019/09/17/jqpeng-%E6%95%99%E7%A8%8B%20%E2%80%94%E2%80%94%20%E5%A6%82%E4%BD%95%E5%9C%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BA%94%E7%94%A8%E9%9B%86%E6%88%90superset/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/jadepeng/images/avatar.gif">
-      <meta itemprop="name" content="JadePeng">
-      <meta itemprop="description" content="JadePeng的技术笔记本">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JadePeng的技术笔记本">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jadepeng/2019/09/17/jqpeng-%E6%95%99%E7%A8%8B%20%E2%80%94%E2%80%94%20%E5%A6%82%E4%BD%95%E5%9C%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BA%94%E7%94%A8%E9%9B%86%E6%88%90superset/" class="post-title-link" itemprop="url">教程 —— 如何在自己的应用集成superset</a>
-        </h2>
-
-        <div class="post-meta">
-
-         
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-09-17 20:01:00" itemprop="dateCreated datePublished" datetime="2019-09-17T20:01:00+08:00">2019-09-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-14 18:09:47" itemprop="dateModified" datetime="2021-05-14T18:09:47+08:00">2021-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/jadepeng/categories/%E5%8D%9A%E5%AE%A2/jqpeng/" itemprop="url" rel="index"><span itemprop="name">jqpeng</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>文章作者:jqpeng<br>原文链接: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoqi/p/intergate-superset.html">教程 —— 如何在自己的应用集成superset</a></p>
-<p>Superset 是apache的一个孵化项目，定位为一款现代的，准商用BI系统</p>
-<h2 id="superset"><a href="#superset" class="headerlink" title="superset"></a>superset</h2><blockquote>
-<p>Apache Superset  (incubating) is a modern, enterprise-ready business intelligence web application</p>
-</blockquote>
-<p>Superset 是apache的一个孵化项目，定位为一款现代的，准商用BI系统。</p>
-<p>Superset（Caravel）是由Airbnb（知名在线房屋短租公司）开源的数据分析与可视化平台（曾用名Caravel、Panoramix），该工具主要特点是可自助分析、自定义仪表盘、分析结果可视化（导出）、用户/角色权限控制，还集成了一个SQL编辑器，可以进行SQL编辑查询等。</p>
-<p>通过superset，可以制作漂亮的统计图表。</p>
-<h3 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h3><p><img src="https://superset.incubator.apache.org/_images/bank_dash.png" alt="_images/bank_dash.png"></p>
-<hr>
-<p><img src="https://superset.incubator.apache.org/_images/explore.png" alt="_images/explore.png"></p>
-<hr>
-<p><img src="https://superset.incubator.apache.org/_images/sqllab.png" alt="_images/sqllab.png"></p>
-<hr>
-<p><img src="https://superset.incubator.apache.org/_images/deckgl_dash.png" alt="_images/deckgl_dash.png"></p>
-<h2 id="superset安装"><a href="#superset安装" class="headerlink" title="superset安装"></a>superset安装</h2><p>我们这里直接使用docker</p>
-<pre><code>git clone https://github.com/apache/incubator-superset/
-cd incubator-superset/contrib/docker
-# prefix with SUPERSET_LOAD_EXAMPLES=yes to load examples:
-docker-compose run --rm superset ./docker-init.sh
-# you can run this command everytime you need to start superset now:
-docker-compose up
-</code></pre>
-<p>等构建完成后，访问 <a target="_blank" rel="noopener" href="http://localhost:8088/">http://localhost:8088</a> 即可。</p>
-<p>想要在自己的应用集成，首先要解决认证</p>
-<h2 id="superset-认证分析"><a href="#superset-认证分析" class="headerlink" title="superset 认证分析"></a>superset 认证分析</h2><p>superset基于flask-appbuilder开发，security基于flask_appbuilder.security，翻阅其代码，</p>
-<p>找到入口： <code>superset/__init__.py</code>:</p>
-<pre><code>custom_sm = app.config.get(&#39;CUSTOM_SECURITY_MANAGER&#39;) or SupersetSecurityManager
-if not issubclass(custom_sm, SupersetSecurityManager):
-    raise Exception(
-        &quot;&quot;&quot;Your CUSTOM_SECURITY_MANAGER must now extend SupersetSecurityManager,
-         not FAB&#39;s security manager.
-         See [4565] in UPDATING.md&quot;&quot;&quot;)
-
-appbuilder = AppBuilder(
-    app,
-    db.session,
-    base_template=&#39;superset/base.html&#39;,
-    indexview=MyIndexView,
-    security_manager_class=custom_sm,
-    update_perms=get_update_perms_flag(),
-)
-
-security_manager = appbuilder.sm
-</code></pre>
-<p>默认使用<code>SupersetSecurityManager</code>,继承自<code>SecurityManager</code>：</p>
-<pre><code>class SupersetSecurityManager(SecurityManager):
-
-    def get_schema_perm(self, database, schema):
-        if schema:
-            return &#39;[&#123;&#125;].[&#123;&#125;]&#39;.format(database, schema)
-
-    def can_access(self, permission_name, view_name):
-        &quot;&quot;&quot;Protecting from has_access failing from missing perms/view&quot;&quot;&quot;
-        user = g.user
-        if user.is_anonymous:
-            return self.is_item_public(permission_name, view_name)
-        return self._has_view_access(user, permission_name, view_name)        ...
-</code></pre>
-<p>我们再来看SecurityManager及父类，发现，登录是通过auth_view来控制的，默认是AUTH_DB，也就是AuthDBView。</p>
-<pre><code>&quot;&quot;&quot; Override if you want your own Authentication LDAP view &quot;&quot;&quot;
-      authdbview = AuthDBView      if self.auth_type == AUTH_DB:
-            self.user_view = self.userdbmodelview
-            self.auth_view = self.authdbview()
- @property
-    def get_url_for_login(self):
-        return url_for(&#39;%s.%s&#39; % (self.sm.auth_view.endpoint, &#39;login&#39;))
-</code></pre>
-<p>再来看authdbview：</p>
-<pre><code>class AuthDBView(AuthView):
-    login_template = &#39;appbuilder/general/security/login_db.html&#39;
-
-    @expose(&#39;/login/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
-    def login(self):
-        if g.user is not None and g.user.is_authenticated:
-            return redirect(self.appbuilder.get_url_for_index)
-        form = LoginForm_db()
-        if form.validate_on_submit():
-            user = self.appbuilder.sm.auth_user_db(form.username.data, form.password.data)
-            if not user:
-                flash(as_unicode(self.invalid_login_message), &#39;warning&#39;)
-                return redirect(self.appbuilder.get_url_for_login)
-            login_user(user, remember=False)
-            return redirect(self.appbuilder.get_url_for_index)
-        return self.render_template(self.login_template,
-                               title=self.title,
-                               form=form,
-                               appbuilder=self.appbuilder)
-</code></pre>
-<p>对外提供’/login/‘接口，读取HTTP POST里的用户名，密码，然后调用auth_user_db验证，验证通过调用login_user生成认证信息。</p>
-<p>因此，我们可以自定义AuthDBView，改为从我们自己的应用认证即可。</p>
-<h2 id="使用jwt来验证superset"><a href="#使用jwt来验证superset" class="headerlink" title="使用jwt来验证superset"></a>使用jwt来验证superset</h2><p>自定义CustomAuthDBView，继承自AuthDBView，登录时可以通过cookie或者url参数传入jwt token，然后验证通过的话，自动登录，。</p>
-<pre><code>import jwt
-import json
-class CustomAuthDBView(AuthDBView):
-    login_template = &#39;appbuilder/general/security/login_db.html&#39;
-
-    @expose(&#39;/login/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
-    def login(self):
-        token = request.args.get(&#39;token&#39;)
-        if not token:
-            token = request.cookies.get(&#39;access_token&#39;)
-        if token is not None:
-            jwt_payload = jwt.decode(token,&#39;secret&#39;,algorithms=[&#39;RS256&#39;])
-            user_name = jwt_payload.get(&quot;user_name&quot;)
-            user = self.appbuilder.sm.find_user(username=user_name)
-            if not user:
-               role_admin = self.appbuilder.sm.find_role(&#39;Admin&#39;)
-               user = self.appbuilder.sm.add_user(user_name, user_name, &#39;aimind&#39;, user_name + &quot;@aimind.com&quot;, role_admin, password = &quot;aimind&quot; + user_name)
-            if user:
-                login_user(user, remember=False)
-                redirect_url = request.args.get(&#39;redirect&#39;)
-                if not redirect_url:
-                    redirect_url = self.appbuilder.get_url_for_index
-                return redirect(redirect_url)
-            else:
-                return super(CustomAuthDBView,self).login()
-        else:
-            flash(&#39;Unable to auto login&#39;, &#39;warning&#39;)
-            return super(CustomAuthDBView,self).login()
-</code></pre>
-<p>如果用户不存在，通过self.appbuilder.sm.add_user自动添加用户。</p>
-<p>然后再引入这个CustomAuthDBView，</p>
-<pre><code>class CustomSecurityManager(SupersetSecurityManager):
-    authdbview = CustomAuthDBView
-</code></pre>
-<p>最后，再引入这个CustomSecurityManager,在superset_config.py 里增加：</p>
-<pre><code>from aimind_security import CustomSecurityManager
-CUSTOM_SECURITY_MANAGER = CustomSecurityManager
-</code></pre>
-<h2 id="在应用里集成superset"><a href="#在应用里集成superset" class="headerlink" title="在应用里集成superset"></a>在应用里集成superset</h2><p>集成就简单了，访问，’SUPER_SET_URL/login/?token=jwt_token’ 即可，可以通过iframe无缝集成。</p>
-<hr>
-<blockquote>
-<p>作者：Jadepeng<br> 出处：jqpeng的技术记事本–<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaoqi">http://www.cnblogs.com/xiaoqi</a><br> 您的支持是对博主最大的鼓励，感谢您的认真阅读。<br> 本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -3094,7 +3321,7 @@ CUSTOM_SECURITY_MANAGER = CustomSecurityManager
       <div class="site-state-item site-state-posts">
           <a href="/jadepeng/archives/">
         
-          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-count">98</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -3147,13 +3374,13 @@ CUSTOM_SECURITY_MANAGER = CustomSecurityManager
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">642k</span>
+    <span title="站点总字数">668k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">9:44</span>
+    <span title="站点阅读时长">10:08</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
